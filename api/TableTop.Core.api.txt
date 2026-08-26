@@ -468,52 +468,6 @@ sealed enum TableTop.Core.Abstractions.Players.PlayerStatus
     Eliminated = 2
     Skipped = 1
     Spectating = 3
-sealed class TableTop.Core.Abstractions.Presentation.ModePresentation
-    .ctor()
-    Boolean Equals(ModePresentation other)
-    Boolean Equals(Object obj)
-    Boolean IsEmpty { get; }
-    IReadOnlyDictionary<String, String> CategoryColours { get; set; }
-    IReadOnlyList<String> CategoriesPinnedToEnd { get; set; }
-    IReadOnlyList<String> CategoriesPinnedToStart { get; set; }
-    Int32 GetHashCode()
-    ModePresentation <Clone>$()
-    ModePresentation None { get; }
-    Nullable<Int32> MinimumPlayers { get; set; }
-    String CompleteLabel { get; set; }
-    String Description { get; set; }
-    String SkipLabel { get; set; }
-    String Title { get; set; }
-    String ToString()
-    ThemePalette Theme { get; set; }
-sealed class TableTop.Core.Abstractions.Presentation.ThemePalette
-    .ctor()
-    Boolean Equals(Object obj)
-    Boolean Equals(ThemePalette other)
-    Boolean IsEmpty { get; }
-    IReadOnlyList<String> BackgroundGradient { get; set; }
-    Int32 GetHashCode()
-    String Accent { get; set; }
-    String AccentSoft { get; set; }
-    String Background { get; set; }
-    String BodyFont { get; set; }
-    String CardBodyInk { get; set; }
-    String CardInk { get; set; }
-    String CardInkSubtle { get; set; }
-    String CardStock { get; set; }
-    String CardStockFlipped { get; set; }
-    String DisplayFont { get; set; }
-    String Name { get; set; }
-    String PanelBackground { get; set; }
-    String PanelBorder { get; set; }
-    String PrimaryButton { get; set; }
-    String PrimaryButtonText { get; set; }
-    String Progress { get; set; }
-    String SecondaryButton { get; set; }
-    String SecondaryButtonText { get; set; }
-    String ToString()
-    String UtilityFont { get; set; }
-    ThemePalette <Clone>$()
 sealed enum TableTop.Core.Abstractions.Progression.FlowPace
     Fast = 2
     Normal = 1

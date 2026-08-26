@@ -34,14 +34,13 @@ namespace TableTop.Presentation.ViewModels;
 /// <b>What deliberately did not move.</b> MAUI's <c>Theme</c>,
 /// <c>DisplayFont</c>/<c>BodyFont</c>/<c>UtilityFont</c>, and the
 /// WCAG-contrast-checked <c>StripColor</c>/<c>StripTextColor</c> all return
-/// platform <c>Color</c> types this project cannot reference — the identical
-/// reason <see cref="ModeListItem"/> exposes an accent as a hex string rather
-/// than a parsed colour. What moved instead is the data those colours are
-/// computed from: <see cref="CardCategory"/> and the category-colour map
-/// implicit in each mode's <c>ResolvedCategoryColours</c>, which MAUI's own
-/// wrapper can still read directly since it isn't gone, only not duplicated
-/// here. WinUI's screen currently renders no per-category strip at all, so
-/// nothing there needed a counterpart.
+/// platform <c>Color</c> types this project cannot reference. What moved
+/// instead is the data those colours are computed from:
+/// <see cref="CardCategory"/> and the category-colour map implicit in each
+/// mode's <c>CategoryColours</c>, which MAUI's own wrapper can still read
+/// directly since it isn't gone, only not duplicated here. WinUI's screen
+/// currently renders no per-category strip at all, so nothing there needed a
+/// counterpart.
 /// </para>
 ///
 /// <para>
@@ -253,9 +252,9 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         ShowCardCount = showCardCount;
 
         var def = mode as TableTop.Games.Base.BaseGameModeDefinition;
-        CompleteLabel = def?.ResolvedCompleteLabel ?? "Completed";
-        SkipLabel = def?.ResolvedSkipLabel ?? "Skip";
-        ModeTitle = def?.DisplayName ?? mode.Name;
+        CompleteLabel = def?.CompleteLabel ?? "Completed";
+        SkipLabel = def?.SkipLabel ?? "Skip";
+        ModeTitle = def?.Name ?? mode.Name;
 
         _styleNames = mode is IGameModeDefinition gmd
             ? ChoiceCards.ExtractStyleNames(gmd.GetCards([]).Select(c => c.Description))

@@ -57,13 +57,15 @@ is now entirely compiled in and the engine reads no content files of any kind.**
 `RestrictionParser` — the last of which survives because `OutLoudMode` parses
 restriction strings directly, independent of any file format.
 
-One deliberate loose end: `BaseGameModeDefinition.Presentation` now always
-returns `ModePresentation.None`, so every `Resolved*` member (`DisplayName`,
-`ResolvedCompleteLabel`, `ResolvedCategoryColours`, `Theme`, …) is a
-pass-through to the compiled-in value. They were kept rather than deleted
-because both heads, the shared ViewModels and the public API snapshot bind to
-them. Collapsing them is a head-facing change and belongs in its own commit —
-see `BACKLOG.md`.
+That loose end is closed as of the backlog item 18 fix: `BaseGameModeDefinition`
+no longer has a `Presentation` property or any `Resolved*`/`DisplayName`/
+`DisplayDescription`/`Theme` member. `ModePresentation` and `ThemePalette` are
+deleted from `TableTop.Core` entirely. The three consumers that bound the
+pass-throughs (`CardTurnGameViewModel`, MAUI's `GameplayViewModel`,
+`ModeDisplayResolver`/`ModeListItem`) now read the compiled-in
+`Name`/`Description`/`CompleteLabel`/`SkipLabel`/`CategoryColours` members
+directly, and MAUI's `ModeTheme.For` no longer has a palette-overlay branch to
+dispatch on.
 
 Archetypes are registered in `ArchetypeRegistry` as a tree; a mode's presence
 there is what makes it reachable from a picker at all.

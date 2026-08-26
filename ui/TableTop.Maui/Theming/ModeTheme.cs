@@ -1,6 +1,4 @@
 using TableTop.Core.Abstractions.Game;
-using TableTop.Core.Abstractions.Presentation;
-using TableTop.Games.Base;
 
 namespace TableTop.Maui.Theming;
 
@@ -95,10 +93,6 @@ public sealed record ModeTheme
     // iOS, Constantia on WinUI — so a C# theme cannot hardcode a default without
     // imposing one platform's answer on all of them. Resolution therefore lives
     // in the view model, which can look the app resource up.
-    //
-    // Until this existed a deck could declare "displayFont" in its JSON, the
-    // loader would faithfully parse it into ThemePalette, and absolutely nothing
-    // would consume it.
 
     /// <summary>Heading and card-title font family, or null for the app default.</summary>
     public string? DisplayFont { get; init; }
@@ -121,86 +115,11 @@ public sealed record ModeTheme
     /// to baize because someone retitled a mode is the kind of failure nobody
     /// notices for months.
     /// </summary>
-    public static ModeTheme For(IGameMode? mode)
+    public static ModeTheme For(IGameMode? mode) => mode switch
     {
-        var fallback = mode switch
-        {
-            TableTop.Games.TruthOrDareMode => AfterDark,
-            _ => Baize,
-        };
-
-        // A palette in the deck JSON wins, overlaid field by field onto the
-        // compiled skin. Overlay rather than replace so a deck can restyle one
-        // thing — just a background, just an accent — without an author having
-        // to restate seventeen colours they don't care about, and so a deck that
-        // sets nothing is byte-identical to before.
-        return mode is BaseGameModeDefinition { Theme: { } palette }
-            ? fallback.OverlaidWith(palette)
-            : fallback;
-    }
-
-    /// <summary>
-    /// Returns a copy of this theme with any values supplied by
-    /// <paramref name="palette"/> applied over the top.
-    ///
-    /// Unparseable colours are skipped rather than throwing or blanking: a typo
-    /// in a hex string is a content mistake, and the right response is that one
-    /// colour falls back to the house skin, not that the mode fails to open.
-    /// </summary>
-    public ModeTheme OverlaidWith(ThemePalette palette)
-    {
-        ArgumentNullException.ThrowIfNull(palette);
-
-        return this with
-        {
-            Name = palette.Name ?? Name,
-            PageBackground = Background(palette) ?? PageBackground,
-            Accent = Hex(palette.Accent) ?? Accent,
-            AccentSoft = Hex(palette.AccentSoft) ?? AccentSoft,
-            PanelBackground = Hex(palette.PanelBackground) ?? PanelBackground,
-            PanelBorder = Hex(palette.PanelBorder) ?? PanelBorder,
-            CardStock = Hex(palette.CardStock) ?? CardStock,
-            CardStockFlipped = Hex(palette.CardStockFlipped) ?? CardStockFlipped,
-            CardInk = Hex(palette.CardInk) ?? CardInk,
-            CardBodyInk = Hex(palette.CardBodyInk) ?? CardBodyInk,
-            CardInkSubtle = Hex(palette.CardInkSubtle) ?? CardInkSubtle,
-            PrimaryButton = Solid(palette.PrimaryButton) ?? PrimaryButton,
-            PrimaryButtonText = Hex(palette.PrimaryButtonText) ?? PrimaryButtonText,
-            SecondaryButton = Hex(palette.SecondaryButton) ?? SecondaryButton,
-            SecondaryButtonText = Hex(palette.SecondaryButtonText) ?? SecondaryButtonText,
-            Progress = Hex(palette.Progress) ?? Progress,
-            DisplayFont = palette.DisplayFont ?? DisplayFont,
-            BodyFont = palette.BodyFont ?? BodyFont,
-            UtilityFont = palette.UtilityFont ?? UtilityFont,
-        };
-    }
-
-    private static Brush? Background(ThemePalette palette)
-    {
-        if (palette.BackgroundGradient is { Count: >= 2 } stops)
-        {
-            var parsed = stops.Select(Hex).Where(c => c is not null).Select(c => c!).ToList();
-            if (parsed.Count >= 2)
-            {
-                var gradient = new LinearGradientBrush { StartPoint = new(0, 0), EndPoint = new(0, 1) };
-                for (var i = 0; i < parsed.Count; i++)
-                    gradient.GradientStops.Add(
-                        new GradientStop(parsed[i], (float)i / (parsed.Count - 1)));
-                return gradient;
-            }
-        }
-        return Solid(palette.Background);
-    }
-
-    private static SolidColorBrush? Solid(string? hex) =>
-        Hex(hex) is { } c ? new SolidColorBrush(c) : null;
-
-    private static Color? Hex(string? value)
-    {
-        if (string.IsNullOrWhiteSpace(value)) return null;
-        try { return Color.FromArgb(value); }
-        catch { return null; }   // content typo: keep the house colour
-    }
+        TableTop.Games.TruthOrDareMode => AfterDark,
+        _ => Baize,
+    };
 
     // ── Palettes ──────────────────────────────────────────────────────────────
 

@@ -20,18 +20,18 @@ across the existing numbering rather than adding to it.
 
 | | Item | Why it matters |
 |---|---|---|
-| **P1** | **18** — remove or restore the inert presentation layer | `ModePresentation` and every `Resolved*` member pass compiled values straight through. Delete the abstraction, or move the palettes into C# so MAUI theming means something again. |
 | **P2** | **19** — normalise persistence failure handling | WinUI settings swallow `IOException` and raise `Changed` anyway, so a failed save is indistinguishable from a good one. MAUI bypasses `IAppSettings` entirely for nine reads, going straight to a singleton. |
 | **P2** | **20** — reduce UI-thread blocking | Four UI call sites run async controller and session creation through `.GetAwaiter().GetResult()`, two of them in page constructors. Costs responsiveness now; risks a synchronisation-context deadlock later. |
 | **P2** | **21** — stale UI comments | Nineteen surviving WPF references; several describe the WinUI file they sit in as WPF. One user-facing settings label may be wrong too. |
 
-**Items 4, 5 and 12 are all closed** and have dropped out of this table
+**Items 4, 5, 12 and 18 are all closed** and have dropped out of this table
 entirely. Item 12 closed the coverage *mechanism* — the declarations and the
 gate that keeps them honest. Item 4 closed the actual gap that mechanism was
 reporting: real screens on every head for every family in the catalogue. Item
 5 gave both heads a real composition root, so a container-registered
 `IControllerFactory`/`IAppSettings` now actually reaches the one path that
-was silently ignoring it. See each item's own section below.
+was silently ignoring it. Item 18 deleted the inert `Presentation`/`Resolved*`
+layer rather than resurrecting it. See each item's own section below.
 
 Note for whoever picks up item 19 next: closing item 5 registered
 `IAppSettings` in both heads' containers (it wasn't registered at all before),
@@ -785,7 +785,7 @@ existing validation pattern each screen already had, but nobody has clicked
 "Start game" with an untagged pair at a Couple-only mode and watched the
 message appear.
 
-### 18. `Presentation` is a permanent `None`, and `Resolved*` is a pass-through
+### 18. `Presentation` is a permanent `None`, and `Resolved*` is a pass-through — **CLOSED**
 
 `ARCHITECTURE.md` points at this item by name; here it is.
 
@@ -825,6 +825,68 @@ And `EveryMode_ResolvesToItsCompiledInValues` used `BeSameAs` to compare
 member being a literal pass-through: `CategoryColours` is expression-bodied and
 allocates a fresh dictionary per call, so no two reads are ever the same
 instance. Reference equality is the wrong assertion for a property that computes.
+
+**Closed by deleting the abstraction, not restoring it.** No content source
+remains that could ever populate `Presentation`, so there was nothing to make
+the pass-throughs a real feature again short of inventing a new one — moving
+the palettes into C# was the other option this item offered, but that is
+genuinely new work (a per-mode palette registry, threading it through both
+heads' theming), not a bug fix. Deleting the dead layer is the change that
+fits this item's scope.
+
+`BaseGameModeDefinition.Presentation` and its nine dependants
+(`DisplayName`, `DisplayDescription`, `ResolvedCompleteLabel`,
+`ResolvedSkipLabel`, `ResolvedMinimumPlayers`, `ResolvedCategoryColours`,
+`ResolvedCategoriesPinnedToStart`, `ResolvedCategoriesPinnedToEnd`, `Theme`)
+are gone. `ModePresentation` and `ThemePalette` are deleted from
+`TableTop.Core` entirely — nothing else referenced either type. The three
+bound consumers now read the compiled-in members directly:
+`CardTurnGameViewModel` reads `CompleteLabel`/`SkipLabel`/`Name`; MAUI's
+`GameplayViewModel` reads `CategoryColours`; `ModeDisplayResolver` (used by
+both `ModeListItem` and MAUI's `GameModeItem`) reads `Name`/`Description`.
+
+**A second inert layer came with it, one level downstream and not named in
+this item's original text.** `Theme` was the only source `ModeDisplayResolver`
+had for an accent hex, so `ModeListItem.Accent`/`HasAccent` and MAUI's
+`GameModeItem.Accent`/`AccentColor`/`HasAccent` were already permanently
+null/false before this change — the same "kept as a pass-through that can
+never fire" shape this item exists to clean up, just one hop further from
+`BaseGameModeDefinition`. Removed rather than left as a now-hardcoded `null`:
+`ModeListItem`/`GameModeItem` lost their accent members, and
+`GameSelectionPage.xaml`'s leading accent stripe (`IsVisible="{Binding
+HasAccent}"`, permanently false) is deleted along with the `Grid` column that
+held it, rather than kept as permanently-invisible chrome.
+
+MAUI's `ModeTheme.For` no longer pattern-matches on `Theme` — the
+palette-overlay branch was unreachable once `Theme` could never be non-null —
+so `OverlaidWith` and its private `Background`/`Solid`/`Hex` helpers are
+deleted too; `For` is now just the concrete-type fallback switch it always
+resolved to in practice.
+
+Two tests deleted outright (`EveryMode_ResolvesToItsCompiledInValues`,
+`SlowBurn_TheModeThatNeverHadAPresentationBlock_IsUnchanged`) along with a
+third and fourth covering the downstream accent dead-end
+(`HasAccent_IsFalse_ForABaseGameModeDefinition_BecauseNothingCanSupplyAnAccent`
+and `Constructor_WrapsTheSameResolutionAsModeDisplayResolver`'s accent
+assertion, trimmed rather than the whole test deleted). The public API
+snapshots (`api/TableTop.Core.api.txt`, `api/TableTop.Games.api.txt`) are
+regenerated via `TABLETOP_UPDATE_API=1 dotnet test … --filter
+PublicApiSurfaceTests` and committed with this change, per
+`PublicApiSurfaceTests`' own instruction.
+
+**Verified by a full build and test run**, not just static analysis: all four
+engine assemblies, Console, WinUI (`-p:Platform=x64`) and MAUI (Windows target)
+all build with zero errors; the 858-test suite passes in full, including the
+regenerated API snapshots; and all seven static gates
+(`check-maui-xaml.py`, `check-winui-xaml.py`, `check-xaml-bindings.py`,
+`check-mvvm-method-parity.py`, `check-shared-usings.py`,
+`check-head-family-coverage.py`, `check-ui-compiles.py`) pass. **Not
+verified:** `tests/TableTop.UiTests` could not run in this environment — the
+WinUI test host failed to load `Microsoft.TestPlatform.CoreUtilities`
+independent of any change here (a `FileNotFoundException` before any test
+executes) — so the `GameSelectionPage.xaml` layout change is confirmed to
+build and bind correctly (`check-xaml-bindings.py`, `check-maui-xaml.py`) but
+not confirmed by a running UI test or by eyes on the actual screen.
 
 ### 19. Persistence failures are handled three different ways, none of them visibly
 
