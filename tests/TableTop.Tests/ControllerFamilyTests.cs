@@ -239,6 +239,8 @@ public sealed class HeadFamilyCoverageTests
         ControllerFamily.Quiz,
         ControllerFamily.Monogamy,
         ControllerFamily.DailyCampaign,
+        ControllerFamily.AreaControl,
+        ControllerFamily.SimultaneousAnswer,
     ];
 
     /// <summary>Mirrors <c>ConsoleGameLauncher.SupportedFamilies</c>.</summary>
@@ -246,6 +248,10 @@ public sealed class HeadFamilyCoverageTests
     [
         ControllerFamily.CardTurn,
         ControllerFamily.Quiz,
+        ControllerFamily.Monogamy,
+        ControllerFamily.DailyCampaign,
+        ControllerFamily.AreaControl,
+        ControllerFamily.SimultaneousAnswer,
     ];
 
     /// <summary>
@@ -264,6 +270,8 @@ public sealed class HeadFamilyCoverageTests
         ControllerFamily.Quiz,
         ControllerFamily.Monogamy,
         ControllerFamily.DailyCampaign,
+        ControllerFamily.AreaControl,
+        ControllerFamily.SimultaneousAnswer,
     ];
 
     [Fact]
@@ -273,43 +281,31 @@ public sealed class HeadFamilyCoverageTests
     }
 
     [Fact]
-    public void Maui_CannotYetPlay_AreaControlOrSimultaneousAnswer()
+    public void Maui_CanNowPlayEveryModeInTheCatalogue()
     {
-        // Documents the CURRENT gap as a fact rather than pretending it's
-        // closed. When someone writes those two pages, this test fails and
-        // tells them to update the declaration — which is the correct
-        // failure, and infinitely better than the silent one this replaces.
-        var unsupported = ControllerFamilies.UnsupportedIn(AllModes(), MauiSupported);
-
-        unsupported.Should().NotBeEmpty();
-        unsupported.Select(ControllerFamilies.For).Distinct()
-            .Should().OnlyContain(f => f == ControllerFamily.AreaControl
-                                    || f == ControllerFamily.SimultaneousAnswer);
+        // Used to document a real gap: MAUI had no AreaControl or
+        // SimultaneousAnswer page, so this asserted UnsupportedIn was
+        // non-empty. Backlog item 4 closed it with real screens for both
+        // families — the honest statement now is that nothing is left
+        // unsupported, not a gap left standing for nostalgia.
+        ControllerFamilies.UnsupportedIn(AllModes(), MauiSupported).Should().BeEmpty();
     }
 
     [Fact]
-    public void WinUi_CannotYetPlay_AreaControlOrSimultaneousAnswer()
+    public void WinUi_CanNowPlayEveryModeInTheCatalogue()
     {
-        // Same shape as the MAUI test above, and the same gap: neither
-        // graphical head has an AreaControl or SimultaneousAnswer screen yet.
-        var unsupported = ControllerFamilies.UnsupportedIn(AllModes(), WinUiSupported);
-
-        unsupported.Should().NotBeEmpty();
-        unsupported.Select(ControllerFamilies.For).Distinct()
-            .Should().OnlyContain(f => f == ControllerFamily.AreaControl
-                                    || f == ControllerFamily.SimultaneousAnswer);
+        // Same closure as the MAUI test above — backlog item 4.
+        ControllerFamilies.UnsupportedIn(AllModes(), WinUiSupported).Should().BeEmpty();
     }
 
     [Fact]
-    public void Console_SupportsFewerFamilies_AndSaysSo()
+    public void Console_CanNowPlayEveryModeInTheCatalogue()
     {
-        var unsupported = ControllerFamilies.UnsupportedIn(AllModes(), ConsoleSupported);
-
-        // The console is deliberately the thinnest head. What matters is that
-        // every shortfall is a family it never claimed, not one it claimed and
-        // then dropped on the floor.
-        unsupported.Select(ControllerFamilies.For).Distinct()
-            .Should().OnlyContain(f => !ConsoleSupported.Contains(f));
+        // Console was "deliberately the thinnest head" until backlog item 4
+        // gave it real renderers for Monogamy, Day One, Claimed! and Herd —
+        // it now declares, and actually supports, every family the other two
+        // heads do.
+        ControllerFamilies.UnsupportedIn(AllModes(), ConsoleSupported).Should().BeEmpty();
     }
 
     // REMOVED: NoHeadSilentlyDropsAFamilyItClaimsToSupport

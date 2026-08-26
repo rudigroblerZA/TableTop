@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
+    x:Class="TableTop.Maui.Pages.HerdGamePage"
+    Title="Herd"
+    Background="{StaticResource BaizeBrush}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="14">
+
+            <Label Text="{Binding LoadError}" TextColor="#F87171" IsVisible="{Binding HasLoadError}" FontSize="15" />
+
+            <VerticalStackLayout IsVisible="{Binding IsPlaying}" Spacing="14">
+
+                <Label Style="{StaticResource PipLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="ROUND " />
+                            <Span Text="{Binding RoundNumber}" />
+                            <Span Text=" / " />
+                            <Span Text="{Binding TotalRounds}" />
+                            <Span Text="  ·  " />
+                            <Span Text="{Binding Category}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <!-- The prompt everyone answers at once -->
+                <Frame Style="{StaticResource PlayingCardStyle}">
+                    <Label Text="{Binding Prompt}" FontFamily="{StaticResource DisplayFont}"
+                           TextColor="{StaticResource CardInkColor}" FontSize="19" FontAttributes="Bold" />
+                </Frame>
+
+                <!-- One answer field per player — a shared device passed around
+                     the table. BindableLayout, not CollectionView, same
+                     nested-scrolling reason as ClaimedGamePage's territory list. -->
+                <Frame Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding PlayerAnswers}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="110,*">
+                                    <Label Grid.Column="0" Text="{Binding PlayerName}" VerticalOptions="Center"
+                                           FontFamily="{StaticResource DisplayFont}" FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <Entry Grid.Column="1" Text="{Binding Answer}" Placeholder="Type an answer…" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Button x:Name="RevealButton" Text="Reveal" Clicked="OnRevealClicked"
+                        Style="{StaticResource PrimaryButtonStyle}" HorizontalOptions="Start" />
+
+                <!-- Last round's result. A pure display toggle — the controller
+                     has already moved on to the round shown above by the time
+                     this can appear; see HerdGameViewModel's doc comment. -->
+                <Frame Style="{StaticResource CardStyle}" IsVisible="{Binding ShowingLastRound}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="LAST ROUND" Style="{StaticResource PipLabelStyle}" />
+                        <Label Text="{Binding LastRoundSummary}" FontFamily="{StaticResource BodyFont}"
+                               TextColor="{StaticResource TextPrimary}" FontSize="15" />
+                        <Label IsVisible="{Binding HasLastHerdAnswer}" FontFamily="{StaticResource BodyFont}"
+                               FontAttributes="Italic" TextColor="{StaticResource GoldBrightColor}" FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="The herd said: " />
+                                    <Span Text="{Binding LastHerdAnswer}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Label IsVisible="{Binding HasLastLoneVoice}" FontFamily="{StaticResource BodyFont}"
+                               FontAttributes="Italic" TextColor="{StaticResource GoldBrightColor}" FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Lone voice: " />
+                                    <Span Text="{Binding LastLoneVoice}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Button x:Name="DismissButton" Text="Dismiss" Clicked="OnDismissLastRoundClicked"
+                                Style="{StaticResource QuietButtonStyle}" HorizontalOptions="Start" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Label Text="{Binding Scores}" IsVisible="{Binding HasScores}"
+                       Style="{StaticResource PipLabelStyle}" TextColor="{StaticResource TextPrimary}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsGameOver}" Spacing="14">
+                <Label Text="Final Scores" Style="{StaticResource HeaderLabelStyle}" TextColor="{StaticResource GoldBrightColor}" />
+                <Label Text="{Binding Summary}" TextColor="#E5E7EB" FontSize="15" LineHeight="1.5" />
+                <Button x:Name="DoneButton" Text="Back to games" Clicked="OnDoneClicked"
+                        Style="{StaticResource PrimaryButtonStyle}" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

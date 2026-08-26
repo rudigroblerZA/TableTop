@@ -25,6 +25,8 @@ public partial class PlayerSetupPage : ContentPage
         ControllerFamily.Quiz,
         ControllerFamily.Monogamy,
         ControllerFamily.DailyCampaign,
+        ControllerFamily.AreaControl,
+        ControllerFamily.SimultaneousAnswer,
     ];
 
     private readonly PlayerSetupViewModel _vm;
@@ -127,11 +129,13 @@ public partial class PlayerSetupPage : ContentPage
 
             Page? next = family switch
             {
-                ControllerFamily.Quiz          => new MillionaireGamePage(_vm.Mode, players),
-                ControllerFamily.Monogamy      => new MonogamyGamePage(_vm.Mode, players),
-                ControllerFamily.DailyCampaign => new DayOneGamePage(_vm.Mode, players),
-                ControllerFamily.CardTurn      => new GameplayPage(_vm.Mode, players),
-                _                              => null,
+                ControllerFamily.Quiz               => new MillionaireGamePage(_vm.Mode, players),
+                ControllerFamily.Monogamy           => new MonogamyGamePage(_vm.Mode, players),
+                ControllerFamily.DailyCampaign       => new DayOneGamePage(_vm.Mode, players),
+                ControllerFamily.CardTurn            => new GameplayPage(_vm.Mode, players),
+                ControllerFamily.AreaControl         => new ClaimedGamePage(_vm.Mode, players),
+                ControllerFamily.SimultaneousAnswer  => new HerdGamePage(_vm.Mode, players),
+                _                                    => null,
             };
 
             if (next is null)

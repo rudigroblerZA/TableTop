@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.24.0**, August 2026. This replaces the accumulated
+Current as of **1.25.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -281,6 +281,19 @@ initially numbered wrong:
   Monogamy dispatch, which now call `MonogamyCardBank.All` directly. A removal
   that breaks nothing in-tree (its only two callers were fixed in the same
   change), so MINOR under the carve-out above rather than MAJOR.
+- **1.25.0** closed backlog item 4 — every head can now play every family in
+  the catalogue. `ClaimedGameViewModel` and `HerdGameViewModel` (new,
+  Presentation, shared by WinUI and MAUI) plus a View/Page pair per head cover
+  AreaControl and SimultaneousAnswer, the two families neither graphical head
+  had a screen for; Console gained `ConsoleClaimedRenderer`,
+  `ConsoleHerdRenderer` and `ConsoleDayOneRenderer` and now declares all six
+  families instead of two. No change to Core, Games or Hosting's public API —
+  this is UI-only, new types in Presentation and the three head projects — but
+  it's new user-facing capability all the same, so MINOR under the general
+  rule rather than left unversioned. `HeadFamilyCoverageTests`' two
+  `_CannotYetPlay_` tests are gone with the gap they asserted; see item 4's
+  own closure note for the ordering bug the new tests caught in
+  `ClaimedGameViewModel` before this shipped.
 
 ## What genuinely doesn't exist here
 

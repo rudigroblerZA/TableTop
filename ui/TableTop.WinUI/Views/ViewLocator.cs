@@ -26,6 +26,8 @@ public static class ViewLocator
         [typeof(MillionaireGameViewModel)]    = () => new MillionaireGameView(),
         [typeof(MonogamyGameViewModel)]       = () => new MonogamyGameView(),
         [typeof(DayOneGameViewModel)]         = () => new DayOneGameView(),
+        [typeof(ClaimedGameViewModel)]        = () => new ClaimedGameView(),
+        [typeof(HerdGameViewModel)]           = () => new HerdGameView(),
         [typeof(SettingsViewModel)]           = () => new SettingsView(),
         [typeof(UnsupportedModeViewModel)]    = () => new UnsupportedModeView(),
     };

@@ -1,6 +1,6 @@
 # TableTop — Backlog
 
-Current as of **1.24.0**, August 2026. Open items only; git history has the rest.
+Current as of **1.25.0**, August 2026. Open items only; git history has the rest.
 
 Items 1–8 predate the 1.18.0 review and keep their numbers — rewriting a
 numbered item in place is how item 7 vanished once (see its note). Items 9–16
@@ -20,17 +20,17 @@ across the existing numbering rather than adding to it.
 
 | | Item | Why it matters |
 |---|---|---|
-| **P0** | **4** — build the missing screens | MAUI has no AreaControl or SimultaneousAnswer page; Console additionally lacks a renderer for Monogamy/DailyCampaign-family modes beyond the one hardcoded `MonogamyMode` special case. Four to six screens across two heads — the coverage *mechanism* (item 12) is now trustworthy; this is the actual gap it's reporting. |
 | **P0** | **5** — real composition roots | MAUI registers pages and ViewModels DI cannot resolve, then constructs them by hand; WinUI has no composition root. Injected hosting services and test doubles are plumbed in but never used in production. |
 | **P1** | **18** — remove or restore the inert presentation layer | `ModePresentation` and every `Resolved*` member pass compiled values straight through. Delete the abstraction, or move the palettes into C# so MAUI theming means something again. |
 | **P2** | **19** — normalise persistence failure handling | WinUI settings swallow `IOException` and raise `Changed` anyway, so a failed save is indistinguishable from a good one. MAUI bypasses `IAppSettings` entirely for nine reads, going straight to a singleton. |
 | **P2** | **20** — reduce UI-thread blocking | Four UI call sites run async controller and session creation through `.GetAwaiter().GetResult()`, two of them in page constructors. Costs responsiveness now; risks a synchronisation-context deadlock later. |
 | **P2** | **21** — stale UI comments | Nineteen surviving WPF references; several describe the WinUI file they sit in as WPF. One user-facing settings label may be wrong too. |
 
-**Item 12 is closed** and has dropped out of this table entirely — both halves
-(WinUI's missing declaration and the hand-copied test arrays) are fixed; see
-its own section below. What's left under item 4 is real UI construction, not a
-metadata gap, which is why it's reworded above rather than removed.
+**Items 4 and 12 are both closed** and have dropped out of this table
+entirely. Item 12 closed the coverage *mechanism* — the declarations and the
+gate that keeps them honest. Item 4 closed the actual gap that mechanism was
+reporting: real screens on every head for every family in the catalogue. See
+both items' own sections below.
 
 Items 1, 2, 3, 8, 13, 15 and 16 sit below this — real, but none of them is
 between a player and a working game.
@@ -101,7 +101,7 @@ and lifelines are template-generated in an `ItemsControl` (a static `Key="A"`
 in a `DataTemplate` binds to every instance), and `WalkAway` is irreversible —
 the same reasoning that excludes `Quit` on the main screen.
 
-### 4. Head routing — partially closed
+### 4. Head routing — CLOSED
 
 **Was live and broken.** Six controller shapes existed with nothing connecting
 them to what a head could render. MAUI's router fell through `_ =>` to its
@@ -134,9 +134,58 @@ sits outside the family/coverage system entirely, while its own declared support
 list says it can't play Monogamy at all. Not a safety problem — the permissive
 direction this backlog generally prefers, same as `ArchetypeFilter`'s default —
 but it means the declaration undersells what Console actually does, which is
-its own small honesty gap. Left as a note rather than a fix: folding the special
-case into the family system, or declaring it accurately, is a design choice for
-whoever picks up the screens work above, not a one-line change made in passing.
+its own small honesty gap.
+
+**Closed.** Real screens on every head, for every family the catalogue can
+produce:
+
+- **WinUI and MAUI** each gained `ClaimedGameViewModel` and `HerdGameViewModel`
+  (shared, in `TableTop.Presentation`, same controller-injected-constructor +
+  mode-and-players-`Create`-factory shape as `MonogamyGameViewModel`), plus a
+  View/Page pair per head, wired into each head's routing switch and
+  `SupportedFamilies`. Both new screens use the plain board-game felt palette
+  already shared by the default card-turn screen — Claimed! and Herd are "Fun"
+  archetype, not couples- or quiz-specific, so no new palette was invented.
+- **Console** stopped special-casing Monogamy by concrete type
+  (`mode is MonogamyMode` → `mode is IMonogamyDeckProvider`, matching how
+  `ControllerFactory` and `ControllerFamilies` already dispatch), and gained
+  `ConsoleClaimedRenderer`, `ConsoleHerdRenderer` and `ConsoleDayOneRenderer` —
+  the last of which had *zero* prior coverage. `SupportedFamilies` now honestly
+  declares all six families, closing the honesty gap named above the same way.
+- `HeadFamilyCoverageTests`' two `_CannotYetPlay_` tests — which asserted the
+  gap this item existed to close — are gone, replaced with
+  `_CanNowPlayEveryModeInTheCatalogue` assertions that the unsupported set is
+  empty. A test asserting a known gap has to leave when the gap does, the same
+  way `NoHeadSilentlyDropsAFamilyItClaimsToSupport` and `DeckManifestTests`
+  did when *their* subjects went.
+- **A real bug found by the new `HerdGameViewModel`/`ClaimedGameViewModel`
+  tests, not by inspection.** `IHerdController.SubmitAnswers` and
+  `IClaimedController.ResolveChallenge` both raise their "what happened" event
+  and then advance internal state (next prompt, or the next player's turn)
+  *before returning* — the same synchronous-cascade shape that broke WinUI's
+  old Monogamy screen (see item 9's history and
+  `MonogamyGameViewModel.Submit`'s doc comment). The first cut of
+  `ClaimedGameViewModel` read `CurrentPlayerName` from inside the
+  `TerritoryClaimed`/`TerritoryStolen`/`ChallengeFailed` handlers — before the
+  controller had actually advanced the turn — so the board briefly showed the
+  wrong player. `HerdGameViewModel` was written with the hazard in mind from
+  the start (its own doc comment names it) and needed no fix; `ClaimedGameViewModel`
+  needed one, found by `Challenge_ThenSucceed_ClaimsTheTerritoryAndAdvancesTheTurn`
+  failing on the very first run. Worth remembering: knowing about a footgun in
+  one screen doesn't mean the next screen written in the same sitting avoids
+  it automatically.
+- **Not verified against the graphical heads' UI directly** — same limitation
+  item 17 recorded for its own WinUI/MAUI wiring: no `dotnet`-driven UI smoke
+  test exists for either head. Console's new renderers could not be exercised
+  interactively either, for an unrelated reason: `ConsoleUi.Clear()` throws
+  `"The handle is invalid"` the moment standard output isn't a real console
+  handle, which is every non-interactive way of driving this app (redirected
+  to a file, piped through another process). That is a pre-existing property
+  of every console renderer, not something this change introduced — the very
+  first `Clear()` call in `ConsoleGameLauncher.Run()` hits it before any
+  mode-specific code runs. Verified instead by the full engine build under
+  `-p:TreatWarningsAsErrors=true`, the 860-test suite (11 of them new,
+  including the ordering bug above), and all seven static gates.
 
 ### 5. Composition-root DI — bypass closed, wiring not
 
