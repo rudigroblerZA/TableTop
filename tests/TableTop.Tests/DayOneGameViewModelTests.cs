@@ -1,7 +1,6 @@
 using TableTop.Games.Couples;
 using TableTop.Hosting.Controllers;
 using TableTop.Presentation.ViewModels;
-using TableTop.Tests.Helpers;
 
 namespace TableTop.Tests;
 

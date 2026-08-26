@@ -1,15 +1,8 @@
-using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Game;
-using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Restrictions;
-using TableTop.Core.Abstractions.Scoring;
-using TableTop.Core.Domain.Cards;
 using TableTop.Core.Domain.Game;
 using TableTop.Core.Domain.Restrictions;
-using TableTop.Core.Domain.Scoring;
 using TableTop.Games;
-using TableTop.Games.Base;
-using TableTop.Hosting;
 
 namespace TableTop.Tests;
 
@@ -181,7 +174,7 @@ public sealed class ModeManifestTests
     {
         IGameMode mode = new InlineModeDef(new List<ICard> { MakeCard(Difficulty.Easy) });
 
-        var first  = mode.GetManifest();
+        var first = mode.GetManifest();
         var second = mode.GetManifest();
 
         object.ReferenceEquals(first, second).Should().BeTrue(
@@ -322,7 +315,7 @@ public sealed class ModeManifestTests
     public void SurpriseMe_ReturnsAMode()
     {
         var registry = ArchetypeRegistry.Default();
-        var mode     = registry.SurpriseMe();
+        var mode = registry.SurpriseMe();
         mode.Should().NotBeNull("there are modes in the registry");
     }
 
@@ -380,7 +373,7 @@ public sealed class ModeManifestTests
     [Fact]
     public void GetModeManifests_ReturnsEntryPerMode()
     {
-        var registry  = ArchetypeRegistry.Default();
+        var registry = ArchetypeRegistry.Default();
         var classroom = registry.FindById("classroom")!;
         var manifests = classroom.GetModeManifests();
 
@@ -406,7 +399,7 @@ public sealed class ModeManifestTests
         // never deal, and ArchetypeRegistry.SurpriseMe filters on TotalCards.
         var mode = new TableTop.Games.Fun.HerdMode();
 
-        var played    = mode.GetHerdDeck().Count;
+        var played = mode.GetHerdDeck().Count;
         var catalogue = mode.GetCards([]).Count;
 
         played.Should().BeLessThan(catalogue,
@@ -428,13 +421,13 @@ public sealed class ModeManifestTests
 
             var expected = ControllerFamilies.TryFor(mode) switch
             {
-                ControllerFamily.Monogamy           => ((IMonogamyDeckProvider)mode).GetDeck().Count,
-                ControllerFamily.Quiz               => ((IQuestionBankProvider)mode).GetQuestionBank().Count,
+                ControllerFamily.Monogamy => ((IMonogamyDeckProvider)mode).GetDeck().Count,
+                ControllerFamily.Quiz => ((IQuestionBankProvider)mode).GetQuestionBank().Count,
                 ControllerFamily.SimultaneousAnswer => ((IHerdDeckProvider)mode).GetHerdDeck().Count,
-                ControllerFamily.AreaControl        => ((IClaimedDeckProvider)mode).GetClaimedDeck().Count,
-                ControllerFamily.DailyCampaign      => ((IDailyDeckProvider)mode).GetDailyDeck().Count,
-                ControllerFamily.CardTurn           => ((IGameModeDefinition)mode).GetCards([]).Count,
-                _                                   => 0,
+                ControllerFamily.AreaControl => ((IClaimedDeckProvider)mode).GetClaimedDeck().Count,
+                ControllerFamily.DailyCampaign => ((IDailyDeckProvider)mode).GetDailyDeck().Count,
+                ControllerFamily.CardTurn => ((IGameModeDefinition)mode).GetCards([]).Count,
+                _ => 0,
             };
 
             var actual = mode.GetManifest().TotalCards;
@@ -459,8 +452,8 @@ public sealed class ModeManifestTests
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private static ICard MakeCard(
-        Difficulty    difficulty  = Difficulty.Easy,
-        string        category    = "Test",
+        Difficulty difficulty = Difficulty.Easy,
+        string category = "Test",
         IRestriction? restriction = null,
         IEnumerable<string>? tags = null) =>
         StandardCard.Create(
@@ -480,7 +473,7 @@ public sealed class ModeManifestTests
 /// </summary>
 internal sealed class FastManifestMode : IGameMode, IModeManifestProvider
 {
-    public string Name        => "Fast Manifest";
+    public string Name => "Fast Manifest";
     public string Description => "Tests the IModeManifestProvider fast path.";
 
     public ModeManifest GetManifest() =>

@@ -81,10 +81,10 @@ public sealed class FamilyAtlasMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Foundations"]   = "#26A69A",
-            ["Wilds"]         = "#7CB342",
-            ["Home Turf"]     = "#FFB300",
-            ["Legend"]        = "#5C6BC0",
+            ["Foundations"] = "#26A69A",
+            ["Wilds"] = "#7CB342",
+            ["Home Turf"] = "#FFB300",
+            ["Legend"] = "#5C6BC0",
             ["Beyond the Map"] = "#AB47BC",
         };
 

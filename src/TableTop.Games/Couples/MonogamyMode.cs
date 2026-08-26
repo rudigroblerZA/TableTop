@@ -18,7 +18,7 @@ namespace TableTop.Games.Couples;
 public sealed class MonogamyMode : IGameMode, IMonogamyDeckProvider
 {
     /// <inheritdoc />
-    public string Name        => "Monogamy";
+    public string Name => "Monogamy";
     /// <inheritdoc />
     public string Description =>
         "A couples intimacy game. Dice roll your zone — Foreplay, Sensual, Steamy, or Wild.";

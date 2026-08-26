@@ -1,5 +1,5 @@
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
@@ -40,7 +40,7 @@ public sealed class UndividedMode : BaseGameModeDefinition, ITableShapeMode
     public TableShape SuitableFor => TableShape.Couple;
 
     /// <inheritdoc />
-    public override string Name        => "Undivided";
+    public override string Name => "Undivided";
     /// <inheritdoc />
     public override string Description =>
         "The turn-taking variation of Afterglow — one of you receives undivided attention while the other gives, then swap. The receiver always steers.";
@@ -48,17 +48,17 @@ public sealed class UndividedMode : BaseGameModeDefinition, ITableShapeMode
     /// <summary>Label for a card you did together.</summary>
     public override string CompleteLabel => "Given";
     /// <summary>Label for passing — free, always, no reason needed.</summary>
-    public override string SkipLabel     => "Pass (always okay)";
+    public override string SkipLabel => "Pass (always okay)";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Consent"]   = "#26A69A",
+            ["Consent"] = "#26A69A",
             ["Attention"] = "#FFCA28",
-            ["Devotion"]  = "#FFA726",
-            ["Worship"]   = "#AD1457",
-            ["Swap"]      = "#42A5F5",
+            ["Devotion"] = "#FFA726",
+            ["Worship"] = "#AD1457",
+            ["Swap"] = "#42A5F5",
             ["Aftercare"] = "#7E57C2",
         };
 
@@ -249,8 +249,8 @@ public static class UndividedCardBank
     private static string Emoji(string category) => category switch
     {
         "Attention" => "🌤️",
-        "Devotion"  => "🔥",
-        "Worship"   => "🌶️",
-        _           => "•",
+        "Devotion" => "🔥",
+        "Worship" => "🌶️",
+        _ => "•",
     };
 }

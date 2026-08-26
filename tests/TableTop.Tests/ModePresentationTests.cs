@@ -1,7 +1,5 @@
-using FluentAssertions;
 using TableTop.Core.Abstractions.Presentation;
 using TableTop.Games.Couples;
-using Xunit;
 
 namespace TableTop.Tests;
 

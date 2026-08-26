@@ -67,11 +67,11 @@ public sealed class DifficultyScoreRule : IRule
     {
         var bonus = card.Difficulty switch
         {
-            Abstractions.Cards.Difficulty.Easy    => 0,
-            Abstractions.Cards.Difficulty.Medium  => 1,
-            Abstractions.Cards.Difficulty.Hard    => 1,
+            Abstractions.Cards.Difficulty.Easy => 0,
+            Abstractions.Cards.Difficulty.Medium => 1,
+            Abstractions.Cards.Difficulty.Hard => 1,
             Abstractions.Cards.Difficulty.Extreme => 2,
-            _                                     => 0
+            _ => 0
         };
         return RuleResult.Allow(scoreDelta: bonus);
     }

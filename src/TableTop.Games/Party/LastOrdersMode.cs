@@ -1,9 +1,9 @@
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
+using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
-using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Domain.Restrictions;
 using TableTop.Core.Domain.Scoring;
 using TableTop.Games.Base;
@@ -50,7 +50,7 @@ public sealed class LastOrdersMode : BaseGameModeDefinition, ITableShapeMode
     private const int DrinkingAge = 18;
 
     /// <inheritdoc />
-    public override string Name        => "Last Orders";
+    public override string Name => "Last Orders";
     /// <inheritdoc />
     public override string Description =>
         "Pub-night dares for grown-ups. Sips not shots, the soft option always counts the same, and nobody loses for drinking less.";
@@ -58,7 +58,7 @@ public sealed class LastOrdersMode : BaseGameModeDefinition, ITableShapeMode
     /// <summary>Label for a completed dare.</summary>
     public override string CompleteLabel => "Done";
     /// <summary>Label for passing — free, always, no reason needed.</summary>
-    public override string SkipLabel     => "Pass (always fine)";
+    public override string SkipLabel => "Pass (always fine)";
 
     /// <summary>House rules open the night; Last Round closes it.</summary>
     public override IReadOnlyList<string> CategoriesPinnedToStart => ["House Rules"];
@@ -70,12 +70,12 @@ public sealed class LastOrdersMode : BaseGameModeDefinition, ITableShapeMode
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["House Rules"]  = "#26A69A",
-            ["Warm Up"]      = "#66BB6A",
+            ["House Rules"] = "#26A69A",
+            ["Warm Up"] = "#66BB6A",
             ["Party Tricks"] = "#42A5F5",
-            ["Confessions"]  = "#AB47BC",
-            ["Forfeits"]     = "#FFA726",
-            ["Last Round"]   = "#7E57C2",
+            ["Confessions"] = "#AB47BC",
+            ["Forfeits"] = "#FFA726",
+            ["Last Round"] = "#7E57C2",
         };
 
     /// <summary>Flat scoring — the soft option must never score less.</summary>
@@ -244,9 +244,9 @@ public static class LastOrdersCardBank
 
     private static string Emoji(string category) => category switch
     {
-        "Warm Up"      => "🌤️",
+        "Warm Up" => "🌤️",
         "Party Tricks" => "🎭",
-        "Confessions"  => "🎤",
-        _              => "•",
+        "Confessions" => "🎤",
+        _ => "•",
     };
 }

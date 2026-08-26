@@ -1,5 +1,5 @@
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
@@ -43,7 +43,7 @@ public sealed class AllInMode : BaseGameModeDefinition, ITableShapeMode
     public TableShape SuitableFor => TableShape.Couple;
 
     /// <inheritdoc />
-    public override string Name        => "All In";
+    public override string Name => "All In";
     /// <inheritdoc />
     public override string Description =>
         "A casino of flirtation: antes, raises, bluff-calling — chips are kisses, and the scoreboard leader claims a secretly written jackpot.";
@@ -51,15 +51,15 @@ public sealed class AllInMode : BaseGameModeDefinition, ITableShapeMode
     /// <summary>Label for the button that records a won hand (scores a chip).</summary>
     public override string CompleteLabel => "Won the Hand";
     /// <summary>Label for the button that folds a card.</summary>
-    public override string SkipLabel     => "Fold";
+    public override string SkipLabel => "Fold";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Ante"]    = "#66BB6A",
-            ["Raise"]   = "#EC407A",
-            ["Bluff"]   = "#42A5F5",
+            ["Ante"] = "#66BB6A",
+            ["Raise"] = "#EC407A",
+            ["Bluff"] = "#42A5F5",
             ["Jackpot"] = "#B71C4A",
         };
 

@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Domain.Restrictions;
 
 namespace TableTop.Tests;

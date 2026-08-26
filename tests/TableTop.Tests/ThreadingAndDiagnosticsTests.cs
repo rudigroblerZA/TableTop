@@ -1,9 +1,6 @@
 using TableTop.Core.Abstractions;
-using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Rules;
-using TableTop.Core.Abstractions.Scoring;
-using TableTop.Core.Domain.Cards;
 using TableTop.Core.Domain.Rules;
 
 namespace TableTop.Tests;
@@ -88,9 +85,9 @@ public sealed class ThreadingAndDiagnosticsTests
     [Fact]
     public void Controller_Start_TransfersOwnershipToCallingThread()
     {
-        var cards   = MakeCards(10);
+        var cards = MakeCards(10);
         var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var ctrl    = TestFactory.BuildController(cards, players, maxRounds: 3);
+        var ctrl = TestFactory.BuildController(cards, players, maxRounds: 3);
 
         // Start() must complete without throwing on the test thread
         var ex = Record.Exception(() => ctrl.Start());
@@ -100,9 +97,9 @@ public sealed class ThreadingAndDiagnosticsTests
     [Fact]
     public void Controller_RecordOutcome_PassesOnOwnerThread()
     {
-        var cards   = MakeCards(10);
+        var cards = MakeCards(10);
         var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var ctrl    = TestFactory.BuildController(cards, players, maxRounds: 2);
+        var ctrl = TestFactory.BuildController(cards, players, maxRounds: 2);
         ctrl.Start();
 
         var ex = Record.Exception(() => ctrl.RecordOutcome(CardOutcome.Completed));
@@ -120,9 +117,9 @@ public sealed class ThreadingAndDiagnosticsTests
         d.Should().BeSameAs(NullEngineDiagnostics.Instance);
 
         // All calls must be no-ops (no throw, no side effects)
-        var card   = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
+        var card = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
         var player = TableTop.Core.Domain.Players.Player.Create("Alice");
-        var rule   = new RestrictionRule();
+        var rule = new RestrictionRule();
         IEngineDiagnostics nullDiag = d;  // call via interface to reach default impls
 
         var ex = Record.Exception(() =>
@@ -175,8 +172,8 @@ public sealed class ThreadingAndDiagnosticsTests
             spy);
 
         var hardCard = StandardCard.Create("Hard Q", "desc", Difficulty.Hard, "Test");
-        var player   = TableTop.Core.Domain.Players.Player.Create("Alice");
-        var context  = TestFactory.MakeRuleContext();
+        var player = TableTop.Core.Domain.Players.Player.Create("Alice");
+        var context = TestFactory.MakeRuleContext();
 
         var result = evaluator.Evaluate(hardCard, player, context);
 
@@ -190,9 +187,9 @@ public sealed class ThreadingAndDiagnosticsTests
     {
         // Constructing without a sink must not throw and must evaluate correctly
         var evaluator = new RuleEvaluator([new RestrictionRule()]);
-        var card      = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
-        var player    = TableTop.Core.Domain.Players.Player.Create("Alice");
-        var context   = TestFactory.MakeRuleContext();
+        var card = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
+        var player = TableTop.Core.Domain.Players.Player.Create("Alice");
+        var context = TestFactory.MakeRuleContext();
 
         var result = evaluator.Evaluate(card, player, context);
         result.IsAllowed.Should().BeTrue("unrestricted card for any player must pass");
@@ -201,10 +198,10 @@ public sealed class ThreadingAndDiagnosticsTests
     [Fact]
     public void Controller_CallsDiagnostics_GameStarted()
     {
-        var spy     = new DiagnosticsSpy();
-        var cards   = MakeCards(5);
+        var spy = new DiagnosticsSpy();
+        var cards = MakeCards(5);
         var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var ctrl    = TestFactory.BuildController(cards, players, maxRounds: 1, diagnostics: spy);
+        var ctrl = TestFactory.BuildController(cards, players, maxRounds: 1, diagnostics: spy);
 
         ctrl.Start();
 
@@ -215,10 +212,10 @@ public sealed class ThreadingAndDiagnosticsTests
     [Fact]
     public void Controller_CallsDiagnostics_TurnRecorded()
     {
-        var spy     = new DiagnosticsSpy();
-        var cards   = MakeCards(10);
+        var spy = new DiagnosticsSpy();
+        var cards = MakeCards(10);
         var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var ctrl    = TestFactory.BuildController(cards, players, maxRounds: 2, diagnostics: spy);
+        var ctrl = TestFactory.BuildController(cards, players, maxRounds: 2, diagnostics: spy);
 
         ctrl.Start();
         ctrl.RecordOutcome(CardOutcome.Completed);
@@ -230,10 +227,10 @@ public sealed class ThreadingAndDiagnosticsTests
     [Fact]
     public void Controller_CallsDiagnostics_TurnUndone()
     {
-        var spy     = new DiagnosticsSpy();
-        var cards   = MakeCards(10);
+        var spy = new DiagnosticsSpy();
+        var cards = MakeCards(10);
         var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var ctrl    = TestFactory.BuildController(cards, players, maxRounds: 3, diagnostics: spy);
+        var ctrl = TestFactory.BuildController(cards, players, maxRounds: 3, diagnostics: spy);
 
         ctrl.Start();
         ctrl.RecordOutcome(CardOutcome.Completed);
@@ -245,10 +242,10 @@ public sealed class ThreadingAndDiagnosticsTests
     [Fact]
     public void Controller_CallsDiagnostics_GameEnded()
     {
-        var spy     = new DiagnosticsSpy();
-        var cards   = MakeCards(4);
+        var spy = new DiagnosticsSpy();
+        var cards = MakeCards(4);
         var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var ctrl    = TestFactory.BuildController(cards, players, maxRounds: 1, diagnostics: spy);
+        var ctrl = TestFactory.BuildController(cards, players, maxRounds: 1, diagnostics: spy);
 
         ctrl.Start();
         while (ctrl.IsRunning) ctrl.RecordOutcome(CardOutcome.Completed);
@@ -262,17 +259,17 @@ public sealed class ThreadingAndDiagnosticsTests
     {
         // Ensure diagnostics are truly a side channel — the game plays identically
         // with and without them.
-        var cards    = MakeCards(6);
-        var players  = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
+        var cards = MakeCards(6);
+        var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
 
-        var withDiag    = TestFactory.BuildController(cards, players, maxRounds: 1,
+        var withDiag = TestFactory.BuildController(cards, players, maxRounds: 1,
             diagnostics: new DiagnosticsSpy());
         var withoutDiag = TestFactory.BuildController(cards, players, maxRounds: 1);
 
-        int scoresWithDiag    = 0;
+        int scoresWithDiag = 0;
         int scoresWithoutDiag = 0;
 
-        withDiag.TurnResult    += (_, e) => scoresWithDiag    += e.ScoreDelta;
+        withDiag.TurnResult += (_, e) => scoresWithDiag += e.ScoreDelta;
         withoutDiag.TurnResult += (_, e) => scoresWithoutDiag += e.ScoreDelta;
 
         withDiag.Start();
@@ -305,12 +302,12 @@ internal sealed class DiagnosticsSpy : IEngineDiagnostics
     public record StartCall(string ModeName, int PlayerCount);
     public record EndCall(string ModeName, int TotalRounds, int TotalTurns);
 
-    public List<DenialCall> DeniedCalls        { get; } = [];
-    public List<AllowCall>  AllowedCalls        { get; } = [];
-    public List<TurnCall>   TurnRecordedCalls   { get; } = [];
-    public List<UndoCall>   TurnUndoneCalls     { get; } = [];
-    public List<StartCall>  GameStartedCalls    { get; } = [];
-    public List<EndCall>    GameEndedCalls      { get; } = [];
+    public List<DenialCall> DeniedCalls { get; } = [];
+    public List<AllowCall> AllowedCalls { get; } = [];
+    public List<TurnCall> TurnRecordedCalls { get; } = [];
+    public List<UndoCall> TurnUndoneCalls { get; } = [];
+    public List<StartCall> GameStartedCalls { get; } = [];
+    public List<EndCall> GameEndedCalls { get; } = [];
 
     public void RuleDenied(IRule rule, ICard card, IPlayer player, string reason)
         => DeniedCalls.Add(new(rule, card, player, reason));

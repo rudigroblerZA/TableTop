@@ -1,6 +1,5 @@
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Game;
 
 namespace TableTop.Hosting.Events;
@@ -75,10 +74,10 @@ public sealed record BreakCardDrawnEvent(
     string CardTitle,
     string CardText,
     string Activity,
-    int?   DurationMinutes,
+    int? DurationMinutes,
     string Scope,
     string EffectType,
-    int    Round);
+    int Round);
 
 /// <summary>Raised when a reward card is drawn and its effect has been applied.</summary>
 public sealed record RewardCardDrawnEvent(
@@ -106,7 +105,7 @@ public sealed record InspirationCardDrawnEvent(
     string CardTitle,
     string InspirationText,
     string InspirationCategory,
-    int    Round);
+    int Round);
 
 /// <summary>Raised after <c>SaveAsync()</c> writes a session snapshot to disk.</summary>
 public sealed record SessionSavedEvent(string FilePath, DateTimeOffset SavedAt);
@@ -117,8 +116,8 @@ public sealed record FlowChangedEvent(
     string Change,
     string NewDifficulty,
     string NewPace,
-    int    CardsBeforeEscalation,
-    int    Round);
+    int CardsBeforeEscalation,
+    int Round);
 
 /// <summary>Raised when the hint engine has a suggestion for the next card selection.</summary>
 public sealed record NextTurnHintEvent(

@@ -14,36 +14,36 @@ public sealed class BreakCard : BaseCard, IBreakCard
         string title,
         string description,
         BreakScope scope,
-        BreakEffect? effect           = null,
-        BreakActivity? activity       = null,
-        int? durationMinutes          = null,
-        IEnumerable<string>? tags     = null,
-        IRestriction? restriction     = null)
+        BreakEffect? effect = null,
+        BreakActivity? activity = null,
+        int? durationMinutes = null,
+        IEnumerable<string>? tags = null,
+        IRestriction? restriction = null)
         : base(id, title, description, Difficulty.Easy, "Break", tags, restriction)
     {
-        Scope           = scope;
-        Effect          = effect;
-        Activity        = activity;
+        Scope = scope;
+        Effect = effect;
+        Activity = activity;
         DurationMinutes = durationMinutes;
     }
 
     /// <inheritdoc />
-    public BreakScope    Scope           { get; }
+    public BreakScope Scope { get; }
     /// <inheritdoc />
-    public BreakEffect?  Effect          { get; }
+    public BreakEffect? Effect { get; }
     /// <inheritdoc />
-    public BreakActivity? Activity       { get; }
+    public BreakActivity? Activity { get; }
     /// <inheritdoc />
-    public int?          DurationMinutes { get; }
+    public int? DurationMinutes { get; }
 
     // ── Factories ─────────────────────────────────────────────────────────────
 
     /// <summary>Initialises a new <see cref="CreateGroupBreak"/> instance.</summary>
     public static BreakCard CreateGroupBreak(
         string title, string description,
-        BreakActivity? activity   = BreakActivity.GroupPause,
-        int? durationMinutes      = null,
-        string? activityText      = null,
+        BreakActivity? activity = BreakActivity.GroupPause,
+        int? durationMinutes = null,
+        string? activityText = null,
         IEnumerable<string>? tags = null) =>
         new(Guid.NewGuid(), title, description, BreakScope.AllPlayers,
             activityText is not null ? new GroupBreakEffect(activityText) : null,
@@ -115,9 +115,9 @@ public sealed class RewardCard : BaseCard, IRewardCard
         string title,
         string description,
         RewardEffect effect,
-        Difficulty difficulty        = Difficulty.Easy,
-        IEnumerable<string>? tags   = null,
-        IRestriction? restriction   = null)
+        Difficulty difficulty = Difficulty.Easy,
+        IEnumerable<string>? tags = null,
+        IRestriction? restriction = null)
         : base(id, title, description, difficulty, "Reward", tags, restriction)
     {
         Effect = effect ?? throw new ArgumentNullException(nameof(effect));
@@ -163,19 +163,19 @@ public sealed class InspirationCard : BaseCard, IInspirationCard
         string title,
         string description,
         string inspirationText,
-        string? inspirationCategory  = null,
-        Difficulty difficulty        = Difficulty.Easy,
-        IEnumerable<string>? tags   = null,
-        IRestriction? restriction   = null)
+        string? inspirationCategory = null,
+        Difficulty difficulty = Difficulty.Easy,
+        IEnumerable<string>? tags = null,
+        IRestriction? restriction = null)
         : base(id, title, description, difficulty, "Inspiration", tags, restriction)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(inspirationText);
-        InspirationText     = inspirationText;
+        InspirationText = inspirationText;
         InspirationCategory = inspirationCategory;
     }
 
     /// <inheritdoc />
-    public string  InspirationText     { get; }
+    public string InspirationText { get; }
     /// <inheritdoc />
     public string? InspirationCategory { get; }
 

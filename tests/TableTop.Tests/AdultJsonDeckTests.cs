@@ -1,10 +1,7 @@
-using FluentAssertions;
-using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Games.Couples;
 using TableTop.Games.Party;
-using Xunit;
 
 namespace TableTop.Tests;
 

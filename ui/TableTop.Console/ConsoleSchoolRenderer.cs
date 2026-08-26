@@ -1,10 +1,9 @@
-using TableTop.Hosting;
-using SC = System.Console;
-using CC = System.ConsoleColor;
-using CK = System.ConsoleKey;
 using TableTop.Core.Abstractions.Scoring;
+using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Events;
+using CC = System.ConsoleColor;
+using SC = System.Console;
 
 namespace TableTop.Console;
 
@@ -18,27 +17,27 @@ namespace TableTop.Console;
 internal sealed class ConsoleSchoolRenderer
 {
     private readonly ICardTurnController _controller;
-    private readonly string              _gameTitle;
-    private CardReadyEvent?              _currentCard;
-    private bool                         _waitingForInput;
-    private int                          _totalScore;
+    private readonly string _gameTitle;
+    private CardReadyEvent? _currentCard;
+    private bool _waitingForInput;
+    private int _totalScore;
 
     public ConsoleSchoolRenderer(ICardTurnController controller, string gameTitle)
     {
         _controller = controller;
-        _gameTitle  = gameTitle;
+        _gameTitle = gameTitle;
 
-        controller.CardReady          += OnCardReady;
-        controller.TurnResult         += OnTurnResult;
-        controller.TurnSkipped        += OnTurnSkipped;
-        controller.SkipAttempted      += OnSkipAttempted;
-        controller.BreakCardDrawn     += OnBreakCardDrawn;
-        controller.RewardCardDrawn    += OnRewardCardDrawn;
+        controller.CardReady += OnCardReady;
+        controller.TurnResult += OnTurnResult;
+        controller.TurnSkipped += OnTurnSkipped;
+        controller.SkipAttempted += OnSkipAttempted;
+        controller.BreakCardDrawn += OnBreakCardDrawn;
+        controller.RewardCardDrawn += OnRewardCardDrawn;
         controller.InspirationCardDrawn += OnInspirationDrawn;
-        controller.NextTurnHint       += OnNextTurnHint;
-        controller.GameEnded          += OnGameEnded;
-        controller.GamePaused         += OnGamePaused;
-        controller.SessionSaved       += OnSessionSaved;
+        controller.NextTurnHint += OnNextTurnHint;
+        controller.GameEnded += OnGameEnded;
+        controller.GamePaused += OnGamePaused;
+        controller.SessionSaved += OnSessionSaved;
     }
 
     public void RunBlocking()
@@ -64,12 +63,12 @@ internal sealed class ConsoleSchoolRenderer
         // Category colour
         var catColour = e.Category switch
         {
-            "Tricky"      or "Agreement" => CC.Yellow,
-            "Challenge"   or "Pronouns"  => CC.Magenta,
-            "Tense"       or "Inferential" or "Adjective" => CC.Green,
-            "Sentences"   or "Academic"  => CC.DarkYellow,
-            "Author"                     => CC.Red,
-            _                            => CC.Cyan,
+            "Tricky" or "Agreement" => CC.Yellow,
+            "Challenge" or "Pronouns" => CC.Magenta,
+            "Tense" or "Inferential" or "Adjective" => CC.Green,
+            "Sentences" or "Academic" => CC.DarkYellow,
+            "Author" => CC.Red,
+            _ => CC.Cyan,
         };
 
         // Category + difficulty badge
@@ -110,9 +109,9 @@ internal sealed class ConsoleSchoolRenderer
         var (icon, msg, colour) = e.Outcome switch
         {
             CardOutcome.Completed => ("✓", Encourage(), CC.Green),
-            CardOutcome.Failed    => ("✗", "Keep going — you'll get it next time!", CC.Red),
-            CardOutcome.Skipped   => ("→", "Moving on.", CC.DarkGray),
-            _                     => ("·", string.Empty, CC.Gray),
+            CardOutcome.Failed => ("✗", "Keep going — you'll get it next time!", CC.Red),
+            CardOutcome.Skipped => ("→", "Moving on.", CC.DarkGray),
+            _ => ("·", string.Empty, CC.Gray),
         };
 
         _totalScore += e.ScoreDelta;
@@ -184,9 +183,9 @@ internal sealed class ConsoleSchoolRenderer
     {
         var colour = e.Urgency switch
         {
-            "Strong"   => CC.Cyan,
+            "Strong" => CC.Cyan,
             "Moderate" => CC.DarkCyan,
-            _          => CC.DarkGray,
+            _ => CC.DarkGray,
         };
         SC.ForegroundColor = colour;
         SC.WriteLine($"\n  💡  {e.HintText}");
@@ -337,7 +336,7 @@ internal sealed class ConsoleSchoolRenderer
         {
             if (string.IsNullOrWhiteSpace(paragraph)) { yield return ""; continue; }
             var words = paragraph.Split(' ');
-            var line  = "";
+            var line = "";
             foreach (var word in words)
             {
                 if (line.Length + word.Length + 1 > width && line.Length > 0)

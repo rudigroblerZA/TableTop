@@ -33,7 +33,7 @@ public sealed class TeamPlayerManager : IPlayerManager
         if (teams is null || teams.Count == 0)
             throw new ArgumentException("At least one team is required.", nameof(teams));
 
-        _teams    = teams.ToList();
+        _teams = teams.ToList();
         ScoreMode = mode;
 
         foreach (var team in _teams)
@@ -49,7 +49,7 @@ public sealed class TeamPlayerManager : IPlayerManager
     // ── IPlayerManager ─────────────────────────────────────────────────────────
 
     /// <summary>Players.</summary>
-    public IReadOnlyList<IPlayer> Players      => _inner.Players;
+    public IReadOnlyList<IPlayer> Players => _inner.Players;
     /// <summary>ActivePlayers.</summary>
     public IReadOnlyList<IPlayer> ActivePlayers => _inner.ActivePlayers;
 

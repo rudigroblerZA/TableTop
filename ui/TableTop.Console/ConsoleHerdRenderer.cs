@@ -1,7 +1,7 @@
-using SC = System.Console;
-using CC = System.ConsoleColor;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Events;
+using CC = System.ConsoleColor;
+using SC = System.Console;
 
 namespace TableTop.Console;
 
@@ -27,9 +27,9 @@ internal sealed class ConsoleHerdRenderer
     public ConsoleHerdRenderer(IHerdController controller)
     {
         _controller = controller;
-        controller.PromptReady   += (_, e) => _prompt = e;
+        controller.PromptReady += (_, e) => _prompt = e;
         controller.RoundResolved += OnRoundResolved;
-        controller.GameEnded     += OnGameEnded;
+        controller.GameEnded += OnGameEnded;
     }
 
     public void RunBlocking()

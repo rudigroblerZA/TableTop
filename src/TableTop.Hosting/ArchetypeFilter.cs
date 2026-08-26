@@ -14,8 +14,8 @@ namespace TableTop.Hosting;
 /// </summary>
 public sealed class ArchetypeFilter
 {
-    private readonly AgeRating  _minAgeRating;
-    private readonly AgeRating  _maxAgeRating;
+    private readonly AgeRating _minAgeRating;
+    private readonly AgeRating _maxAgeRating;
     private readonly TableShape _tableShape;
 
     /// <param name="minAgeRating">
@@ -38,13 +38,13 @@ public sealed class ArchetypeFilter
     /// <see cref="TableShapes.Any"/> to filter on age alone.
     /// </param>
     public ArchetypeFilter(
-        AgeRating  minAgeRating = AgeRating.AllAges,
-        AgeRating  maxAgeRating = AgeRating.Adult,
-        TableShape tableShape   = TableShapes.Any)
+        AgeRating minAgeRating = AgeRating.AllAges,
+        AgeRating maxAgeRating = AgeRating.Adult,
+        TableShape tableShape = TableShapes.Any)
     {
         _minAgeRating = minAgeRating;
         _maxAgeRating = maxAgeRating;
-        _tableShape   = tableShape;
+        _tableShape = tableShape;
     }
 
     /// <summary>Filters for a specific table, at a given rating ceiling.</summary>
@@ -75,7 +75,7 @@ public sealed class ArchetypeFilter
     private Archetype FilterNode(Archetype a)
     {
         var children = Apply(a.SubArchetypes);
-        var modes    = a.Modes.Where(SuitsTable).ToList();
+        var modes = a.Modes.Where(SuitsTable).ToList();
         return new Archetype(a.Id, a.Name, a.Description, a.Emoji, modes, children, a.AgeRating);
     }
 

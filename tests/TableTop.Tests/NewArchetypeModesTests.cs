@@ -1,16 +1,12 @@
-using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Game;
+using TableTop.Core.Domain.Progression;
+using TableTop.Core.Domain.Scoring;
 using TableTop.Games.Couples;
 using TableTop.Games.Family;
 using TableTop.Games.School;
-using TableTop.Hosting;
+using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Controllers;
 using TableTop.Hosting.Events;
-using TableTop.Core.Abstractions.Game;
-using TableTop.Hosting.Abstractions;
-using TableTop.Tests.Helpers;
-using TableTop.Core.Domain.Progression;
-using TableTop.Core.Domain.Cards;
-using TableTop.Core.Domain.Scoring;
 
 namespace TableTop.Tests;
 
@@ -361,7 +357,7 @@ public sealed class StyleNameTests
     [Fact]
     public void Verdict_NamesStyle_OrFallsBackToLetter()
     {
-        var tally  = new Dictionary<char, int> { ['A'] = 3, ['B'] = 1 };
+        var tally = new Dictionary<char, int> { ['A'] = 3, ['B'] = 1 };
         var styles = new Dictionary<char, string> { ['A'] = "The Pathfinder" };
         ChoiceCards.Verdict(tally, styles).Should().Be("The Pathfinder (A)");
         ChoiceCards.Verdict(tally, new Dictionary<char, string>()).Should().Be("mostly A");
@@ -606,7 +602,7 @@ public sealed class AllInTests
         mode.SkipLabel.Should().Be("Fold");
 
         var player = TableTop.Core.Domain.Players.Player.Create("A");
-        var card   = TableTop.Games.Couples.AllInCardBank.All[0];
+        var card = TableTop.Games.Couples.AllInCardBank.All[0];
         mode.GetScoring()
             .CalculateScore(card, player, TableTop.Core.Abstractions.Scoring.CardOutcome.Completed)
             .Should().Be(1);   // one chip per won hand
@@ -760,7 +756,7 @@ public sealed class DayOneControllerTests : IDisposable
     {
         var tmpFile = NewTmpFile();
         var clock = new FakeClock();
-        var ctrl  = new DayOneController(ThreeDayDeck(), _players, "Test", clock, tmpFile);
+        var ctrl = new DayOneController(ThreeDayDeck(), _players, "Test", clock, tmpFile);
         DayReadyEvent? ready = null;
         ctrl.DayReady += (_, e) => ready = e;
 
@@ -776,7 +772,7 @@ public sealed class DayOneControllerTests : IDisposable
     {
         var tmpFile = NewTmpFile();
         var clock = new FakeClock();
-        var ctrl  = new DayOneController(ThreeDayDeck(), _players, "Test", clock, tmpFile);
+        var ctrl = new DayOneController(ThreeDayDeck(), _players, "Test", clock, tmpFile);
         AllCaughtUpEvent? caughtUp = null;
         ctrl.AllCaughtUp += (_, e) => caughtUp = e;
 
@@ -795,7 +791,7 @@ public sealed class DayOneControllerTests : IDisposable
     {
         var tmpFile = NewTmpFile();
         var clock = new FakeClock();
-        var ctrl  = new DayOneController(ThreeDayDeck(), _players, "Test", clock, tmpFile);
+        var ctrl = new DayOneController(ThreeDayDeck(), _players, "Test", clock, tmpFile);
         ctrl.Start();
         ctrl.CompleteToday();
 
@@ -816,7 +812,7 @@ public sealed class DayOneControllerTests : IDisposable
     {
         var tmpFile = NewTmpFile();
         var clock = new FakeClock();
-        var ctrl  = new DayOneController(ThreeDayDeck(), _players, "Test", clock, tmpFile);
+        var ctrl = new DayOneController(ThreeDayDeck(), _players, "Test", clock, tmpFile);
         ctrl.Start();                       // Day 1 unlocked, not yet played
 
         clock.UtcNow = clock.UtcNow.AddDays(5);   // 5 real days pass, untouched
@@ -841,7 +837,7 @@ public sealed class DayOneControllerTests : IDisposable
     {
         var tmpFile = NewTmpFile();
         var clock = new FakeClock();
-        var ctrl  = new DayOneController(ThreeDayDeck(), _players, "Test", clock, tmpFile);
+        var ctrl = new DayOneController(ThreeDayDeck(), _players, "Test", clock, tmpFile);
         ctrl.Start();
         clock.UtcNow = clock.UtcNow.AddDays(5);
         ctrl.Start();
@@ -987,8 +983,8 @@ public sealed class TruthOrDareContentTests
         var styleRegret = loaded.First(c => c.Title == "Style Regret");
         styleRegret.Should().BeAssignableTo<TableTop.Core.Abstractions.Cards.IPromptCard>();
 
-        var malePlayer   = TableTop.Core.Domain.Players.Player.Create("_", new Dictionary<string,string>{["gender"]="male"});
-        var femalePlayer = TableTop.Core.Domain.Players.Player.Create("_", new Dictionary<string,string>{["gender"]="female"});
+        var malePlayer = TableTop.Core.Domain.Players.Player.Create("_", new Dictionary<string, string> { ["gender"] = "male" });
+        var femalePlayer = TableTop.Core.Domain.Players.Player.Create("_", new Dictionary<string, string> { ["gender"] = "female" });
         var prompt = (TableTop.Core.Abstractions.Cards.IPromptCard)styleRegret;
         prompt.ResolvePrompt(malePlayer).Should().Contain("men's fashion");
         prompt.ResolvePrompt(femalePlayer).Should().Contain("beauty or fashion");
@@ -1037,8 +1033,11 @@ public sealed class GameplayOptionsTests
         var options = new GameplayOptions { MinDifficulty = Difficulty.Extreme, MaxDifficulty = Difficulty.Extreme };
 
         InvalidOperationException? caught = null;
-        try { await CardTurnController.CreateAsync(def, TwoPlayers(), "Test", 1, new DifficultyProgressionStrategy(),
-                  new CardTurnControllerOptions { Gameplay = options }); }
+        try
+        {
+            await CardTurnController.CreateAsync(def, TwoPlayers(), "Test", 1, new DifficultyProgressionStrategy(),
+                  new CardTurnControllerOptions { Gameplay = options });
+        }
         catch (InvalidOperationException ex) { caught = ex; }
 
         caught.Should().NotBeNull();
@@ -1145,8 +1144,8 @@ public sealed class ArchetypeFilterTests
     {
         var full = ArchetypeRegistry.Default().RootArchetypes;
         var allAgesCount = new ArchetypeFilter(AgeRating.AllAges).CountSurvivingModes(full);
-        var teenCount     = new ArchetypeFilter(AgeRating.Teen).CountSurvivingModes(full);
-        var adultCount    = new ArchetypeFilter(AgeRating.Adult).CountSurvivingModes(full);
+        var teenCount = new ArchetypeFilter(AgeRating.Teen).CountSurvivingModes(full);
+        var adultCount = new ArchetypeFilter(AgeRating.Adult).CountSurvivingModes(full);
 
         allAgesCount.Should().BeLessThan(teenCount);
         teenCount.Should().BeLessThan(adultCount);
@@ -1200,7 +1199,7 @@ public sealed class SixtySecondsTests
         int TargetOf(TableTop.Core.Abstractions.Cards.ICard c) =>
             int.Parse(System.Text.RegularExpressions.Regex.Match(c.Description, @"Target: (\d+)").Groups[1].Value);
 
-        var avgEasy    = cards.Where(c => c.Difficulty == Difficulty.Easy).Average(TargetOf);
+        var avgEasy = cards.Where(c => c.Difficulty == Difficulty.Easy).Average(TargetOf);
         var avgExtreme = cards.Where(c => c.Difficulty == Difficulty.Extreme).Average(TargetOf);
         avgExtreme.Should().BeLessThan(avgEasy);
     }
@@ -1219,11 +1218,11 @@ public sealed class SixtySecondsTests
     public void HittingATarget_ScoresMore_ForHarderCategories()
     {
         var scoring = new DifficultyBasedScoringStrategy();
-        var easyCard    = TableTop.Games.Family.SixtySecondsCardBank.All.First(c => c.Difficulty == Difficulty.Easy);
+        var easyCard = TableTop.Games.Family.SixtySecondsCardBank.All.First(c => c.Difficulty == Difficulty.Easy);
         var extremeCard = TableTop.Games.Family.SixtySecondsCardBank.All.First(c => c.Difficulty == Difficulty.Extreme);
         var player = TableTop.Core.Domain.Players.Player.Create("P");
 
-        var easyScore    = scoring.CalculateScore(easyCard, player, CardOutcome.Completed);
+        var easyScore = scoring.CalculateScore(easyCard, player, CardOutcome.Completed);
         var extremeScore = scoring.CalculateScore(extremeCard, player, CardOutcome.Completed);
         extremeScore.Should().BeGreaterThan(easyScore);
     }
@@ -1277,7 +1276,7 @@ public sealed class LogicLabTests
     {
         var scoring = new DifficultyBasedScoringStrategy();
         var player = TableTop.Core.Domain.Players.Player.Create("P");
-        var easy    = TableTop.Games.School.LogicLabCardBank.All.First(c => c.Difficulty == Difficulty.Easy);
+        var easy = TableTop.Games.School.LogicLabCardBank.All.First(c => c.Difficulty == Difficulty.Easy);
         var extreme = TableTop.Games.School.LogicLabCardBank.All.First(c => c.Difficulty == Difficulty.Extreme);
         scoring.CalculateScore(extreme, player, CardOutcome.Completed)
             .Should().BeGreaterThan(scoring.CalculateScore(easy, player, CardOutcome.Completed));
@@ -1331,7 +1330,7 @@ public sealed class SpyVsSpouseTests
     {
         var scoring = new DifficultyBasedScoringStrategy();
         var player = TableTop.Core.Domain.Players.Player.Create("Agent");
-        var easy    = TableTop.Games.Couples.SpyVsSpouseCardBank.All.First(c => c.Category == "Briefing" && c.Difficulty == Difficulty.Easy);
+        var easy = TableTop.Games.Couples.SpyVsSpouseCardBank.All.First(c => c.Category == "Briefing" && c.Difficulty == Difficulty.Easy);
         var extreme = TableTop.Games.Couples.SpyVsSpouseCardBank.All.First(c => c.Category == "Briefing" && c.Difficulty == Difficulty.Extreme);
         scoring.CalculateScore(extreme, player, CardOutcome.Completed)
             .Should().BeGreaterThan(scoring.CalculateScore(easy, player, CardOutcome.Completed));
@@ -1953,7 +1952,7 @@ public sealed class UndoLastTurnTests
 {
     private sealed class UndoProbeMode : TableTop.Games.Base.BaseGameModeDefinition
     {
-        public override string Name        => "UndoProbe";
+        public override string Name => "UndoProbe";
         public override string Description => "undo regression probe";
         protected override IScoringStrategy BuildScoring() => new DifficultyBasedScoringStrategy();
         protected override IReadOnlyList<TableTop.Core.Abstractions.Cards.ICard> BuildCards(
@@ -1982,9 +1981,9 @@ public sealed class UndoLastTurnTests
     public void AfterUndo_TheNextOutcome_AppliesToTheRePresentedTurn()
     {
         var controller = Make();
-        var dealt  = new List<string>();
+        var dealt = new List<string>();
         var scored = new List<string>();
-        controller.CardReady  += (_, e) => dealt.Add(e.PlayerName);
+        controller.CardReady += (_, e) => dealt.Add(e.PlayerName);
         controller.TurnResult += (_, e) => scored.Add(e.PlayerName);
 
         controller.Start();                                   // dealt to Ana
@@ -2284,7 +2283,7 @@ public sealed class CoupleMemberTagTests
     {
         var restriction = new TableTop.Core.Domain.Restrictions.CoupleOnlyRestriction();
         var untagged = Untagged();
-        var tagged   = Tagged();
+        var tagged = Tagged();
 
         restriction.IsSatisfiedBy(untagged[0], untagged)
             .Should().BeFalse("gender/age attributes alone must not satisfy it");
@@ -2295,7 +2294,7 @@ public sealed class CoupleMemberTagTests
     [Fact]
     public void TaggedCouple_CanReachEveryCard_InACouplesGatedDeck()
     {
-        var deck   = TableTop.Games.Couples.BetweenTheTwoOfYouCardBank.All;
+        var deck = TableTop.Games.Couples.BetweenTheTwoOfYouCardBank.All;
         var tagged = Tagged();
 
         var gated = deck.Count(c => c.Restriction is not null);
@@ -2311,7 +2310,7 @@ public sealed class CoupleMemberTagTests
     public void UntaggedPlayers_AreLockedOut_OfTheGatedPortion()
     {
         // Pins the shape of the bug so a future refactor can't silently reintroduce it.
-        var deck     = TableTop.Games.Couples.BetweenTheTwoOfYouCardBank.All;
+        var deck = TableTop.Games.Couples.BetweenTheTwoOfYouCardBank.All;
         var untagged = Untagged();
 
         var playable = deck.Count(c =>
@@ -2489,7 +2488,7 @@ public sealed class MinimumAgeRestrictionTests
 {
     private sealed class AgeGatedMode : TableTop.Games.Base.BaseGameModeDefinition
     {
-        public override string Name        => "AgeGatedProbe";
+        public override string Name => "AgeGatedProbe";
         public override string Description => "probe deck with a 21+ tier";
 
         protected override IScoringStrategy BuildScoring() => new FixedScoringStrategy(1);

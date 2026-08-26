@@ -49,7 +49,7 @@ namespace TableTop.Core.Domain.Cards;
 /// </summary>
 public sealed class CardDeckBuilder
 {
-    private readonly string       _deckName;
+    private readonly string _deckName;
     private readonly List<ICard> _cards = [];
     private string _currentCategory = "";
 
@@ -80,11 +80,11 @@ public sealed class CardDeckBuilder
     /// <summary>Adds one card to the current category.</summary>
     /// <exception cref="InvalidOperationException">No <see cref="Category"/> has been set yet.</exception>
     public CardDeckBuilder Card(
-        string          title,
-        string          description,
-        Difficulty      difficulty,
-        IEnumerable<string>? tags        = null,
-        IRestriction?        restriction = null)
+        string title,
+        string description,
+        Difficulty difficulty,
+        IEnumerable<string>? tags = null,
+        IRestriction? restriction = null)
     {
         if (_currentCategory.Length == 0)
             throw new InvalidOperationException(

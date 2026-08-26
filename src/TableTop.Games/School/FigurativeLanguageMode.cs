@@ -33,18 +33,18 @@ public sealed class FigurativeLanguageMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Named + explained (+2)";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "→ Next card";
+    public override string SkipLabel => "→ Next card";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Comparison"]    = "#42A5F5",
-            ["Sound"]         = "#66BB6A",
-            ["Exaggeration"]  = "#FFCA28",
-            ["Contrast"]      = "#EC407A",
-            ["Atmosphere"]    = "#AB47BC",
-            ["Voice"]         = "#26C6DA",
+            ["Comparison"] = "#42A5F5",
+            ["Sound"] = "#66BB6A",
+            ["Exaggeration"] = "#FFCA28",
+            ["Contrast"] = "#EC407A",
+            ["Atmosphere"] = "#AB47BC",
+            ["Voice"] = "#26C6DA",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

@@ -45,17 +45,17 @@ public sealed class HerdController : IHerdController
     public const int LoneVoicePoints = 2;
 
     private readonly IReadOnlyList<IPlayer> _players;
-    private readonly IReadOnlyList<ICard>   _deck;
+    private readonly IReadOnlyList<ICard> _deck;
     private readonly Dictionary<string, int> _scores = new(StringComparer.OrdinalIgnoreCase);
 
     private int _index = -1;
 
     /// <inheritdoc />
-    public event EventHandler<HerdPromptReadyEvent>?   PromptReady;
+    public event EventHandler<HerdPromptReadyEvent>? PromptReady;
     /// <inheritdoc />
     public event EventHandler<HerdRoundResolvedEvent>? RoundResolved;
     /// <inheritdoc />
-    public event EventHandler<HerdGameEndedEvent>?     GameEnded;
+    public event EventHandler<HerdGameEndedEvent>? GameEnded;
 
     /// <inheritdoc />
     public bool IsRunning { get; private set; }
@@ -94,7 +94,7 @@ public sealed class HerdController : IHerdController
             throw new ArgumentException("The prompt deck is empty.", nameof(deck));
 
         _players = players;
-        _deck    = deck;
+        _deck = deck;
 
         foreach (var p in players) _scores[p.DisplayName] = 0;
     }
@@ -183,7 +183,7 @@ public sealed class HerdController : IHerdController
         IsRunning = false;
 
         var ordered = _scores.OrderByDescending(kv => kv.Value).ToList();
-        var top     = ordered.Count > 0 ? ordered[0].Value : 0;
+        var top = ordered.Count > 0 ? ordered[0].Value : 0;
 
         // Ties report every leader rather than picking one — the same choice
         // ClaimedController makes for a tied deck-exhaustion ending.
@@ -204,7 +204,7 @@ public sealed class HerdController : IHerdController
     private static string Normalise(string answer)
     {
         var trimmed = answer.Trim().ToLowerInvariant();
-        var chars   = trimmed.Where(c => !char.IsPunctuation(c)).ToArray();
+        var chars = trimmed.Where(c => !char.IsPunctuation(c)).ToArray();
         return string.Join(' ', new string(chars).Split(' ', StringSplitOptions.RemoveEmptyEntries));
     }
 

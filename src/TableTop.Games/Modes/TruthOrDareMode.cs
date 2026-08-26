@@ -1,4 +1,3 @@
-using TableTop.Games.Base;
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Restrictions;
@@ -6,6 +5,7 @@ using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
 using TableTop.Core.Domain.Restrictions;
 using TableTop.Core.Domain.Scoring;
+using TableTop.Games.Base;
 
 namespace TableTop.Games;
 
@@ -38,17 +38,17 @@ public sealed class TruthOrDareMode : BaseGameModeDefinition
     /// <summary>Label for the button that records a completed truth/dare.</summary>
     public override string CompleteLabel => "Did It";
     /// <summary>Label for the button that invokes the chicken clause.</summary>
-    public override string SkipLabel     => "Chickened Out";
+    public override string SkipLabel => "Chickened Out";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Classics"]  = "#42A5F5",
+            ["Classics"] = "#42A5F5",
             ["Spotlight"] = "#AB47BC",
-            ["Chaos"]     = "#FFA726",
-            ["Hot Seat"]  = "#EF5350",
-            ["Legends"]   = "#B71C4A",
+            ["Chaos"] = "#FFA726",
+            ["Hot Seat"] = "#EF5350",
+            ["Legends"] = "#B71C4A",
         };
 
     /// <summary>Braver picks score more.</summary>
@@ -71,7 +71,7 @@ public static class TruthOrDareCardBank
 
     private static IReadOnlyList<ICard> Build()
     {
-        var adultsOnly  = new AdultOnlyRestriction();
+        var adultsOnly = new AdultOnlyRestriction();
         var couplesOnly = new CoupleOnlyRestriction();
 
         return

@@ -52,12 +52,12 @@ public sealed class ControllerFactory : IControllerFactory
 
     /// <inheritdoc />
     public Task<IGameController> CreateAsync(
-        IGameMode              mode,
+        IGameMode mode,
         IReadOnlyList<IPlayer> players,
-        int                    maxRounds       = Core.TableTopDefaults.Session.MaxRounds,
-        GameplayOptions?       gameplayOptions = null,
+        int maxRounds = Core.TableTopDefaults.Session.MaxRounds,
+        GameplayOptions? gameplayOptions = null,
         Persistence.SessionSnapshot? resumeFrom = null,
-        CancellationToken      ct              = default)
+        CancellationToken ct = default)
     {
         // GameplayOptions (shuffle/difficulty-range/session-length) currently
         // shapes the CardTurnController path, which is what the vast majority
@@ -123,26 +123,26 @@ public sealed class ControllerFactory : IControllerFactory
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private async Task<IGameController> CreateCardTurnAsync(
-        IGameModeDefinition               definition,
-        IReadOnlyList<IPlayer>            players,
-        string                            modeName,
-        int                               maxRounds,
+        IGameModeDefinition definition,
+        IReadOnlyList<IPlayer> players,
+        string modeName,
+        int maxRounds,
         Core.Abstractions.Progression.IProgressionStrategy progression,
-        GameplayOptions?                  gameplayOptions,
-        Persistence.SessionSnapshot?      resumeFrom,
-        CancellationToken                 ct)
+        GameplayOptions? gameplayOptions,
+        Persistence.SessionSnapshot? resumeFrom,
+        CancellationToken ct)
     {
         return await CardTurnController.CreateAsync(
-            definition:  definition,
-            players:     players,
-            modeName:    modeName,
-            maxRounds:   maxRounds,
+            definition: definition,
+            players: players,
+            modeName: modeName,
+            maxRounds: maxRounds,
             progression: progression,
             options: new CardTurnControllerOptions
             {
-                Gameplay          = gameplayOptions,
+                Gameplay = gameplayOptions,
                 SessionRepository = _persistence,
-                ResumeFrom        = resumeFrom,
+                ResumeFrom = resumeFrom,
             },
             ct: ct)
             .ConfigureAwait(false);
@@ -170,11 +170,11 @@ public sealed class JsonGamePersistence : IGamePersistence
         _inner = new JsonSessionRepository(filePath);
 
     /// <inheritdoc />
-    public bool HasSavedSession                                         => _inner.HasSavedSession;
+    public bool HasSavedSession => _inner.HasSavedSession;
     /// <inheritdoc />
     public Task SaveAsync(SessionSnapshot s, CancellationToken ct = default) => _inner.SaveAsync(s, ct);
     /// <inheritdoc />
-    public Task<SessionSnapshot?> LoadAsync(CancellationToken ct = default)  => _inner.LoadAsync(ct);
+    public Task<SessionSnapshot?> LoadAsync(CancellationToken ct = default) => _inner.LoadAsync(ct);
     /// <inheritdoc />
-    public Task DeleteAsync(CancellationToken ct = default)                  => _inner.DeleteAsync(ct);
+    public Task DeleteAsync(CancellationToken ct = default) => _inner.DeleteAsync(ct);
 }

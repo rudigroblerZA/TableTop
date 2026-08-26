@@ -28,30 +28,30 @@ public sealed class MillionaireGameViewModel : ViewModelBase, IDisposable
 
     private string _questionText = "", _playerName = "", _prizeText = "";
     private string _guaranteedText = "", _flash = "", _summary = "";
-    private bool   _isAnswered, _isGameOver;
+    private bool _isAnswered, _isGameOver;
 
     /// <summary>The four (or fewer, after 50:50) answer options.</summary>
-    public ObservableCollection<AnswerOption>   Answers   { get; } = [];
+    public ObservableCollection<AnswerOption> Answers { get; } = [];
     /// <summary>Available lifelines.</summary>
     public ObservableCollection<LifelineOption> Lifelines { get; } = [];
 
     /// <summary>Returns to the previous screen.</summary>
-    public ICommand BackCommand     { get; }
+    public ICommand BackCommand { get; }
     /// <summary>Walks away with the current guaranteed prize.</summary>
     public ICommand WalkAwayCommand { get; }
 
     /// <summary>The current question.</summary>
-    public string QuestionText   { get => _questionText;   private set => SetField(ref _questionText, value); }
+    public string QuestionText { get => _questionText; private set => SetField(ref _questionText, value); }
     /// <summary>Who is in the hot seat.</summary>
-    public string PlayerName     { get => _playerName;     private set => SetField(ref _playerName, value); }
+    public string PlayerName { get => _playerName; private set => SetField(ref _playerName, value); }
     /// <summary>What this question is worth.</summary>
-    public string PrizeText      { get => _prizeText;      private set => SetField(ref _prizeText, value); }
+    public string PrizeText { get => _prizeText; private set => SetField(ref _prizeText, value); }
     /// <summary>The locked-in safe-haven amount.</summary>
     public string GuaranteedText { get => _guaranteedText; private set => SetField(ref _guaranteedText, value); }
     /// <summary>Transient feedback after an action.</summary>
-    public string Flash          { get => _flash;          private set => SetField(ref _flash, value); }
+    public string Flash { get => _flash; private set => SetField(ref _flash, value); }
     /// <summary>Final standings.</summary>
-    public string Summary        { get => _summary;        private set => SetField(ref _summary, value); }
+    public string Summary { get => _summary; private set => SetField(ref _summary, value); }
 
     /// <summary>True once this question has been answered.</summary>
     public bool IsAnswered
@@ -74,40 +74,40 @@ public sealed class MillionaireGameViewModel : ViewModelBase, IDisposable
     }
 
     /// <summary>True while the session is live and loadable.</summary>
-    public bool IsPlaying   => !IsGameOver && !HasLoadError;
+    public bool IsPlaying => !IsGameOver && !HasLoadError;
 
     /// <summary>True when answers and lifelines should accept input.</summary>
     public bool CanInteract => !IsAnswered && !IsGameOver && !HasLoadError;
 
     /// <summary>Controller-build failure message, or empty. Was MAUI-only.</summary>
-    public string LoadError    => _loadError;
+    public string LoadError => _loadError;
     /// <summary>True when the mode could not be started.</summary>
-    public bool   HasLoadError => !string.IsNullOrEmpty(_loadError);
+    public bool HasLoadError => !string.IsNullOrEmpty(_loadError);
 
     /// <summary>Builds the screen around an already-created controller.</summary>
     public MillionaireGameViewModel(INavigator navigator, IMillionaireController controller)
     {
         _controller = controller;
 
-        BackCommand     = new RelayCommand(navigator.GoBack);
+        BackCommand = new RelayCommand(navigator.GoBack);
         WalkAwayCommand = new RelayCommand(WalkAway, () => CanInteract);
 
-        _controller.HotSeatBegan     += OnHotSeatBegan;
-        _controller.QuestionReady    += OnQuestionReady;
-        _controller.LifelineUsed     += OnLifelineUsed;
-        _controller.AnswerCorrect    += OnAnswerCorrect;
-        _controller.AnswerWrong      += OnAnswerWrong;
-        _controller.WalkedAway       += OnWalkedAway;
-        _controller.MillionaireWon   += OnWon;
-        _controller.GameEnded        += OnGameEnded;
+        _controller.HotSeatBegan += OnHotSeatBegan;
+        _controller.QuestionReady += OnQuestionReady;
+        _controller.LifelineUsed += OnLifelineUsed;
+        _controller.AnswerCorrect += OnAnswerCorrect;
+        _controller.AnswerWrong += OnAnswerWrong;
+        _controller.WalkedAway += OnWalkedAway;
+        _controller.MillionaireWon += OnWon;
+        _controller.GameEnded += OnGameEnded;
         _controller.Start();
     }
 
     /// <summary>Error-state constructor: no controller, just a message.</summary>
     private MillionaireGameViewModel(INavigator navigator, string loadError)
     {
-        _loadError      = loadError;
-        BackCommand     = new RelayCommand(navigator.GoBack);
+        _loadError = loadError;
+        BackCommand = new RelayCommand(navigator.GoBack);
         WalkAwayCommand = new RelayCommand(() => { }, () => false);
     }
 
@@ -168,12 +168,12 @@ public sealed class MillionaireGameViewModel : ViewModelBase, IDisposable
     private void OnHotSeatBegan(object? sender, HotSeatBeganEvent e)
     {
         PlayerName = e.PlayerName;
-        Flash      = $"{e.PlayerName} takes the hot seat!";
+        Flash = $"{e.PlayerName} takes the hot seat!";
     }
 
     private void OnQuestionReady(object? sender, QuestionReadyEvent e)
     {
-        IsAnswered   = false;
+        IsAnswered = false;
         QuestionText = e.QuestionText;
 
         Answers.Clear();
@@ -185,7 +185,7 @@ public sealed class MillionaireGameViewModel : ViewModelBase, IDisposable
             Lifelines.Add(new LifelineOption(i, e.Lifelines[i].Name, e.Lifelines[i].IsAvailable, this));
 
         var rung = e.Ladder.Rungs.FirstOrDefault(r => r.IsCurrent);
-        PrizeText      = rung is not null ? $"Playing for {Money(rung.PrizeAmount)}" : "";
+        PrizeText = rung is not null ? $"Playing for {Money(rung.PrizeAmount)}" : "";
         GuaranteedText = e.Ladder.GuaranteedPrize > 0 ? $"Guaranteed: {Money(e.Ladder.GuaranteedPrize)}" : "";
     }
 
@@ -248,9 +248,9 @@ public sealed class MillionaireGameViewModel : ViewModelBase, IDisposable
         private readonly MillionaireGameViewModel _owner;
 
         /// <summary>A, B, C or D.</summary>
-        public AnswerLabel Label   { get; }
+        public AnswerLabel Label { get; }
         /// <summary>"A)  Paris", ready to render.</summary>
-        public string      Display { get; }
+        public string Display { get; }
 
         /// <summary>Command that submits this answer. WinUI binds this.</summary>
         public ICommand SelectCommand { get; }
@@ -272,9 +272,9 @@ public sealed class MillionaireGameViewModel : ViewModelBase, IDisposable
         private bool _available;
 
         /// <summary>Position in the controller's lifeline list.</summary>
-        public int    Index { get; }
+        public int Index { get; }
         /// <summary>Display name.</summary>
-        public string Name  { get; }
+        public string Name { get; }
 
         /// <summary>False once spent.</summary>
         public bool IsAvailable { get => _available; private set => SetField(ref _available, value); }

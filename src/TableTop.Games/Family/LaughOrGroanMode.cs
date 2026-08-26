@@ -32,15 +32,15 @@ public sealed class LaughOrGroanMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "→ Next";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "⤳ Skip";
+    public override string SkipLabel => "⤳ Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
             ["Would You Rather"] = "#FFCA28",
-            ["Scenario"]         = "#42A5F5",
-            ["Hot Take"]         = "#EC407A",
+            ["Scenario"] = "#42A5F5",
+            ["Hot Take"] = "#EC407A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

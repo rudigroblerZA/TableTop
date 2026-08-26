@@ -32,7 +32,7 @@ namespace TableTop.Games.Family;
 public sealed class LetterRushMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Letter Rush";
+    public override string Name => "Letter Rush";
     /// <inheritdoc />
     public override string Description =>
         "One letter, five categories, 90 seconds — fill them all. Match someone else's answer and it's worth nothing.";
@@ -40,17 +40,17 @@ public sealed class LetterRushMode : BaseGameModeDefinition
     /// <summary>Label for a completed round.</summary>
     public override string CompleteLabel => "Scored It";
     /// <summary>Label for skipping a card.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Classic"]  = "#42A5F5",
+            ["Classic"] = "#42A5F5",
             ["Around the House"] = "#66BB6A",
             ["Out in the World"] = "#FFA726",
             ["Imagination"] = "#AB47BC",
-            ["Tricky"]   = "#EF5350",
+            ["Tricky"] = "#EF5350",
         };
 
     /// <summary>Trickier letter/category mixes are worth more.</summary>

@@ -26,7 +26,7 @@ namespace TableTop.Games.School;
 public sealed class OneWordWonderMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "One Word Wonder";
+    public override string Name => "One Word Wonder";
     /// <inheritdoc />
     public override string Description =>
         "Describe something in exactly one word. Everyone else guesses what it is. Hilarity ensues.";
@@ -34,18 +34,18 @@ public sealed class OneWordWonderMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Guessed";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Animal"]      = "#66BB6A",
-            ["Object"]      = "#42A5F5",
-            ["Place"]       = "#FFA726",
-            ["Concept"]     = "#AB47BC",
-            ["Action"]      = "#EC407A",
-            ["Emotion"]     = "#EF5350",
+            ["Animal"] = "#66BB6A",
+            ["Object"] = "#42A5F5",
+            ["Place"] = "#FFA726",
+            ["Concept"] = "#AB47BC",
+            ["Action"] = "#EC407A",
+            ["Emotion"] = "#EF5350",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

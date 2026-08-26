@@ -24,8 +24,8 @@ public sealed class AttributeDirectedTextResolver : ICardTextResolver
         ArgumentNullException.ThrowIfNull(variants);
 
         _attributeKey = attributeKey;
-        _defaultText  = defaultText;
-        _variants     = new Dictionary<string, string>(variants, StringComparer.OrdinalIgnoreCase);
+        _defaultText = defaultText;
+        _variants = new Dictionary<string, string>(variants, StringComparer.OrdinalIgnoreCase);
     }
 
     /// <inheritdoc />

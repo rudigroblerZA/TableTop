@@ -21,20 +21,20 @@ public sealed class PlayerProfile
     // ── Profile fields ────────────────────────────────────────────────────────
 
     /// <summary>Stable identifier — survives across sessions.</summary>
-    public Guid   Id           { get; init; } = Guid.NewGuid();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     /// <summary>Player's display name.</summary>
-    public string Name         { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     /// <summary>Player's gender identity. Used to select gendered card prompts. Defaults to <c>"other"</c>.</summary>
-    public string Gender       { get; set; } = "other";
+    public string Gender { get; set; } = "other";
     /// <summary>Player's age. Used by the restriction system to gate adult-only content (requires Age &gt;= 18).</summary>
-    public int    Age          { get; set; } = 25;
+    public int Age { get; set; } = 25;
     /// <summary>True when the player is a parent — used to surface parenting or family content in relevant modes.</summary>
-    public bool   IsParent     { get; set; }
+    public bool IsParent { get; set; }
     /// <summary>True when the player is married or in a long-term partnership.</summary>
-    public bool   IsMarried    { get; set; }
+    public bool IsMarried { get; set; }
     /// <summary>True when the player is participating as part of a couple in couples-only game modes.</summary>
-    public bool   IsCoupleMember { get; set; }
+    public bool IsCoupleMember { get; set; }
 
     /// <summary>Computed — not stored. Derived from <see cref="Age"/> on load.</summary>
     public bool IsAdult => Age >= 18;
@@ -47,13 +47,13 @@ public sealed class PlayerProfile
         var attrs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["gender"] = Gender,
-            ["age"]    = Age.ToString()
+            ["age"] = Age.ToString()
         };
 
         var tags = new List<string>();
-        if (IsAdult)        tags.Add("adult");
-        if (IsParent)       tags.Add("parent");
-        if (IsMarried)      tags.Add("married");
+        if (IsAdult) tags.Add("adult");
+        if (IsParent) tags.Add("parent");
+        if (IsMarried) tags.Add("married");
         if (IsCoupleMember) tags.Add("couple-member");
 
         // Use the profile's stable Id so restriction metadata survives across sessions

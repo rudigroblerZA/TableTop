@@ -1,8 +1,8 @@
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
+using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
-using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Domain.Restrictions;
 using TableTop.Core.Domain.Scoring;
 using TableTop.Games.Base;
@@ -43,15 +43,15 @@ public sealed class TwoTruthsOneWishMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Revealed (+1)";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "→ Next card";
+    public override string SkipLabel => "→ Next card";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["About Me"]      = "#42A5F5",
-            ["About Us"]      = "#66BB6A",
-            ["The Future"]    = "#FFCA28",
+            ["About Me"] = "#42A5F5",
+            ["About Us"] = "#66BB6A",
+            ["The Future"] = "#FFCA28",
             ["Big Questions"] = "#EC407A",
         };
 
@@ -76,7 +76,7 @@ public static class TwoTruthsOneWishCardBank
     private static IReadOnlyList<ICard> Build()
     {
         var couplesOnly = new CoupleOnlyRestriction();
-        var couples18   = couplesOnly.And(new AdultOnlyRestriction());
+        var couples18 = couplesOnly.And(new AdultOnlyRestriction());
 
         return
         [

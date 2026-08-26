@@ -36,12 +36,12 @@ public interface IControllerFactory
     /// </param>
     /// <param name="ct">Optional cancellation token for async deck building.</param>
     Task<IGameController> CreateAsync(
-        IGameMode              mode,
+        IGameMode mode,
         IReadOnlyList<IPlayer> players,
-        int                    maxRounds       = Core.TableTopDefaults.Session.MaxRounds,
-        GameplayOptions?       gameplayOptions = null,
+        int maxRounds = Core.TableTopDefaults.Session.MaxRounds,
+        GameplayOptions? gameplayOptions = null,
         Persistence.SessionSnapshot? resumeFrom = null,
-        CancellationToken      ct              = default);
+        CancellationToken ct = default);
 
     /// <summary>
     /// The saved session, or null if there isn't one. A host calls this at

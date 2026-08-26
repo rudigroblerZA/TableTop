@@ -25,7 +25,7 @@ namespace TableTop.Games.Family;
 public sealed class RankThisMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Rank This";
+    public override string Name => "Rank This";
     /// <inheritdoc />
     public override string Description =>
         "Rank absurd things 1–5. Reveal. Argue about why. Discover who's normal and who isn't.";
@@ -33,17 +33,17 @@ public sealed class RankThisMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Ranked";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Silly"]       = "#EC407A",
-            ["Preference"]  = "#FFCA28",
-            ["Values"]      = "#66BB6A",
-            ["Scary"]       = "#EF5350",
-            ["Weird"]       = "#AB47BC",
+            ["Silly"] = "#EC407A",
+            ["Preference"] = "#FFCA28",
+            ["Values"] = "#66BB6A",
+            ["Scary"] = "#EF5350",
+            ["Weird"] = "#AB47BC",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

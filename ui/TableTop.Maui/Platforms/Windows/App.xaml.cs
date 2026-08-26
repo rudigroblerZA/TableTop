@@ -1,5 +1,3 @@
-using Microsoft.UI.Xaml;
-
 namespace TableTop.Maui.WinUI;
 
 /// <summary>

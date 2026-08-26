@@ -1,5 +1,5 @@
-using TableTop.Core.Domain.Decks;
 using TableTop.Core.Abstractions.Restrictions;
+using TableTop.Core.Domain.Decks;
 using TableTop.Core.Domain.Restrictions;
 
 namespace TableTop.Tests;
@@ -48,7 +48,7 @@ public sealed class RestrictionParserTests
         var r = Parse("age:18");
         r.Should().BeOfType<MinimumAgeRestriction>();
         var adult = Player.Create("Alice", attributes: new Dictionary<string, string> { ["age"] = "21" });
-        var minor = Player.Create("Bob",   attributes: new Dictionary<string, string> { ["age"] = "15" });
+        var minor = Player.Create("Bob", attributes: new Dictionary<string, string> { ["age"] = "15" });
         r.IsSatisfiedBy(adult, []).Should().BeTrue();
         r.IsSatisfiedBy(minor, []).Should().BeFalse();
     }
@@ -58,7 +58,7 @@ public sealed class RestrictionParserTests
     {
         var r = Parse("attr:role=admin");
         r.Should().BeOfType<AttributeRestriction>();
-        var admin  = Player.Create("Alice", attributes: new Dictionary<string, string> { ["role"] = "admin" });
+        var admin = Player.Create("Alice", attributes: new Dictionary<string, string> { ["role"] = "admin" });
         var normal = Player.Create("Bob");
         r.IsSatisfiedBy(admin, []).Should().BeTrue();
         r.IsSatisfiedBy(normal, []).Should().BeFalse();
@@ -67,29 +67,29 @@ public sealed class RestrictionParserTests
     [Fact]
     public void Parse_And_ReturnsAndRestriction()
     {
-        var r      = Parse("and(adult,parent)");
+        var r = Parse("and(adult,parent)");
         r.Should().BeOfType<AndRestriction>();
-        var both   = Player.Create("Alice", tags: ["adult", "parent"]);
+        var both = Player.Create("Alice", tags: ["adult", "parent"]);
         var onlyAdult = Player.Create("Bob", tags: ["adult"]);
-        r.IsSatisfiedBy(both,      []).Should().BeTrue();
+        r.IsSatisfiedBy(both, []).Should().BeTrue();
         r.IsSatisfiedBy(onlyAdult, []).Should().BeFalse();
     }
 
     [Fact]
     public void Parse_Or_ReturnsOrRestriction()
     {
-        var r      = Parse("or(parent,married)");
+        var r = Parse("or(parent,married)");
         r.Should().BeOfType<OrRestriction>();
-        var parent  = Player.Create("Alice", tags: ["parent"]);
+        var parent = Player.Create("Alice", tags: ["parent"]);
         var neither = Player.Create("Bob");
-        r.IsSatisfiedBy(parent,  []).Should().BeTrue();
+        r.IsSatisfiedBy(parent, []).Should().BeTrue();
         r.IsSatisfiedBy(neither, []).Should().BeFalse();
     }
 
     [Fact]
     public void Parse_Not_ReturnsNotRestriction()
     {
-        var r     = Parse("not(adult)");
+        var r = Parse("not(adult)");
         r.Should().BeOfType<NotRestriction>();
         var adult = Player.Create("Alice", tags: ["adult"]);
         var other = Player.Create("Bob");
@@ -103,15 +103,15 @@ public sealed class RestrictionParserTests
         // and(adult,or(parent,married))
         var r = Parse("and(adult,or(parent,married))");
 
-        var adultParent  = Player.Create("A", tags: ["adult", "parent"]);
+        var adultParent = Player.Create("A", tags: ["adult", "parent"]);
         var adultMarried = Player.Create("B", tags: ["adult", "married"]);
-        var adultOnly    = Player.Create("C", tags: ["adult"]);
-        var child        = Player.Create("D");
+        var adultOnly = Player.Create("C", tags: ["adult"]);
+        var child = Player.Create("D");
 
-        r.IsSatisfiedBy(adultParent,  []).Should().BeTrue();
+        r.IsSatisfiedBy(adultParent, []).Should().BeTrue();
         r.IsSatisfiedBy(adultMarried, []).Should().BeTrue();
-        r.IsSatisfiedBy(adultOnly,    []).Should().BeFalse();
-        r.IsSatisfiedBy(child,        []).Should().BeFalse();
+        r.IsSatisfiedBy(adultOnly, []).Should().BeFalse();
+        r.IsSatisfiedBy(child, []).Should().BeFalse();
     }
 
     [Fact]
@@ -123,21 +123,21 @@ public sealed class RestrictionParserTests
 
     [Fact]
     public void Parse_InvalidKeyword_ThrowsFormatException()
-        { Xunit.Assert.Throws<FormatException>(() => Parse("wizard")); }
+    { Xunit.Assert.Throws<FormatException>(() => Parse("wizard")); }
 
     [Fact]
     public void Parse_MissingCloseParen_ThrowsFormatException()
-        { Xunit.Assert.Throws<FormatException>(() => Parse("and(adult,male")); }
+    { Xunit.Assert.Throws<FormatException>(() => Parse("and(adult,male")); }
 
     [Fact]
     public void Parse_InvalidAge_ThrowsFormatException()
-        { Xunit.Assert.Throws<FormatException>(() => Parse("age:notanumber")); }
+    { Xunit.Assert.Throws<FormatException>(() => Parse("age:notanumber")); }
 
     [Fact]
     public void Parse_MissingAttrEquals_ThrowsFormatException()
-        { Xunit.Assert.Throws<FormatException>(() => Parse("attr:roleonly")); }
+    { Xunit.Assert.Throws<FormatException>(() => Parse("attr:roleonly")); }
 
     [Fact]
     public void Parse_TrailingText_ThrowsFormatException()
-        { Xunit.Assert.Throws<FormatException>(() => Parse("adult garbage")); }
+    { Xunit.Assert.Throws<FormatException>(() => Parse("adult garbage")); }
 }

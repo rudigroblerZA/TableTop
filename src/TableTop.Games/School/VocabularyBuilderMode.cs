@@ -1,5 +1,5 @@
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
@@ -30,17 +30,17 @@ public sealed class VocabularyBuilderMode : BaseGameModeDefinition, IFlowAwareMo
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ All three (+3)";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "→ Next word";
+    public override string SkipLabel => "→ Next word";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Adjective"]  = "#26C6DA",
-            ["Noun"]       = "#66BB6A",
-            ["Verb"]       = "#FFCA28",
-            ["Adverb"]     = "#EC407A",
-            ["Academic"]   = "#AB47BC",
+            ["Adjective"] = "#26C6DA",
+            ["Noun"] = "#66BB6A",
+            ["Verb"] = "#FFCA28",
+            ["Adverb"] = "#EC407A",
+            ["Academic"] = "#AB47BC",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

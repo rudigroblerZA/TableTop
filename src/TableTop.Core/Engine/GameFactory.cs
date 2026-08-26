@@ -35,7 +35,7 @@ public sealed class GameFactory : IGameFactory
     public GameFactory(IEngineDiagnostics? diagnostics = null, bool teamPlay = false)
     {
         _diagnostics = diagnostics ?? NullEngineDiagnostics.Instance;
-        _teamPlay    = teamPlay;
+        _teamPlay = teamPlay;
     }
 
     /// <inheritdoc />

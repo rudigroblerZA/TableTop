@@ -1,10 +1,8 @@
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Abstractions.Rules;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
-using TableTop.Core.Domain.Rules;
 using TableTop.Core.Domain.Scoring;
 using TableTop.Games.Base;
 
@@ -37,14 +35,14 @@ public sealed class SpellingBeeMode : BaseGameModeDefinition, IFlowAwareMode
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Both correct (+2)";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "→ Next word";
+    public override string SkipLabel => "→ Next word";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours => new Dictionary<string, string>
     {
-        ["Word"]       = "#26C6DA",
-        ["Tricky"]     = "#FFCA28",
-        ["Challenge"]  = "#EC407A",
+        ["Word"] = "#26C6DA",
+        ["Tricky"] = "#FFCA28",
+        ["Challenge"] = "#EC407A",
     };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

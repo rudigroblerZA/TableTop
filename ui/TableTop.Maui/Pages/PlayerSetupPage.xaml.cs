@@ -1,7 +1,5 @@
 using TableTop.Core.Abstractions.Game;
-using TableTop.Core.Abstractions.Players;
 using TableTop.Hosting;
-using TableTop.Maui.ViewModels;
 using TableTop.Presentation.ViewModels;
 
 namespace TableTop.Maui.Pages;
@@ -76,8 +74,8 @@ public partial class PlayerSetupPage : ContentPage
             if (!_vm.CanStartGame)
             {
                 var need = _vm.MinimumPlayers;
-            await DisplayAlert("Need Players",
-                need == 1 ? "Please add a player." : $"Please add at least {need} players.", "OK");
+                await DisplayAlert("Need Players",
+                    need == 1 ? "Please add a player." : $"Please add at least {need} players.", "OK");
                 return;
             }
 
@@ -129,13 +127,13 @@ public partial class PlayerSetupPage : ContentPage
 
             Page? next = family switch
             {
-                ControllerFamily.Quiz               => new MillionaireGamePage(_vm.Mode, players),
-                ControllerFamily.Monogamy           => new MonogamyGamePage(_vm.Mode, players),
-                ControllerFamily.DailyCampaign       => new DayOneGamePage(_vm.Mode, players),
-                ControllerFamily.CardTurn            => new GameplayPage(_vm.Mode, players),
-                ControllerFamily.AreaControl         => new ClaimedGamePage(_vm.Mode, players),
-                ControllerFamily.SimultaneousAnswer  => new HerdGamePage(_vm.Mode, players),
-                _                                    => null,
+                ControllerFamily.Quiz => new MillionaireGamePage(_vm.Mode, players),
+                ControllerFamily.Monogamy => new MonogamyGamePage(_vm.Mode, players),
+                ControllerFamily.DailyCampaign => new DayOneGamePage(_vm.Mode, players),
+                ControllerFamily.CardTurn => new GameplayPage(_vm.Mode, players),
+                ControllerFamily.AreaControl => new ClaimedGamePage(_vm.Mode, players),
+                ControllerFamily.SimultaneousAnswer => new HerdGamePage(_vm.Mode, players),
+                _ => null,
             };
 
             if (next is null)

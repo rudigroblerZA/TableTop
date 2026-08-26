@@ -1,5 +1,3 @@
-using Microsoft.Maui.Controls.Xaml;
-
 // ── FORCE COMPILE-TIME XAML VALIDATION ───────────────────────────────────────
 //
 // Without this, XAML is parsed when a page is NAVIGATED TO, so a property that

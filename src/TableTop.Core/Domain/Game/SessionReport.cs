@@ -80,35 +80,35 @@ public sealed class SessionReport
     /// </summary>
     public static SessionReport Build(
         IReadOnlyList<TurnRecord> turns,
-        IReadOnlyList<IPlayer>    players,
-        int                       totalRounds,
-        TimeSpan                  duration)
+        IReadOnlyList<IPlayer> players,
+        int totalRounds,
+        TimeSpan duration)
     {
         var perPlayer = players.Select(p => BuildPlayerStats(p, turns)).ToList().AsReadOnly();
 
         return new SessionReport
         {
-            Turns          = turns,
-            TotalRounds    = totalRounds,
-            Duration       = duration,
-            PlayerStats    = perPlayer,
-            LongestStreak  = FindLongestStreak(turns, players),
+            Turns = turns,
+            TotalRounds = totalRounds,
+            Duration = duration,
+            PlayerStats = perPlayer,
+            LongestStreak = FindLongestStreak(turns, players),
             HardestCardCleared = turns
                 .Where(t => t.Outcome == CardOutcome.Completed)
                 .OrderByDescending(t => t.Card.Difficulty)
                 .ThenByDescending(t => t.ScoreDelta)
                 .FirstOrDefault(),
-            FastestAnswer  = turns
+            FastestAnswer = turns
                 .Where(t => t.Outcome == CardOutcome.Completed && t.Elapsed.HasValue && t.Elapsed > TimeSpan.Zero)
                 .OrderBy(t => t.Elapsed)
                 .FirstOrDefault(),
-            MostSkips      = perPlayer
+            MostSkips = perPlayer
                 .Where(s => s.SkippedTurns > 0)
                 .OrderByDescending(s => s.SkippedTurns)
                 .Select(s => ((IPlayer)s.Player, s.SkippedTurns))
                 .Cast<(IPlayer, int)?>()
                 .FirstOrDefault(),
-            HighScorer     = perPlayer
+            HighScorer = perPlayer
                 .OrderByDescending(s => s.FinalScore)
                 .Select(s => s.Player)
                 .FirstOrDefault(),
@@ -127,13 +127,13 @@ public sealed class SessionReport
 
         return new PlayerStats
         {
-            Player          = player,
-            TotalTurns      = mine.Count,
-            CompletedTurns  = mine.Count(t => t.Outcome == CardOutcome.Completed),
-            SkippedTurns    = mine.Count(t => t.Outcome == CardOutcome.Skipped),
-            FinalScore      = mine.LastOrDefault()?.ScoreAfter ?? 0,
+            Player = player,
+            TotalTurns = mine.Count,
+            CompletedTurns = mine.Count(t => t.Outcome == CardOutcome.Completed),
+            SkippedTurns = mine.Count(t => t.Outcome == CardOutcome.Skipped),
+            FinalScore = mine.LastOrDefault()?.ScoreAfter ?? 0,
             TotalScoreDelta = mine.Sum(t => t.ScoreDelta),
-            HardestCleared  = mine
+            HardestCleared = mine
                 .Where(t => t.Outcome == CardOutcome.Completed)
                 .OrderByDescending(t => t.Card.Difficulty)
                 .FirstOrDefault()?.Card.Difficulty,
@@ -143,7 +143,7 @@ public sealed class SessionReport
 
     private static StreakRecord? FindLongestStreak(
         IReadOnlyList<TurnRecord> turns,
-        IReadOnlyList<IPlayer>    players)
+        IReadOnlyList<IPlayer> players)
     {
         StreakRecord? best = null;
 
@@ -178,24 +178,24 @@ public sealed class SessionReport
 public sealed record PlayerStats
 {
     /// <summary>Player.</summary>
-    public required IPlayer Player         { get; init; }
+    public required IPlayer Player { get; init; }
     /// <summary>TotalTurns.</summary>
-    public required int TotalTurns         { get; init; }
+    public required int TotalTurns { get; init; }
     /// <summary>CompletedTurns.</summary>
-    public required int CompletedTurns     { get; init; }
+    public required int CompletedTurns { get; init; }
     /// <summary>SkippedTurns.</summary>
-    public required int SkippedTurns       { get; init; }
+    public required int SkippedTurns { get; init; }
     /// <summary>Current score value.</summary>
-    public required int FinalScore         { get; init; }
+    public required int FinalScore { get; init; }
     /// <summary>Current score value.</summary>
-    public required int TotalScoreDelta    { get; init; }
+    public required int TotalScoreDelta { get; init; }
 
     /// <summary>Highest difficulty tier successfully completed by this player.</summary>
     public Difficulty? HardestCleared { get; init; }
 
     /// <summary>Average seconds to answer when timing data was available. Null otherwise.</summary>
     public double? AverageAnswerSeconds { get; init; }
-/// <summary>Fraction of turns completed (not skipped) by this player; 0.0–1.0.</summary>
+    /// <summary>Fraction of turns completed (not skipped) by this player; 0.0–1.0.</summary>
 
     public double CompletionRate =>
         TotalTurns == 0 ? 0 : (double)CompletedTurns / TotalTurns;

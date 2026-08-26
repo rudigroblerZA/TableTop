@@ -1,4 +1,3 @@
-using TableTop.Hosting.Hints;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Hosting.Events;
 using TableTop.Hosting.Persistence;
@@ -13,35 +12,35 @@ public interface ICardTurnController : IGameController
 {
     // ── Events ────────────────────────────────────────────────────────────────
     /// <summary>CardReady.</summary>
-    event EventHandler<CardReadyEvent>            CardReady;
+    event EventHandler<CardReadyEvent> CardReady;
     /// <summary>TurnResult.</summary>
-    event EventHandler<TurnResultEvent>           TurnResult;
+    event EventHandler<TurnResultEvent> TurnResult;
     /// <summary>TurnSkipped.</summary>
-    event EventHandler<TurnSkippedEvent>          TurnSkipped;
+    event EventHandler<TurnSkippedEvent> TurnSkipped;
     /// <summary>SkipAttempted.</summary>
-    event EventHandler<SkipAttemptedEvent>        SkipAttempted;
+    event EventHandler<SkipAttemptedEvent> SkipAttempted;
     /// <summary>GameEnded.</summary>
-    event EventHandler<GameEndedEvent>            GameEnded;
+    event EventHandler<GameEndedEvent> GameEnded;
     /// <summary>GamePaused.</summary>
-    event EventHandler<GamePausedEvent>           GamePaused;
+    event EventHandler<GamePausedEvent> GamePaused;
     /// <summary>BreakCardDrawn.</summary>
-    event EventHandler<BreakCardDrawnEvent>       BreakCardDrawn;
+    event EventHandler<BreakCardDrawnEvent> BreakCardDrawn;
     /// <summary>RewardCardDrawn.</summary>
-    event EventHandler<RewardCardDrawnEvent>      RewardCardDrawn;
+    event EventHandler<RewardCardDrawnEvent> RewardCardDrawn;
     /// <summary>InspirationCardDrawn.</summary>
     event EventHandler<InspirationCardDrawnEvent> InspirationCardDrawn;
     /// <summary>SessionSaved.</summary>
-    event EventHandler<SessionSavedEvent>         SessionSaved;
+    event EventHandler<SessionSavedEvent> SessionSaved;
     /// <summary>FlowChanged.</summary>
-    event EventHandler<FlowChangedEvent>          FlowChanged;
+    event EventHandler<FlowChangedEvent> FlowChanged;
     /// <summary>NextTurnHint.</summary>
-    event EventHandler<NextTurnHintEvent>         NextTurnHint;
+    event EventHandler<NextTurnHintEvent> NextTurnHint;
 
     /// <summary>Raised when UndoLastTurn() successfully reverses the previous turn.</summary>
-    event EventHandler<TurnUndoneEvent>           TurnUndone;
+    event EventHandler<TurnUndoneEvent> TurnUndone;
 
     /// <summary>Raised when the engine-side card timer expires (if running).</summary>
-    event EventHandler<TimerExpiredEvent>         TimerExpired;
+    event EventHandler<TimerExpiredEvent> TimerExpired;
 
     // ── Commands ──────────────────────────────────────────────────────────────
 

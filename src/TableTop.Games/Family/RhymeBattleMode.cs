@@ -28,7 +28,7 @@ namespace TableTop.Games.Family;
 public sealed class RhymeBattleMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Rhyme Battle";
+    public override string Name => "Rhyme Battle";
     /// <inheritdoc />
     public override string Description =>
         "Starting word is given. Shout rhymes. Can't repeat. Last one standing wins.";
@@ -36,17 +36,17 @@ public sealed class RhymeBattleMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Survived";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Forfeit";
+    public override string SkipLabel => "Forfeit";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Easy"]       = "#66BB6A",
-            ["Medium"]     = "#FFCA28",
-            ["Hard"]       = "#EF5350",
+            ["Easy"] = "#66BB6A",
+            ["Medium"] = "#FFCA28",
+            ["Hard"] = "#EF5350",
             ["Impossible"] = "#AB47BC",
-            ["Chaos"]      = "#EC407A",
+            ["Chaos"] = "#EC407A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

@@ -28,7 +28,7 @@ namespace TableTop.Games.Couples;
 public sealed class MindMeldMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Mind Meld";
+    public override string Name => "Mind Meld";
     /// <inheritdoc />
     public override string Description =>
         "Both secretly answer the same question — reveal together, score when you match. You vs. the deck.";
@@ -36,20 +36,20 @@ public sealed class MindMeldMode : BaseGameModeDefinition
     /// <summary>Label shown on the button that records a matched round.</summary>
     public override string CompleteLabel => "Matched";
     /// <summary>Label shown on the button that records a miss.</summary>
-    public override string SkipLabel     => "Missed";
+    public override string SkipLabel => "Missed";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Us"]           = "#EC407A",
-            ["Favourites"]   = "#AB47BC",
-            ["Memories"]     = "#FFA726",
+            ["Us"] = "#EC407A",
+            ["Favourites"] = "#AB47BC",
+            ["Memories"] = "#FFA726",
             ["Hypothetical"] = "#42A5F5",
-            ["Speed Round"]  = "#EF5350",
-            ["Deep Sync"]    = "#66BB6A",
-            ["After Dark"]   = "#B71C4A",
-            ["Do It Now"]    = "#D97706",
+            ["Speed Round"] = "#EF5350",
+            ["Deep Sync"] = "#66BB6A",
+            ["After Dark"] = "#B71C4A",
+            ["Do It Now"] = "#D97706",
         };
 
     /// <summary>One shared point per matched answer.</summary>

@@ -36,7 +36,7 @@ namespace TableTop.Games.Fun;
 public sealed class SplitTheRoomMode : BaseGameModeDefinition, ITableShapeMode
 {
     /// <inheritdoc />
-    public override string Name        => "Split the Room";
+    public override string Name => "Split the Room";
     /// <inheritdoc />
     public override string Description =>
         "Two teams, alternating cards. One side performs, the other guesses, judges or races — score on paper, loser buys the next round of something.";
@@ -50,7 +50,7 @@ public sealed class SplitTheRoomMode : BaseGameModeDefinition, ITableShapeMode
     /// <summary>Records the acting team taking the points.</summary>
     public override string CompleteLabel => "Point Scored";
     /// <summary>Records the acting team missing.</summary>
-    public override string SkipLabel     => "No Point";
+    public override string SkipLabel => "No Point";
 
     /// <summary>Opens on the setup card so teams and scoring get agreed.</summary>
     public override IReadOnlyList<string> CategoriesPinnedToStart => ["Setup"];
@@ -62,12 +62,12 @@ public sealed class SplitTheRoomMode : BaseGameModeDefinition, ITableShapeMode
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Setup"]     = "#5AC8B0",
-            ["Describe"]  = "#42A5F5",
-            ["Perform"]   = "#AB47BC",
-            ["Guess Us"]  = "#FFA726",
-            ["Race"]      = "#EF5350",
-            ["Decider"]   = "#B71C4A",
+            ["Setup"] = "#5AC8B0",
+            ["Describe"] = "#42A5F5",
+            ["Perform"] = "#AB47BC",
+            ["Guess Us"] = "#FFA726",
+            ["Race"] = "#EF5350",
+            ["Decider"] = "#B71C4A",
         };
 
     /// <summary>Harder cards are worth more points, and the cards say so.</summary>
@@ -94,13 +94,13 @@ public static class SplitTheRoomCardBank
 
     private static string Emoji(string category) => category switch
     {
-        "Setup"    => "📋",
+        "Setup" => "📋",
         "Describe" => "🗣️",
-        "Perform"  => "🎭",
+        "Perform" => "🎭",
         "Guess Us" => "🤔",
-        "Race"     => "⏱️",
-        "Decider"  => "🏆",
-        _          => "🎲",
+        "Race" => "⏱️",
+        "Decider" => "🏆",
+        _ => "🎲",
     };
 
     private static IReadOnlyList<ICard> Build() =>

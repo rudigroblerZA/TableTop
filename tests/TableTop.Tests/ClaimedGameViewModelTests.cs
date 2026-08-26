@@ -98,7 +98,7 @@ public sealed class ClaimedGameViewModelTests
         var vm = new ClaimedGameViewModel(new FakeNavigator(), ctrl);
 
         vm.Challenge("Alpha"); vm.Succeed(); // A holds Alpha, turn -> B
-        vm.Challenge("Beta");  vm.Succeed(); // B holds Beta,  turn -> A
+        vm.Challenge("Beta"); vm.Succeed(); // B holds Beta,  turn -> A
         vm.Challenge("Gamma"); vm.Succeed(); // A holds Alpha + Gamma = 2 -> win
 
         vm.IsGameOver.Should().BeTrue();

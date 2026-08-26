@@ -13,7 +13,7 @@ public sealed class JsonPlayerRepository : IPlayerRepository
 
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
-        WriteIndented          = true,
+        WriteIndented = true,
         PropertyNameCaseInsensitive = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     };

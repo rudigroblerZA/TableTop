@@ -1,10 +1,8 @@
-using TableTop.Core.Domain.Players;
 using TableTop.Core.Domain.Restrictions;
 using TableTop.Games;
 using TableTop.Games.Couples;
 using TableTop.Games.School;
 using TableTop.Presentation.ViewModels;
-using TableTop.Tests.Helpers;
 
 namespace TableTop.Tests;
 
@@ -32,7 +30,7 @@ public sealed class CardTurnGameViewModelTests
     /// </summary>
     private static (Player, Player) Couple() =>
         (Player.Create("Alice", tags: ["couple-member"]),
-         Player.Create("Bob",   tags: ["couple-member"]));
+         Player.Create("Bob", tags: ["couple-member"]));
 
     [Fact]
     public async Task CreateAsync_WithARealMode_StartsTheControllerAndShowsTheFirstCard()

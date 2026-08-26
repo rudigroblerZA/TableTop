@@ -14,7 +14,7 @@ namespace TableTop.Core.Domain.Rules;
 public sealed class RuleEvaluator : IRuleEvaluator
 {
     private readonly IReadOnlyList<IRule> _rules;
-    private readonly IEngineDiagnostics   _diagnostics;
+    private readonly IEngineDiagnostics _diagnostics;
 
     /// <summary>Creates a RuleEvaluator with the default no-op diagnostics.</summary>
     public RuleEvaluator(IEnumerable<IRule> rules)
@@ -25,7 +25,7 @@ public sealed class RuleEvaluator : IRuleEvaluator
     {
         ArgumentNullException.ThrowIfNull(rules);
         ArgumentNullException.ThrowIfNull(diagnostics);
-        _rules       = rules.ToList().AsReadOnly();
+        _rules = rules.ToList().AsReadOnly();
         _diagnostics = diagnostics;
     }
 

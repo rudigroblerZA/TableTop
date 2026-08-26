@@ -1,7 +1,3 @@
-using TableTop.Core.Abstractions.Cards;
-using TableTop.Core.Domain.Cards;
-using TableTop.Core.Domain.Players;
-using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Controllers;
 using TableTop.Hosting.Events;
 
@@ -20,7 +16,7 @@ namespace TableTop.Tests;
 public sealed class ClaimedControllerTests
 {
     private static Player Alice(string name = "Alice") => Player.Create(name);
-    private static Player Bob(string name   = "Bob")   => Player.Create(name);
+    private static Player Bob(string name = "Bob") => Player.Create(name);
 
     private static ICard Card(string territory, string title = "T", Difficulty difficulty = Difficulty.Easy) =>
         new StandardCard(Guid.NewGuid(), title, "body", difficulty, territory);
@@ -39,12 +35,12 @@ public sealed class ClaimedControllerTests
     }
 
     private static ClaimedController BuildController(
-        IReadOnlyList<Player>? players               = null,
-        IReadOnlyList<ICard>?  deck                  = null,
-        int                    winningTerritoryCount = 3)
+        IReadOnlyList<Player>? players = null,
+        IReadOnlyList<ICard>? deck = null,
+        int winningTerritoryCount = 3)
     {
         var p = players ?? [Alice(), Bob()];
-        var d = deck    ?? Deck(territoryCount: 5);
+        var d = deck ?? Deck(territoryCount: 5);
         return new ClaimedController(
             p.Cast<Core.Abstractions.Players.IPlayer>().ToList().AsReadOnly(),
             d, winningTerritoryCount);
@@ -96,7 +92,7 @@ public sealed class ClaimedControllerTests
     public void CurrentPlayerName_IsFirstPlayerInListOrder()
     {
         var alice = Alice();
-        var bob   = Bob();
+        var bob = Bob();
         var c = BuildController(players: [alice, bob]);
         c.Start();
 
@@ -148,9 +144,9 @@ public sealed class ClaimedControllerTests
         var c = BuildController();
         c.Start();
         var claimed = false;
-        var stolen  = false;
+        var stolen = false;
         c.TerritoryClaimed += (_, _) => claimed = true;
-        c.TerritoryStolen  += (_, _) => stolen  = true;
+        c.TerritoryStolen += (_, _) => stolen = true;
 
         c.ChallengeTerritory(c.ChallengeableTerritories.First());
         c.ResolveChallenge(succeeded: true);
@@ -196,7 +192,7 @@ public sealed class ClaimedControllerTests
     public void ResolveChallenge_Success_OnRivalHeldTerritory_StealsIt()
     {
         var alice = Alice();
-        var bob   = Bob();
+        var bob = Bob();
         var c = BuildController(players: [alice, bob], deck: Deck(territoryCount: 5, cardsPerTerritory: 3));
         c.Start();
 
@@ -308,7 +304,7 @@ public sealed class ClaimedControllerTests
         // drops out of ChallengeableTerritories entirely rather than lingering
         // as a raid option.
         var alice = Alice();
-        var bob   = Bob();
+        var bob = Bob();
         var c = BuildController(players: [alice, bob], deck: Deck(territoryCount: 3, cardsPerTerritory: 1),
                                  winningTerritoryCount: 2);
         c.Start();
@@ -337,7 +333,7 @@ public sealed class ClaimedControllerTests
         // covered on its own terms in the next test — this one's job is just
         // confirming the end reason is DeckExhausted.
         var alice = Alice();
-        var bob   = Bob();
+        var bob = Bob();
         var c = new ClaimedController(
             [alice, bob], Deck(territoryCount: 2, cardsPerTerritory: 1), winningTerritoryCount: 2);
         c.Start();
@@ -357,7 +353,7 @@ public sealed class ClaimedControllerTests
     public void DeckExhausted_Tie_ReportsBothPlayersAsWinners_NotOneArbitrarily()
     {
         var alice = Alice();
-        var bob   = Bob();
+        var bob = Bob();
         var c = new ClaimedController(
             [alice, bob], Deck(territoryCount: 2, cardsPerTerritory: 1), winningTerritoryCount: 2);
         c.Start();

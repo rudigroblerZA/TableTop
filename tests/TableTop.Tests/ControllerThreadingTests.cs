@@ -1,7 +1,5 @@
 using System.Collections.Concurrent;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Abstractions.Scoring;
-using TableTop.Core.Domain.Players;
 using TableTop.Core.Domain.Progression;
 using TableTop.Games;
 using TableTop.Hosting.Controllers;
@@ -64,22 +62,22 @@ public sealed class ControllerThreadingTests
         TableTop.Hosting.Controllers.ThreadingGuard_TestAccessor.Enabled = true;
         try
         {
-        using var controller = Started();
-        Exception? captured = null;
+            using var controller = Started();
+            Exception? captured = null;
 
-        // Exactly what an unmarshalled System.Threading.Timer callback does.
-        var timer = new Thread(() =>
-        {
-            try { controller.RecordOutcome(CardOutcome.Completed); }
-            catch (Exception ex) { captured = ex; }
-        });
-        timer.Start();
-        timer.Join(TimeSpan.FromSeconds(5)).Should().BeTrue("the timer thread should not hang");
+            // Exactly what an unmarshalled System.Threading.Timer callback does.
+            var timer = new Thread(() =>
+            {
+                try { controller.RecordOutcome(CardOutcome.Completed); }
+                catch (Exception ex) { captured = ex; }
+            });
+            timer.Start();
+            timer.Join(TimeSpan.FromSeconds(5)).Should().BeTrue("the timer thread should not hang");
 
-        captured.Should().BeOfType<InvalidOperationException>(
-            "a mutating call from a non-owner thread is exactly what ThreadingGuard exists to catch, " +
-            "and it must be caught through the real controller and not only in the guard's own unit test");
-        captured!.Message.Should().Contain("not thread-safe");
+            captured.Should().BeOfType<InvalidOperationException>(
+                "a mutating call from a non-owner thread is exactly what ThreadingGuard exists to catch, " +
+                "and it must be caught through the real controller and not only in the guard's own unit test");
+            captured!.Message.Should().Contain("not thread-safe");
         }
         finally { TableTop.Hosting.Controllers.ThreadingGuard_TestAccessor.Enabled = wasEnabled; }
     }
@@ -105,7 +103,8 @@ public sealed class ControllerThreadingTests
                     action();
             }
             catch (Exception ex) { pumpFailure = ex; ready.Set(); }
-        }) { Name = "owner", IsBackground = true };
+        })
+        { Name = "owner", IsBackground = true };
 
         owner.Start();
         ready.Wait(TimeSpan.FromSeconds(10)).Should().BeTrue("the owner thread should start the controller");

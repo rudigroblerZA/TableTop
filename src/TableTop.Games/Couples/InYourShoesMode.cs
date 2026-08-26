@@ -32,7 +32,7 @@ namespace TableTop.Games.Couples;
 public sealed class InYourShoesMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "In Your Shoes";
+    public override string Name => "In Your Shoes";
     /// <inheritdoc />
     public override string Description =>
         "Answer as your partner would — then they reveal the truth. How well do you really know them?";
@@ -40,15 +40,15 @@ public sealed class InYourShoesMode : BaseGameModeDefinition
     /// <summary>Label for a guessed-and-revealed round.</summary>
     public override string CompleteLabel => "Revealed";
     /// <summary>Label for skipping a card.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
             ["Everyday"] = "#42A5F5",
-            ["Inner"]    = "#AB47BC",
-            ["Us"]       = "#EC407A",
+            ["Inner"] = "#AB47BC",
+            ["Us"] = "#EC407A",
         };
 
     /// <summary>A closer read of your partner (harder tier) is worth more.</summary>

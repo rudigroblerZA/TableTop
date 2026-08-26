@@ -27,7 +27,7 @@ namespace TableTop.Games.Family;
 public sealed class AlibiMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Alibi";
+    public override string Name => "Alibi";
     /// <inheritdoc />
     public override string Description =>
         "A silly crime, two suspects, one hastily agreed alibi — questioned separately. Stories must match.";
@@ -35,16 +35,16 @@ public sealed class AlibiMode : BaseGameModeDefinition
     /// <summary>Label for the button that records an acquittal.</summary>
     public override string CompleteLabel => "Acquitted";
     /// <summary>Label for the button that records a conviction.</summary>
-    public override string SkipLabel     => "GUILTY";
+    public override string SkipLabel => "GUILTY";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Domestic"]     = "#FFA726",
-            ["Workplace"]    = "#42A5F5",
-            ["Neighbourhood"]= "#66BB6A",
-            ["Historic"]     = "#AB47BC",
+            ["Domestic"] = "#FFA726",
+            ["Workplace"] = "#42A5F5",
+            ["Neighbourhood"] = "#66BB6A",
+            ["Historic"] = "#AB47BC",
             ["With a Twist"] = "#EF5350",
         };
 

@@ -28,7 +28,7 @@ namespace TableTop.Games.Family;
 public sealed class DrawItMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Draw It";
+    public override string Name => "Draw It";
     /// <inheritdoc />
     public override string Description =>
         "Pictionary for the family — draw it, no words or letters, everyone guesses. First guess scores. Answer's on the back.";
@@ -36,17 +36,17 @@ public sealed class DrawItMode : BaseGameModeDefinition
     /// <summary>Label for a guessed card.</summary>
     public override string CompleteLabel => "Guessed!";
     /// <summary>Label for a card nobody got.</summary>
-    public override string SkipLabel     => "Nobody got it";
+    public override string SkipLabel => "Nobody got it";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Objects"]   = "#66BB6A",
+            ["Objects"] = "#66BB6A",
             ["Animals & Nature"] = "#26A69A",
-            ["Actions"]   = "#42A5F5",
-            ["Places"]    = "#FFA726",
-            ["Idioms"]    = "#EF5350",
+            ["Actions"] = "#42A5F5",
+            ["Places"] = "#FFA726",
+            ["Idioms"] = "#EF5350",
         };
 
     /// <summary>Harder things to draw score more.</summary>

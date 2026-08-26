@@ -1,8 +1,8 @@
-using SC = System.Console;
-using CC = System.ConsoleColor;
 using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Events;
+using CC = System.ConsoleColor;
+using SC = System.Console;
 
 namespace TableTop.Console;
 
@@ -24,8 +24,8 @@ internal sealed class ConsoleDayOneRenderer
     public ConsoleDayOneRenderer(IDayOneController controller)
     {
         _controller = controller;
-        controller.DayReady         += (_, e) => _dayReady = e;
-        controller.AllCaughtUp      += OnAllCaughtUp;
+        controller.DayReady += (_, e) => _dayReady = e;
+        controller.AllCaughtUp += OnAllCaughtUp;
         controller.CampaignComplete += OnCampaignComplete;
     }
 

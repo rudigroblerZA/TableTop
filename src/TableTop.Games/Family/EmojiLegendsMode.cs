@@ -26,7 +26,7 @@ namespace TableTop.Games.Family;
 public sealed class EmojiLegendsMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Emoji Legends";
+    public override string Name => "Emoji Legends";
     /// <inheritdoc />
     public override string Description =>
         "Emoji sequence = film, song, or book. Can you guess it?";
@@ -34,17 +34,17 @@ public sealed class EmojiLegendsMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Guessed";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Film"]       = "#42A5F5",
-            ["Song"]       = "#EC407A",
-            ["Book"]       = "#66BB6A",
-            ["TV Show"]    = "#FFCA28",
-            ["Mixed"]      = "#AB47BC",
+            ["Film"] = "#42A5F5",
+            ["Song"] = "#EC407A",
+            ["Book"] = "#66BB6A",
+            ["TV Show"] = "#FFCA28",
+            ["Mixed"] = "#AB47BC",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

@@ -1,10 +1,9 @@
-using TableTop.Hosting;
-using SC = System.Console;
-using CC = System.ConsoleColor;
-using CK = System.ConsoleKey;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Events;
+using CC = System.ConsoleColor;
+using SC = System.Console;
 
 namespace TableTop.Console;
 
@@ -14,17 +13,17 @@ namespace TableTop.Console;
 internal sealed class ConsoleMonogamyRenderer
 {
     private readonly IMonogamyController _controller;
-    private bool                         _waitingForInput;
-    private bool                         _awaitingZoneChoice;
+    private bool _waitingForInput;
+    private bool _awaitingZoneChoice;
 
     public ConsoleMonogamyRenderer(IMonogamyController controller)
     {
         _controller = controller;
-        controller.DiceRolled    += OnDiceRolled;
+        controller.DiceRolled += OnDiceRolled;
         controller.DoublesRolled += OnDoublesRolled;
-        controller.CardReady     += OnCardReady;
+        controller.CardReady += OnCardReady;
         controller.TokensAwarded += OnTokensAwarded;
-        controller.GameEnded     += OnGameEnded;
+        controller.GameEnded += OnGameEnded;
     }
 
     public void RunBlocking()
@@ -122,16 +121,16 @@ internal sealed class ConsoleMonogamyRenderer
             var zone = input switch
             {
                 "1" or "foreplay" => MonogamyZone.Foreplay,
-                "2" or "sensual"  => MonogamyZone.Sensual,
-                "3" or "steamy"   => MonogamyZone.Steamy,
-                "4" or "wild"     => MonogamyZone.Wild,
-                _                 => (MonogamyZone?)null,
+                "2" or "sensual" => MonogamyZone.Sensual,
+                "3" or "steamy" => MonogamyZone.Steamy,
+                "4" or "wild" => MonogamyZone.Wild,
+                _ => (MonogamyZone?)null,
             };
             if (zone is null)
             {
                 ConsoleUi.PrintError("Enter 1, 2, 3, or 4.");
                 _awaitingZoneChoice = true;
-                _waitingForInput    = true;
+                _waitingForInput = true;
                 return;
             }
             _controller.ChooseZone(zone.Value);
@@ -140,9 +139,9 @@ internal sealed class ConsoleMonogamyRenderer
 
         switch (input)
         {
-            case "c": _controller.CompleteCard();  break;
+            case "c": _controller.CompleteCard(); break;
             case "n": _controller.NegotiateCard(); break;
-            case "s": _controller.SkipCard();      break;
+            case "s": _controller.SkipCard(); break;
             case "q":
                 if (ConsoleUi.PromptYesNo("Quit Monogamy?"))
                     _controller.Quit();

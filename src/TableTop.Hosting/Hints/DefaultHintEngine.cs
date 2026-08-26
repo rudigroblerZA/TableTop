@@ -25,15 +25,15 @@ public sealed class DefaultHintEngine : IHintEngine
     {
         if (ctx.RecentOutcomes.Count == 0) return null;
 
-        var window      = ctx.RecentOutcomes.Take(WindowSize).ToList();
+        var window = ctx.RecentOutcomes.Take(WindowSize).ToList();
         var difficulties = ctx.RecentDifficulties.Take(WindowSize).ToList();
-        var current     = ctx.CurrentFlow?.CurrentDifficulty
+        var current = ctx.CurrentFlow?.CurrentDifficulty
                           ?? (difficulties.Count > 0 ? difficulties[0] : Difficulty.Easy);
 
         var completions = window.Count(o => o == CardOutcome.Completed);
-        var failures    = window.Count(o => o == CardOutcome.Failed);
-        var skips       = window.Count(o => o == CardOutcome.Skipped);
-        var struggling  = failures + skips;
+        var failures = window.Count(o => o == CardOutcome.Failed);
+        var skips = window.Count(o => o == CardOutcome.Skipped);
+        var struggling = failures + skips;
 
         // ── Rule 1: struggling — ease down ────────────────────────────────────
         if (struggling >= 2 && window.Count >= 2)
@@ -43,10 +43,10 @@ public sealed class DefaultHintEngine : IHintEngine
                 player, target,
                 ctx.CurrentFlow is not null ? PaceHint.SlowDown : null,
                 neutral: $"You've had a tough run — {target} cards might feel better right now.",
-                him:     $"No shame in stepping back — {target} gives you room to build momentum again.",
-                her:     $"Give yourself some grace — {target} is where the good stuff lives too.",
+                him: $"No shame in stepping back — {target} gives you room to build momentum again.",
+                her: $"Give yourself some grace — {target} is where the good stuff lives too.",
                 urgency: HintUrgency.Strong,
-                reason:  "Struggling");
+                reason: "Struggling");
         }
 
         // ── Rule 2: excelling on hard/extreme — push up ───────────────────────
@@ -59,10 +59,10 @@ public sealed class DefaultHintEngine : IHintEngine
                     player, target,
                     ctx.CurrentFlow is not null ? PaceHint.SpeedUp : null,
                     neutral: $"You're on fire — ready to try {target}?",
-                    him:     $"You're clearly ready for {target}. Step it up.",
-                    her:     $"You're absolutely nailing this — {target} is your next move.",
+                    him: $"You're clearly ready for {target}. Step it up.",
+                    her: $"You're absolutely nailing this — {target} is your next move.",
                     urgency: HintUrgency.Strong,
-                    reason:  "Excelling");
+                    reason: "Excelling");
         }
 
         // ── Rule 3: consistent completions at current level ───────────────────
@@ -74,10 +74,10 @@ public sealed class DefaultHintEngine : IHintEngine
                     player, target,
                     null,
                     neutral: $"You're doing well — a {target} card could be interesting.",
-                    him:     $"Solid run — {target} might be worth a shot.",
-                    her:     $"You're doing really well — why not try {target}?",
+                    him: $"Solid run — {target} might be worth a shot.",
+                    her: $"You're doing really well — why not try {target}?",
                     urgency: HintUrgency.Gentle,
-                    reason:  "ConsistentSuccess");
+                    reason: "ConsistentSuccess");
         }
 
         // ── Rule 4: single failure after a run of success ─────────────────────
@@ -89,10 +89,10 @@ public sealed class DefaultHintEngine : IHintEngine
                 player, current,
                 null,
                 neutral: $"One blip — {current} is still your level.",
-                him:     "Shake it off. Same level, fresh start.",
-                her:     "One off moment doesn't define you — carry on.",
+                him: "Shake it off. Same level, fresh start.",
+                her: "One off moment doesn't define you — carry on.",
                 urgency: HintUrgency.Gentle,
-                reason:  "OneStumble");
+                reason: "OneStumble");
         }
 
         // ── Rule 5: heavy skipping ────────────────────────────────────────────
@@ -103,10 +103,10 @@ public sealed class DefaultHintEngine : IHintEngine
                 player, target,
                 ctx.CurrentFlow is not null ? PaceHint.SlowDown : null,
                 neutral: $"You've been skipping a lot — {target} might be a better fit.",
-                him:     $"No pressure — {target} lets you actually engage rather than skip.",
-                her:     $"It's worth finding your level — {target} might open things up.",
+                him: $"No pressure — {target} lets you actually engage rather than skip.",
+                her: $"It's worth finding your level — {target} might open things up.",
                 urgency: HintUrgency.Moderate,
-                reason:  "HeavySkipping");
+                reason: "HeavySkipping");
         }
 
         return null; // No meaningful hint right now
@@ -116,18 +116,18 @@ public sealed class DefaultHintEngine : IHintEngine
 
     private static Difficulty IncreaseDifficulty(Difficulty d) => d switch
     {
-        Difficulty.Easy    => Difficulty.Medium,
-        Difficulty.Medium  => Difficulty.Hard,
-        Difficulty.Hard    => Difficulty.Extreme,
-        _                  => d,
+        Difficulty.Easy => Difficulty.Medium,
+        Difficulty.Medium => Difficulty.Hard,
+        Difficulty.Hard => Difficulty.Extreme,
+        _ => d,
     };
 
     private static Difficulty DecreaseDifficulty(Difficulty d) => d switch
     {
         Difficulty.Extreme => Difficulty.Hard,
-        Difficulty.Hard    => Difficulty.Medium,
-        Difficulty.Medium  => Difficulty.Easy,
-        _                  => d,
+        Difficulty.Hard => Difficulty.Medium,
+        Difficulty.Medium => Difficulty.Easy,
+        _ => d,
     };
 
     private static NextTurnHint MakeHint(
@@ -137,9 +137,9 @@ public sealed class DefaultHintEngine : IHintEngine
         new(
             SuggestedDifficulty: target,
             SuggestedPaceChange: pace,
-            NeutralHint:         neutral,
-            HimHint:             him == neutral ? null : him,
-            HerHint:             her == neutral ? null : her,
-            Urgency:             urgency,
-            Reason:              reason);
+            NeutralHint: neutral,
+            HimHint: him == neutral ? null : him,
+            HerHint: her == neutral ? null : her,
+            Urgency: urgency,
+            Reason: reason);
 }

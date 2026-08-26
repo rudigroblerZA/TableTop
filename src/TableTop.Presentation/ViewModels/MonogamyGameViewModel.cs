@@ -42,11 +42,11 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
     public ObservableCollection<ZoneOption> ZoneChoices { get; } = [];
 
     /// <summary>Returns to the previous screen.</summary>
-    public ICommand BackCommand      { get; }
+    public ICommand BackCommand { get; }
     /// <summary>Completes the current card (both partners acted).</summary>
-    public ICommand CompleteCommand  { get; }
+    public ICommand CompleteCommand { get; }
     /// <summary>Skips the current card — free in Monogamy.</summary>
-    public ICommand SkipCommand      { get; }
+    public ICommand SkipCommand { get; }
     /// <summary>Marks the card negotiated (played with modifications).</summary>
     public ICommand NegotiateCommand { get; }
 
@@ -59,17 +59,17 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
     /// <summary>Whose turn it is.</summary>
     public string PlayerName { get => _playerName; private set => SetField(ref _playerName, value); }
     /// <summary>The last dice roll, rendered for display.</summary>
-    public string DiceText   { get => _diceText;   private set => SetField(ref _diceText, value); }
+    public string DiceText { get => _diceText; private set => SetField(ref _diceText, value); }
     /// <summary>Title of the current card.</summary>
-    public string CardTitle  { get => _cardTitle;  private set => SetField(ref _cardTitle, value); }
+    public string CardTitle { get => _cardTitle; private set => SetField(ref _cardTitle, value); }
     /// <summary>Body text of the current card, resolved for the current player.</summary>
-    public string CardText   { get => _cardText;   private set => SetField(ref _cardText, value); }
+    public string CardText { get => _cardText; private set => SetField(ref _cardText, value); }
     /// <summary>Token standings, rendered for display.</summary>
-    public string TokenText  { get => _tokenText;  private set => SetField(ref _tokenText, value); }
+    public string TokenText { get => _tokenText; private set => SetField(ref _tokenText, value); }
     /// <summary>Transient feedback after an action.</summary>
-    public string Flash      { get => _flash;      private set => SetField(ref _flash, value); }
+    public string Flash { get => _flash; private set => SetField(ref _flash, value); }
     /// <summary>End-of-game summary.</summary>
-    public string Summary    { get => _summary;    private set => SetField(ref _summary, value); }
+    public string Summary { get => _summary; private set => SetField(ref _summary, value); }
 
     /// <summary>
     /// Per-player token totals. Was MAUI-only; WinUI showed nothing equivalent.
@@ -144,16 +144,16 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
     {
         _controller = controller;
 
-        BackCommand      = new RelayCommand(() => { _controller?.Quit(); navigator.GoBack(); });
-        CompleteCommand  = new RelayCommand(() => Submit(() => _controller?.CompleteCard()),  () => HasCard);
-        SkipCommand      = new RelayCommand(() => Submit(() => _controller?.SkipCard()),      () => HasCard);
+        BackCommand = new RelayCommand(() => { _controller?.Quit(); navigator.GoBack(); });
+        CompleteCommand = new RelayCommand(() => Submit(() => _controller?.CompleteCard()), () => HasCard);
+        SkipCommand = new RelayCommand(() => Submit(() => _controller?.SkipCard()), () => HasCard);
         NegotiateCommand = new RelayCommand(() => Submit(() => _controller?.NegotiateCard()), () => HasCard);
 
-        _controller.DiceRolled    += OnDiceRolled;
+        _controller.DiceRolled += OnDiceRolled;
         _controller.DoublesRolled += OnDoublesRolled;
-        _controller.CardReady     += OnCardReady;
+        _controller.CardReady += OnCardReady;
         _controller.TokensAwarded += OnTokensAwarded;
-        _controller.GameEnded     += OnGameEnded;
+        _controller.GameEnded += OnGameEnded;
 
         if (!_controller.IsRunning) _controller.Start();
     }
@@ -163,10 +163,10 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
     /// </summary>
     private MonogamyGameViewModel(INavigator navigator, string loadError)
     {
-        _loadError       = loadError;
-        BackCommand      = new RelayCommand(navigator.GoBack);
-        CompleteCommand  = new RelayCommand(() => { }, () => false);
-        SkipCommand      = new RelayCommand(() => { }, () => false);
+        _loadError = loadError;
+        BackCommand = new RelayCommand(navigator.GoBack);
+        CompleteCommand = new RelayCommand(() => { }, () => false);
+        SkipCommand = new RelayCommand(() => { }, () => false);
         NegotiateCommand = new RelayCommand(() => { }, () => false);
     }
 
@@ -178,10 +178,10 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
     /// WinUI app down instead of showing why. Shared, so both behave the same.
     /// </summary>
     public static MonogamyGameViewModel Create(
-        INavigator             navigator,
-        IGameMode              mode,
+        INavigator navigator,
+        IGameMode mode,
         IReadOnlyList<IPlayer> players,
-        int                    winningTokenCount = 10)
+        int winningTokenCount = 10)
     {
         try
         {
@@ -203,7 +203,7 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
     private void OnDiceRolled(object? sender, DiceRolledEvent e)
     {
         PlayerName = e.PlayerName;
-        DiceText   = $"{e.Die1} + {e.Die2} = {e.Total}";
+        DiceText = $"{e.Die1} + {e.Die2} = {e.Total}";
         SetZone(e.ResultingZone);
     }
 
@@ -223,9 +223,9 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
         AwaitingZone = false;
         ZoneChoices.Clear();
         CardTitle = e.CardTitle;
-        CardText  = e.CardText;
+        CardText = e.CardText;
         SetZone(e.Zone);
-        HasCard   = true;
+        HasCard = true;
         RaiseActionCommands();
     }
 
@@ -233,15 +233,15 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
     {
         _tokenTotals[e.PlayerName] = e.TotalTokens;
         TokenText = $"{e.PlayerName}: {e.TotalTokens} tokens";
-        Flash     = e.TokensEarned > 0 ? $"+{e.TokensEarned} to {e.PlayerName}" : "";
-        Scores    = string.Join("   ·   ", _tokenTotals.Select(kv => $"{kv.Key} {kv.Value}"));
+        Flash = e.TokensEarned > 0 ? $"+{e.TokensEarned} to {e.PlayerName}" : "";
+        Scores = string.Join("   ·   ", _tokenTotals.Select(kv => $"{kv.Key} {kv.Value}"));
     }
 
     private void OnGameEnded(object? sender, MonogamyGameEndedEvent e)
     {
         IsGameOver = true;
-        HasCard    = false;
-        Summary    = e.WinnerName is { Length: > 0 }
+        HasCard = false;
+        Summary = e.WinnerName is { Length: > 0 }
             ? $"{e.WinnerName} wins after {e.TotalRounds} rounds."
             : "Session ended.";
         RaiseActionCommands();
@@ -284,14 +284,14 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
     {
         if (!HasCard || _submitting) return;
         _submitting = true;
-        try     { action(); }
+        try { action(); }
         finally { _submitting = false; RaiseActionCommands(); }
     }
 
     private void RaiseActionCommands()
     {
-        (CompleteCommand  as RelayCommand)?.RaiseCanExecuteChanged();
-        (SkipCommand      as RelayCommand)?.RaiseCanExecuteChanged();
+        (CompleteCommand as RelayCommand)?.RaiseCanExecuteChanged();
+        (SkipCommand as RelayCommand)?.RaiseCanExecuteChanged();
         (NegotiateCommand as RelayCommand)?.RaiseCanExecuteChanged();
     }
 
@@ -329,7 +329,7 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
 
         internal ZoneOption(MonogamyZone zone, MonogamyGameViewModel owner)
         {
-            Zone   = zone;
+            Zone = zone;
             _owner = owner;
             SelectCommand = new RelayCommand(() => owner.ChooseZone(zone), () => owner.AwaitingZone);
         }

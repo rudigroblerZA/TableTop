@@ -1,6 +1,5 @@
-using TableTop.Presentation.ViewModels;
 using TableTop.Maui.Services;
-using TableTop.Maui.ViewModels;
+using TableTop.Presentation.ViewModels;
 
 namespace TableTop.Maui.Pages;
 
@@ -34,9 +33,9 @@ public partial class SettingsPage : ContentPage
     {
         Application.Current!.UserAppTheme = AppSettings.Instance.Theme switch
         {
-            "light"  => AppTheme.Light,
+            "light" => AppTheme.Light,
             "system" => AppTheme.Unspecified,
-            _        => AppTheme.Dark,
+            _ => AppTheme.Dark,
         };
     }
 

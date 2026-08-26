@@ -44,11 +44,11 @@ public sealed class DifficultyBasedScoringStrategy : IScoringStrategy
 
         return card.Difficulty switch
         {
-            Difficulty.Easy    => 1,
-            Difficulty.Medium  => 2,
-            Difficulty.Hard    => 3,
+            Difficulty.Easy => 1,
+            Difficulty.Medium => 2,
+            Difficulty.Hard => 3,
             Difficulty.Extreme => 5,
-            _                  => 1
+            _ => 1
         };
     }
 }

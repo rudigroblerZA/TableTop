@@ -28,7 +28,7 @@ namespace TableTop.Games.Family;
 public sealed class MonologueMadnessMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Monologue Madness";
+    public override string Name => "Monologue Madness";
     /// <inheritdoc />
     public override string Description =>
         "You have 60 seconds. Improvise a speech on this topic. Go.";
@@ -36,16 +36,16 @@ public sealed class MonologueMadnessMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Spoke";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Politics"]    = "#42A5F5",
-            ["Philosophy"]  = "#AB47BC",
-            ["Ridiculous"]  = "#EC407A",
-            ["Corporate"]   = "#FFA726",
+            ["Politics"] = "#42A5F5",
+            ["Philosophy"] = "#AB47BC",
+            ["Ridiculous"] = "#EC407A",
+            ["Corporate"] = "#FFA726",
             ["Confessions"] = "#66BB6A",
         };
 

@@ -51,7 +51,7 @@ public sealed class OutLoudMode : BaseGameModeDefinition, ITableShapeMode
     public TableShape SuitableFor => TableShape.Couple;
 
     /// <inheritdoc />
-    public override string Name        => "Out Loud";
+    public override string Name => "Out Loud";
 
     /// <inheritdoc />
     public override string Description =>
@@ -62,7 +62,7 @@ public sealed class OutLoudMode : BaseGameModeDefinition, ITableShapeMode
     public override string CompleteLabel => "Said It";
 
     /// <summary>Free, silent, and costs nothing — which is what keeps the top of the deck honest.</summary>
-    public override string SkipLabel     => "Couldn't Say It";
+    public override string SkipLabel => "Couldn't Say It";
 
     /// <summary>
     /// The Closer sits at the end: after it, the deck stops asking and the two
@@ -75,11 +75,11 @@ public sealed class OutLoudMode : BaseGameModeDefinition, ITableShapeMode
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Admissions"]  = "#D68FA8",   // soft rose — the warm-up
+            ["Admissions"] = "#D68FA8",   // soft rose — the warm-up
             ["Confessions"] = "#C2557A",   // deeper
-            ["Direction"]   = "#A02D5B",   // command register
-            ["Narration"]   = "#6E1338",   // the dark end
-            ["Closer"]      = "#C49E4C",   // house gold, so it reads as an ending
+            ["Direction"] = "#A02D5B",   // command register
+            ["Narration"] = "#6E1338",   // the dark end
+            ["Closer"] = "#C49E4C",   // house gold, so it reads as an ending
         };
 
     /// <inheritdoc />
@@ -106,11 +106,11 @@ internal static class OutLoudCardBank
 {
     private static ICard Card(string tier, string body, Difficulty difficulty, string note) =>
         new StandardCard(
-            id:          StableId(tier, body),
-            title:       tier,
+            id: StableId(tier, body),
+            title: tier,
             description: $"<b>{body}</b>\n\n<i>{note}</i>",
-            difficulty:  difficulty,
-            category:    tier,
+            difficulty: difficulty,
+            category: tier,
             // Card-level gate. The mode already declares TableShape.Couple and the
             // Intimate node carries AgeRating.Adult, so "adult" alone matches every
             // other adult deck rather than inventing a second convention.

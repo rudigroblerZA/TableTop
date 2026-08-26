@@ -1,4 +1,3 @@
-using Microsoft.Maui.Graphics;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Presentation.ViewModels;
 
@@ -67,7 +66,7 @@ public sealed class GameModeItem
     private static Color? Parse(string? hex)
     {
         if (string.IsNullOrWhiteSpace(hex)) return null;
-        try   { return Color.FromArgb(hex); }
+        try { return Color.FromArgb(hex); }
         catch { return null; }
     }
 }

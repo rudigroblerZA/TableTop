@@ -68,22 +68,22 @@ public static class ModeManifestBuilder
 
         return new ModeManifest
         {
-            TotalCards            = cards.Count,
-            CardsByDifficulty     = byDifficulty,
-            Categories            = categories,
-            CardsByCategory       = byCategory,
-            AllTags               = allTags,
-            HasAdultContent       = hasAdult,
-            HasCouplesContent     = hasCouples,
-            EstimatedMinPlayTime  = RoundToFiveMinutes(TimeSpan.FromSeconds(minSec)),
-            EstimatedMaxPlayTime  = RoundToFiveMinutes(TimeSpan.FromSeconds(maxSec)),
+            TotalCards = cards.Count,
+            CardsByDifficulty = byDifficulty,
+            Categories = categories,
+            CardsByCategory = byCategory,
+            AllTags = allTags,
+            HasAdultContent = hasAdult,
+            HasCouplesContent = hasCouples,
+            EstimatedMinPlayTime = RoundToFiveMinutes(TimeSpan.FromSeconds(minSec)),
+            EstimatedMaxPlayTime = RoundToFiveMinutes(TimeSpan.FromSeconds(maxSec)),
         };
     }
 
     private static TimeSpan RoundToFiveMinutes(TimeSpan t)
     {
         var totalMins = (int)Math.Ceiling(t.TotalMinutes);
-        var rounded   = (int)(Math.Ceiling(totalMins / 5.0) * 5);
+        var rounded = (int)(Math.Ceiling(totalMins / 5.0) * 5);
         return TimeSpan.FromMinutes(Math.Max(5, rounded));
     }
 }

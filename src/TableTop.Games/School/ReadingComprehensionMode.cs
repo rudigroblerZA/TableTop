@@ -1,5 +1,5 @@
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
@@ -31,16 +31,16 @@ public sealed class ReadingComprehensionMode : BaseGameModeDefinition, IFlowAwar
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Full answer (+2)";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "→ Next passage";
+    public override string SkipLabel => "→ Next passage";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Literal"]      = "#26C6DA",
-            ["Inferential"]  = "#66BB6A",
-            ["Vocabulary"]   = "#FFCA28",
-            ["Author"]       = "#EC407A",
+            ["Literal"] = "#26C6DA",
+            ["Inferential"] = "#66BB6A",
+            ["Vocabulary"] = "#FFCA28",
+            ["Author"] = "#EC407A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

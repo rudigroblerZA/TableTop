@@ -1,9 +1,9 @@
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
+using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
-using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Domain.Restrictions;
 using TableTop.Core.Domain.Scoring;
 using TableTop.Games.Base;
@@ -40,15 +40,15 @@ public sealed class RelationshipDaresMode : BaseGameModeDefinition, ITableShapeM
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Done it";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "~ Negotiate";
+    public override string SkipLabel => "~ Negotiate";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Playful"]  = "#26C6DA",
-            ["Honest"]   = "#66BB6A",
-            ["Tender"]   = "#FFCA28",
+            ["Playful"] = "#26C6DA",
+            ["Honest"] = "#66BB6A",
+            ["Tender"] = "#FFCA28",
             ["Intimate"] = "#EC407A",
         };
 
@@ -73,8 +73,8 @@ public static class RelationshipDaresCardBank
     private static IReadOnlyList<ICard> Build()
     {
         var couplesOnly = new CoupleOnlyRestriction();
-        var adultsOnly  = new AdultOnlyRestriction();
-        var couples18   = couplesOnly.And(adultsOnly);
+        var adultsOnly = new AdultOnlyRestriction();
+        var couples18 = couplesOnly.And(adultsOnly);
 
         return
         [

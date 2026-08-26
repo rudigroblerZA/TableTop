@@ -1,6 +1,5 @@
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Maui.ViewModels;
 using TableTop.Presentation.ViewModels;
 
 namespace TableTop.Maui.Pages;
@@ -24,9 +23,9 @@ public partial class MonogamyGamePage : ContentPage
             opt.Invoke();
     }
 
-    private void OnCompleteClicked(object sender, EventArgs e)  => _vm.Complete();
+    private void OnCompleteClicked(object sender, EventArgs e) => _vm.Complete();
     private void OnNegotiateClicked(object sender, EventArgs e) => _vm.Negotiate();
-    private void OnSkipClicked(object sender, EventArgs e)      => _vm.Skip();
+    private void OnSkipClicked(object sender, EventArgs e) => _vm.Skip();
 
     private async void OnDoneClicked(object sender, EventArgs e) => await Navigation.PopToRootAsync();
 

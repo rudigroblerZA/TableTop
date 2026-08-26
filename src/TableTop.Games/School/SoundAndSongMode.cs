@@ -20,7 +20,7 @@ namespace TableTop.Games.School;
 public sealed class SoundAndSongMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Sound & Song";
+    public override string Name => "Sound & Song";
     /// <inheritdoc />
     public override string Description =>
         "Music general knowledge — instruments, the orchestra, reading and counting music, and music history. Multiple choice.";
@@ -28,7 +28,7 @@ public sealed class SoundAndSongMode : BaseGameModeDefinition
     /// <summary>Label for a correctly answered card.</summary>
     public override string CompleteLabel => "Correct";
     /// <summary>Label for a passed card.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>

@@ -44,7 +44,7 @@ namespace TableTop.Games.Couples;
 public sealed class SpyVsSpouseMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Spy vs Spouse";
+    public override string Name => "Spy vs Spouse";
     /// <inheritdoc />
     public override string Description =>
         "An innocent conversation game hiding a second, secret one: silent mission briefings, cover stories, and counterintelligence accusations.";
@@ -52,16 +52,16 @@ public sealed class SpyVsSpouseMode : BaseGameModeDefinition
     /// <summary>Label for the button that records a verified mission or played card.</summary>
     public override string CompleteLabel => "Mission Complete";
     /// <summary>Label for the button that burns a card.</summary>
-    public override string SkipLabel     => "Burn It";
+    public override string SkipLabel => "Burn It";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Briefing"]     = "#37474F",
-            ["Cover Story"]  = "#EC407A",
+            ["Briefing"] = "#37474F",
+            ["Cover Story"] = "#EC407A",
             ["Counterintel"] = "#FFA726",
-            ["Dead Drop"]    = "#26A69A",
+            ["Dead Drop"] = "#26A69A",
         };
 
     /// <summary>Harder missions pay more when verified.</summary>

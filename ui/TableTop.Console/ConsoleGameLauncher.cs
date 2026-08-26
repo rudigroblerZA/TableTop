@@ -1,13 +1,11 @@
-using TableTop.Hosting.Persistence;
-using TableTop.Hosting.Abstractions;
-using TableTop.Hosting.Controllers;
-using SC = System.Console;
-using CC = System.ConsoleColor;
-using CK = System.ConsoleKey;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Hosting;
-using TableTop.Games;
+using TableTop.Hosting.Abstractions;
+using TableTop.Hosting.Controllers;
+using TableTop.Hosting.Persistence;
+using CC = System.ConsoleColor;
+using SC = System.Console;
 
 namespace TableTop.Console;
 
@@ -43,14 +41,14 @@ internal sealed class ConsoleGameLauncher
         ControllerFamily.SimultaneousAnswer,
     ];
 
-    private readonly IPlayerRepository  _repository;
+    private readonly IPlayerRepository _repository;
     private readonly IControllerFactory _controllerFactory;
 
     public ConsoleGameLauncher(
-        IPlayerRepository?  repository        = null,
-        IControllerFactory? controllerFactory  = null)
+        IPlayerRepository? repository = null,
+        IControllerFactory? controllerFactory = null)
     {
-        _repository        = repository        ?? new JsonPlayerRepository();
+        _repository = repository ?? new JsonPlayerRepository();
         _controllerFactory = controllerFactory ?? new ControllerFactory();
         SeedDefaultsIfEmpty();
     }
@@ -66,7 +64,7 @@ internal sealed class ConsoleGameLauncher
 
             // Build archetype registry (includes any JSON modes from ./modes/)
             var registry = BuildRegistry();
-            var mode     = ConsoleArchetypePicker.Run(registry);
+            var mode = ConsoleArchetypePicker.Run(registry);
             if (mode is null) break;
 
             var suitability = TableSuitability.Check(mode, players);
@@ -116,7 +114,7 @@ internal sealed class ConsoleGameLauncher
         // staying pinned to the one that exists today.
         if (mode is IMonogamyDeckProvider monogamyProvider)
         {
-            var target     = ConsoleUi.PromptInt("Tokens to win?", 3, 30);
+            var target = ConsoleUi.PromptInt("Tokens to win?", 3, 30);
             var controller = new MonogamyController(
                 players,
                 monogamyProvider.GetDeck(),

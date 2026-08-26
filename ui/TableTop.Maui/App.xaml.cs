@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using TableTop.Maui.Pages;
 using TableTop.Maui.Services;
 
@@ -26,9 +25,9 @@ public partial class App : Application
         // Apply saved theme before any page renders
         UserAppTheme = AppSettings.Instance.Theme switch
         {
-            "light"  => AppTheme.Light,
+            "light" => AppTheme.Light,
             "system" => AppTheme.Unspecified,
-            _        => AppTheme.Dark,
+            _ => AppTheme.Dark,
         };
     }
 
@@ -44,7 +43,7 @@ public partial class App : Application
             // the WPF and WinUI heads use. This shows on every page, so it was
             // the most visible thing still wearing the pre-mock palette.
             BarBackgroundColor = Color.FromArgb("#4A2E1D"),
-            BarTextColor       = Color.FromArgb("#E3C67F"),
+            BarTextColor = Color.FromArgb("#E3C67F"),
         });
     }
 }

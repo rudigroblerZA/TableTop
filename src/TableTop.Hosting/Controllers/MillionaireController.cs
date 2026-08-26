@@ -4,9 +4,9 @@ using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Domain.Cards;
 using TableTop.Core.Domain.Game;
 using TableTop.Core.Domain.Lifelines;
+using TableTop.Games;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Events;
-using TableTop.Games;
 
 namespace TableTop.Hosting.Controllers;
 
@@ -16,32 +16,32 @@ namespace TableTop.Hosting.Controllers;
 /// </summary>
 public sealed class MillionaireController : IMillionaireController
 {
-    private readonly IReadOnlyList<IPlayer>   _players;
-    private readonly Dictionary<Guid, long>   _bankedPrizes;
+    private readonly IReadOnlyList<IPlayer> _players;
+    private readonly Dictionary<Guid, long> _bankedPrizes;
 
     private List<MultipleChoiceCard> _questionPool = [];
-    private PrizeLadder              _ladder       = new();
-    private List<Core.Domain.Lifelines.FiftyFiftyLifeline>      _lifelineList = [];
-    private List<Core.Abstractions.Lifelines.ILifeline>          _lifelines    = [];
-    private List<AnswerLabel>        _activeOptions = [];
-    private MultipleChoiceCard?      _currentQuestion;
-    private int                      _hotSeatIndex;
+    private PrizeLadder _ladder = new();
+    private List<Core.Domain.Lifelines.FiftyFiftyLifeline> _lifelineList = [];
+    private List<Core.Abstractions.Lifelines.ILifeline> _lifelines = [];
+    private List<AnswerLabel> _activeOptions = [];
+    private MultipleChoiceCard? _currentQuestion;
+    private int _hotSeatIndex;
 
     // ── Events ────────────────────────────────────────────────────────────────
     /// <summary>HotSeatBegan.</summary>
-    public event EventHandler<HotSeatBeganEvent>?         HotSeatBegan;
+    public event EventHandler<HotSeatBeganEvent>? HotSeatBegan;
     /// <summary>QuestionReady.</summary>
-    public event EventHandler<QuestionReadyEvent>?        QuestionReady;
+    public event EventHandler<QuestionReadyEvent>? QuestionReady;
     /// <summary>LifelineUsed.</summary>
-    public event EventHandler<LifelineUsedEvent>?         LifelineUsed;
+    public event EventHandler<LifelineUsedEvent>? LifelineUsed;
     /// <summary>AnswerCorrect.</summary>
-    public event EventHandler<AnswerCorrectEvent>?        AnswerCorrect;
+    public event EventHandler<AnswerCorrectEvent>? AnswerCorrect;
     /// <summary>AnswerWrong.</summary>
-    public event EventHandler<AnswerWrongEvent>?          AnswerWrong;
+    public event EventHandler<AnswerWrongEvent>? AnswerWrong;
     /// <summary>WalkedAway.</summary>
-    public event EventHandler<WalkedAwayEvent>?           WalkedAway;
+    public event EventHandler<WalkedAwayEvent>? WalkedAway;
     /// <summary>MillionaireWon.</summary>
-    public event EventHandler<MillionaireWonEvent>?       MillionaireWon;
+    public event EventHandler<MillionaireWonEvent>? MillionaireWon;
     /// <summary>GameEnded.</summary>
     public event EventHandler<MillionaireGameEndedEvent>? GameEnded;
 
@@ -59,11 +59,11 @@ public sealed class MillionaireController : IMillionaireController
     /// Pass <see cref="TableTop.Games.School.Grade6QuestionBank.All"/> for the school edition.
     /// </param>
     public MillionaireController(
-        IReadOnlyList<IPlayer>              players,
-        IReadOnlyList<MultipleChoiceCard>?  questionBank = null)
+        IReadOnlyList<IPlayer> players,
+        IReadOnlyList<MultipleChoiceCard>? questionBank = null)
     {
-        _players      = players;
-        _customBank   = questionBank;
+        _players = players;
+        _customBank = questionBank;
         _bankedPrizes = players.ToDictionary(p => p.Id, _ => 0L);
     }
 
@@ -96,10 +96,10 @@ public sealed class MillionaireController : IMillionaireController
 
             var rung = _ladder.Rungs[_ladder.CurrentRungIndex - 1];
             AnswerCorrect?.Invoke(this, new AnswerCorrectEvent(
-                PrizeWon:         rung.PrizeAmount,
+                PrizeWon: rung.PrizeAmount,
                 SafeHavenReached: _ladder.CurrentRung.IsSafeHaven,
-                GuaranteedPrize:  _ladder.GuaranteedPrize,
-                Ladder:           BuildLadderSnapshot()));
+                GuaranteedPrize: _ladder.GuaranteedPrize,
+                Ladder: BuildLadderSnapshot()));
 
             LoadNextQuestion();
         }
@@ -108,8 +108,8 @@ public sealed class MillionaireController : IMillionaireController
             var guaranteed = _ladder.GuaranteedPrize;
             _bankedPrizes[_players[_hotSeatIndex].Id] = guaranteed;
             AnswerWrong?.Invoke(this, new AnswerWrongEvent(
-                CorrectLabel:    _currentQuestion.CorrectAnswer,
-                CorrectText:     _currentQuestion.Answers[_currentQuestion.CorrectAnswer],
+                CorrectLabel: _currentQuestion.CorrectAnswer,
+                CorrectText: _currentQuestion.Answers[_currentQuestion.CorrectAnswer],
                 GuaranteedPrize: guaranteed));
             AdvanceToNextPlayer();
         }
@@ -118,7 +118,7 @@ public sealed class MillionaireController : IMillionaireController
     /// <summary>The player takes their current prize money and exits the hot seat.</summary>
     public void WalkAway()
     {
-        var rung  = _ladder.CurrentRung;
+        var rung = _ladder.CurrentRung;
         var prize = rung.PrizeAmount;
         _bankedPrizes[_players[_hotSeatIndex].Id] = prize;
         WalkedAway?.Invoke(this, new WalkedAwayEvent(prize));
@@ -139,10 +139,10 @@ public sealed class MillionaireController : IMillionaireController
             _activeOptions = result.RemainingOptions.ToList();
 
         LifelineUsed?.Invoke(this, new LifelineUsedEvent(
-            LifelineName:     lifeline.Name,
-            Narrative:        result.Narrative,
+            LifelineName: lifeline.Name,
+            Narrative: result.Narrative,
             RemainingOptions: result.RemainingOptions,
-            Suggestion:       result.Suggestion));
+            Suggestion: result.Suggestion));
 
         // Re-emit question with updated options
         RaiseQuestionReady();
@@ -158,14 +158,14 @@ public sealed class MillionaireController : IMillionaireController
             return;
         }
 
-        var player    = _players[_hotSeatIndex];
-        _ladder       = new PrizeLadder();
-        _lifelines    = [new FiftyFiftyLifeline(), new PhoneAFriendLifeline(), new AskTheAudienceLifeline()];
+        var player = _players[_hotSeatIndex];
+        _ladder = new PrizeLadder();
+        _lifelines = [new FiftyFiftyLifeline(), new PhoneAFriendLifeline(), new AskTheAudienceLifeline()];
         _questionPool = BuildQuestionPool();
 
         HotSeatBegan?.Invoke(this, new HotSeatBeganEvent(
-            PlayerName:   player.DisplayName,
-            PlayerIndex:  _hotSeatIndex,
+            PlayerName: player.DisplayName,
+            PlayerIndex: _hotSeatIndex,
             TotalPlayers: _players.Count));
 
         LoadNextQuestion();
@@ -180,7 +180,7 @@ public sealed class MillionaireController : IMillionaireController
 
         _questionPool.Remove(q);
         _currentQuestion = q;
-        _activeOptions   = Enum.GetValues<AnswerLabel>().ToList();
+        _activeOptions = Enum.GetValues<AnswerLabel>().ToList();
 
         RaiseQuestionReady();
     }
@@ -189,11 +189,11 @@ public sealed class MillionaireController : IMillionaireController
     {
         if (_currentQuestion is null) return;
         QuestionReady?.Invoke(this, new QuestionReadyEvent(
-            QuestionText:     _currentQuestion.Title,
-            Answers:          _currentQuestion.Answers,
+            QuestionText: _currentQuestion.Title,
+            Answers: _currentQuestion.Answers,
             AvailableOptions: _activeOptions.AsReadOnly(),
-            Ladder:           BuildLadderSnapshot(),
-            Lifelines:        _lifelines.Select(l => new LifelineSnapshot(l.Name, l.IsAvailable)).ToList().AsReadOnly()));
+            Ladder: BuildLadderSnapshot(),
+            Lifelines: _lifelines.Select(l => new LifelineSnapshot(l.Name, l.IsAvailable)).ToList().AsReadOnly()));
     }
 
     private void AdvanceToNextPlayer()
@@ -222,9 +222,9 @@ public sealed class MillionaireController : IMillionaireController
                 i == _ladder.CurrentRungIndex && !_ladder.IsComplete,
                 i < _ladder.CurrentRungIndex))
             .ToList().AsReadOnly(),
-            CurrentIndex:    _ladder.CurrentRungIndex,
+            CurrentIndex: _ladder.CurrentRungIndex,
             GuaranteedPrize: _ladder.GuaranteedPrize,
-            IsComplete:      _ladder.IsComplete);
+            IsComplete: _ladder.IsComplete);
 
     private List<MultipleChoiceCard> BuildQuestionPool()
     {
@@ -241,10 +241,10 @@ public sealed class MillionaireController : IMillionaireController
     {
         var target = rung.QuestionNumber switch
         {
-            <= 5  => Difficulty.Easy,
+            <= 5 => Difficulty.Easy,
             <= 10 => Difficulty.Medium,
             <= 14 => Difficulty.Hard,
-            _     => Difficulty.Extreme,
+            _ => Difficulty.Extreme,
         };
         return pool.FirstOrDefault(q => q.Difficulty == target) ?? pool.FirstOrDefault();
     }

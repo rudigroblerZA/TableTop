@@ -45,7 +45,7 @@ public sealed class SettingsViewModel : ViewModelBase
     public SettingsViewModel(INavigator navigator, IAppSettings settings)
     {
         _s = settings;
-        BackCommand  = new RelayCommand(navigator.GoBack);
+        BackCommand = new RelayCommand(navigator.GoBack);
 
         // Passing null to OnPropertyChanged tells binding engines "every property
         // changed" — the whole screen re-reads after a reset, without listing
@@ -72,9 +72,9 @@ public sealed class SettingsViewModel : ViewModelBase
     // until it binds them.
 
     /// <summary>Display labels for <see cref="ThemeIndex"/>.</summary>
-    public IReadOnlyList<string> ThemeOptions      { get; } = ["Dark", "Light", "System"];
+    public IReadOnlyList<string> ThemeOptions { get; } = ["Dark", "Light", "System"];
     /// <summary>Display labels for <see cref="FontSizeIndex"/>.</summary>
-    public IReadOnlyList<string> FontSizeOptions   { get; } = ["Small (12)", "Medium (15)", "Large (18)", "Extra Large (20)"];
+    public IReadOnlyList<string> FontSizeOptions { get; } = ["Small (12)", "Medium (15)", "Large (18)", "Extra Large (20)"];
     /// <summary>Display labels for the difficulty bounds.</summary>
     public IReadOnlyList<string> DifficultyOptions { get; } = ["Easy", "Medium", "Hard", "Extreme"];
     /// <summary>
@@ -84,10 +84,10 @@ public sealed class SettingsViewModel : ViewModelBase
     /// than naming the rating. It was hardcoded in that head's markup; MAUI bound
     /// the ViewModel's terser list and got the worse labels. Now both get these.
     /// </summary>
-    public IReadOnlyList<string> AgeOptions        { get; } =
+    public IReadOnlyList<string> AgeOptions { get; } =
         ["All ages (show everything)", "Teen and up", "Adult only"];
     /// <summary>Display labels for <see cref="TimerIndex"/>.</summary>
-    public IReadOnlyList<string> TimerOptions      { get; } = ["30 seconds", "60 seconds", "90 seconds", "2 minutes", "3 minutes", "5 minutes"];
+    public IReadOnlyList<string> TimerOptions { get; } = ["30 seconds", "60 seconds", "90 seconds", "2 minutes", "3 minutes", "5 minutes"];
 
     private static readonly int[] FontSizeValues = [12, 15, 18, 20];
     private static readonly int[] TimerSecValues = [30, 60, 90, 120, 180, 300];

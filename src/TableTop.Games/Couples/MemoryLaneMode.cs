@@ -1,8 +1,8 @@
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
+using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
-using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Domain.Restrictions;
 using TableTop.Core.Domain.Scoring;
 using TableTop.Games.Base;
@@ -36,16 +36,16 @@ public sealed class MemoryLaneMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "→ Both shared";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "⤳ Skip";
+    public override string SkipLabel => "⤳ Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
             ["First Times"] = "#42A5F5",
-            ["Milestones"]  = "#66BB6A",
-            ["Hidden Views"]= "#EC407A",
-            ["Right Now"]   = "#FFCA28",
+            ["Milestones"] = "#66BB6A",
+            ["Hidden Views"] = "#EC407A",
+            ["Right Now"] = "#FFCA28",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

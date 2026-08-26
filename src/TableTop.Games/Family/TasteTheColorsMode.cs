@@ -29,7 +29,7 @@ namespace TableTop.Games.Family;
 public sealed class TasteTheColorsMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Taste The Colors";
+    public override string Name => "Taste The Colors";
     /// <inheritdoc />
     public override string Description =>
         "What does Tuesday taste like? Cross your senses. Be creative. Be weird.";
@@ -37,17 +37,17 @@ public sealed class TasteTheColorsMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Answered";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Time"]       = "#42A5F5",
-            ["Emotion"]    = "#EC407A",
-            ["Concept"]    = "#AB47BC",
-            ["Abstract"]   = "#FFA726",
-            ["Sensory"]    = "#66BB6A",
+            ["Time"] = "#42A5F5",
+            ["Emotion"] = "#EC407A",
+            ["Concept"] = "#AB47BC",
+            ["Abstract"] = "#FFA726",
+            ["Sensory"] = "#66BB6A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

@@ -73,7 +73,7 @@ public static class TableSuitability
             return new TableSuitabilityResult(true, mode.Name, TableShape.None, TableShape.None);
 
         var actual = TableComposition.From(players).Shape;
-        var suits  = shaped.SuitableFor.Suits(actual);
+        var suits = shaped.SuitableFor.Suits(actual);
         return new TableSuitabilityResult(suits, mode.Name, shaped.SuitableFor, actual);
     }
 }

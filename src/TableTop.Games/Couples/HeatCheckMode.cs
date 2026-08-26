@@ -1,5 +1,5 @@
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
@@ -31,7 +31,7 @@ public sealed class HeatCheckMode : BaseGameModeDefinition, ITableShapeMode
     public TableShape SuitableFor => TableShape.Couple;
 
     /// <inheritdoc />
-    public override string Name        => "Heat Check";
+    public override string Name => "Heat Check";
     /// <inheritdoc />
     public override string Description =>
         "Every card at two temperatures — 🕯️ candle or 🔥 fire. You choose together, every time. Mismatch means candle.";
@@ -39,16 +39,16 @@ public sealed class HeatCheckMode : BaseGameModeDefinition, ITableShapeMode
     /// <summary>Label for the button that records a played card.</summary>
     public override string CompleteLabel => "Played It";
     /// <summary>Label for the button that passes on a card entirely.</summary>
-    public override string SkipLabel     => "Too Hot / Not Tonight";
+    public override string SkipLabel => "Too Hot / Not Tonight";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
             ["Confessions"] = "#EC407A",
-            ["Dares"]       = "#EF5350",
-            ["Scenes"]      = "#AB47BC",
-            ["Closer"]      = "#B71C4A",
+            ["Dares"] = "#EF5350",
+            ["Scenes"] = "#AB47BC",
+            ["Closer"] = "#B71C4A",
         };
 
     /// <summary>No points — the reward system is built into the cards.</summary>

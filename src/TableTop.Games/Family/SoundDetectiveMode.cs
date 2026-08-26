@@ -27,7 +27,7 @@ namespace TableTop.Games.Family;
 public sealed class SoundDetectiveMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Sound Detective";
+    public override string Name => "Sound Detective";
     /// <inheritdoc />
     public override string Description =>
         "Guess the sound from increasingly abstract clues. First correct = most points.";
@@ -35,17 +35,17 @@ public sealed class SoundDetectiveMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Guessed";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Nature"]     = "#66BB6A",
-            ["Human"]      = "#EC407A",
+            ["Nature"] = "#66BB6A",
+            ["Human"] = "#EC407A",
             ["Mechanical"] = "#42A5F5",
-            ["Animal"]     = "#FFCA28",
-            ["Abstract"]   = "#AB47BC",
+            ["Animal"] = "#FFCA28",
+            ["Abstract"] = "#AB47BC",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

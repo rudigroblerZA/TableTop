@@ -87,24 +87,24 @@ public sealed class SessionSnapshot
 public sealed class FlowStateSnapshot
 {
     /// <summary>The difficulty tier at which this player's flow was sitting when the session was saved.</summary>
-    public string Difficulty           { get; set; } = "Easy";
+    public string Difficulty { get; set; } = "Easy";
     /// <summary>The escalation pace at which this player's flow was sitting when the session was saved.</summary>
-    public string Pace                 { get; set; } = "Normal";
+    public string Pace { get; set; } = "Normal";
     /// <summary>Cards played at the saved difficulty level, used to continue auto-escalation counting after resume.</summary>
-    public int    CardsPlayedAtLevel   { get; set; }
+    public int CardsPlayedAtLevel { get; set; }
 }
 
 /// <summary>Per-player state at save time.</summary>
 public sealed class PlayerSessionState
 {
     /// <summary>The player's stable identity GUID.</summary>
-    public Guid   PlayerId    { get; set; }
+    public Guid PlayerId { get; set; }
     /// <summary>The player's display name at save time.</summary>
     public string DisplayName { get; set; } = string.Empty;
     /// <summary>The player's score at save time.</summary>
-    public int    Score       { get; set; }
+    public int Score { get; set; }
     /// <summary>The player's status (<c>Active</c> or <c>Inactive</c>) at save time.</summary>
-    public string Status      { get; set; } = "Active";
+    public string Status { get; set; } = "Active";
 
     /// <summary>
     /// The player's attributes at save time — gender above all.
@@ -129,14 +129,14 @@ public sealed class PlayerSessionState
 public sealed class SavedInspiration
 {
     /// <summary>The saved inspiration card's ID.</summary>
-    public Guid    CardId             { get; set; }
+    public Guid CardId { get; set; }
     /// <summary>The saved inspiration card's title.</summary>
-    public string  Title              { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
     /// <summary>The inspiration prompt text that was saved.</summary>
-    public string  InspirationText    { get; set; } = string.Empty;
+    public string InspirationText { get; set; } = string.Empty;
     /// <summary>The category of this inspiration card, if one was set.</summary>
-    public string? InspirationCategory{ get; set; }
+    public string? InspirationCategory { get; set; }
     /// <summary>SavedAt.</summary>
-    public DateTimeOffset SavedAt     { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset SavedAt { get; set; } = DateTimeOffset.UtcNow;
 
 }

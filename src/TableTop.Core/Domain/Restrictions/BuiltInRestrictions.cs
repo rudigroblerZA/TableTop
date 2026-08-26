@@ -45,7 +45,7 @@ public sealed class AttributeRestriction : IRestriction
         _value = value;
     }
 
-    internal string Key   => _key;
+    internal string Key => _key;
     internal string Value => _value;
 
     /// <inheritdoc />

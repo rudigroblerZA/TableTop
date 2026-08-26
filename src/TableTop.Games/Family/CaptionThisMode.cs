@@ -27,7 +27,7 @@ namespace TableTop.Games.Family;
 public sealed class CaptionThisMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Caption This";
+    public override string Name => "Caption This";
     /// <inheritdoc />
     public override string Description =>
         "Invent the funniest caption, headline, or one-liner for an absurd scene. Quickest wit wins the round.";
@@ -35,14 +35,14 @@ public sealed class CaptionThisMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "🏆 Funniest";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "⤳ Skip";
+    public override string SkipLabel => "⤳ Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Scene"]     = "#42A5F5",
-            ["Headline"]  = "#FFCA28",
+            ["Scene"] = "#42A5F5",
+            ["Headline"] = "#FFCA28",
             ["Overheard"] = "#EC407A",
         };
 

@@ -2,11 +2,11 @@ namespace TableTop.Hosting.Events;
 
 /// <summary>A territory challenge has been drawn and is waiting for the table to judge it.</summary>
 public sealed record TerritoryChallengeReadyEvent(
-    string  PlayerName,
-    string  TerritoryName,
-    string  CardTitle,
-    string  CardText,
-    string  Difficulty,
+    string PlayerName,
+    string TerritoryName,
+    string CardTitle,
+    string CardText,
+    string Difficulty,
     // Null when the territory is unclaimed; the current holder's name otherwise (a raid).
     string? DefenderName);
 
@@ -30,7 +30,7 @@ public sealed record ChallengeFailedEvent(
     string PlayerName,
     string TerritoryName,
     // True when this was a raid on a held territory rather than a claim on open ground.
-    bool   WasRaid);
+    bool WasRaid);
 
 /// <summary>Why a Claimed! session ended.</summary>
 public enum ClaimedEndReason

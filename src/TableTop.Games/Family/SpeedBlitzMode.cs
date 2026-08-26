@@ -25,7 +25,7 @@ namespace TableTop.Games.Family;
 public sealed class SpeedBlitzMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Speed Blitz";
+    public override string Name => "Speed Blitz";
     /// <inheritdoc />
     public override string Description =>
         "Rapid-fire timed challenges — name things, answer trivia, solve riddles, all against the clock.";
@@ -33,17 +33,17 @@ public sealed class SpeedBlitzMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Success";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "✗ Timeout";
+    public override string SkipLabel => "✗ Timeout";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Name"]    = "#42A5F5",
-            ["Words"]   = "#66BB6A",
-            ["Trivia"]  = "#FFA726",
-            ["Riddle"]  = "#EC407A",
-            ["Math"]    = "#AB47BC",
+            ["Name"] = "#42A5F5",
+            ["Words"] = "#66BB6A",
+            ["Trivia"] = "#FFA726",
+            ["Riddle"] = "#EC407A",
+            ["Math"] = "#AB47BC",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

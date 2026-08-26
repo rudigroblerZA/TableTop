@@ -26,7 +26,7 @@ namespace TableTop.Games.Couples;
 public sealed class TheProphecyMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "The Prophecy";
+    public override string Name => "The Prophecy";
     /// <inheritdoc />
     public override string Description =>
         "Answer a question. Receive a hilariously vague fortune. Laugh at the universe.";
@@ -34,17 +34,17 @@ public sealed class TheProphecyMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Prophesied";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Decline fate";
+    public override string SkipLabel => "Decline fate";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Love"]       = "#EC407A",
-            ["Career"]     = "#42A5F5",
-            ["Chaos"]      = "#EF5350",
-            ["Wisdom"]     = "#AB47BC",
-            ["Destiny"]    = "#FFCA28",
+            ["Love"] = "#EC407A",
+            ["Career"] = "#42A5F5",
+            ["Chaos"] = "#EF5350",
+            ["Wisdom"] = "#AB47BC",
+            ["Destiny"] = "#FFCA28",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

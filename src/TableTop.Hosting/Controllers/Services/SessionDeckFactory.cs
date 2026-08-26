@@ -2,7 +2,6 @@ using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Decks;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Domain.Cards;
 using TableTop.Core.Domain.Decks;
 
 namespace TableTop.Hosting.Controllers.Services;
@@ -28,16 +27,16 @@ internal static class SessionDeckFactory
     /// The configured difficulty range excludes every card in the mode.
     /// </exception>
     public static async Task<IDeck> BuildAsync(
-        IGameModeDefinition    definition,
+        IGameModeDefinition definition,
         IReadOnlyList<IPlayer> players,
-        string                 modeName,
-        GameplayOptions        options,
-        CancellationToken      ct = default)
+        string modeName,
+        GameplayOptions options,
+        CancellationToken ct = default)
     {
         ct.ThrowIfCancellationRequested();
 
         var builder = PrepareBuilder(definition, players, modeName, options);
-        var deck    = await builder.BuildAsync(ct).ConfigureAwait(false);
+        var deck = await builder.BuildAsync(ct).ConfigureAwait(false);
 
         return Finish(deck, definition, players, modeName, options);
     }
@@ -55,24 +54,24 @@ internal static class SessionDeckFactory
     /// The configured difficulty range excludes every card in the mode.
     /// </exception>
     public static IDeck Build(
-        IGameModeDefinition    definition,
+        IGameModeDefinition definition,
         IReadOnlyList<IPlayer> players,
-        string                 modeName,
-        GameplayOptions        options)
+        string modeName,
+        GameplayOptions options)
     {
         var builder = PrepareBuilder(definition, players, modeName, options);
-        var deck    = builder.BuildAsync().GetAwaiter().GetResult();
+        var deck = builder.BuildAsync().GetAwaiter().GetResult();
 
         return Finish(deck, definition, players, modeName, options);
     }
 
     private static IDeckBuilder PrepareBuilder(
-        IGameModeDefinition    definition,
+        IGameModeDefinition definition,
         IReadOnlyList<IPlayer> players,
-        string                 modeName,
-        GameplayOptions        options)
+        string modeName,
+        GameplayOptions options)
     {
-        var cards    = definition.GetCards(players);
+        var cards = definition.GetCards(players);
         var provider = new InMemoryCardProvider(cards);
 
         var builder = new DeckBuilder().WithName(modeName).WithProvider(provider);
@@ -84,11 +83,11 @@ internal static class SessionDeckFactory
 
     /// <summary>Shuffle, pinning and capping — identical for both entry points.</summary>
     private static IDeck Finish(
-        IDeck                  deck,
-        IGameModeDefinition    definition,
+        IDeck deck,
+        IGameModeDefinition definition,
         IReadOnlyList<IPlayer> players,
-        string                 modeName,
-        GameplayOptions        options)
+        string modeName,
+        GameplayOptions options)
     {
         if (deck.Count == 0)
             throw new InvalidOperationException(
@@ -128,7 +127,7 @@ internal static class SessionDeckFactory
         IDeck deck, IGameModeDefinition definition, IReadOnlyDictionary<Guid, int> authoredOrder)
     {
         var first = definition.CategoriesPinnedToStart;
-        var last  = definition.CategoriesPinnedToEnd;
+        var last = definition.CategoriesPinnedToEnd;
         if (first.Count == 0 && last.Count == 0) return deck;
 
         bool In(IReadOnlyList<string> set, ICard c) =>

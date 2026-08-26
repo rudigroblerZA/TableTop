@@ -29,10 +29,10 @@ public static class MonogamyDiceMapping
     /// </summary>
     public static MonogamyZone ToZone(this DiceRoll roll) => roll.Total switch
     {
-        <= 4  => MonogamyZone.Foreplay,
-        <= 6  => MonogamyZone.Sensual,
-        <= 8  => MonogamyZone.Steamy,
+        <= 4 => MonogamyZone.Foreplay,
+        <= 6 => MonogamyZone.Sensual,
+        <= 8 => MonogamyZone.Steamy,
         <= 10 => MonogamyZone.Wild,
-        _     => MonogamyZone.Fantasy,
+        _ => MonogamyZone.Fantasy,
     };
 }

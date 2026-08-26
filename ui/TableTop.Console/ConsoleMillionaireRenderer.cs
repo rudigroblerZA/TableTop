@@ -1,9 +1,8 @@
-using SC = System.Console;
-using CC = System.ConsoleColor;
-using CK = System.ConsoleKey;
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Events;
+using CC = System.ConsoleColor;
+using SC = System.Console;
 
 namespace TableTop.Console;
 
@@ -13,23 +12,23 @@ namespace TableTop.Console;
 internal sealed class ConsoleMillionaireRenderer
 {
     private readonly IMillionaireController _controller;
-    private QuestionReadyEvent?             _currentQuestion;
-    private bool                            _awaitingConfirm;
-    private AnswerLabel?                    _pendingAnswer;
-    private bool                            _waitingForInput;
+    private QuestionReadyEvent? _currentQuestion;
+    private bool _awaitingConfirm;
+    private AnswerLabel? _pendingAnswer;
+    private bool _waitingForInput;
 
     public ConsoleMillionaireRenderer(IMillionaireController controller)
     {
         _controller = controller;
 
-        controller.HotSeatBegan   += OnHotSeatBegan;
-        controller.QuestionReady  += OnQuestionReady;
-        controller.LifelineUsed   += OnLifelineUsed;
-        controller.AnswerCorrect  += OnAnswerCorrect;
-        controller.AnswerWrong    += OnAnswerWrong;
-        controller.WalkedAway     += OnWalkedAway;
+        controller.HotSeatBegan += OnHotSeatBegan;
+        controller.QuestionReady += OnQuestionReady;
+        controller.LifelineUsed += OnLifelineUsed;
+        controller.AnswerCorrect += OnAnswerCorrect;
+        controller.AnswerWrong += OnAnswerWrong;
+        controller.WalkedAway += OnWalkedAway;
         controller.MillionaireWon += OnMillionaireWon;
-        controller.GameEnded      += OnGameEnded;
+        controller.GameEnded += OnGameEnded;
     }
 
     public void RunBlocking()
@@ -62,7 +61,7 @@ internal sealed class ConsoleMillionaireRenderer
     {
         _currentQuestion = e;
         _awaitingConfirm = false;
-        _pendingAnswer   = null;
+        _pendingAnswer = null;
 
         ConsoleUi.Clear();
         ConsoleUi.Banner();
@@ -143,7 +142,7 @@ internal sealed class ConsoleMillionaireRenderer
         if (_awaitingConfirm)
         {
             if (input is "Y" or "YES") { _controller.SubmitAnswer(_pendingAnswer!.Value); return; }
-            if (input is "N" or "NO")  { _awaitingConfirm = false; _pendingAnswer = null; PrintCurrentQuestion(); return; }
+            if (input is "N" or "NO") { _awaitingConfirm = false; _pendingAnswer = null; PrintCurrentQuestion(); return; }
         }
 
         switch (input)
@@ -171,7 +170,7 @@ internal sealed class ConsoleMillionaireRenderer
             _waitingForInput = true;
             return;
         }
-        _pendingAnswer   = label;
+        _pendingAnswer = label;
         _awaitingConfirm = true;
         SC.Write($"  Final answer — {label}: {_currentQuestion?.Answers[label]}? (y/n): ");
         _waitingForInput = true;

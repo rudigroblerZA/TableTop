@@ -21,7 +21,7 @@ namespace TableTop.Games.School;
 public sealed class WorldExplorerMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "World Explorer";
+    public override string Name => "World Explorer";
     /// <inheritdoc />
     public override string Description =>
         "Geography general knowledge — capitals, countries, landmarks, and natural wonders. Multiple choice, four difficulties.";
@@ -29,15 +29,15 @@ public sealed class WorldExplorerMode : BaseGameModeDefinition
     /// <summary>Label for a correctly answered card.</summary>
     public override string CompleteLabel => "Correct";
     /// <summary>Label for a passed card.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Capitals"]   = "#26C6DA",
-            ["Countries"]  = "#66BB6A",
-            ["Landmarks"]  = "#FFA726",
+            ["Capitals"] = "#26C6DA",
+            ["Countries"] = "#66BB6A",
+            ["Landmarks"] = "#FFA726",
             ["Natural World"] = "#4CAF50",
             ["On the Map"] = "#42A5F5",
         };

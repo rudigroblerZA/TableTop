@@ -27,7 +27,7 @@ namespace TableTop.Games.Family;
 public sealed class BackwardsStoryMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Backwards Story";
+    public override string Name => "Backwards Story";
     /// <inheritdoc />
     public override string Description =>
         "Read the ending. Write the full story. Vote on which version is best.";
@@ -35,17 +35,17 @@ public sealed class BackwardsStoryMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Created";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Dramatic"]    = "#EC407A",
-            ["Silly"]       = "#FFCA28",
+            ["Dramatic"] = "#EC407A",
+            ["Silly"] = "#FFCA28",
             ["Mysterious"] = "#AB47BC",
-            ["Heartfelt"]  = "#66BB6A",
-            ["Chaotic"]    = "#EF5350",
+            ["Heartfelt"] = "#66BB6A",
+            ["Chaotic"] = "#EF5350",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

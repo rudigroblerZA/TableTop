@@ -4,7 +4,6 @@ using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Progression;
 using TableTop.Core.Abstractions.Rules;
 using TableTop.Core.Abstractions.Scoring;
-using TableTop.Core.Domain.Players;
 using TableTop.Core.Domain.Progression;
 using TableTop.Core.Domain.Rules;
 
@@ -38,10 +37,10 @@ namespace TableTop.Core.Engine;
 public sealed class Game : IGame
 {
     private readonly IGameConfiguration _config;
-    private readonly IPlayerManager     _playerManager;
-    private readonly IRuleEvaluator     _ruleEvaluator;
-    private readonly List<ICard>        _playedCards = [];
-    private readonly GameMetadata       _metadata    = new();
+    private readonly IPlayerManager _playerManager;
+    private readonly IRuleEvaluator _ruleEvaluator;
+    private readonly List<ICard> _playedCards = [];
+    private readonly GameMetadata _metadata = new();
 
     /// <summary>
     /// Exposes the session metadata for seeding (e.g. played-card history when
@@ -50,24 +49,24 @@ public sealed class Game : IGame
     public GameMetadata Metadata => _metadata;
 
     private IPlayer? _currentPlayer;
-    private ICard?   _currentCard;
+    private ICard? _currentCard;
 
     /// <inheritdoc />
     public ICard? CurrentCard => _currentCard;
-    private int      _turnsThisRound;        // Issue 3: explicit per-round turn counter
-    private int      _activePlayerSnapshot;  // Issue 3: snapshotted at round start
+    private int _turnsThisRound;        // Issue 3: explicit per-round turn counter
+    private int _activePlayerSnapshot;  // Issue 3: snapshotted at round start
 
     /// <summary>Initialises a new <see cref="Game"/> instance.</summary>
     public Game(
         IGameConfiguration config,
-        IPlayerManager     playerManager,
-        IRuleEvaluator     ruleEvaluator)
+        IPlayerManager playerManager,
+        IRuleEvaluator ruleEvaluator)
     {
-        _config        = config        ?? throw new ArgumentNullException(nameof(config));
+        _config = config ?? throw new ArgumentNullException(nameof(config));
         _playerManager = playerManager ?? throw new ArgumentNullException(nameof(playerManager));
         _ruleEvaluator = ruleEvaluator ?? throw new ArgumentNullException(nameof(ruleEvaluator));
 
-        Id    = Guid.NewGuid();
+        Id = Guid.NewGuid();
         State = GameState.Pending;
         Round = 0;
 
@@ -76,13 +75,13 @@ public sealed class Game : IGame
     }
 
     /// <inheritdoc />
-    public Guid      Id            { get; }
+    public Guid Id { get; }
     /// <inheritdoc />
-    public GameState State         { get; private set; }
+    public GameState State { get; private set; }
     /// <inheritdoc />
-    public int       Round         { get; private set; }
+    public int Round { get; private set; }
     /// <inheritdoc />
-    public IPlayer?  CurrentPlayer => _currentPlayer;
+    public IPlayer? CurrentPlayer => _currentPlayer;
 
     /// <summary>PlayedCards.</summary>
     public IReadOnlyList<ICard> PlayedCards => _playedCards.AsReadOnly();
@@ -93,7 +92,7 @@ public sealed class Game : IGame
     /// <summary>TurnCompleted.</summary>
     public event EventHandler<TurnCompletedEventArgs>? TurnCompleted;
     /// <summary>GameEnded.</summary>
-    public event EventHandler<GameEndedEventArgs>?     GameEnded;
+    public event EventHandler<GameEndedEventArgs>? GameEnded;
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
@@ -117,13 +116,13 @@ public sealed class Game : IGame
         if (_currentPlayer is null) return null;
 
         var progressionContext = BuildProgressionContext();
-        var ruleContext        = BuildRuleContext();
+        var ruleContext = BuildRuleContext();
 
         // Phase 1: ask the strategy for a candidate ID — deck is NOT mutated
-        ICard? selected      = null;
-        var    deckSize      = _config.Deck.Count;
-        var    attempts      = 0;
-        var    skipIds       = new HashSet<Guid>(); // cards found ineligible this pass
+        ICard? selected = null;
+        var deckSize = _config.Deck.Count;
+        var attempts = 0;
+        var skipIds = new HashSet<Guid>(); // cards found ineligible this pass
 
         // Hold back deferred categories while anything else is still playable.
         //
@@ -208,7 +207,7 @@ public sealed class Game : IGame
             // Issue 8: special cards use explicit NoScore policy by default
             scoreDelta = _config.SpecialCardScoringPolicy switch
             {
-                SpecialCardScoringPolicy.NoScore    => 0,
+                SpecialCardScoringPolicy.NoScore => 0,
                 SpecialCardScoringPolicy.FixedBonus => _config.SpecialCardBonusScore,
                 SpecialCardScoringPolicy.ModeDefined =>
                     _config.ScoringStrategy.CalculateScore(_currentCard, _currentPlayer, outcome),
@@ -221,8 +220,8 @@ public sealed class Game : IGame
             var strategyScore = _config.ScoringStrategy
                 .CalculateScore(_currentCard, _currentPlayer, outcome);
 
-            var ruleContext   = BuildRuleContext();
-            var ruleResult    = _ruleEvaluator
+            var ruleContext = BuildRuleContext();
+            var ruleResult = _ruleEvaluator
                 .Evaluate(_currentCard, _currentPlayer, ruleContext);
 
             scoreDelta = strategyScore + ruleResult.ScoreDelta;
@@ -235,16 +234,16 @@ public sealed class Game : IGame
 
         var args = new TurnCompletedEventArgs
         {
-            Player     = _currentPlayer,
-            Card       = _currentCard,
-            Outcome    = outcome,
+            Player = _currentPlayer,
+            Card = _currentCard,
+            Outcome = outcome,
             ScoreDelta = scoreDelta,
-            Round      = Round,
+            Round = Round,
         };
 
         // Null out before firing events so AdvanceTurn() during event handling
         // can set fresh values without being overwritten afterwards.
-        _currentCard   = null;
+        _currentCard = null;
         _currentPlayer = null;
 
         TurnCompleted?.Invoke(this, args);
@@ -293,12 +292,12 @@ public sealed class Game : IGame
         // Restore the turn itself, and point the rotation at this player so the
         // NEXT turn goes to whoever legitimately follows them.
         _currentPlayer = player;
-        _currentCard   = card;
+        _currentCard = card;
         _playerManager.RewindTo(player.Id);
     }
 
     /// <inheritdoc />
-    public void Pause()  { EnsureState(GameState.Active); State = GameState.Paused; }
+    public void Pause() { EnsureState(GameState.Active); State = GameState.Paused; }
     /// <inheritdoc />
     public void Resume() { EnsureState(GameState.Paused); State = GameState.Active; }
 
@@ -316,7 +315,7 @@ public sealed class Game : IGame
         GameEnded?.Invoke(this, new GameEndedEventArgs
         {
             FinalStandings = standings,
-            TotalRounds    = Round,
+            TotalRounds = Round,
         });
     }
 
@@ -324,9 +323,9 @@ public sealed class Game : IGame
 
     private void SnapshotActivePlayerCount()
     {
-        _activePlayerSnapshot                     = _playerManager.ActivePlayers.Count;
-        _metadata.ActivePlayersAtRoundStart        = _activePlayerSnapshot;
-        _turnsThisRound                            = 0;
+        _activePlayerSnapshot = _playerManager.ActivePlayers.Count;
+        _metadata.ActivePlayersAtRoundStart = _activePlayerSnapshot;
+        _turnsThisRound = 0;
     }
 
     private void AdvanceRoundIfComplete()

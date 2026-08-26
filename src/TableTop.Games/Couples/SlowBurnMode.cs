@@ -1,5 +1,5 @@
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
@@ -37,7 +37,7 @@ public sealed class SlowBurnMode : BaseGameModeDefinition, ITableShapeMode
     public TableShape SuitableFor => TableShape.Couple;
 
     /// <inheritdoc />
-    public override string Name        => "Slow Burn";
+    public override string Name => "Slow Burn";
     /// <inheritdoc />
     public override string Description =>
         "Sealed promises, beautiful almosts, and a pot of folded IOUs that pays out when the game ends. Bring paper. Bring patience.";
@@ -45,16 +45,16 @@ public sealed class SlowBurnMode : BaseGameModeDefinition, ITableShapeMode
     /// <summary>Label for the button that records a played card.</summary>
     public override string CompleteLabel => "Delivered";
     /// <summary>Label for the button that passes on a card.</summary>
-    public override string SkipLabel     => "Saving It";
+    public override string SkipLabel => "Saving It";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["IOU"]        = "#EC407A",
-            ["Almost"]     = "#EF5350",
+            ["IOU"] = "#EC407A",
+            ["Almost"] = "#EF5350",
             ["House Rule"] = "#AB47BC",
-            ["Cash In"]    = "#B71C4A",
+            ["Cash In"] = "#B71C4A",
         };
 
     /// <summary>No points — the pot is the prize.</summary>

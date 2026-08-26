@@ -1,6 +1,5 @@
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Maui.ViewModels;
 using TableTop.Presentation.ViewModels;
 
 namespace TableTop.Maui.Pages;

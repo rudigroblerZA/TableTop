@@ -50,11 +50,11 @@ internal static class ClaimedCardBank
 {
     private static ICard C(string territory, string title, string body, Difficulty difficulty) =>
         new StandardCard(
-            id:          StableId(territory, title, body),
-            title:       title,
+            id: StableId(territory, title, body),
+            title: title,
             description: body,
-            difficulty:  difficulty,
-            category:    territory);
+            difficulty: difficulty,
+            category: territory);
 
     private static Guid StableId(string territory, string title, string body) =>
         new(System.Security.Cryptography.MD5.HashData(

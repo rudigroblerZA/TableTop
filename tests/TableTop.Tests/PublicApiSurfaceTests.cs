@@ -39,8 +39,8 @@ public sealed class PublicApiSurfaceTests
     public void Public_surface_matches_the_committed_snapshot(string assemblyName)
     {
         var assembly = AssemblyFor(assemblyName);
-        var actual   = Describe(assembly);
-        var path     = Path.Combine(FindRepositoryRoot(), "api", $"{assemblyName}.api.txt");
+        var actual = Describe(assembly);
+        var path = Path.Combine(FindRepositoryRoot(), "api", $"{assemblyName}.api.txt");
 
         if (Environment.GetEnvironmentVariable(UpdateEnvironmentVariable) == "1")
         {
@@ -54,7 +54,7 @@ public sealed class PublicApiSurfaceTests
             $"Generate it with {UpdateEnvironmentVariable}=1.");
 
         var expectedLines = File.ReadAllLines(path);
-        var actualLines   = actual.Split('\n').Select(l => l.TrimEnd('\r')).ToArray();
+        var actualLines = actual.Split('\n').Select(l => l.TrimEnd('\r')).ToArray();
 
         // Ordered, positional comparison — NOT a set difference.
         //
@@ -68,11 +68,11 @@ public sealed class PublicApiSurfaceTests
         //
         // Walking both sequences in order and pairing on the type header keeps
         // a member attributed to the type it belongs to.
-        var added   = new List<string>();
+        var added = new List<string>();
         var removed = new List<string>();
 
         var expectedByType = GroupByType(expectedLines);
-        var actualByType   = GroupByType(actualLines);
+        var actualByType = GroupByType(actualLines);
 
         foreach (var (type, members) in actualByType)
         {
@@ -125,7 +125,7 @@ public sealed class PublicApiSurfaceTests
     /// </summary>
     private static Dictionary<string, List<string>> GroupByType(IEnumerable<string> lines)
     {
-        var result  = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+        var result = new Dictionary<string, List<string>>(StringComparer.Ordinal);
         var current = "";
 
         foreach (var line in lines)
@@ -154,10 +154,10 @@ public sealed class PublicApiSurfaceTests
 
     private static Assembly AssemblyFor(string name) => name switch
     {
-        "TableTop.Core"    => typeof(Core.Abstractions.Cards.ICard).Assembly,
-        "TableTop.Games"   => typeof(Games.WouldYouRatherMode).Assembly,
+        "TableTop.Core" => typeof(Core.Abstractions.Cards.ICard).Assembly,
+        "TableTop.Games" => typeof(Games.WouldYouRatherMode).Assembly,
         "TableTop.Hosting" => typeof(Hosting.Controllers.CardTurnController).Assembly,
-        _                  => throw new ArgumentOutOfRangeException(nameof(name), name, "unknown assembly"),
+        _ => throw new ArgumentOutOfRangeException(nameof(name), name, "unknown assembly"),
     };
 
     internal static string Describe(Assembly assembly)
@@ -176,7 +176,7 @@ public sealed class PublicApiSurfaceTests
         var kind = t.IsEnum ? "enum" : t.IsInterface ? "interface" : t.IsValueType ? "struct" : "class";
         var mods = t is { IsAbstract: true, IsSealed: true } ? "static "
                  : t.IsAbstract ? "abstract "
-                 : t.IsSealed   ? "sealed " : "";
+                 : t.IsSealed ? "sealed " : "";
         return $"{mods}{kind} {t.FullName}";
     }
 

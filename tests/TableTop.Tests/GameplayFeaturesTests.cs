@@ -1,9 +1,5 @@
-using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Abstractions.Scoring;
-using TableTop.Core.Domain.Cards;
 using TableTop.Core.Domain.Game;
-using TableTop.Core.Domain.Players;
 using TableTop.Core.Domain.Scoring;
 using TableTop.Hosting.Events;
 
@@ -24,8 +20,8 @@ public sealed class GameplayFeaturesTests
     public void Team_Create_WithMembers_HasCorrectName()
     {
         var alice = Player.Create("Alice");
-        var bob   = Player.Create("Bob");
-        var team  = new Team("Dream Team", [alice, bob]);
+        var bob = Player.Create("Bob");
+        var team = new Team("Dream Team", [alice, bob]);
 
         team.Name.Should().Be("Dream Team");
         team.Members.Should().HaveCount(2);
@@ -36,7 +32,7 @@ public sealed class GameplayFeaturesTests
     public void Team_Contains_ReturnsTrueForMember()
     {
         var alice = Player.Create("Alice");
-        var team  = new Team("Solo", [alice]);
+        var team = new Team("Solo", [alice]);
 
         team.Contains(alice.Id).Should().BeTrue();
         team.Contains(Guid.NewGuid()).Should().BeFalse();
@@ -75,8 +71,8 @@ public sealed class GameplayFeaturesTests
     public void Team_FromGroups_BuildsCorrectTeams()
     {
         var alice = Player.Create("Alice");
-        var bob   = Player.Create("Bob");
-        var eve   = Player.Create("Eve");
+        var bob = Player.Create("Bob");
+        var eve = Player.Create("Eve");
 
         var teams = Team.FromGroups([
             ("Red",  new[] { alice, bob }.ToList<IPlayer>().AsReadOnly()),
@@ -92,9 +88,9 @@ public sealed class GameplayFeaturesTests
     public void TeamPlayerManager_TeamOnly_CreditToTeamNotIndividual()
     {
         var alice = Player.Create("Alice");
-        var bob   = Player.Create("Bob");
-        var team  = new Team("A+B", [alice, bob]);
-        var mgr   = new TeamPlayerManager([team], TeamScoreMode.TeamOnly);
+        var bob = Player.Create("Bob");
+        var team = new Team("A+B", [alice, bob]);
+        var mgr = new TeamPlayerManager([team], TeamScoreMode.TeamOnly);
 
         mgr.ApplyScore(alice.Id, 10);
 
@@ -109,8 +105,8 @@ public sealed class GameplayFeaturesTests
     public void TeamPlayerManager_Both_CreditToTeamAndIndividual()
     {
         var alice = Player.Create("Alice");
-        var team  = new Team("Solo", [alice]);
-        var mgr   = new TeamPlayerManager([team], TeamScoreMode.Both);
+        var team = new Team("Solo", [alice]);
+        var mgr = new TeamPlayerManager([team], TeamScoreMode.Both);
 
         mgr.ApplyScore(alice.Id, 5);
 
@@ -122,8 +118,8 @@ public sealed class GameplayFeaturesTests
     public void TeamPlayerManager_Individual_DoesNotCreditTeam()
     {
         var alice = Player.Create("Alice");
-        var team  = new Team("Solo", [alice]);
-        var mgr   = new TeamPlayerManager([team], TeamScoreMode.Individual);
+        var team = new Team("Solo", [alice]);
+        var mgr = new TeamPlayerManager([team], TeamScoreMode.Individual);
 
         mgr.ApplyScore(alice.Id, 7);
 
@@ -134,11 +130,11 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void TeamPlayerManager_GetStandings_OrdersByScore()
     {
-        var p1    = Player.Create("P1");
-        var p2    = Player.Create("P2");
-        var t1    = new Team("Low",  [p1]);
-        var t2    = new Team("High", [p2]);
-        var mgr   = new TeamPlayerManager([t1, t2], TeamScoreMode.TeamOnly);
+        var p1 = Player.Create("P1");
+        var p2 = Player.Create("P2");
+        var t1 = new Team("Low", [p1]);
+        var t2 = new Team("High", [p2]);
+        var mgr = new TeamPlayerManager([t1, t2], TeamScoreMode.TeamOnly);
 
         mgr.ApplyScore(p1.Id, 3);
         mgr.ApplyScore(p2.Id, 9);
@@ -152,8 +148,8 @@ public sealed class GameplayFeaturesTests
     public void TeamPlayerManager_GetTeam_ReturnsCorrectTeam()
     {
         var alice = Player.Create("Alice");
-        var team  = new Team("A", [alice]);
-        var mgr   = new TeamPlayerManager([team]);
+        var team = new Team("A", [alice]);
+        var mgr = new TeamPlayerManager([team]);
 
         var found = mgr.GetTeam(alice.Id);
         found.Should().NotBeNull();
@@ -180,13 +176,13 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void TimeBasedScoring_Fast_EarnsMaxPoints()
     {
-        var strat  = new TimeBasedScoringStrategy(
-            fastThreshold:   TimeSpan.FromSeconds(10),
+        var strat = new TimeBasedScoringStrategy(
+            fastThreshold: TimeSpan.FromSeconds(10),
             mediumThreshold: TimeSpan.FromSeconds(30),
-            slowThreshold:   TimeSpan.FromSeconds(60),
+            slowThreshold: TimeSpan.FromSeconds(60),
             fastPoints: 3, mediumPoints: 2, slowPoints: 1);
 
-        var card   = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
+        var card = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
         var player = Player.Create("Alice");
 
         strat.CalculateScore(card, player, CardOutcome.Completed,
@@ -196,8 +192,8 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void TimeBasedScoring_Medium_EarnsMediumPoints()
     {
-        var strat  = new TimeBasedScoringStrategy();
-        var card   = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
+        var strat = new TimeBasedScoringStrategy();
+        var card = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
         var player = Player.Create("Alice");
 
         strat.CalculateScore(card, player, CardOutcome.Completed,
@@ -207,8 +203,8 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void TimeBasedScoring_Slow_EarnsSlowPoints()
     {
-        var strat  = new TimeBasedScoringStrategy();
-        var card   = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
+        var strat = new TimeBasedScoringStrategy();
+        var card = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
         var player = Player.Create("Alice");
 
         strat.CalculateScore(card, player, CardOutcome.Completed,
@@ -218,8 +214,8 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void TimeBasedScoring_TooSlow_EarnsZero()
     {
-        var strat  = new TimeBasedScoringStrategy();
-        var card   = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
+        var strat = new TimeBasedScoringStrategy();
+        var card = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
         var player = Player.Create("Alice");
 
         strat.CalculateScore(card, player, CardOutcome.Completed,
@@ -229,8 +225,8 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void TimeBasedScoring_Skipped_AlwaysZero()
     {
-        var strat  = new TimeBasedScoringStrategy();
-        var card   = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
+        var strat = new TimeBasedScoringStrategy();
+        var card = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
         var player = Player.Create("Alice");
 
         strat.CalculateScore(card, player, CardOutcome.Skipped,
@@ -240,8 +236,8 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void TimeBasedScoring_NoElapsed_FallsBackToOnePoint()
     {
-        var strat  = new TimeBasedScoringStrategy();
-        var card   = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
+        var strat = new TimeBasedScoringStrategy();
+        var card = StandardCard.Create("Q", "desc", Difficulty.Easy, "Test");
         var player = Player.Create("Alice");
 
         // Standard IScoringStrategy overload — no elapsed
@@ -254,17 +250,17 @@ public sealed class GameplayFeaturesTests
     public void TurnRecord_StoresAllFields()
     {
         var player = Player.Create("Alice");
-        var card   = StandardCard.Create("Q", "desc", Difficulty.Hard, "Cat");
-        var rec    = new TurnRecord
+        var card = StandardCard.Create("Q", "desc", Difficulty.Hard, "Cat");
+        var rec = new TurnRecord
         {
-            TurnNumber  = 1,
-            Round       = 1,
-            Player      = player,
-            Card        = card,
-            Outcome     = CardOutcome.Completed,
-            ScoreDelta  = 3,
-            ScoreAfter  = 3,
-            Elapsed     = TimeSpan.FromSeconds(12),
+            TurnNumber = 1,
+            Round = 1,
+            Player = player,
+            Card = card,
+            Outcome = CardOutcome.Completed,
+            ScoreDelta = 3,
+            ScoreAfter = 3,
+            Elapsed = TimeSpan.FromSeconds(12),
         };
 
         rec.Player.DisplayName.Should().Be("Alice");
@@ -275,9 +271,9 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void SessionReport_Build_CountsTurnsCorrectly()
     {
-        var alice  = Player.Create("Alice");
-        var bob    = Player.Create("Bob");
-        var card   = MakeCard(Difficulty.Easy);
+        var alice = Player.Create("Alice");
+        var bob = Player.Create("Bob");
+        var card = MakeCard(Difficulty.Easy);
 
         var turns = new List<TurnRecord>
         {
@@ -299,8 +295,8 @@ public sealed class GameplayFeaturesTests
     public void SessionReport_LongestStreak_IdentifiesCorrectPlayer()
     {
         var alice = Player.Create("Alice");
-        var bob   = Player.Create("Bob");
-        var card  = MakeCard(Difficulty.Easy);
+        var bob = Player.Create("Bob");
+        var card = MakeCard(Difficulty.Easy);
 
         var turns = new List<TurnRecord>
         {
@@ -322,8 +318,8 @@ public sealed class GameplayFeaturesTests
     public void SessionReport_HardestCardCleared_IsCorrect()
     {
         var alice = Player.Create("Alice");
-        var easy  = MakeCard(Difficulty.Easy);
-        var hard  = MakeCard(Difficulty.Hard);
+        var easy = MakeCard(Difficulty.Easy);
+        var hard = MakeCard(Difficulty.Hard);
 
         var turns = new List<TurnRecord>
         {
@@ -341,7 +337,7 @@ public sealed class GameplayFeaturesTests
     public void SessionReport_FastestAnswer_ReturnsLowestElapsed()
     {
         var alice = Player.Create("Alice");
-        var card  = MakeCard(Difficulty.Easy);
+        var card = MakeCard(Difficulty.Easy);
 
         var turns = new List<TurnRecord>
         {
@@ -360,8 +356,8 @@ public sealed class GameplayFeaturesTests
     public void SessionReport_MostSkips_FindsSkippingPlayer()
     {
         var alice = Player.Create("Alice");
-        var bob   = Player.Create("Bob");
-        var card  = MakeCard(Difficulty.Easy);
+        var bob = Player.Create("Bob");
+        var card = MakeCard(Difficulty.Easy);
 
         var turns = new List<TurnRecord>
         {
@@ -381,8 +377,8 @@ public sealed class GameplayFeaturesTests
     public void SessionReport_HighScorer_IsPlayerWithMostPoints()
     {
         var alice = Player.Create("Alice");
-        var bob   = Player.Create("Bob");
-        var card  = MakeCard(Difficulty.Easy);
+        var bob = Player.Create("Bob");
+        var card = MakeCard(Difficulty.Easy);
 
         var turns = new List<TurnRecord>
         {
@@ -399,7 +395,7 @@ public sealed class GameplayFeaturesTests
     public void PlayerStats_CompletionRate_IsCorrect()
     {
         var alice = Player.Create("Alice");
-        var card  = MakeCard(Difficulty.Easy);
+        var card = MakeCard(Difficulty.Easy);
 
         var turns = new List<TurnRecord>
         {
@@ -410,7 +406,7 @@ public sealed class GameplayFeaturesTests
         };
 
         var report = SessionReport.Build(turns, [alice], 4, TimeSpan.Zero);
-        var stats  = report.PlayerStats[0];
+        var stats = report.PlayerStats[0];
 
         stats.CompletionRate.Should().Be(0.75); // 3 of 4
     }
@@ -420,12 +416,12 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void UndoLastTurn_RevertsScore()
     {
-        var cards   = MakeCardList(10);
+        var cards = MakeCardList(10);
         var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var ctrl    = TestFactory.BuildController(cards, players, maxRounds: 5);
+        var ctrl = TestFactory.BuildController(cards, players, maxRounds: 5);
 
         int scoreAfterComplete = 0;
-        int scoreAfterUndo     = 0;
+        int scoreAfterUndo = 0;
 
         ctrl.TurnResult += (_, e) =>
         {
@@ -455,9 +451,9 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void UndoLastTurn_RaisesEvent()
     {
-        var cards   = MakeCardList(10);
+        var cards = MakeCardList(10);
         var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var ctrl    = TestFactory.BuildController(cards, players, maxRounds: 5);
+        var ctrl = TestFactory.BuildController(cards, players, maxRounds: 5);
 
         TurnUndoneEvent? undoEvent = null;
         ctrl.TurnUndone += (_, e) => undoEvent = e;
@@ -473,9 +469,9 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void UndoLastTurn_ReturnsFalse_WhenNothingToUndo()
     {
-        var cards   = MakeCardList(10);
+        var cards = MakeCardList(10);
         var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var ctrl    = TestFactory.BuildController(cards, players, maxRounds: 5);
+        var ctrl = TestFactory.BuildController(cards, players, maxRounds: 5);
 
         ctrl.Start();
 
@@ -487,9 +483,9 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void UndoLastTurn_ReRaisesCardReady()
     {
-        var cards   = MakeCardList(10);
+        var cards = MakeCardList(10);
         var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var ctrl    = TestFactory.BuildController(cards, players, maxRounds: 5);
+        var ctrl = TestFactory.BuildController(cards, players, maxRounds: 5);
 
         var readyEvents = new List<CardReadyEvent>();
         ctrl.CardReady += (_, e) => readyEvents.Add(e);
@@ -506,9 +502,9 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void RecordTimedOutcome_StoresElapsedInReport()
     {
-        var cards   = MakeCardList(10);
+        var cards = MakeCardList(10);
         var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var ctrl    = TestFactory.BuildController(cards, players, maxRounds: 1);
+        var ctrl = TestFactory.BuildController(cards, players, maxRounds: 1);
 
         GameEndedEvent? endEvent = null;
         ctrl.GameEnded += (_, e) => endEvent = e;
@@ -531,9 +527,9 @@ public sealed class GameplayFeaturesTests
     [Fact]
     public void GameEndedEvent_IncludesSessionReport()
     {
-        var cards   = MakeCardList(5);
+        var cards = MakeCardList(5);
         var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var ctrl    = TestFactory.BuildController(cards, players, maxRounds: 1);
+        var ctrl = TestFactory.BuildController(cards, players, maxRounds: 1);
 
         GameEndedEvent? endEvent = null;
         ctrl.GameEnded += (_, e) => endEvent = e;
@@ -563,13 +559,13 @@ public sealed class GameplayFeaturesTests
         TimeSpan? elapsed = null) =>
         new()
         {
-            TurnNumber  = turnNum,
-            Round       = round,
-            Player      = player,
-            Card        = card,
-            Outcome     = outcome,
-            ScoreDelta  = delta,
-            ScoreAfter  = after,
-            Elapsed     = elapsed,
+            TurnNumber = turnNum,
+            Round = round,
+            Player = player,
+            Card = card,
+            Outcome = outcome,
+            ScoreDelta = delta,
+            ScoreAfter = after,
+            Elapsed = elapsed,
         };
 }

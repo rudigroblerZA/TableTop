@@ -27,7 +27,7 @@ namespace TableTop.Games.Family;
 public sealed class UselessSuperpowersMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Useless Superpowers";
+    public override string Name => "Useless Superpowers";
     /// <inheritdoc />
     public override string Description =>
         "Draw a terrible power, then pitch the group on why it makes you the greatest hero alive.";
@@ -35,18 +35,18 @@ public sealed class UselessSuperpowersMode : BaseGameModeDefinition
     /// <summary>Label shown on the button that records the round's winning pitch.</summary>
     public override string CompleteLabel => "Best Pitch";
     /// <summary>Label shown on the button that skips the current card.</summary>
-    public override string SkipLabel     => "Recast";
+    public override string SkipLabel => "Recast";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Barely Super"]  = "#42A5F5",
+            ["Barely Super"] = "#42A5F5",
             ["Cursed Timing"] = "#FFA726",
-            ["Tiny Scale"]    = "#66BB6A",
-            ["Wrong Target"]  = "#AB47BC",
-            ["Showdown"]      = "#EF5350",
-            ["Origin Story"]  = "#EC407A",
+            ["Tiny Scale"] = "#66BB6A",
+            ["Wrong Target"] = "#AB47BC",
+            ["Showdown"] = "#EF5350",
+            ["Origin Story"] = "#EC407A",
         };
 
     /// <summary>One point to the round's voted-best pitch.</summary>

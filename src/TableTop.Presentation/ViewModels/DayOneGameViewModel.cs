@@ -30,20 +30,20 @@ public sealed class DayOneGameViewModel : ViewModelBase, IDisposable
     private readonly string _loadError = "";
 
     private string _dayLabel = "", _cardTitle = "", _cardText = "", _statusText = "";
-    private bool   _hasCard, _isDone;
+    private bool _hasCard, _isDone;
 
     /// <summary>Returns to the previous screen.</summary>
-    public ICommand BackCommand          { get; }
+    public ICommand BackCommand { get; }
 
     /// <summary>Marks today's card complete and advances.</summary>
     public ICommand CompleteTodayCommand { get; }
 
     /// <summary>"Day 4 of 21", or similar.</summary>
-    public string DayLabel   { get => _dayLabel;   private set => SetField(ref _dayLabel, value); }
+    public string DayLabel { get => _dayLabel; private set => SetField(ref _dayLabel, value); }
     /// <summary>Title of today's card.</summary>
-    public string CardTitle  { get => _cardTitle;  private set => SetField(ref _cardTitle, value); }
+    public string CardTitle { get => _cardTitle; private set => SetField(ref _cardTitle, value); }
     /// <summary>Body text of today's card.</summary>
-    public string CardText   { get => _cardText;   private set => SetField(ref _cardText, value); }
+    public string CardText { get => _cardText; private set => SetField(ref _cardText, value); }
     /// <summary>Caught-up or completion message.</summary>
     public string StatusText { get => _statusText; private set => SetField(ref _statusText, value); }
 
@@ -51,7 +51,7 @@ public sealed class DayOneGameViewModel : ViewModelBase, IDisposable
     public bool HasCard { get => _hasCard; private set { SetField(ref _hasCard, value); RaiseCompleteState(); } }
 
     /// <summary>True once the whole campaign is finished.</summary>
-    public bool IsDone  { get => _isDone;  private set => SetField(ref _isDone, value); }
+    public bool IsDone { get => _isDone; private set => SetField(ref _isDone, value); }
 
     /// <summary>Controller-build failure message, or empty. Was MAUI-only.</summary>
     public string LoadError => _loadError;
@@ -66,11 +66,11 @@ public sealed class DayOneGameViewModel : ViewModelBase, IDisposable
     {
         _controller = controller;
 
-        BackCommand          = new RelayCommand(navigator.GoBack);
+        BackCommand = new RelayCommand(navigator.GoBack);
         CompleteTodayCommand = new RelayCommand(CompleteToday, () => HasCard);
 
-        _controller.DayReady         += OnDayReady;
-        _controller.AllCaughtUp      += OnAllCaughtUp;
+        _controller.DayReady += OnDayReady;
+        _controller.AllCaughtUp += OnAllCaughtUp;
         _controller.CampaignComplete += OnCampaignComplete;
         _controller.Start();
     }
@@ -78,8 +78,8 @@ public sealed class DayOneGameViewModel : ViewModelBase, IDisposable
     /// <summary>Error-state constructor: no controller, just a message.</summary>
     private DayOneGameViewModel(INavigator navigator, string loadError)
     {
-        _loadError           = loadError;
-        BackCommand          = new RelayCommand(navigator.GoBack);
+        _loadError = loadError;
+        BackCommand = new RelayCommand(navigator.GoBack);
         CompleteTodayCommand = new RelayCommand(() => { }, () => false);
     }
 
@@ -88,10 +88,10 @@ public sealed class DayOneGameViewModel : ViewModelBase, IDisposable
     /// rather than an exception — which is what MAUI did and WinUI did not.
     /// </summary>
     public static async Task<DayOneGameViewModel> CreateAsync(
-        INavigator             navigator,
-        IGameMode              mode,
+        INavigator navigator,
+        IGameMode mode,
         IReadOnlyList<IPlayer> players,
-        IControllerFactory?    controllerFactory = null)
+        IControllerFactory? controllerFactory = null)
     {
         try
         {
@@ -120,16 +120,16 @@ public sealed class DayOneGameViewModel : ViewModelBase, IDisposable
 
     private void OnDayReady(object? sender, DayReadyEvent e)
     {
-        DayLabel   = $"Day {e.DayNumber} of {e.TotalDays}";
-        CardTitle  = e.Card.Title;
-        CardText   = e.CardText;
+        DayLabel = $"Day {e.DayNumber} of {e.TotalDays}";
+        CardTitle = e.Card.Title;
+        CardText = e.CardText;
         StatusText = "";
-        HasCard    = true;
+        HasCard = true;
     }
 
     private void OnAllCaughtUp(object? sender, AllCaughtUpEvent e)
     {
-        HasCard  = false;
+        HasCard = false;
         DayLabel = $"Day {e.DayNumber} of {e.TotalDays}";
 
         // Hours rather than a timestamp: the wait is what matters, and a
@@ -142,9 +142,9 @@ public sealed class DayOneGameViewModel : ViewModelBase, IDisposable
 
     private void OnCampaignComplete(object? sender, CampaignCompleteEvent e)
     {
-        HasCard    = false;
-        IsDone     = true;
-        DayLabel   = $"All {e.TotalDays} days complete";
+        HasCard = false;
+        IsDone = true;
+        DayLabel = $"All {e.TotalDays} days complete";
         StatusText = $"Finished in {(e.CompletedAt - e.StartedAt).Days + 1} days.";
     }
 

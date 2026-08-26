@@ -80,8 +80,8 @@ public sealed class Deck : IDeck
     {
         // Rebuild the queue without the target card, returning the target.
         // O(n) but correct and avoids card loss during search.
-        var cards   = _remaining.ToList();
-        var target  = cards.FirstOrDefault(c => c.Id == cardId)
+        var cards = _remaining.ToList();
+        var target = cards.FirstOrDefault(c => c.Id == cardId)
             ?? throw new InvalidOperationException(
                 $"Card {cardId} is not present in deck '{Name}'.");
 

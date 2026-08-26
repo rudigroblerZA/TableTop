@@ -41,7 +41,7 @@ namespace TableTop.Games.Fun;
 public sealed class AllTogetherNowMode : BaseGameModeDefinition, ITableShapeMode
 {
     /// <inheritdoc />
-    public override string Name        => "All Together Now";
+    public override string Name => "All Together Now";
     /// <inheritdoc />
     public override string Description =>
         "The table against the deck. One shared score, no winners and no losers — either you all clear the target or the deck takes it.";
@@ -55,7 +55,7 @@ public sealed class AllTogetherNowMode : BaseGameModeDefinition, ITableShapeMode
     /// <summary>Records a card the table cleared together.</summary>
     public override string CompleteLabel => "Cleared It";
     /// <summary>Records a card that beat the table.</summary>
-    public override string SkipLabel     => "Beat Us";
+    public override string SkipLabel => "Beat Us";
 
     /// <summary>Opens on the shared brief so the target gets agreed out loud.</summary>
     public override IReadOnlyList<string> CategoriesPinnedToStart => ["Brief"];
@@ -67,12 +67,12 @@ public sealed class AllTogetherNowMode : BaseGameModeDefinition, ITableShapeMode
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Brief"]       = "#5AC8B0",
+            ["Brief"] = "#5AC8B0",
             ["Everyone In"] = "#66BB6A",
-            ["Relay"]       = "#42A5F5",
-            ["In Silence"]  = "#7E57C2",
-            ["Against It"]  = "#EF5350",
-            ["Debrief"]     = "#A78BD0",
+            ["Relay"] = "#42A5F5",
+            ["In Silence"] = "#7E57C2",
+            ["Against It"] = "#EF5350",
+            ["Debrief"] = "#A78BD0",
         };
 
     /// <summary>Harder cards are worth more, for tables that want a points target.</summary>
@@ -98,13 +98,13 @@ public static class AllTogetherNowCardBank
 
     private static string Emoji(string category) => category switch
     {
-        "Brief"       => "📋",
+        "Brief" => "📋",
         "Everyone In" => "🙌",
-        "Relay"       => "🔗",
-        "In Silence"  => "🤫",
-        "Against It"  => "🔥",
-        "Debrief"     => "💜",
-        _             => "🎲",
+        "Relay" => "🔗",
+        "In Silence" => "🤫",
+        "Against It" => "🔥",
+        "Debrief" => "💜",
+        _ => "🎲",
     };
 
     private static IReadOnlyList<ICard> Build() =>

@@ -48,11 +48,11 @@ public sealed class ClaimedGameViewModel : ViewModelBase, IDisposable
     public ObservableCollection<TerritoryOption> Territories { get; } = [];
 
     /// <summary>Returns to the previous screen.</summary>
-    public ICommand BackCommand    { get; }
+    public ICommand BackCommand { get; }
     /// <summary>Judges the pending challenge a success.</summary>
     public ICommand SucceedCommand { get; }
     /// <summary>Judges the pending challenge a failure.</summary>
-    public ICommand FailCommand    { get; }
+    public ICommand FailCommand { get; }
 
     private string _currentPlayerName = "", _flash = "", _summary = "";
     private string _pendingCardTitle = "", _pendingCardText = "", _pendingDifficulty = "";
@@ -69,7 +69,7 @@ public sealed class ClaimedGameViewModel : ViewModelBase, IDisposable
     /// <summary>Title of the pending challenge card.</summary>
     public string PendingCardTitle { get => _pendingCardTitle; private set => SetField(ref _pendingCardTitle, value); }
     /// <summary>Body text of the pending challenge card.</summary>
-    public string PendingCardText  { get => _pendingCardText;  private set => SetField(ref _pendingCardText, value); }
+    public string PendingCardText { get => _pendingCardText; private set => SetField(ref _pendingCardText, value); }
     /// <summary>Difficulty of the pending challenge card.</summary>
     public string PendingDifficulty { get => _pendingDifficulty; private set => SetField(ref _pendingDifficulty, value); }
     /// <summary>The defending player's name, or null when the territory is open ground.</summary>
@@ -104,15 +104,15 @@ public sealed class ClaimedGameViewModel : ViewModelBase, IDisposable
     {
         _controller = controller;
 
-        BackCommand    = new RelayCommand(() => { _controller?.Dispose(); navigator.GoBack(); });
-        SucceedCommand = new RelayCommand(() => Resolve(true),  () => HasPendingChallenge);
-        FailCommand    = new RelayCommand(() => Resolve(false), () => HasPendingChallenge);
+        BackCommand = new RelayCommand(() => { _controller?.Dispose(); navigator.GoBack(); });
+        SucceedCommand = new RelayCommand(() => Resolve(true), () => HasPendingChallenge);
+        FailCommand = new RelayCommand(() => Resolve(false), () => HasPendingChallenge);
 
         _controller.TerritoryChallengeReady += OnTerritoryChallengeReady;
-        _controller.TerritoryClaimed        += OnTerritoryClaimed;
-        _controller.TerritoryStolen         += OnTerritoryStolen;
-        _controller.ChallengeFailed         += OnChallengeFailed;
-        _controller.GameEnded               += OnGameEnded;
+        _controller.TerritoryClaimed += OnTerritoryClaimed;
+        _controller.TerritoryStolen += OnTerritoryStolen;
+        _controller.ChallengeFailed += OnChallengeFailed;
+        _controller.GameEnded += OnGameEnded;
 
         if (!_controller.IsRunning) _controller.Start();
         RefreshBoard();
@@ -121,10 +121,10 @@ public sealed class ClaimedGameViewModel : ViewModelBase, IDisposable
     /// <summary>Error-state constructor: no controller, just a message.</summary>
     private ClaimedGameViewModel(INavigator navigator, string loadError)
     {
-        _loadError     = loadError;
-        BackCommand    = new RelayCommand(navigator.GoBack);
+        _loadError = loadError;
+        BackCommand = new RelayCommand(navigator.GoBack);
         SucceedCommand = new RelayCommand(() => { }, () => false);
-        FailCommand    = new RelayCommand(() => { }, () => false);
+        FailCommand = new RelayCommand(() => { }, () => false);
     }
 
     /// <summary>
@@ -155,11 +155,11 @@ public sealed class ClaimedGameViewModel : ViewModelBase, IDisposable
     private void OnTerritoryChallengeReady(object? sender, TerritoryChallengeReadyEvent e)
     {
         HasPendingChallenge = true;
-        PendingCardTitle    = e.CardTitle;
-        PendingCardText     = e.CardText;
-        PendingDifficulty   = e.Difficulty;
+        PendingCardTitle = e.CardTitle;
+        PendingCardText = e.CardText;
+        PendingDifficulty = e.Difficulty;
         PendingDefenderName = e.DefenderName;
-        IsRaid              = e.DefenderName is not null;
+        IsRaid = e.DefenderName is not null;
         RaiseActionCommands();
     }
 
@@ -238,7 +238,7 @@ public sealed class ClaimedGameViewModel : ViewModelBase, IDisposable
     private void RaiseActionCommands()
     {
         (SucceedCommand as RelayCommand)?.RaiseCanExecuteChanged();
-        (FailCommand    as RelayCommand)?.RaiseCanExecuteChanged();
+        (FailCommand as RelayCommand)?.RaiseCanExecuteChanged();
     }
 
     /// <inheritdoc />
@@ -261,10 +261,10 @@ public sealed class ClaimedGameViewModel : ViewModelBase, IDisposable
 
         internal TerritoryOption(string name, string? holder, bool isChallengeable, ClaimedGameViewModel owner)
         {
-            Name             = name;
-            HolderDisplay    = holder ?? "Open";
-            IsChallengeable  = isChallengeable;
-            _owner           = owner;
+            Name = name;
+            HolderDisplay = holder ?? "Open";
+            IsChallengeable = isChallengeable;
+            _owner = owner;
             ChallengeCommand = new RelayCommand(() => owner.Challenge(name), () => isChallengeable && !owner.HasPendingChallenge);
         }
 

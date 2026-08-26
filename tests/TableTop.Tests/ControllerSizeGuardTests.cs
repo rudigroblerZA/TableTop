@@ -35,7 +35,7 @@ public sealed class ControllerSizeGuardTests
     // was D.1 (CardTurnControllerOptions) plus extracting UndoCoordinator —
     // not a raised ceiling.
     // Headroom is deliberately thin — a few lines, not a few hundred.
-    private const int MaxRawLines  = 700;
+    private const int MaxRawLines = 700;
     private const int MaxCodeLines = 390;
 
     private const string ControllerPath = "src/TableTop.Hosting/Controllers/CardTurnController.cs";
@@ -44,7 +44,7 @@ public sealed class ControllerSizeGuardTests
     public void CardTurnController_StaysUnderItsLineBudget()
     {
         var lines = File.ReadAllLines(Path.Combine(FindRepositoryRoot(), ControllerPath));
-        var code  = lines.Count(IsSubstantive);
+        var code = lines.Count(IsSubstantive);
 
         code.Should().BeLessThanOrEqualTo(MaxCodeLines,
             $"CardTurnController has {code} lines of code against a budget of {MaxCodeLines}. " +

@@ -62,16 +62,16 @@ public sealed class HerdGameViewModel : ViewModelBase, IDisposable
     /// <summary>Total rounds in the session.</summary>
     public int TotalRounds { get => _totalRounds; private set => SetField(ref _totalRounds, value); }
     /// <summary>The current prompt.</summary>
-    public string Prompt   { get => _prompt;      private set => SetField(ref _prompt, value); }
+    public string Prompt { get => _prompt; private set => SetField(ref _prompt, value); }
     /// <summary>The current prompt's category.</summary>
-    public string Category { get => _category;    private set => SetField(ref _category, value); }
+    public string Category { get => _category; private set => SetField(ref _category, value); }
 
     /// <summary>The most-given answer last round, or empty when nobody matched.</summary>
     public string LastHerdAnswer { get => _lastHerdAnswer; private set { SetField(ref _lastHerdAnswer, value); OnPropertyChanged(nameof(HasLastHerdAnswer)); } }
     /// <summary>True when last round had a herd answer.</summary>
     public bool HasLastHerdAnswer => _lastHerdAnswer.Length > 0;
     /// <summary>The lone voice last round, or empty when nobody stood alone.</summary>
-    public string LastLoneVoice   { get => _lastLoneVoice;   private set { SetField(ref _lastLoneVoice, value);   OnPropertyChanged(nameof(HasLastLoneVoice)); } }
+    public string LastLoneVoice { get => _lastLoneVoice; private set { SetField(ref _lastLoneVoice, value); OnPropertyChanged(nameof(HasLastLoneVoice)); } }
     /// <summary>True when last round had a lone voice.</summary>
     public bool HasLastLoneVoice => _lastLoneVoice.Length > 0;
     /// <summary>Every answer group from last round, rendered for display.</summary>
@@ -113,13 +113,13 @@ public sealed class HerdGameViewModel : ViewModelBase, IDisposable
     {
         _controller = controller;
 
-        RevealCommand           = new RelayCommand(Reveal);
+        RevealCommand = new RelayCommand(Reveal);
         DismissLastRoundCommand = new RelayCommand(() => ShowingLastRound = false);
-        BackCommand             = new RelayCommand(() => { _controller?.Quit(); navigator.GoBack(); });
+        BackCommand = new RelayCommand(() => { _controller?.Quit(); navigator.GoBack(); });
 
-        _controller.PromptReady   += OnPromptReady;
+        _controller.PromptReady += OnPromptReady;
         _controller.RoundResolved += OnRoundResolved;
-        _controller.GameEnded     += OnGameEnded;
+        _controller.GameEnded += OnGameEnded;
 
         if (!_controller.IsRunning) _controller.Start();
     }
@@ -127,10 +127,10 @@ public sealed class HerdGameViewModel : ViewModelBase, IDisposable
     /// <summary>Error-state constructor: no controller, just a message.</summary>
     private HerdGameViewModel(INavigator navigator, string loadError)
     {
-        _loadError              = loadError;
-        RevealCommand           = new RelayCommand(() => { }, () => false);
+        _loadError = loadError;
+        RevealCommand = new RelayCommand(() => { }, () => false);
         DismissLastRoundCommand = new RelayCommand(() => { });
-        BackCommand             = new RelayCommand(navigator.GoBack);
+        BackCommand = new RelayCommand(navigator.GoBack);
     }
 
     /// <summary>
@@ -161,8 +161,8 @@ public sealed class HerdGameViewModel : ViewModelBase, IDisposable
     {
         RoundNumber = e.RoundNumber;
         TotalRounds = e.TotalRounds;
-        Prompt      = e.Prompt;
-        Category    = e.Category;
+        Prompt = e.Prompt;
+        Category = e.Category;
 
         PlayerAnswers.Clear();
         foreach (var name in _controller!.Scores.Keys)
@@ -171,8 +171,8 @@ public sealed class HerdGameViewModel : ViewModelBase, IDisposable
 
     private void OnRoundResolved(object? sender, HerdRoundResolvedEvent e)
     {
-        LastHerdAnswer   = e.HerdAnswer ?? "";
-        LastLoneVoice    = e.LoneVoiceName ?? "";
+        LastHerdAnswer = e.HerdAnswer ?? "";
+        LastLoneVoice = e.LoneVoiceName ?? "";
         LastRoundSummary = string.Join("   ·   ", e.Groups.Select(g =>
             $"{g.Answer} ({g.PlayerNames.Count})"));
         ShowingLastRound = true;

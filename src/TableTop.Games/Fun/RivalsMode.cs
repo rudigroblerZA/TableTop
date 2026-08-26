@@ -77,11 +77,11 @@ public sealed class RivalsMode : BaseGameModeDefinition, ITeamMode, ITableShapeM
         new Dictionary<string, string>
         {
             ["How To Play"] = "#26A69A",
-            ["Wordplay"]    = "#42A5F5",
-            ["Memory"]      = "#AB47BC",
+            ["Wordplay"] = "#42A5F5",
+            ["Memory"] = "#AB47BC",
             ["Performance"] = "#FFA726",
-            ["Knowledge"]   = "#66BB6A",
-            ["Nerve"]       = "#EF5350",
+            ["Knowledge"] = "#66BB6A",
+            ["Nerve"] = "#EF5350",
         };
 
     /// <summary>The rules card explains the mechanic and must come before any card relying on it.</summary>

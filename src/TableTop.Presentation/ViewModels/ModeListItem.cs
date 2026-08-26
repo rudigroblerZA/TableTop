@@ -31,7 +31,7 @@ public static class ModeDisplayResolver
     {
         var definition = mode as BaseGameModeDefinition;
         return (
-            definition?.DisplayName        ?? mode.Name,
+            definition?.DisplayName ?? mode.Name,
             definition?.DisplayDescription ?? mode.Description,
             definition?.Theme?.Accent);
     }

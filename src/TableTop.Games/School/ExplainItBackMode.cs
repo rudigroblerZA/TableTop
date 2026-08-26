@@ -41,7 +41,7 @@ namespace TableTop.Games.School;
 public sealed class ExplainItBackMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Explain It Back";
+    public override string Name => "Explain It Back";
 
     /// <inheritdoc />
     public override string Description =>
@@ -52,18 +52,18 @@ public sealed class ExplainItBackMode : BaseGameModeDefinition
     public override string CompleteLabel => "They Got It";
 
     /// <summary>The honest outcome when the explanation didn't land. Says where the teaching failed, not the player.</summary>
-    public override string SkipLabel     => "Didn't Land";
+    public override string SkipLabel => "Didn't Land";
 
     /// <summary>Category → hex colour, one per subject.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Maths"]     = "#42A5F5",
-            ["Science"]   = "#66BB6A",
-            ["English"]   = "#AB47BC",
-            ["History"]   = "#EF5350",
+            ["Maths"] = "#42A5F5",
+            ["Science"] = "#66BB6A",
+            ["English"] = "#AB47BC",
+            ["History"] = "#EF5350",
             ["Geography"] = "#26A69A",
-            ["Logic"]     = "#FFA726",
+            ["Logic"] = "#FFA726",
         };
 
     /// <summary>
@@ -90,11 +90,11 @@ internal static class ExplainItBackCardBank
 {
     private static ICard C(string category, string body, Difficulty difficulty) =>
         new StandardCard(
-            id:          StableId(category, body),
-            title:       category,
+            id: StableId(category, body),
+            title: category,
             description: body,
-            difficulty:  difficulty,
-            category:    category);
+            difficulty: difficulty,
+            category: category);
 
     private static Guid StableId(string category, string body) =>
         new(System.Security.Cryptography.MD5.HashData(

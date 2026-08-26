@@ -17,7 +17,7 @@ public partial class HerdGamePage : ContentPage
         BindingContext = _vm;
     }
 
-    private void OnRevealClicked(object sender, EventArgs e)         => _vm.Reveal();
+    private void OnRevealClicked(object sender, EventArgs e) => _vm.Reveal();
     private void OnDismissLastRoundClicked(object sender, EventArgs e) => _vm.DismissLastRound();
 
     private async void OnDoneClicked(object sender, EventArgs e) => await Navigation.PopToRootAsync();

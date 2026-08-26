@@ -28,7 +28,7 @@ namespace TableTop.Games.School;
 public sealed class EstimationStationMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Estimation Station";
+    public override string Name => "Estimation Station";
     /// <inheritdoc />
     public override string Description =>
         "Everyone secretly guesses the number — closest wins. Reasoning beats knowledge.";
@@ -36,18 +36,18 @@ public sealed class EstimationStationMode : BaseGameModeDefinition
     /// <summary>Label shown on the button that records a completed round.</summary>
     public override string CompleteLabel => "Closest";
     /// <summary>Label shown on the button that skips the current card.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
             ["Measurement"] = "#42A5F5",
-            ["Nature"]      = "#66BB6A",
-            ["Everyday"]    = "#FFA726",
-            ["Space"]       = "#AB47BC",
-            ["Body"]        = "#EC407A",
-            ["Speed & Time"]= "#26C6DA",
+            ["Nature"] = "#66BB6A",
+            ["Everyday"] = "#FFA726",
+            ["Space"] = "#AB47BC",
+            ["Body"] = "#EC407A",
+            ["Speed & Time"] = "#26C6DA",
         };
 
     /// <summary>One point to whoever guessed closest each round.</summary>

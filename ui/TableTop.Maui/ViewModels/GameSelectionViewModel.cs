@@ -54,7 +54,7 @@ public sealed class GameSelectionViewModel : BindableObject
     /// </summary>
     public bool IsRebuilding { get; private set; }
 
-    public ObservableCollection<Archetype> Archetypes    { get; }
+    public ObservableCollection<Archetype> Archetypes { get; }
     public ObservableCollection<Archetype> SubArchetypes { get; } = [];
     /// <summary>
     /// Rows for the game list. <see cref="GameModeItem"/> rather than raw
@@ -165,25 +165,25 @@ public sealed class GameSelectionViewModel : BindableObject
         IsRebuilding = true;
         try
         {
-        SubArchetypes.Clear();
-        GameModes.Clear();
-        SelectedSubArchetype = null;
-        SelectedGameMode = null;
+            SubArchetypes.Clear();
+            GameModes.Clear();
+            SelectedSubArchetype = null;
+            SelectedGameMode = null;
 
-        if (SelectedArchetype is null) return;
+            if (SelectedArchetype is null) return;
 
-        foreach (var sub in SelectedArchetype.SubArchetypes)
-            SubArchetypes.Add(sub);
+            foreach (var sub in SelectedArchetype.SubArchetypes)
+                SubArchetypes.Add(sub);
 
-        // Direct modes of a leaf archetype. If this archetype is a pure branch
-        // (no direct modes) the list stays empty until a variant is picked,
-        // which is the intended flow — but a leaf must still be playable.
-        foreach (var mode in SelectedArchetype.Modes)
-            GameModes.Add(new GameModeItem(mode));
+            // Direct modes of a leaf archetype. If this archetype is a pure branch
+            // (no direct modes) the list stays empty until a variant is picked,
+            // which is the intended flow — but a leaf must still be playable.
+            foreach (var mode in SelectedArchetype.Modes)
+                GameModes.Add(new GameModeItem(mode));
 
-        // Auto-select single sub-archetype
-        if (SubArchetypes.Count == 1)
-            SelectedSubArchetype = SubArchetypes[0];
+            // Auto-select single sub-archetype
+            if (SubArchetypes.Count == 1)
+                SelectedSubArchetype = SubArchetypes[0];
         }
         finally { IsRebuilding = false; }
     }
@@ -194,32 +194,32 @@ public sealed class GameSelectionViewModel : BindableObject
         IsRebuilding = true;
         try
         {
-        GameModes.Clear();
-        SelectedGameMode = null;
+            GameModes.Clear();
+            SelectedGameMode = null;
 
-        if (SelectedSubArchetype is null) return;
+            if (SelectedSubArchetype is null) return;
 
-        // Gather modes from the whole subtree, not just direct children.
-        //
-        // This picker is three levels deep (type → variant → game). The archetype
-        // tree used to be deeper in one place — "Classroom → Grade 6" had its own
-        // sub-archetypes and NO direct modes, so reading only .Modes produced an
-        // empty game list and selection looked broken. Grade 6 has since been
-        // flattened into Classroom and every node now carries its own modes, so
-        // nothing currently needs this recursion.
-        //
-        // Kept anyway: it is correct for any depth, and the alternative is a
-        // picker that silently shows nothing the next time someone adds a
-        // grouping node. The bug it was written for was invisible until a player
-        // hit it.
-        foreach (var mode in CollectModes(SelectedSubArchetype))
-            GameModes.Add(new GameModeItem(mode));
+            // Gather modes from the whole subtree, not just direct children.
+            //
+            // This picker is three levels deep (type → variant → game). The archetype
+            // tree used to be deeper in one place — "Classroom → Grade 6" had its own
+            // sub-archetypes and NO direct modes, so reading only .Modes produced an
+            // empty game list and selection looked broken. Grade 6 has since been
+            // flattened into Classroom and every node now carries its own modes, so
+            // nothing currently needs this recursion.
+            //
+            // Kept anyway: it is correct for any depth, and the alternative is a
+            // picker that silently shows nothing the next time someone adds a
+            // grouping node. The bug it was written for was invisible until a player
+            // hit it.
+            foreach (var mode in CollectModes(SelectedSubArchetype))
+                GameModes.Add(new GameModeItem(mode));
 
-        // .Mode, not the row: GameModes holds GameModeItem wrappers and
-        // SelectedGameMode is the IGameMode itself. SelectedGameModeItem is the
-        // property that takes a row, and it unwraps to this one.
-        if (GameModes.Count == 1)
-            SelectedGameMode = GameModes[0].Mode;
+            // .Mode, not the row: GameModes holds GameModeItem wrappers and
+            // SelectedGameMode is the IGameMode itself. SelectedGameModeItem is the
+            // property that takes a row, and it unwraps to this one.
+            if (GameModes.Count == 1)
+                SelectedGameMode = GameModes[0].Mode;
         }
         finally { IsRebuilding = reentrant; }
     }

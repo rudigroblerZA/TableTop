@@ -20,7 +20,7 @@ namespace TableTop.Games.School;
 public sealed class NumberWorldMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Number World";
+    public override string Name => "Number World";
     /// <inheritdoc />
     public override string Description =>
         "Maths general knowledge — shapes, units, famous numbers, and maths vocabulary. Trivia, not drills. Multiple choice.";
@@ -28,17 +28,17 @@ public sealed class NumberWorldMode : BaseGameModeDefinition
     /// <summary>Label for a correctly answered card.</summary>
     public override string CompleteLabel => "Correct";
     /// <summary>Label for a passed card.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Shapes"]      = "#42A5F5",
-            ["Measuring"]   = "#66BB6A",
+            ["Shapes"] = "#42A5F5",
+            ["Measuring"] = "#66BB6A",
             ["Famous Numbers"] = "#FFCA28",
             ["Maths Words"] = "#AB47BC",
-            ["Number Facts"]= "#FF7043",
+            ["Number Facts"] = "#FF7043",
         };
 
     /// <summary>Harder questions score more.</summary>

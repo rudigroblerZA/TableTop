@@ -32,17 +32,17 @@ public sealed class WordDetectivesMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Identified (+2)";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "→ Next word";
+    public override string SkipLabel => "→ Next word";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Greek Root"]  = "#42A5F5",
-            ["Latin Root"]  = "#66BB6A",
-            ["Prefix"]      = "#FFCA28",
-            ["Suffix"]      = "#AB47BC",
-            ["Mixed"]       = "#EC407A",
+            ["Greek Root"] = "#42A5F5",
+            ["Latin Root"] = "#66BB6A",
+            ["Prefix"] = "#FFCA28",
+            ["Suffix"] = "#AB47BC",
+            ["Mixed"] = "#EC407A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

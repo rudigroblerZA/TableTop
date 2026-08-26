@@ -20,8 +20,8 @@ namespace TableTop.Tests;
 /// </summary>
 public sealed class MonogamyGameViewModelTests
 {
-    private static Player Male(string name   = "Adam") => Player.Create(name, attributes: new Dictionary<string, string> { ["gender"] = "male" });
-    private static Player Female(string name = "Eve")  => Player.Create(name, attributes: new Dictionary<string, string> { ["gender"] = "female" });
+    private static Player Male(string name = "Adam") => Player.Create(name, attributes: new Dictionary<string, string> { ["gender"] = "male" });
+    private static Player Female(string name = "Eve") => Player.Create(name, attributes: new Dictionary<string, string> { ["gender"] = "female" });
 
     private static MonogamyController RealController(int winningTokens = 200, Random? rng = null) =>
         new(

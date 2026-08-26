@@ -35,7 +35,7 @@ public sealed class DocumentationAccuracyTests
     [Fact]
     public void Readme_mode_count_matches_the_tree()
     {
-        var root   = FindRepositoryRoot();
+        var root = FindRepositoryRoot();
         var readme = File.ReadAllText(Path.Combine(root, "README.md"));
 
         // Count what the registry actually holds, not BaseGameModeDefinition
@@ -66,7 +66,7 @@ public sealed class DocumentationAccuracyTests
     [Fact]
     public void Readme_lists_every_project_in_the_solution()
     {
-        var root   = FindRepositoryRoot();
+        var root = FindRepositoryRoot();
         var readme = File.ReadAllText(Path.Combine(root, "README.md"));
 
         var projects = Directory

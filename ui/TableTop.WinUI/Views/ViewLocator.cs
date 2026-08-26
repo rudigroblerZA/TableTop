@@ -1,9 +1,7 @@
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using TableTop.WinUI.Infrastructure;
-using TableTop.WinUI.ViewModels;
 using TableTop.Presentation.Infrastructure;
 using TableTop.Presentation.ViewModels;
+using TableTop.WinUI.ViewModels;
 
 namespace TableTop.WinUI.Views;
 
@@ -17,19 +15,19 @@ public static class ViewLocator
 {
     private static readonly Dictionary<Type, Func<UIElement>> Map = new()
     {
-        [typeof(IntroViewModel)]              = () => new IntroView(),
-        [typeof(ArchetypePickerViewModel)]    = () => new ArchetypePickerView(),
+        [typeof(IntroViewModel)] = () => new IntroView(),
+        [typeof(ArchetypePickerViewModel)] = () => new ArchetypePickerView(),
         [typeof(SubArchetypePickerViewModel)] = () => new SubArchetypePickerView(),
-        [typeof(GameSelectionViewModel)]      = () => new GameSelectionView(),
-        [typeof(PlayerSetupViewModel)]        = () => new PlayerSetupView(),
-        [typeof(CardTurnGameViewModel)]       = () => new CardTurnGameView(),
-        [typeof(MillionaireGameViewModel)]    = () => new MillionaireGameView(),
-        [typeof(MonogamyGameViewModel)]       = () => new MonogamyGameView(),
-        [typeof(DayOneGameViewModel)]         = () => new DayOneGameView(),
-        [typeof(ClaimedGameViewModel)]        = () => new ClaimedGameView(),
-        [typeof(HerdGameViewModel)]           = () => new HerdGameView(),
-        [typeof(SettingsViewModel)]           = () => new SettingsView(),
-        [typeof(UnsupportedModeViewModel)]    = () => new UnsupportedModeView(),
+        [typeof(GameSelectionViewModel)] = () => new GameSelectionView(),
+        [typeof(PlayerSetupViewModel)] = () => new PlayerSetupView(),
+        [typeof(CardTurnGameViewModel)] = () => new CardTurnGameView(),
+        [typeof(MillionaireGameViewModel)] = () => new MillionaireGameView(),
+        [typeof(MonogamyGameViewModel)] = () => new MonogamyGameView(),
+        [typeof(DayOneGameViewModel)] = () => new DayOneGameView(),
+        [typeof(ClaimedGameViewModel)] = () => new ClaimedGameView(),
+        [typeof(HerdGameViewModel)] = () => new HerdGameView(),
+        [typeof(SettingsViewModel)] = () => new SettingsView(),
+        [typeof(UnsupportedModeViewModel)] = () => new UnsupportedModeView(),
     };
 
     /// <summary>Builds the view for <paramref name="viewModel"/> with its DataContext set.</summary>

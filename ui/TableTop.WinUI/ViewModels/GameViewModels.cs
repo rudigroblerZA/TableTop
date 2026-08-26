@@ -1,14 +1,11 @@
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Abstractions.Scoring;
-using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Controllers;
-using TableTop.WinUI.Infrastructure;
 using TableTop.Presentation.Infrastructure;
 using TableTop.Presentation.ViewModels;
+using TableTop.WinUI.Infrastructure;
 
 namespace TableTop.WinUI.ViewModels;
 
@@ -60,9 +57,9 @@ public static class GameViewModelFactory
         var s = WinUIAppSettings.Instance;
         var gameplayOptions = new GameplayOptions
         {
-            ShuffleDeck    = s.ShuffleCards,
-            MinDifficulty  = (Core.Abstractions.Cards.Difficulty)(s.MinDifficulty + 1),
-            MaxDifficulty  = (Core.Abstractions.Cards.Difficulty)(s.MaxDifficulty + 1),
+            ShuffleDeck = s.ShuffleCards,
+            MinDifficulty = (Core.Abstractions.Cards.Difficulty)(s.MinDifficulty + 1),
+            MaxDifficulty = (Core.Abstractions.Cards.Difficulty)(s.MaxDifficulty + 1),
             CardsPerPlayer = s.CardsPerPlayer > 0 ? s.CardsPerPlayer : null,
         };
 
@@ -76,13 +73,13 @@ public static class GameViewModelFactory
         // mode currently reaches it.
         return controller switch
         {
-            ICardTurnController ctc   => new CardTurnGameViewModel(
+            ICardTurnController ctc => new CardTurnGameViewModel(
                 navigator, mode, ctc, s.EnableTimer, s.TimerSeconds, s.ShowCardCount),
             IMillionaireController mc => new MillionaireGameViewModel(navigator, mc),
-            IMonogamyController mo    => new MonogamyGameViewModel(navigator, mo),
-            IDayOneController dc      => new DayOneGameViewModel(navigator, dc),
-            IClaimedController cc     => new ClaimedGameViewModel(navigator, cc),
-            IHerdController hc        => new HerdGameViewModel(navigator, hc),
+            IMonogamyController mo => new MonogamyGameViewModel(navigator, mo),
+            IDayOneController dc => new DayOneGameViewModel(navigator, dc),
+            IClaimedController cc => new ClaimedGameViewModel(navigator, cc),
+            IHerdController hc => new HerdGameViewModel(navigator, hc),
             _ => Fallback(navigator, mode, controller),
         };
     }
@@ -129,7 +126,7 @@ public sealed class UnsupportedModeViewModel : ViewModelBase
     /// <summary>Initialises the fallback for <paramref name="modeName"/>.</summary>
     public UnsupportedModeViewModel(Navigator navigator, string modeName)
     {
-        ModeName      = modeName;
+        ModeName = modeName;
         GoBackCommand = new RelayCommand(() => navigator.GoBack());
     }
 }

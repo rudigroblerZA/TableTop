@@ -27,7 +27,7 @@ namespace TableTop.Games.School;
 public sealed class LogicLabMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Logic Lab";
+    public override string Name => "Logic Lab";
     /// <inheritdoc />
     public override string Description =>
         "Riddles, deductions, sequences, and liars — pure reasoning, with every answer explained on the flip side.";
@@ -35,17 +35,17 @@ public sealed class LogicLabMode : BaseGameModeDefinition
     /// <summary>Label for the button that records a solved puzzle.</summary>
     public override string CompleteLabel => "Solved It";
     /// <summary>Label for the button that concedes a puzzle.</summary>
-    public override string SkipLabel     => "Brain Melted";
+    public override string SkipLabel => "Brain Melted";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Riddles"]      = "#66BB6A",
-            ["Deduction"]    = "#42A5F5",
-            ["Sequences"]    = "#AB47BC",
+            ["Riddles"] = "#66BB6A",
+            ["Deduction"] = "#42A5F5",
+            ["Sequences"] = "#AB47BC",
             ["Truth & Lies"] = "#FFA726",
-            ["Assumptions"]  = "#EF5350",
+            ["Assumptions"] = "#EF5350",
         };
 
     /// <summary>Harder puzzles score more — reasoning earns its keep.</summary>

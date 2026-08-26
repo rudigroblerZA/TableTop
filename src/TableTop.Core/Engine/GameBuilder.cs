@@ -6,7 +6,6 @@ using TableTop.Core.Abstractions.Progression;
 using TableTop.Core.Abstractions.Rules;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Progression;
-using TableTop.Core.Domain.Rules;
 using TableTop.Core.Domain.Scoring;
 
 namespace TableTop.Core.Engine;
@@ -157,10 +156,10 @@ public sealed class GameBuilder
         TableTop.Core.Abstractions.Game.SpecialCardScoringPolicy policy, int bonus = 0)
     {
         _specialCardPolicy = policy;
-        _specialCardBonus  = bonus;
+        _specialCardBonus = bonus;
         return this;
     }
-/// <summary>Constructs and returns the configured <see cref="IGame"/> instance.</summary>
+    /// <summary>Constructs and returns the configured <see cref="IGame"/> instance.</summary>
 
     public IGame Build()
     {

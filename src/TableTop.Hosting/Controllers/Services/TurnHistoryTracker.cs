@@ -18,8 +18,8 @@ public sealed class TurnHistoryTracker
     private const int MaxHistoryDepth = Core.TableTopDefaults.History.MaxDepth;
 
     // Fast per-player lookups for the hint engine
-    private readonly Dictionary<Guid, List<CardOutcome>> _outcomes     = new();
-    private readonly Dictionary<Guid, List<Difficulty>>  _difficulties = new();
+    private readonly Dictionary<Guid, List<CardOutcome>> _outcomes = new();
+    private readonly Dictionary<Guid, List<Difficulty>> _difficulties = new();
 
     // Full ordered history for reports and undo
     private readonly List<TurnRecord> _allTurns = new();
@@ -30,7 +30,7 @@ public sealed class TurnHistoryTracker
     {
         foreach (var p in players)
         {
-            _outcomes[p.Id]     = new List<CardOutcome>();
+            _outcomes[p.Id] = new List<CardOutcome>();
             _difficulties[p.Id] = new List<Difficulty>();
         }
     }
@@ -40,32 +40,32 @@ public sealed class TurnHistoryTracker
     /// <paramref name="scoreAfter"/> captures the player's current total.
     /// </summary>
     public void Record(
-        IPlayer     player,
-        ICard       card,
+        IPlayer player,
+        ICard card,
         CardOutcome outcome,
-        int         scoreDelta,
-        int         scoreAfter,
-        int         round,
-        TimeSpan?   elapsed = null)
+        int scoreDelta,
+        int scoreAfter,
+        int round,
+        TimeSpan? elapsed = null)
     {
         _turnCounter++;
 
         // Hint engine fast path
         EnsureInitialised(player.Id);
-        Prepend(_outcomes[player.Id],     outcome,          MaxHistoryDepth);
-        Prepend(_difficulties[player.Id], card.Difficulty,  MaxHistoryDepth);
+        Prepend(_outcomes[player.Id], outcome, MaxHistoryDepth);
+        Prepend(_difficulties[player.Id], card.Difficulty, MaxHistoryDepth);
 
         // Full audit record
         _allTurns.Add(new TurnRecord
         {
-            TurnNumber  = _turnCounter,
-            Round       = round,
-            Player      = player,
-            Card        = card,
-            Outcome     = outcome,
-            ScoreDelta  = scoreDelta,
-            ScoreAfter  = scoreAfter,
-            Elapsed     = elapsed,
+            TurnNumber = _turnCounter,
+            Round = round,
+            Player = player,
+            Card = card,
+            Outcome = outcome,
+            ScoreDelta = scoreDelta,
+            ScoreAfter = scoreAfter,
+            Elapsed = elapsed,
         });
     }
 
@@ -75,7 +75,7 @@ public sealed class TurnHistoryTracker
     public void Record(Guid playerId, CardOutcome outcome, Difficulty difficulty)
     {
         EnsureInitialised(playerId);
-        Prepend(_outcomes[playerId],     outcome,    MaxHistoryDepth);
+        Prepend(_outcomes[playerId], outcome, MaxHistoryDepth);
         Prepend(_difficulties[playerId], difficulty, MaxHistoryDepth);
         // NOTE: does not add to _allTurns — caller should prefer the full overload
     }
@@ -128,7 +128,7 @@ public sealed class TurnHistoryTracker
     {
         if (!_outcomes.ContainsKey(playerId))
         {
-            _outcomes[playerId]     = new List<CardOutcome>();
+            _outcomes[playerId] = new List<CardOutcome>();
             _difficulties[playerId] = new List<Difficulty>();
         }
     }

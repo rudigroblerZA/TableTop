@@ -1,31 +1,29 @@
 using TableTop.Core.Abstractions.Cards;
-using TableTop.Core.Abstractions.Game;
-using TableTop.Core.Abstractions.Lifelines;
 
 namespace TableTop.Hosting.Events;
 
 /// <summary>Raised when a new hot-seat player begins their run.</summary>
 public sealed record HotSeatBeganEvent(
     string PlayerName,
-    int    PlayerIndex,
-    int    TotalPlayers
+    int PlayerIndex,
+    int TotalPlayers
 );
 
 /// <summary>Raised when a new question is ready for the hot-seat player.</summary>
 public sealed record QuestionReadyEvent(
-    string                                   QuestionText,
+    string QuestionText,
     IReadOnlyDictionary<AnswerLabel, string> Answers,
-    IReadOnlyList<AnswerLabel>               AvailableOptions,
-    PrizeLadderSnapshot                      Ladder,
-    IReadOnlyList<LifelineSnapshot>          Lifelines
+    IReadOnlyList<AnswerLabel> AvailableOptions,
+    PrizeLadderSnapshot Ladder,
+    IReadOnlyList<LifelineSnapshot> Lifelines
 );
 
 /// <summary>Raised when a lifeline result is available.</summary>
 public sealed record LifelineUsedEvent(
-    string                     LifelineName,
-    string                     Narrative,
-    IReadOnlyList<AnswerLabel>  RemainingOptions,
-    AnswerLabel?                Suggestion
+    string LifelineName,
+    string Narrative,
+    IReadOnlyList<AnswerLabel> RemainingOptions,
+    AnswerLabel? Suggestion
 );
 
 /// <summary>Raised when the player answers correctly.</summary>
@@ -39,8 +37,8 @@ public sealed record AnswerCorrectEvent(
 /// <summary>Raised when the player answers incorrectly.</summary>
 public sealed record AnswerWrongEvent(
     AnswerLabel CorrectLabel,
-    string      CorrectText,
-    long        GuaranteedPrize
+    string CorrectText,
+    long GuaranteedPrize
 );
 
 /// <summary>Raised when the player walks away.</summary>
@@ -58,18 +56,18 @@ public sealed record HotSeatResult(string PlayerName, long Prize);
 /// <summary>Immutable snapshot of the prize ladder for UI rendering.</summary>
 public sealed record PrizeLadderSnapshot(
     IReadOnlyList<LadderRungSnapshot> Rungs,
-    int                               CurrentIndex,
-    long                              GuaranteedPrize,
-    bool                              IsComplete
+    int CurrentIndex,
+    long GuaranteedPrize,
+    bool IsComplete
 );
 
 /// <summary>A snapshot of one rung on the prize ladder, used in the game-ended standings.</summary>
 public sealed record LadderRungSnapshot(
-    int    QuestionNumber,
-    long   PrizeAmount,
-    bool   IsSafeHaven,
-    bool   IsCurrent,
-    bool   IsPassed
+    int QuestionNumber,
+    long PrizeAmount,
+    bool IsSafeHaven,
+    bool IsCurrent,
+    bool IsPassed
 );
 
 /// <summary>The name and remaining-use status of a single lifeline.</summary>
