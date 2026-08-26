@@ -124,6 +124,38 @@ silently; regenerate with `TABLETOP_UPDATE_API=1` and commit the diff.
 
 ---
 
+## Branching
+
+GitFlow. Two long-lived branches, and nothing commits directly to either:
+
+| Branch | Holds |
+|---|---|
+| `main` | Released versions only. Every commit is tagged (`v1.22.0`). |
+| `develop` | Integration. The branch you start work from and merge back into. |
+
+Short-lived branches, named for what they carry:
+
+```bash
+git switch develop && git switch -c feature/table-suitability
+git switch develop && git switch -c bug/millionaire-vm-flake
+```
+
+- `feature/*` — new capability, new modes, new decks. Merges to `develop`.
+- `bug/*` — fixes. Merges to `develop`.
+
+A release is `develop` → `main`, tagged with the version already set in
+`Directory.Build.props`. CI (`.github/workflows/ci.yml`) builds and tests both
+long-lived branches and every pull request into them, so a branch that is red
+cannot be merged without it being visible.
+
+Before opening a pull request, the three things that fail loudest if skipped:
+the engine suite (`dotnet test TableTop.Engine.slnx`), the API snapshot if you
+touched public surface (see **Versioning** above), and the mode/card counts in
+this file if you added either — `DocumentationAccuracyTests` enforces the mode
+count.
+
+---
+
 ## Documentation
 
 Two files, replacing what used to be a 34-file `docs/` folder that had
