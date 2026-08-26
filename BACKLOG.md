@@ -699,13 +699,14 @@ if the comment is wrong the label may be too, and the label is user-facing.
 keep one that contrasts against WPF to explain a decision. The distinction is
 whether WPF is the subject or the foil.
 
-### 22. `MillionaireGameViewModelTests` is flaky — it drives a shuffled real deck
+### 22. `MillionaireGameViewModelTests` is flaky — it drives a shuffled real deck — **CLOSED**
 
-**P2, and it is genuinely intermittent — measured, not suspected.** Three of the
-class's tests answer `vm.Answers[0]` and assert `vm.IsAnswered` becomes true.
-`RealController()` builds from `new MillionaireMode().GetQuestionBank()`, the
-live bank, and the question order is shuffled, so which question is on screen
-and what `Answers[0]` refers to changes per run.
+**P2, and it was genuinely intermittent — measured, not suspected.** Three of the
+class's tests answered `vm.Answers[0]` and asserted `vm.IsAnswered` becomes true.
+`RealController()` built from `new MillionaireMode().GetQuestionBank()`, the
+live bank, and `MillionaireController.BuildQuestionPool` orders by difficulty
+then by `Random.Shared.Next()`, so which question reached rung one changed
+every run.
 
 Measured on the 1.21.0 tree while adding an unrelated mode: the full suite
 failed 2 runs out of 3, and the *failing test within the class differed between
@@ -713,15 +714,34 @@ runs* (`AnswerOption_SelectCommand_…` one time, `AnswerOption_Invoke_…` the
 next). Run the class alone and it passed 5 for 5 — which is exactly the profile
 that gets a failure dismissed as "just a flake" and then hides a real one later.
 
-This is not the parallel-statics problem item 14 describes; both statics named
-there are gone. It is a test reaching for real, shuffled content when it wanted
-a fixed fixture. The fix is a stub question bank with known answers, so the
-three tests assert the routing they were written to assert
-(`Invoke()` and `SelectCommand` reaching the same path) rather than
-incidentally depending on which question the shuffle dealt.
+**The mechanism was one step past where this entry originally stopped, and the
+extra step is the interesting part.** "The question changes per run" is true but
+not sufficient — it only matters because a *correct* answer does not leave the
+question settled. `SubmitAnswer` raises `AnswerCorrect`, whose handler sets
+`IsAnswered = true`, and then calls `LoadNextQuestion`, whose `QuestionReady`
+handler sets `IsAnswered = false` again for the newly-loaded question. So the
+assertion failed precisely when the shuffle happened to put the correct answer
+at `Answers[0]`. Measured directly before fixing: the first option was correct
+in **22 of 400** constructions, which compounds across three tests and repeated
+runs into the observed one-in-three suite failure.
 
-Worth doing before the next person debugs it: a suite that fails a third of the
-time trains everyone to re-run rather than read.
+**Fixed with a fixed fixture bank** whose correct answer is always D, so
+`Answers[0]` (label A) is reliably wrong. The tests now name the option they
+click — `WrongLabel` to settle a question, `CorrectLabel` to advance the ladder
+— rather than trusting an index, since `Answers[0]` reading as "the one that
+ends the round" was the assumption that broke. `Answer_CorrectOrWrong_SetsIsAnswered`
+was split into two honestly-named tests: a wrong answer settles, and a correct
+answer advances and *reopens* interaction. That second behaviour was always
+intended and was previously only ever observed by accident, in the runs that
+failed.
+
+**Verified by repetition, which is the only proof that means anything here:**
+25 consecutive runs of the class and 15 consecutive full-suite runs, zero
+failures. Before the fix the class failed roughly one run in three.
+
+This was never the parallel-statics problem item 14 describes; both statics
+named there are gone. It was a test reaching for real, shuffled content when it
+wanted a fixed fixture.
 
 ---
 
