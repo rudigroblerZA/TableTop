@@ -32,7 +32,7 @@ gate that keeps them honest. Item 4 closed the actual gap that mechanism was
 reporting: real screens on every head for every family in the catalogue. See
 both items' own sections below.
 
-Items 1, 2, 3, 8, 13, 15 and 16 sit below this — real, but none of them is
+Items 2, 3, 8, 13, 15 and 16 sit below this — real, but none of them is
 between a player and a working game.
 
 **1.21.0 removed a guard without replacing it, and that is worth a decision
@@ -63,21 +63,53 @@ when written and is now simply checkable — check it rather than trusting it.
 
 ---
 
-### 1. Coverage is a static approximation, not a number
+### 1. Coverage is a static approximation, not a number — **CLOSED**
 
 CI collects coverage (`coverage.runsettings`) and `scripts/measure-coverage.ps1`
-turns it into a percentage. Neither has run to completion here — no NuGet
-access (`NU1301: 403`, re-confirmed each time, never assumed).
+turns it into a percentage. Neither had run to completion when this item was
+written — no NuGet access (`NU1301: 403`, re-confirmed each time, never
+assumed).
 
-`scripts/offline-build.sh` (item 8) does **not** unblock this: coverage needs
+`scripts/offline-build.sh` (item 8) did **not** unblock this: coverage needs
 the real test suite, which needs xunit and coverlet from NuGet. The engine
 building offline is not the same as the tests running.
 
-**Ask: run `./scripts/measure-coverage.ps1` on a machine with NuGet.** The
-1.19.0 run proved `dotnet test` is reachable on someone's machine, so this is
-now one command away rather than blocked. Static reach analysis is a poor proxy — it was wrong in both directions the once it
-was checked: flagged `TableTop.Presentation` low before it had any tests, and
-called `TableTop.Games` low because mode-sweeping tests don't name types.
+**Closed by running the ask.** `./scripts/measure-coverage.ps1` on a machine
+with NuGet, against the 862-test suite (all passing):
+
+| Metric | Result |
+|---|---|
+| Line coverage | **91.8%** (17,527 / 19,080 coverable lines) |
+| Branch coverage | 67.9% (1,307 / 1,924) |
+| Method coverage | 70.9% (1,504 / 2,121); fully covered 59.8% (1,270 / 2,121) |
+| Assemblies / Classes / Files | 4 / 349 / 214 |
+
+Per-assembly: `TableTop.Core` 85.6%, `TableTop.Hosting` 88.9%,
+`TableTop.Presentation` 88.7%. (`TableTop.Games` isn't broken out separately
+by the tool — mode-sweeping tests exercise it heavily but don't name types,
+the same effect that made the old static-reach proxy call it falsely low.)
+
+The line/method split is the honest read: line coverage alone would say this
+suite is thorough, and it mostly is, but branch coverage sitting almost 24
+points lower means a meaningful fraction of conditional paths inside covered
+methods are untested — a line can be "hit" while only one side of an `if`
+ever runs. Full-method coverage (59.8%) being well below line coverage
+(91.8%) says the same thing from a different angle: many methods have *some*
+covered line but aren't exercised end-to-end.
+
+Named zero-coverage classes worth a look before trusting any future refactor
+near them: `TableTop.Hosting.Controllers.JsonGamePersistence`,
+`TableTop.Hosting.Diagnostics.LoggerEngineDiagnostics`,
+`TableTop.Hosting.Extensions.ServiceCollectionExtensions`,
+`TableTop.Hosting.ResumableSession`, and `TableTop.Hosting.SessionResumer` at
+12.5%. None of these came up in this pass — recorded here so the next person
+touching one knows to write the test first, not assume one exists.
+
+Confirms the static-reach proxy this item always distrusted was wrong in
+both directions, same as previously found: it once flagged
+`TableTop.Presentation` low before it had any tests, and called
+`TableTop.Games` low because mode-sweeping tests don't name types — a real
+run settles it instead of guessing.
 
 ### 2. `tests/TableTop.UiTests` can't reach the shared ViewModels
 
