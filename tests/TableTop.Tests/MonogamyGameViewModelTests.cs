@@ -1,9 +1,6 @@
-using TableTop.Core.Abstractions.Cards;
-using TableTop.Core.Domain.Progression;
-using TableTop.Games.Data;
+using TableTop.Games;
 using TableTop.Hosting.Controllers;
 using TableTop.Presentation.ViewModels;
-using TableTop.Tests.Helpers;
 
 namespace TableTop.Tests;
 

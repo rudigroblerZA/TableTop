@@ -1,5 +1,5 @@
 using TableTop.Core.Domain.Progression;
-using TableTop.Games.Data;
+using TableTop.Games;
 using TableTop.Hosting.Controllers;
 using TableTop.Hosting.Events;
 
