@@ -263,9 +263,6 @@ sealed class TableTop.Games.Couples.WouldYouKnowMode
     String SkipLabel { get; }
 static class TableTop.Games.Data.MonogamyCardBank
     IReadOnlyList<MonogamyCard> All { get; }
-static class TableTop.Games.Data.MonogamyCardBankExtended
-    IReadOnlyList<MonogamyCard> All { get; }
-    IReadOnlyList<MonogamyCard> FullDeck { get; }
 static class TableTop.Games.FactOrFiction.ExpertFactOrFictionCardBank
     IReadOnlyList<ICard> All { get; }
 sealed class TableTop.Games.FactOrFiction.ExpertFactOrFictionMode

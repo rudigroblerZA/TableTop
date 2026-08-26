@@ -111,7 +111,7 @@ internal sealed class ConsoleGameLauncher
             var target     = ConsoleUi.PromptInt("Tokens to win?", 3, 30);
             var controller = new MonogamyController(
                 players,
-                TableTop.Games.Data.MonogamyCardBankExtended.FullDeck,
+                TableTop.Games.Data.MonogamyCardBank.All,
                 winningTokenCount: target);
             new ConsoleMonogamyRenderer(controller).RunBlocking();
             return;
