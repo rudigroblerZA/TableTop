@@ -142,29 +142,18 @@
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnGameModeTapped" />
                         </Frame.GestureRecognizers>
-                        <!-- Leading stripe in the deck's own accent, so a themed
-                             mode is recognisable in the list before you open it.
-                             Fixed width so titles stay left-aligned whether or
-                             not a deck declares a palette. -->
-                        <Grid ColumnDefinitions="4,*" ColumnSpacing="12">
-                            <BoxView Grid.Column="0"
-                                     Color="{Binding AccentColor}"
-                                     IsVisible="{Binding HasAccent}"
-                                     CornerRadius="2"
-                                     VerticalOptions="Fill" />
-                            <VerticalStackLayout Grid.Column="1" Spacing="4">
-                                <Label Text="{Binding Title}"
-                                       FontFamily="{StaticResource DisplayFont}"
-                                       FontSize="17"
-                                       FontAttributes="Bold"
-                                       TextColor="{StaticResource TextPrimary}" />
-                                <Label Text="{Binding Description}"
-                                       FontFamily="{StaticResource BodyFont}"
-                                       FontSize="13"
-                                       TextColor="#A9BDB4"
-                                       LineHeight="1.4" />
-                            </VerticalStackLayout>
-                        </Grid>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding Title}"
+                                   FontFamily="{StaticResource DisplayFont}"
+                                   FontSize="17"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="{Binding Description}"
+                                   FontFamily="{StaticResource BodyFont}"
+                                   FontSize="13"
+                                   TextColor="#A9BDB4"
+                                   LineHeight="1.4" />
+                        </VerticalStackLayout>
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

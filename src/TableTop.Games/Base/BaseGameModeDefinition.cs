@@ -1,7 +1,6 @@
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Abstractions.Presentation;
 using TableTop.Core.Abstractions.Rules;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Rules;
@@ -26,70 +25,6 @@ public abstract class BaseGameModeDefinition : IGameMode, IGameModeDefinition
 
     /// <inheritdoc />
     public abstract string Description { get; }
-
-    // ── Presentation ──────────────────────────────────────────────────────────
-    //
-    // This used to be loaded from each mode's .deck.json. Those files were
-    // removed in 1.18.0 and the loader that read them in 1.19.0, so there is no
-    // longer any source that can override a compiled-in value. Presentation is
-    // therefore always None, and every Resolved* member below falls through to
-    // the C# value.
-    //
-    // The members are kept rather than deleted because both heads, the shared
-    // ViewModels and the public API snapshot bind to them. Collapsing them into
-    // the plain Name/CompleteLabel/CategoryColours members they now just return
-    // is a head-facing change and belongs in its own commit — see BACKLOG.md.
-
-    /// <summary>
-    /// Always <see cref="ModePresentation.None"/>. Kept so the Resolved*
-    /// members below retain their shape for consumers. Never null.
-    /// </summary>
-    public ModePresentation Presentation => ModePresentation.None;
-
-    // ── Resolved presentation ─────────────────────────────────────────────────
-    //
-    // WHY THESE EXIST ALONGSIDE Name, CompleteLabel AND FRIENDS
-    // ─────────────────────────────────────────────────────────
-    // Name and Description are abstract and the labels are virtual, so all 92
-    // modes already override them. Teaching those members to consult JSON would
-    // not work: a subclass override wins over any base implementation, so JSON
-    // would be silently ignored on precisely the modes that bothered to set a
-    // value. Making them non-virtual would break every mode in the catalogue.
-    //
-    // So the resolution happens here instead, in members no subclass overrides.
-    // Hosts should read these; the originals remain as the compiled-in default
-    // each one falls back to. JSON wins where it speaks, C# stands where it
-    // doesn't, and a deck with no presentation block behaves exactly as before.
-
-    /// <summary>Name to display: JSON title if set, otherwise <see cref="Name"/>.</summary>
-    public string DisplayName => Presentation.Title ?? Name;
-
-    /// <summary>Description to display: JSON if set, otherwise <see cref="Description"/>.</summary>
-    public string DisplayDescription => Presentation.Description ?? Description;
-
-    /// <summary>Primary action label: JSON if set, otherwise <see cref="CompleteLabel"/>.</summary>
-    public string ResolvedCompleteLabel => Presentation.CompleteLabel ?? CompleteLabel;
-
-    /// <summary>Secondary action label: JSON if set, otherwise <see cref="SkipLabel"/>.</summary>
-    public string ResolvedSkipLabel => Presentation.SkipLabel ?? SkipLabel;
-
-    /// <summary>Table minimum: JSON if set, otherwise <see cref="MinimumPlayers"/>.</summary>
-    public int ResolvedMinimumPlayers => Presentation.MinimumPlayers ?? MinimumPlayers;
-
-    /// <summary>Category colours: JSON if set, otherwise <see cref="CategoryColours"/>.</summary>
-    public IReadOnlyDictionary<string, string> ResolvedCategoryColours =>
-        Presentation.CategoryColours ?? CategoryColours;
-
-    /// <summary>Categories pinned first: JSON if set, otherwise <see cref="CategoriesPinnedToStart"/>.</summary>
-    public IReadOnlyList<string> ResolvedCategoriesPinnedToStart =>
-        Presentation.CategoriesPinnedToStart ?? CategoriesPinnedToStart;
-
-    /// <summary>Categories pinned last: JSON if set, otherwise <see cref="CategoriesPinnedToEnd"/>.</summary>
-    public IReadOnlyList<string> ResolvedCategoriesPinnedToEnd =>
-        Presentation.CategoriesPinnedToEnd ?? CategoriesPinnedToEnd;
-
-    /// <summary>Colours and fonts from JSON, or null when the deck declares none.</summary>
-    public ThemePalette? Theme => Presentation.Theme;
 
     // ── IGameModeDefinition ───────────────────────────────────────────────────
 

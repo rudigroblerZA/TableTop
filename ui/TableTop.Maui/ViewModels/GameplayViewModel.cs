@@ -273,7 +273,7 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
         // correctly-themed error state rather than a half-styled screen.
         Theme = Theming.ModeTheme.For(gameMode);
         var definition = gameMode as TableTop.Games.Base.BaseGameModeDefinition;
-        _categoryColours = definition?.ResolvedCategoryColours ?? new Dictionary<string, string>();
+        _categoryColours = definition?.CategoryColours ?? new Dictionary<string, string>();
 
         // Backlog item 5: IControllerFactory/IAppSettings resolved from the
         // app's container (MauiProgram.cs's AddTableTopHosting()) rather than

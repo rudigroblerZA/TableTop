@@ -1,25 +1,15 @@
 abstract class TableTop.Games.Base.BaseGameModeDefinition
     IEnumerable<IRule> GetRules()
     IReadOnlyDictionary<String, String> CategoryColours { get; }
-    IReadOnlyDictionary<String, String> ResolvedCategoryColours { get; }
     IReadOnlyList<ICard> GetCards(IReadOnlyList<IPlayer> players)
     IReadOnlyList<String> CategoriesPinnedToEnd { get; }
     IReadOnlyList<String> CategoriesPinnedToStart { get; }
-    IReadOnlyList<String> ResolvedCategoriesPinnedToEnd { get; }
-    IReadOnlyList<String> ResolvedCategoriesPinnedToStart { get; }
     IScoringStrategy GetScoring()
     Int32 MinimumPlayers { get; }
-    Int32 ResolvedMinimumPlayers { get; }
-    ModePresentation Presentation { get; }
     String CompleteLabel { get; }
     String Description { get; }
-    String DisplayDescription { get; }
-    String DisplayName { get; }
     String Name { get; }
-    String ResolvedCompleteLabel { get; }
-    String ResolvedSkipLabel { get; }
     String SkipLabel { get; }
-    ThemePalette Theme { get; }
 static class TableTop.Games.Couples.AfterglowCardBank
     IReadOnlyList<ICard> All { get; }
 sealed class TableTop.Games.Couples.AfterglowMode
