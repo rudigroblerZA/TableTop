@@ -164,6 +164,18 @@ A release is `develop` → `main`, tagged with the version already set in
 long-lived branches and every pull request into them, so a branch that is red
 cannot be merged without it being visible.
 
+Two code-quality checks run in CI alongside the build:
+
+- **Trivy** (`trivy` job) — filesystem scan for known-vulnerable NuGet
+  packages and committed secrets, reporting to the repo's Security tab.
+  Report-only for now (`exit-code: "0"`) until the current findings are
+  triaged; see the job's comment in `ci.yml` for turning it into a real gate.
+- **SonarCloud** (`sonarcloud` job) — static analysis, code smells,
+  duplication, PR decoration. Needs a SonarCloud project and a `SONAR_TOKEN`
+  repository secret that this repo cannot provision itself; the job is
+  `continue-on-error: true` until both exist — see its comment in `ci.yml`
+  for the two setup steps.
+
 Before opening a pull request, the three things that fail loudest if skipped:
 the engine suite (`dotnet test TableTop.Engine.slnx`), the API snapshot if you
 touched public surface (see **Versioning** above), and the mode/card counts in
