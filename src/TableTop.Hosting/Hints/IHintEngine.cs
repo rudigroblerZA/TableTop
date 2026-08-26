@@ -19,7 +19,7 @@ public interface IHintEngine
     /// Returns null when no meaningful hint can be made (e.g. first card of the session).
     /// </summary>
     NextTurnHint? GenerateHint(
-        IPlayer     player,
+        IPlayer player,
         HintContext context);
 }
 
@@ -34,11 +34,11 @@ public interface IHintEngine
 /// <param name="Round">Current round number.</param>
 /// <param name="Standings">All players' scores for relative context.</param>
 public sealed record HintContext(
-    IReadOnlyList<CardOutcome>          RecentOutcomes,
-    IReadOnlyList<Difficulty>           RecentDifficulties,
-    FlowState?                          CurrentFlow,
-    int                                 SkipCount,
-    int                                 Round,
+    IReadOnlyList<CardOutcome> RecentOutcomes,
+    IReadOnlyList<Difficulty> RecentDifficulties,
+    FlowState? CurrentFlow,
+    int SkipCount,
+    int Round,
     IReadOnlyList<(Guid Id, int Score)> Standings
 );
 
@@ -53,13 +53,13 @@ public sealed record HintContext(
 /// <param name="Urgency">How strongly to surface this hint in the UI.</param>
 /// <param name="Reason">Machine-readable reason token for filtering and logging.</param>
 public sealed record NextTurnHint(
-    Difficulty  SuggestedDifficulty,
-    PaceHint?   SuggestedPaceChange,
-    string      NeutralHint,
-    string?     HimHint,
-    string?     HerHint,
+    Difficulty SuggestedDifficulty,
+    PaceHint? SuggestedPaceChange,
+    string NeutralHint,
+    string? HimHint,
+    string? HerHint,
     HintUrgency Urgency,
-    string      Reason
+    string Reason
 )
 {
     /// <summary>
@@ -71,9 +71,9 @@ public sealed record NextTurnHint(
         var gender = player.Attributes.TryGetValue("gender", out var g) ? g.ToLowerInvariant() : "";
         return gender switch
         {
-            "male"   => HimHint ?? NeutralHint,
+            "male" => HimHint ?? NeutralHint,
             "female" => HerHint ?? NeutralHint,
-            _        => NeutralHint
+            _ => NeutralHint
         };
     }
 }

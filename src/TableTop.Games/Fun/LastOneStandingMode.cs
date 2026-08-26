@@ -37,7 +37,7 @@ namespace TableTop.Games.Fun;
 public sealed class LastOneStandingMode : BaseGameModeDefinition, ITableShapeMode
 {
     /// <inheritdoc />
-    public override string Name        => "Last One Standing";
+    public override string Name => "Last One Standing";
     /// <inheritdoc />
     public override string Description =>
         "Everyone attempts every card. Fail and you're out — and you become a judge. Last player left wins, and it takes about fifteen minutes.";
@@ -51,7 +51,7 @@ public sealed class LastOneStandingMode : BaseGameModeDefinition, ITableShapeMod
     /// <summary>Records surviving the card.</summary>
     public override string CompleteLabel => "Survived";
     /// <summary>Records being knocked out.</summary>
-    public override string SkipLabel     => "Out";
+    public override string SkipLabel => "Out";
 
     /// <summary>Opens on the rules, because elimination needs its terms agreed first.</summary>
     public override IReadOnlyList<string> CategoriesPinnedToStart => ["Rules"];
@@ -63,11 +63,11 @@ public sealed class LastOneStandingMode : BaseGameModeDefinition, ITableShapeMod
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Rules"]    = "#5AC8B0",
-            ["Round"]    = "#42A5F5",
+            ["Rules"] = "#5AC8B0",
+            ["Round"] = "#42A5F5",
             ["Pressure"] = "#FFA726",
-            ["Revival"]  = "#66BB6A",
-            ["Final"]    = "#B71C4A",
+            ["Revival"] = "#66BB6A",
+            ["Final"] = "#B71C4A",
         };
 
     /// <summary>
@@ -104,12 +104,12 @@ public static class LastOneStandingCardBank
 
     private static string Emoji(string category) => category switch
     {
-        "Rules"    => "📋",
-        "Round"    => "🎯",
+        "Rules" => "📋",
+        "Round" => "🎯",
         "Pressure" => "🔥",
-        "Revival"  => "🌱",
-        "Final"    => "🏆",
-        _          => "🎲",
+        "Revival" => "🌱",
+        "Final" => "🏆",
+        _ => "🎲",
     };
 
     private static IReadOnlyList<ICard> Build() =>

@@ -1,5 +1,3 @@
-using TableTop.Core.Domain.Cards;
-
 namespace TableTop.Tests;
 
 /// <summary>
@@ -60,7 +58,7 @@ public sealed class CardDeckBuilderTests
         // independently built decks with identical deck name, category, title
         // and body must produce identical ids — across calls, across process
         // restarts, forever. Verified directly rather than assumed.
-        var first  = SampleDeck();
+        var first = SampleDeck();
         var second = SampleDeck();
 
         first.Select(c => c.Id).Should().Equal(second.Select(c => c.Id));
@@ -134,7 +132,7 @@ public sealed class CardDeckBuilderTests
         var builder = CardDeckBuilder.For("Deck").Category("X");
 
         var blankTitle = () => builder.Card("", "Body", Difficulty.Easy);
-        var blankBody  = () => builder.Card("Title", "", Difficulty.Easy);
+        var blankBody = () => builder.Card("Title", "", Difficulty.Easy);
 
         blankTitle.Should().Throw<ArgumentException>();
         blankBody.Should().Throw<ArgumentException>();

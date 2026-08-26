@@ -20,7 +20,7 @@ namespace TableTop.Games.School;
 public sealed class SportingChanceMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Sporting Chance";
+    public override string Name => "Sporting Chance";
     /// <inheritdoc />
     public override string Description =>
         "Sport general knowledge — rules and basics, equipment, the Olympics, and world sport. Multiple choice, four difficulties.";
@@ -28,16 +28,16 @@ public sealed class SportingChanceMode : BaseGameModeDefinition
     /// <summary>Label for a correctly answered card.</summary>
     public override string CompleteLabel => "Correct";
     /// <summary>Label for a passed card.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["The Basics"]  = "#66BB6A",
-            ["On the Field"]= "#42A5F5",
-            ["The Olympics"]= "#FFCA28",
-            ["Equipment"]   = "#FFA726",
+            ["The Basics"] = "#66BB6A",
+            ["On the Field"] = "#42A5F5",
+            ["The Olympics"] = "#FFCA28",
+            ["Equipment"] = "#FFA726",
             ["World Sport"] = "#26A69A",
         };
 

@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using TableTop.Core.Abstractions;
-using TableTop.Core.Domain.Decks;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Controllers;
 using TableTop.Hosting.Diagnostics;
@@ -46,8 +45,8 @@ public static class ServiceCollectionExtensions
     /// </param>
     public static IServiceCollection AddTableTopHosting(
         this IServiceCollection services,
-        string?                 sessionFilePath = null,
-        string?                 playerFilePath  = null)
+        string? sessionFilePath = null,
+        string? playerFilePath = null)
     {
         // ── Controller factory ───────────────────────────────────────────────
         // Transient: a new factory is cheap and now genuinely carries no state of

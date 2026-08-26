@@ -1,5 +1,5 @@
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
@@ -43,7 +43,7 @@ public sealed class AfterglowMode : BaseGameModeDefinition, ITableShapeMode
     public TableShape SuitableFor => TableShape.Couple;
 
     /// <inheritdoc />
-    public override string Name        => "Afterglow";
+    public override string Name => "Afterglow";
     /// <inheritdoc />
     public override string Description =>
         "An explicit intimacy game where consent is the mechanic — safeword and boundaries first, every card an invitation you opt into, aftercare to close.";
@@ -51,18 +51,18 @@ public sealed class AfterglowMode : BaseGameModeDefinition, ITableShapeMode
     /// <summary>Label for a card you both chose to do.</summary>
     public override string CompleteLabel => "Together";
     /// <summary>Label for passing — free, always, no reason needed.</summary>
-    public override string SkipLabel     => "Pass (always okay)";
+    public override string SkipLabel => "Pass (always okay)";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Consent"]  = "#26A69A",
-            ["Warm Up"]  = "#FFCA28",
-            ["Turn Up"]  = "#FFA726",
-            ["Heat"]     = "#EF5350",
-            ["Undone"]   = "#AD1457",
-            ["Aftercare"]= "#7E57C2",
+            ["Consent"] = "#26A69A",
+            ["Warm Up"] = "#FFCA28",
+            ["Turn Up"] = "#FFA726",
+            ["Heat"] = "#EF5350",
+            ["Undone"] = "#AD1457",
+            ["Aftercare"] = "#7E57C2",
         };
 
     /// <summary>Deeper movements are worth more — but this isn't really about the score.</summary>
@@ -238,8 +238,8 @@ public static class AfterglowCardBank
     {
         "Warm Up" => "🌤️",
         "Turn Up" => "🔥",
-        "Heat"    => "🌶️",
-        "Undone"  => "💥",
-        _         => "•",
+        "Heat" => "🌶️",
+        "Undone" => "💥",
+        _ => "•",
     };
 }

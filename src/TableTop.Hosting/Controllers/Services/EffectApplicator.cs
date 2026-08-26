@@ -1,5 +1,4 @@
 using TableTop.Core.Abstractions.Cards;
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 
 namespace TableTop.Hosting.Controllers.Services;
@@ -12,14 +11,14 @@ namespace TableTop.Hosting.Controllers.Services;
 public sealed class EffectApplicator
 {
     private readonly IPlayerManager _playerManager;
-    private readonly SkipPolicy     _skipPolicy;
-    private readonly HashSet<Guid>  _extraCardPlayers = [];
+    private readonly SkipPolicy _skipPolicy;
+    private readonly HashSet<Guid> _extraCardPlayers = [];
 
     /// <summary>Initialises a new <see cref="EffectApplicator"/> instance.</summary>
     public EffectApplicator(IPlayerManager playerManager, SkipPolicy skipPolicy)
     {
         _playerManager = playerManager;
-        _skipPolicy    = skipPolicy;
+        _skipPolicy = skipPolicy;
     }
 
     // ── Break effects ─────────────────────────────────────────────────────────

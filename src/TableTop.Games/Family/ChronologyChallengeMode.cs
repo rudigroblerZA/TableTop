@@ -28,7 +28,7 @@ namespace TableTop.Games.Family;
 public sealed class ChronologyChallengeMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Chronology Challenge";
+    public override string Name => "Chronology Challenge";
     /// <inheritdoc />
     public override string Description =>
         "Put four events in order. Did they happen closer together than you think — or further apart?";
@@ -36,17 +36,17 @@ public sealed class ChronologyChallengeMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Ordered";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["History"]     = "#42A5F5",
-            ["Invention"]   = "#66BB6A",
+            ["History"] = "#42A5F5",
+            ["Invention"] = "#66BB6A",
             ["Pop Culture"] = "#EC407A",
-            ["Science"]     = "#AB47BC",
-            ["Modern"]      = "#FFCA28",
+            ["Science"] = "#AB47BC",
+            ["Modern"] = "#FFCA28",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

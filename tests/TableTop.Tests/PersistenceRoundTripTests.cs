@@ -1,10 +1,4 @@
-using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Abstractions.Scoring;
-using TableTop.Core.Domain.Cards;
-using TableTop.Core.Domain.Players;
-using TableTop.Core.Domain.Progression;
-using TableTop.Hosting.Controllers;
 using TableTop.Hosting.Persistence;
 
 namespace TableTop.Tests;
@@ -67,8 +61,8 @@ public sealed class PersistenceRoundTripTests
     [Fact]
     public async Task SaveAndResume_SnapshotRecordsRound()
     {
-        var cards      = MakeCards(20);
-        var players    = MakePlayers();
+        var cards = MakeCards(20);
+        var players = MakePlayers();
         var persistence = new InMemoryPersistence();
 
         var lastRound = 0;
@@ -94,8 +88,8 @@ public sealed class PersistenceRoundTripTests
     [Fact]
     public async Task SaveAndResume_RestoresPlayerScores()
     {
-        var cards      = MakeCards(20);
-        var players    = MakePlayers();
+        var cards = MakeCards(20);
+        var players = MakePlayers();
         var persistence = new InMemoryPersistence();
 
         var ctrlA = TestFactory.BuildController(cards, players,
@@ -131,8 +125,8 @@ public sealed class PersistenceRoundTripTests
     // real xUnit (dotnet test) each [Fact] runs in isolation — no shared state issue.
     public async Task SaveAndResume_DoesNotReplayAlreadyPlayedCards()
     {
-        var cards      = MakeCards(10);
-        var players    = MakePlayers();
+        var cards = MakeCards(10);
+        var players = MakePlayers();
         var persistence = new InMemoryPersistence();
 
         var playedCards = new List<ICard>();
@@ -170,8 +164,8 @@ public sealed class PersistenceRoundTripTests
     [Fact]
     public async Task SaveAndResume_RestoresSkipCount()
     {
-        var cards      = MakeCards(20);
-        var players    = MakePlayers();
+        var cards = MakeCards(20);
+        var players = MakePlayers();
         var persistence = new InMemoryPersistence();
 
         var ctrlA = TestFactory.BuildController(cards, players,
@@ -201,8 +195,8 @@ public sealed class PersistenceRoundTripTests
     [Fact]
     public async Task Save_SetsSchemaVersionOnSnapshot()
     {
-        var cards      = MakeCards(5);
-        var players    = MakePlayers();
+        var cards = MakeCards(5);
+        var players = MakePlayers();
         var persistence = new InMemoryPersistence();
 
         var ctrl = TestFactory.BuildController(cards, players,
@@ -247,8 +241,8 @@ internal sealed class VersionFuturisticPersistence : IGamePersistence
         var snap = new SessionSnapshot
         {
             SchemaVersion = SessionSnapshot.CurrentSchemaVersion + 999,
-            ModeName      = "SomeMode",
-            Round         = 3,
+            ModeName = "SomeMode",
+            Round = 3,
         };
 
         // Apply the same version check that JsonSessionRepository does

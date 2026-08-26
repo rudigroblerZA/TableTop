@@ -1,5 +1,3 @@
-using TableTop.Core.Abstractions.Players;
-
 namespace TableTop.Core.Abstractions.Game;
 
 /// <summary>

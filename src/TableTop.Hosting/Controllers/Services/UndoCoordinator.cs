@@ -1,6 +1,5 @@
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Game;
-using TableTop.Core.Abstractions.Scoring;
 using TableTop.Hosting.Events;
 
 namespace TableTop.Hosting.Controllers.Services;
@@ -16,27 +15,27 @@ namespace TableTop.Hosting.Controllers.Services;
 /// </summary>
 internal sealed class UndoCoordinator
 {
-    private readonly IGame                              _game;
-    private readonly TurnHistoryTracker                 _history;
+    private readonly IGame _game;
+    private readonly TurnHistoryTracker _history;
     private readonly Core.Abstractions.IEngineDiagnostics _diagnostics;
-    private readonly Func<IReadOnlyList<ScoreEntry>>    _buildScores;
-    private readonly Action<TurnUndoneEvent>            _onTurnUndone;
-    private readonly Action<CardReadyEvent>             _onCardReady;
+    private readonly Func<IReadOnlyList<ScoreEntry>> _buildScores;
+    private readonly Action<TurnUndoneEvent> _onTurnUndone;
+    private readonly Action<CardReadyEvent> _onCardReady;
 
     public UndoCoordinator(
-        IGame                                game,
-        TurnHistoryTracker                   history,
+        IGame game,
+        TurnHistoryTracker history,
         Core.Abstractions.IEngineDiagnostics diagnostics,
-        Func<IReadOnlyList<ScoreEntry>>      buildScores,
-        Action<TurnUndoneEvent>              onTurnUndone,
-        Action<CardReadyEvent>               onCardReady)
+        Func<IReadOnlyList<ScoreEntry>> buildScores,
+        Action<TurnUndoneEvent> onTurnUndone,
+        Action<CardReadyEvent> onCardReady)
     {
-        _game         = game;
-        _history      = history;
-        _diagnostics  = diagnostics;
-        _buildScores  = buildScores;
+        _game = game;
+        _history = history;
+        _diagnostics = diagnostics;
+        _buildScores = buildScores;
         _onTurnUndone = onTurnUndone;
-        _onCardReady  = onCardReady;
+        _onCardReady = onCardReady;
     }
 
     /// <summary>
@@ -46,7 +45,7 @@ internal sealed class UndoCoordinator
     public bool Undo()
     {
         if (_history.LastTurn is not { } last) return false;
-        if (_game.State != GameState.Active)   return false;
+        if (_game.State != GameState.Active) return false;
 
         // 1. Reverse the score
         _game.PlayerManager.ApplyScore(last.Player.Id, -last.ScoreDelta);
@@ -65,11 +64,11 @@ internal sealed class UndoCoordinator
         _diagnostics.TurnUndone(last.Player, last.Card, last.Outcome, -last.ScoreDelta);
 
         _onTurnUndone(new TurnUndoneEvent(
-            PlayerName:      last.Player.DisplayName,
-            CardTitle:       last.Card.Title,
+            PlayerName: last.Player.DisplayName,
+            CardTitle: last.Card.Title,
             ReversedOutcome: last.Outcome,
-            ScoreRestored:   -last.ScoreDelta,
-            CurrentScores:   _buildScores()));
+            ScoreRestored: -last.ScoreDelta,
+            CurrentScores: _buildScores()));
 
         // Re-present the same card to the same player.
         var text = last.Card is IPromptCard p
@@ -77,15 +76,15 @@ internal sealed class UndoCoordinator
             : last.Card.Description;
 
         _onCardReady(new CardReadyEvent(
-            Player:      last.Player,
-            PlayerName:  last.Player.DisplayName,
-            Card:        last.Card,
-            CardTitle:   last.Card.Title,
-            CardText:    text,
-            Category:    last.Card.Category,
-            Difficulty:  last.Card.Difficulty.ToString(),
+            Player: last.Player,
+            PlayerName: last.Player.DisplayName,
+            Card: last.Card,
+            CardTitle: last.Card.Title,
+            CardText: text,
+            Category: last.Card.Category,
+            Difficulty: last.Card.Difficulty.ToString(),
             Restriction: last.Card.Restriction?.Description,
-            Round:       last.Round));
+            Round: last.Round));
 
         return true;
     }

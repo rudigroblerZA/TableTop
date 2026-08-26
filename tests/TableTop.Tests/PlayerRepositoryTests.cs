@@ -9,7 +9,7 @@ public sealed class PlayerRepositoryTests : IDisposable
 
     public void Dispose()
     {
-        if (File.Exists(_tmpFile))     File.Delete(_tmpFile);
+        if (File.Exists(_tmpFile)) File.Delete(_tmpFile);
         if (File.Exists(_tmpFile + ".tmp")) File.Delete(_tmpFile + ".tmp");
     }
 
@@ -18,12 +18,12 @@ public sealed class PlayerRepositoryTests : IDisposable
     {
         var profile = new PlayerProfile
         {
-            Id             = Guid.NewGuid(),
-            Name           = "Alice",
-            Gender         = "female",
-            Age            = 30,
-            IsParent       = true,
-            IsMarried      = true,
+            Id = Guid.NewGuid(),
+            Name = "Alice",
+            Gender = "female",
+            Age = 30,
+            IsParent = true,
+            IsMarried = true,
             IsCoupleMember = false,
         };
 
@@ -102,11 +102,11 @@ public sealed class PlayerRepositoryTests : IDisposable
     {
         var profile = new PlayerProfile
         {
-            Name           = "Bob",
-            Gender         = "male",
-            Age            = 40,
-            IsParent       = true,
-            IsMarried      = false,
+            Name = "Bob",
+            Gender = "male",
+            Age = 40,
+            IsParent = true,
+            IsMarried = false,
             IsCoupleMember = true,
         };
 
@@ -123,9 +123,9 @@ public sealed class PlayerRepositoryTests : IDisposable
     [Fact]
     public async Task ToPlayer_PreservesProfileId()
     {
-        var id      = Guid.NewGuid();
+        var id = Guid.NewGuid();
         var profile = new PlayerProfile { Id = id, Name = "Carol", Age = 22 };
-        var player  = profile.ToPlayer();
+        var player = profile.ToPlayer();
         player.Id.Should().Be(id);
     }
 

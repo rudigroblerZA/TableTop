@@ -20,7 +20,7 @@ namespace TableTop.Games.School;
 public sealed class ThroughTheAgesMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Through the Ages";
+    public override string Name => "Through the Ages";
     /// <inheritdoc />
     public override string Description =>
         "History & culture general knowledge — the ancient world, inventions, famous figures, and the arts. Multiple choice, four difficulties.";
@@ -28,17 +28,17 @@ public sealed class ThroughTheAgesMode : BaseGameModeDefinition
     /// <summary>Label for a correctly answered card.</summary>
     public override string CompleteLabel => "Correct";
     /// <summary>Label for a passed card.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
             ["Ancient World"] = "#FFCA28",
-            ["Inventions"]    = "#42A5F5",
-            ["Famous Figures"]= "#AB47BC",
-            ["Arts & Culture"]= "#EC407A",
-            ["Milestones"]    = "#26A69A",
+            ["Inventions"] = "#42A5F5",
+            ["Famous Figures"] = "#AB47BC",
+            ["Arts & Culture"] = "#EC407A",
+            ["Milestones"] = "#26A69A",
         };
 
     /// <summary>Harder questions score more.</summary>

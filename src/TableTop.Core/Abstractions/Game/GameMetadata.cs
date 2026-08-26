@@ -65,7 +65,7 @@ public sealed class GameMetadata
     /// reserve this for extension data that doesn't belong in the main contract.
     /// </summary>
     private readonly Dictionary<string, object> _extensions = [];
-/// <summary>Stores an arbitrary extension value keyed by <paramref name="key"/>.</summary>
+    /// <summary>Stores an arbitrary extension value keyed by <paramref name="key"/>.</summary>
 
     /// <summary>Retrieves a typed extension value. Returns false when the key is absent or the value is the wrong type.</summary>
     public void SetExtension(string key, object value) => _extensions[key] = value;

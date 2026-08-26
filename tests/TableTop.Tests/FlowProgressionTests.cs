@@ -1,6 +1,4 @@
-using TableTop.Hosting.Persistence;
 using TableTop.Core.Abstractions.Progression;
-using TableTop.Core.Domain.Decks;
 using TableTop.Core.Domain.Progression;
 using TableTop.Hosting.Controllers;
 using TableTop.Hosting.Events;
@@ -128,9 +126,9 @@ public sealed class FlowProgressionTests : IDisposable
     [Fact]
     public void Strategy_CreatesDefaultFlowState_ForNewPlayer()
     {
-        var strat  = new FlowAwareProgressionStrategy();
+        var strat = new FlowAwareProgressionStrategy();
         var player = Player.Create("Alice");
-        var state  = strat.GetFlowState(player.Id);
+        var state = strat.GetFlowState(player.Id);
         state.Should().NotBeNull();
         state.CurrentDifficulty.Should().Be(Difficulty.Easy);
     }
@@ -149,7 +147,7 @@ public sealed class FlowProgressionTests : IDisposable
             StandardCard.Create("H2", "d", Difficulty.Hard,    "T"),
         };
         var deck = BuildDeck(cards);
-        var ctx  = new ProgressionContext(1, [], [player]);
+        var ctx = new ProgressionContext(1, [], [player]);
 
         var drawnId = strat.SelectCandidate(player, deck, ctx); // advance
         deck.Peek(c => c.Id == drawnId)!.Difficulty.Should().Be(Difficulty.Hard);
@@ -158,7 +156,7 @@ public sealed class FlowProgressionTests : IDisposable
     [Fact]
     public void Strategy_FallsBackToNearest_WhenPreferredUnavailable()
     {
-        var strat  = new FlowAwareProgressionStrategy(Difficulty.Extreme);
+        var strat = new FlowAwareProgressionStrategy(Difficulty.Extreme);
         var player = Player.Create("Alice");
 
         var cards = new[]
@@ -167,7 +165,7 @@ public sealed class FlowProgressionTests : IDisposable
             StandardCard.Create("M1", "d", Difficulty.Medium, "T"),
         };
         var deck = BuildDeck(cards);
-        var ctx  = new ProgressionContext(1, [], [player]);
+        var ctx = new ProgressionContext(1, [], [player]);
 
         var drawnId = strat.SelectCandidate(player, deck, ctx); // advance
         drawnId.Should().NotBeNull(); // Falls back to nearest available
@@ -187,7 +185,7 @@ public sealed class FlowProgressionTests : IDisposable
             .ToArray();
 
         var deck = BuildDeck(cards);
-        var ctx  = new ProgressionContext(1, [], [player]);
+        var ctx = new ProgressionContext(1, [], [player]);
 
         // Draw 2 Easy cards (threshold for Fast)
         strat.SelectCandidate(player, deck, ctx); // advance
@@ -309,8 +307,8 @@ public sealed class FlowProgressionTests : IDisposable
     public async Task Save_IncludesFlowState_InSnapshot()
     {
         var filePath = Path.Combine(_dir, "flow_session.json");
-        var repo     = new TableTop.Hosting.Persistence.JsonSessionRepository(filePath);
-        var alice    = Player.Create("Alice");
+        var repo = new TableTop.Hosting.Persistence.JsonSessionRepository(filePath);
+        var alice = Player.Create("Alice");
         var ctrl = BuildController(MakeCards(10), players: [alice],
                             useFlow: true, repo: repo);
         ctrl.Start();
@@ -328,7 +326,7 @@ public sealed class FlowProgressionTests : IDisposable
 
     private static IReadOnlyList<ICard> MakeCards(int n) =>
         Enumerable.Range(1, n / 2)
-            .Select(i => (ICard)StandardCard.Create($"E{i}", "d", Difficulty.Easy,   "T"))
+            .Select(i => (ICard)StandardCard.Create($"E{i}", "d", Difficulty.Easy, "T"))
             .Concat(Enumerable.Range(1, n / 2)
                 .Select(i => StandardCard.Create($"M{i}", "d", Difficulty.Medium, "T")))
             .ToList().AsReadOnly();
@@ -342,8 +340,8 @@ public sealed class FlowProgressionTests : IDisposable
     private static CardTurnController BuildController(
         IReadOnlyList<ICard> cards,
         IReadOnlyList<Player>? players = null,
-        bool useFlow   = true,
-        int maxRounds  = 20,
+        bool useFlow = true,
+        int maxRounds = 20,
         TableTop.Hosting.Persistence.ISessionRepository? repo = null)
     {
         IProgressionStrategy strat = useFlow
@@ -353,8 +351,8 @@ public sealed class FlowProgressionTests : IDisposable
         return TestFactory.BuildController(
             cards,
             players?.Cast<Core.Abstractions.Players.IPlayer>().ToList(),
-            maxRounds:         maxRounds,
-            progression:       strat,
+            maxRounds: maxRounds,
+            progression: strat,
             sessionRepository: repo);
     }
 }

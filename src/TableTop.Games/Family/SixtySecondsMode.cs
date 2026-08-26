@@ -34,7 +34,7 @@ namespace TableTop.Games.Family;
 public sealed class SixtySecondsMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "60 Seconds";
+    public override string Name => "60 Seconds";
     /// <inheritdoc />
     public override string Description =>
         "One category, one sixty-second window — name as many as you can before the clock runs out.";
@@ -42,19 +42,19 @@ public sealed class SixtySecondsMode : BaseGameModeDefinition
     /// <summary>Label for the button that records hitting the target count.</summary>
     public override string CompleteLabel => "Hit the Target";
     /// <summary>Label for the button that records falling short.</summary>
-    public override string SkipLabel     => "Time's Up";
+    public override string SkipLabel => "Time's Up";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
             ["Everyday Things"] = "#66BB6A",
-            ["Nature"]          = "#26A69A",
-            ["Food & Drink"]    = "#FFA726",
-            ["Places"]          = "#42A5F5",
-            ["Entertainment"]   = "#AB47BC",
-            ["Words"]           = "#EC407A",
-            ["Wildcard"]        = "#EF5350",
+            ["Nature"] = "#26A69A",
+            ["Food & Drink"] = "#FFA726",
+            ["Places"] = "#42A5F5",
+            ["Entertainment"] = "#AB47BC",
+            ["Words"] = "#EC407A",
+            ["Wildcard"] = "#EF5350",
         };
 
     /// <summary>Harder-to-fill categories score more when hit.</summary>

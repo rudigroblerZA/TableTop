@@ -1,7 +1,5 @@
 using TableTop.Core.Abstractions.Game;
-using TableTop.Core.Domain.Players;
 using TableTop.Games.Fun;
-using TableTop.Hosting;
 using TableTop.Hosting.Controllers;
 
 namespace TableTop.Tests;
@@ -62,13 +60,13 @@ public sealed class RollWithItModeTests
     }
 
     [Theory]
-    [InlineData(2,  "Warm-Up")]
-    [InlineData(4,  "Warm-Up")]
-    [InlineData(5,  "Chat")]
-    [InlineData(6,  "Chat")]
-    [InlineData(7,  "Act")]
-    [InlineData(8,  "Act")]
-    [InlineData(9,  "Bold")]
+    [InlineData(2, "Warm-Up")]
+    [InlineData(4, "Warm-Up")]
+    [InlineData(5, "Chat")]
+    [InlineData(6, "Chat")]
+    [InlineData(7, "Act")]
+    [InlineData(8, "Act")]
+    [InlineData(9, "Bold")]
     [InlineData(10, "Bold")]
     [InlineData(11, "Wild Card")]
     [InlineData(12, "Wild Card")]

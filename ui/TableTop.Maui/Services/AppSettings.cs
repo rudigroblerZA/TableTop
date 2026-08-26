@@ -25,20 +25,20 @@ namespace TableTop.Maui.Services;
 public sealed class AppSettings : IAppSettings
 {
     // ── Preference keys ────────────────────────────────────────────────────
-    private const string KeyTheme            = "tt_theme";
-    private const string KeyCardFontSize     = "tt_card_font_size";
-    private const string KeyShuffleCards     = "tt_shuffle_cards";
-    private const string KeyMinDifficulty    = "tt_min_difficulty";
-    private const string KeyMaxDifficulty    = "tt_max_difficulty";
-    private const string KeyMinAgeRating     = "tt_min_age_rating";
-    private const string KeyShowCardCount    = "tt_show_card_count";
-    private const string KeyShowDifficulty   = "tt_show_difficulty";
-    private const string KeyShowCategory     = "tt_show_category";
-    private const string KeyAutoNextPlayer   = "tt_auto_next_player";
-    private const string KeyCardsPerPlayer   = "tt_cards_per_player";
-    private const string KeyTimerSeconds     = "tt_timer_seconds";
-    private const string KeyEnableTimer      = "tt_enable_timer";
-    private const string KeyRecentPlayers    = "tt_recent_players";
+    private const string KeyTheme = "tt_theme";
+    private const string KeyCardFontSize = "tt_card_font_size";
+    private const string KeyShuffleCards = "tt_shuffle_cards";
+    private const string KeyMinDifficulty = "tt_min_difficulty";
+    private const string KeyMaxDifficulty = "tt_max_difficulty";
+    private const string KeyMinAgeRating = "tt_min_age_rating";
+    private const string KeyShowCardCount = "tt_show_card_count";
+    private const string KeyShowDifficulty = "tt_show_difficulty";
+    private const string KeyShowCategory = "tt_show_category";
+    private const string KeyAutoNextPlayer = "tt_auto_next_player";
+    private const string KeyCardsPerPlayer = "tt_cards_per_player";
+    private const string KeyTimerSeconds = "tt_timer_seconds";
+    private const string KeyEnableTimer = "tt_enable_timer";
+    private const string KeyRecentPlayers = "tt_recent_players";
 
     // ── Singleton ──────────────────────────────────────────────────────────
     public static AppSettings Instance { get; } = new();
@@ -206,20 +206,20 @@ public sealed class AppSettings : IAppSettings
     /// <summary>Resets all settings to factory defaults.</summary>
     public void ResetToDefaults()
     {
-        Theme            = "dark";
-        CardFontSize     = 15;
-        ShuffleCards     = true;
-        MinDifficulty    = 0;
-        MaxDifficulty    = 3;
-        MinAgeRating     = 0;
-        CardsPerPlayer   = 0;
-        AutoNextPlayer   = false;
-        EnableTimer      = false;
-        TimerSeconds     = 60;
-        ShowCardCount    = true;
+        Theme = "dark";
+        CardFontSize = 15;
+        ShuffleCards = true;
+        MinDifficulty = 0;
+        MaxDifficulty = 3;
+        MinAgeRating = 0;
+        CardsPerPlayer = 0;
+        AutoNextPlayer = false;
+        EnableTimer = false;
+        TimerSeconds = 60;
+        ShowCardCount = true;
         ShowDifficultyBadge = true;
-        ShowCategoryBadge   = true;
-        RecentPlayers    = [];
+        ShowCategoryBadge = true;
+        RecentPlayers = [];
 
         Notify("*");
     }

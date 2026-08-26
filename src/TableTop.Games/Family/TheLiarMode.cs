@@ -28,7 +28,7 @@ namespace TableTop.Games.Family;
 public sealed class TheLiarMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "The Liar";
+    public override string Name => "The Liar";
     /// <inheritdoc />
     public override string Description =>
         "Three people tell the same story. One is lying. Can you spot the impostor?";
@@ -36,17 +36,17 @@ public sealed class TheLiarMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Guessed";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Everyday"]    = "#42A5F5",
-            ["Adventure"]   = "#66BB6A",
-            ["Workplace"]   = "#FFA726",
-            ["Relationship"]= "#EC407A",
-            ["Disaster"]    = "#EF5350",
+            ["Everyday"] = "#42A5F5",
+            ["Adventure"] = "#66BB6A",
+            ["Workplace"] = "#FFA726",
+            ["Relationship"] = "#EC407A",
+            ["Disaster"] = "#EF5350",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

@@ -14,25 +14,25 @@ namespace TableTop.Hosting.Controllers;
 /// </summary>
 public sealed class ClaimedController : IClaimedController
 {
-    private readonly IReadOnlyList<IPlayer>          _players;
-    private readonly int                             _winningTerritoryCount;
+    private readonly IReadOnlyList<IPlayer> _players;
+    private readonly int _winningTerritoryCount;
     private readonly Dictionary<string, List<ICard>> _pools;      // territory -> remaining cards, shuffled
-    private readonly Dictionary<string, Guid?>       _holders;    // territory -> holding player id, null = open
+    private readonly Dictionary<string, Guid?> _holders;    // territory -> holding player id, null = open
 
-    private int    _currentIndex;
+    private int _currentIndex;
     private string? _pendingTerritory;
-    private bool     _pendingWasRaid;
+    private bool _pendingWasRaid;
 
     /// <inheritdoc />
     public event EventHandler<TerritoryChallengeReadyEvent>? TerritoryChallengeReady;
     /// <inheritdoc />
-    public event EventHandler<TerritoryClaimedEvent>?         TerritoryClaimed;
+    public event EventHandler<TerritoryClaimedEvent>? TerritoryClaimed;
     /// <inheritdoc />
-    public event EventHandler<TerritoryStolenEvent>?          TerritoryStolen;
+    public event EventHandler<TerritoryStolenEvent>? TerritoryStolen;
     /// <inheritdoc />
-    public event EventHandler<ChallengeFailedEvent>?          ChallengeFailed;
+    public event EventHandler<ChallengeFailedEvent>? ChallengeFailed;
     /// <inheritdoc />
-    public event EventHandler<ClaimedGameEndedEvent>?         GameEnded;
+    public event EventHandler<ClaimedGameEndedEvent>? GameEnded;
 
     /// <inheritdoc />
     public bool IsRunning { get; private set; }
@@ -42,13 +42,13 @@ public sealed class ClaimedController : IClaimedController
     /// <param name="winningTerritoryCount">Territories held simultaneously to win outright.</param>
     public ClaimedController(
         IReadOnlyList<IPlayer> players,
-        IReadOnlyList<ICard>   deck,
-        int                    winningTerritoryCount)
+        IReadOnlyList<ICard> deck,
+        int winningTerritoryCount)
     {
         if (players.Count < 2)
             throw new ArgumentException("Claimed! needs at least two players.", nameof(players));
 
-        _players               = players;
+        _players = players;
         _winningTerritoryCount = winningTerritoryCount;
 
         var rng = new Random();
@@ -108,12 +108,12 @@ public sealed class ClaimedController : IClaimedController
         _pendingWasRaid = holderId is not null;
 
         TerritoryChallengeReady?.Invoke(this, new TerritoryChallengeReadyEvent(
-            PlayerName:    CurrentPlayerName,
+            PlayerName: CurrentPlayerName,
             TerritoryName: territoryName,
-            CardTitle:     card.Title,
-            CardText:      card.Description,
-            Difficulty:    card.Difficulty.ToString(),
-            DefenderName:  holderId is { } id ? _players.First(p => p.Id == id).DisplayName : null));
+            CardTitle: card.Title,
+            CardText: card.Description,
+            Difficulty: card.Difficulty.ToString(),
+            DefenderName: holderId is { } id ? _players.First(p => p.Id == id).DisplayName : null));
     }
 
     /// <inheritdoc />
@@ -121,9 +121,9 @@ public sealed class ClaimedController : IClaimedController
     {
         if (_pendingTerritory is null) return;   // nothing pending — ChallengeTerritory wasn't called, or already resolved
 
-        var territory  = _pendingTerritory;
-        var wasRaid     = _pendingWasRaid;
-        var player      = _players[_currentIndex];
+        var territory = _pendingTerritory;
+        var wasRaid = _pendingWasRaid;
+        var player = _players[_currentIndex];
         _pendingTerritory = null;
 
         if (!succeeded)
@@ -140,17 +140,17 @@ public sealed class ClaimedController : IClaimedController
         {
             var defender = _players.First(p => p.Id == previousHolderId);
             TerritoryStolen?.Invoke(this, new TerritoryStolenEvent(
-                AttackerName:            player.DisplayName,
-                DefenderName:            defender.DisplayName,
-                TerritoryName:           territory,
+                AttackerName: player.DisplayName,
+                DefenderName: defender.DisplayName,
+                TerritoryName: territory,
                 AttackerHeldTerritories: HeldBy(player.Id),
                 DefenderHeldTerritories: HeldBy(defender.Id)));
         }
         else
         {
             TerritoryClaimed?.Invoke(this, new TerritoryClaimedEvent(
-                PlayerName:      player.DisplayName,
-                TerritoryName:   territory,
+                PlayerName: player.DisplayName,
+                TerritoryName: territory,
                 HeldTerritories: HeldBy(player.Id)));
         }
 

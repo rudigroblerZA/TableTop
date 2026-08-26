@@ -1,4 +1,3 @@
-using System.Linq;
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
@@ -36,20 +35,20 @@ public sealed class FamilyQuizMode : BaseGameModeDefinition, IQuestionBankProvid
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Correct!";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "→ Next question";
+    public override string SkipLabel => "→ Next question";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Animals"]     = "#66BB6A",
-            ["Science"]     = "#42A5F5",
-            ["History"]     = "#FFCA28",
-            ["Geography"]   = "#26C6DA",
-            ["Language"]    = "#AB47BC",
+            ["Animals"] = "#66BB6A",
+            ["Science"] = "#42A5F5",
+            ["History"] = "#FFCA28",
+            ["Geography"] = "#26C6DA",
+            ["Language"] = "#AB47BC",
             ["Pop Culture"] = "#EC407A",
-            ["Numbers"]     = "#FF7043",
-            ["Nature"]      = "#4CAF50",
+            ["Numbers"] = "#FF7043",
+            ["Nature"] = "#4CAF50",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

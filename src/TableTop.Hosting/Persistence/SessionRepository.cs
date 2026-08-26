@@ -18,9 +18,9 @@ public sealed class JsonSessionRepository : IGamePersistence, ISessionRepository
 
     private static readonly JsonSerializerOptions Options = new()
     {
-        WriteIndented               = true,
+        WriteIndented = true,
         PropertyNameCaseInsensitive = true,
-        DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     };
 
     /// <summary>Absolute path to the JSON file where sessions are persisted.</summary>

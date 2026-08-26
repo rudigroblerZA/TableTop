@@ -1,6 +1,5 @@
 using TableTop.Core.Abstractions.Game;
 using TableTop.Games.Couples;
-using TableTop.Hosting;
 
 namespace TableTop.Tests;
 

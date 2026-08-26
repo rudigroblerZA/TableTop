@@ -13,8 +13,8 @@ public sealed class Team : ITeam
     public Team(string name, IEnumerable<IPlayer> members)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
-        Id      = Guid.NewGuid();
-        Name    = name;
+        Id = Guid.NewGuid();
+        Name = name;
         _members = members?.ToList()
             ?? throw new ArgumentNullException(nameof(members));
         if (_members.Count == 0)
@@ -22,11 +22,11 @@ public sealed class Team : ITeam
     }
 
     /// <inheritdoc />
-    public Guid   Id    { get; }
+    public Guid Id { get; }
     /// <inheritdoc />
-    public string Name  { get; }
+    public string Name { get; }
     /// <inheritdoc />
-    public int    Score { get; private set; }
+    public int Score { get; private set; }
 
     /// <summary>Members.</summary>
     public IReadOnlyList<IPlayer> Members => _members.AsReadOnly();
@@ -53,12 +53,12 @@ public sealed class Team : ITeam
                 $"Cannot create {teamCount} teams from {players.Count} players.");
 
         nameFactory ??= i => $"Team {i + 1}";
-        var size   = players.Count / teamCount;
-        var teams  = new List<Team>();
+        var size = players.Count / teamCount;
+        var teams = new List<Team>();
 
         for (int i = 0; i < teamCount; i++)
         {
-            var isLast  = i == teamCount - 1;
+            var isLast = i == teamCount - 1;
             var members = isLast
                 ? players.Skip(i * size).ToList()
                 : players.Skip(i * size).Take(size).ToList();

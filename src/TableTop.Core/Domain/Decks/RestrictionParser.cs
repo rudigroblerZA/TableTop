@@ -1,4 +1,3 @@
-using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Domain.Restrictions;
 
@@ -43,7 +42,7 @@ public static class RestrictionParser
         if (string.IsNullOrWhiteSpace(expression))
             return null;
 
-        var span   = expression.Trim().AsSpan();
+        var span = expression.Trim().AsSpan();
         var result = ParseExpr(ref span);
 
         if (!span.IsEmpty)
@@ -113,11 +112,11 @@ public static class RestrictionParser
         var token = ReadToken(ref s).ToLowerInvariant();
         return token switch
         {
-            "adult"   => new AdultOnlyRestriction(),
-            "male"    => new MaleOnlyRestriction(),
-            "female"  => new FemaleOnlyRestriction(),
-            "couple"  => new CoupleOnlyRestriction(),
-            "parent"  => new ParentOnlyRestriction(),
+            "adult" => new AdultOnlyRestriction(),
+            "male" => new MaleOnlyRestriction(),
+            "female" => new FemaleOnlyRestriction(),
+            "couple" => new CoupleOnlyRestriction(),
+            "parent" => new ParentOnlyRestriction(),
             "married" => new MarriedOnlyRestriction(),
             _ => throw new FormatException($"Unknown restriction keyword '{token}'.")
         };

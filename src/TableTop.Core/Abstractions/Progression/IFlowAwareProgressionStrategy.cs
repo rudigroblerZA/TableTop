@@ -1,7 +1,3 @@
-using TableTop.Core.Abstractions.Cards;
-using TableTop.Core.Abstractions.Decks;
-using TableTop.Core.Abstractions.Players;
-
 namespace TableTop.Core.Abstractions.Progression;
 
 /// <summary>

@@ -1,7 +1,7 @@
+using TableTop.Hosting.Extensions;
 using TableTop.Maui.Pages;
 using TableTop.Maui.Services;
 using TableTop.Maui.ViewModels;
-using TableTop.Hosting.Extensions;
 using TableTop.Presentation.ViewModels;
 
 namespace TableTop.Maui;

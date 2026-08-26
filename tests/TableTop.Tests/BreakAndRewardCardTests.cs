@@ -1,5 +1,3 @@
-using TableTop.Core.Abstractions.Restrictions;
-
 namespace TableTop.Tests;
 
 public sealed class BreakAndRewardCardTests

@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace TableTop.Hosting.Controllers;
 
 /// <summary>
@@ -49,7 +47,7 @@ namespace TableTop.Hosting.Controllers;
 /// </summary>
 internal sealed class ThreadingGuard
 {
-    private int    _ownerThreadId = -1;   // -1 = not yet set
+    private int _ownerThreadId = -1;   // -1 = not yet set
     private string _ownerDescription = "unstarted";
 
     /// <summary>
@@ -77,7 +75,7 @@ internal sealed class ThreadingGuard
     /// </summary>
     public void TransferOwnership()
     {
-        _ownerThreadId    = Environment.CurrentManagedThreadId;
+        _ownerThreadId = Environment.CurrentManagedThreadId;
         _ownerDescription = Thread.CurrentThread.Name is { Length: > 0 } n
             ? $"'{n}' (id {_ownerThreadId})"
             : $"thread #{_ownerThreadId}";

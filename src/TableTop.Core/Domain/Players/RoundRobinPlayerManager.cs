@@ -16,8 +16,8 @@ namespace TableTop.Core.Domain.Players;
 public sealed class RoundRobinPlayerManager : IPlayerManager
 {
     // Issue 5: store as IPlayer, not the concrete Player type
-    private readonly List<IPlayer>  _players = [];
-    private readonly Dictionary<Guid, int>          _scores  = [];
+    private readonly List<IPlayer> _players = [];
+    private readonly Dictionary<Guid, int> _scores = [];
     private readonly Dictionary<Guid, PlayerStatus> _statuses = [];
     private int _currentIndex = -1;
 
@@ -33,7 +33,7 @@ public sealed class RoundRobinPlayerManager : IPlayerManager
 
     /// <summary>ActivePlayers.</summary>
     public IReadOnlyList<IPlayer> ActivePlayers =>
-        _activeCache  ??= _players
+        _activeCache ??= _players
             .Where(p => GetStatus(p.Id) == PlayerStatus.Active)
             .Select(Wrap)
             .ToList()
@@ -47,7 +47,7 @@ public sealed class RoundRobinPlayerManager : IPlayerManager
             throw new InvalidOperationException($"Player {player.Id} is already registered.");
 
         _players.Add(player);
-        _scores[player.Id]   = player.Score;   // seed from initial score
+        _scores[player.Id] = player.Score;   // seed from initial score
         _statuses[player.Id] = player.Status;  // seed from initial status
         InvalidateCache();
     }
@@ -122,7 +122,7 @@ public sealed class RoundRobinPlayerManager : IPlayerManager
     private void InvalidateCache()
     {
         _playersCache = null;
-        _activeCache  = null;
+        _activeCache = null;
     }
 
     /// <summary>
@@ -132,25 +132,25 @@ public sealed class RoundRobinPlayerManager : IPlayerManager
     /// </summary>
     private sealed class PlayerView : IPlayer
     {
-        private readonly IPlayer                   _inner;
-        private readonly RoundRobinPlayerManager   _manager;
+        private readonly IPlayer _inner;
+        private readonly RoundRobinPlayerManager _manager;
 
         public PlayerView(IPlayer inner, RoundRobinPlayerManager manager)
         {
-            _inner   = inner;
+            _inner = inner;
             _manager = manager;
         }
 
         /// <inheritdoc />
-        public Guid   Id            => _inner.Id;
+        public Guid Id => _inner.Id;
         /// <inheritdoc />
-        public string DisplayName   => _inner.DisplayName;
+        public string DisplayName => _inner.DisplayName;
         public IReadOnlyDictionary<string, string> Attributes => _inner.Attributes;
         public IReadOnlyList<string> Tags => _inner.Tags;
 
         // Score and Status are sourced from the manager, not the underlying player
         /// <inheritdoc />
-        public int          Score  => _manager.GetScore(_inner.Id);
+        public int Score => _manager.GetScore(_inner.Id);
         public PlayerStatus Status => _manager.GetStatus(_inner.Id);
     }
 

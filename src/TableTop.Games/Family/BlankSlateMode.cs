@@ -35,7 +35,7 @@ namespace TableTop.Games.Family;
 public sealed class BlankSlateMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Blank Slate";
+    public override string Name => "Blank Slate";
     /// <inheritdoc />
     public override string Description =>
         "Fill in the blank, funniest answer wins. Pick from the shortlist or invent your own — the judge decides.";
@@ -43,16 +43,16 @@ public sealed class BlankSlateMode : BaseGameModeDefinition
     /// <summary>Label for awarding the round.</summary>
     public override string CompleteLabel => "🏆 Funniest";
     /// <summary>Label for skipping a prompt.</summary>
-    public override string SkipLabel     => "⤳ Skip";
+    public override string SkipLabel => "⤳ Skip";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
             ["Everyday"] = "#42A5F5",
-            ["School"]   = "#66BB6A",
-            ["Creatures"]= "#FFA726",
-            ["Absurd"]   = "#AB47BC",
+            ["School"] = "#66BB6A",
+            ["Creatures"] = "#FFA726",
+            ["Absurd"] = "#AB47BC",
         };
 
     /// <summary>One point to whoever wins the round.</summary>

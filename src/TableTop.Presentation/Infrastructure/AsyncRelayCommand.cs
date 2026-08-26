@@ -17,9 +17,9 @@ public sealed class AsyncRelayCommand : ICommand
     /// <summary>Initialises the command with its async action, guard, and error sink.</summary>
     public AsyncRelayCommand(Func<Task> execute, Func<bool>? canExecute = null, Action<Exception>? onError = null)
     {
-        _execute    = execute;
+        _execute = execute;
         _canExecute = canExecute;
-        _onError    = onError;
+        _onError = onError;
     }
 
     /// <inheritdoc />

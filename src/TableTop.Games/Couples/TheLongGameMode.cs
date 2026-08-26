@@ -1,5 +1,5 @@
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
@@ -37,7 +37,7 @@ public sealed class TheLongGameMode : BaseGameModeDefinition, ITableShapeMode
     public TableShape SuitableFor => TableShape.Couple;
 
     /// <inheritdoc />
-    public override string Name        => "The Long Game";
+    public override string Name => "The Long Game";
     /// <inheritdoc />
     public override string Description =>
         "The quiet deck about noticing and keeping the good things — specific admiration, real thank-yous, honest promises.";
@@ -45,16 +45,16 @@ public sealed class TheLongGameMode : BaseGameModeDefinition, ITableShapeMode
     /// <summary>Label for a completed exchange.</summary>
     public override string CompleteLabel => "Kept";
     /// <summary>Label for passing a card.</summary>
-    public override string SkipLabel     => "Not tonight";
+    public override string SkipLabel => "Not tonight";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Noticing"]  = "#66BB6A",
+            ["Noticing"] = "#66BB6A",
             ["Gratitude"] = "#FFCA28",
             ["Weathered"] = "#78909C",
-            ["Vows"]      = "#EC407A",
+            ["Vows"] = "#EC407A",
         };
 
     /// <summary>Deeper movements are worth more — but this is a game you can't lose.</summary>

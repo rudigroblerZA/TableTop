@@ -30,16 +30,16 @@ public sealed class FactOrFictionMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Guess";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "→ Next";
+    public override string SkipLabel => "→ Next";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Everyday"]    = "#66BB6A",
-            ["Surprising"]  = "#42A5F5",
-            ["Outlandish"]  = "#FFCA28",
-            ["Wild"]        = "#EC407A",
+            ["Everyday"] = "#66BB6A",
+            ["Surprising"] = "#42A5F5",
+            ["Outlandish"] = "#FFCA28",
+            ["Wild"] = "#EC407A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

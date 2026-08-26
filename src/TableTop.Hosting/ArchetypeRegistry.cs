@@ -1,11 +1,11 @@
-using TableTop.Games.FactOrFiction;
-using TableTop.Games.Family;
-using TableTop.Games.Couples;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Games;
-using TableTop.Games.School;
+using TableTop.Games.Couples;
+using TableTop.Games.FactOrFiction;
+using TableTop.Games.Family;
 using TableTop.Games.Fun;
 using TableTop.Games.Party;
+using TableTop.Games.School;
 
 namespace TableTop.Hosting;
 
@@ -41,9 +41,9 @@ public sealed class ArchetypeRegistry : IArchetypeRegistry
 
     /// <inheritdoc />
     public IGameMode? SurpriseMe(
-        AgeRating maxAgeRating      = AgeRating.Adult,
-        bool      allowAdultContent = false,
-        int?      maxCards          = null)
+        AgeRating maxAgeRating = AgeRating.Adult,
+        bool allowAdultContent = false,
+        int? maxCards = null)
     {
         var candidates = AllModes
             .Where(m =>

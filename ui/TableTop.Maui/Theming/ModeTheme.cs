@@ -1,4 +1,3 @@
-using Microsoft.Maui.Graphics;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Presentation;
 using TableTop.Games.Base;
@@ -127,7 +126,7 @@ public sealed record ModeTheme
         var fallback = mode switch
         {
             TableTop.Games.TruthOrDareMode => AfterDark,
-            _                              => Baize,
+            _ => Baize,
         };
 
         // A palette in the deck JSON wins, overlaid field by field onto the
@@ -154,25 +153,25 @@ public sealed record ModeTheme
 
         return this with
         {
-            Name                  = palette.Name ?? Name,
-            PageBackground        = Background(palette) ?? PageBackground,
-            Accent                = Hex(palette.Accent)              ?? Accent,
-            AccentSoft            = Hex(palette.AccentSoft)          ?? AccentSoft,
-            PanelBackground       = Hex(palette.PanelBackground)     ?? PanelBackground,
-            PanelBorder           = Hex(palette.PanelBorder)         ?? PanelBorder,
-            CardStock             = Hex(palette.CardStock)           ?? CardStock,
-            CardStockFlipped      = Hex(palette.CardStockFlipped)    ?? CardStockFlipped,
-            CardInk               = Hex(palette.CardInk)             ?? CardInk,
-            CardBodyInk           = Hex(palette.CardBodyInk)         ?? CardBodyInk,
-            CardInkSubtle         = Hex(palette.CardInkSubtle)       ?? CardInkSubtle,
-            PrimaryButton         = Solid(palette.PrimaryButton)     ?? PrimaryButton,
-            PrimaryButtonText     = Hex(palette.PrimaryButtonText)   ?? PrimaryButtonText,
-            SecondaryButton       = Hex(palette.SecondaryButton)     ?? SecondaryButton,
-            SecondaryButtonText   = Hex(palette.SecondaryButtonText) ?? SecondaryButtonText,
-            Progress              = Hex(palette.Progress)            ?? Progress,
-            DisplayFont           = palette.DisplayFont              ?? DisplayFont,
-            BodyFont              = palette.BodyFont                 ?? BodyFont,
-            UtilityFont           = palette.UtilityFont              ?? UtilityFont,
+            Name = palette.Name ?? Name,
+            PageBackground = Background(palette) ?? PageBackground,
+            Accent = Hex(palette.Accent) ?? Accent,
+            AccentSoft = Hex(palette.AccentSoft) ?? AccentSoft,
+            PanelBackground = Hex(palette.PanelBackground) ?? PanelBackground,
+            PanelBorder = Hex(palette.PanelBorder) ?? PanelBorder,
+            CardStock = Hex(palette.CardStock) ?? CardStock,
+            CardStockFlipped = Hex(palette.CardStockFlipped) ?? CardStockFlipped,
+            CardInk = Hex(palette.CardInk) ?? CardInk,
+            CardBodyInk = Hex(palette.CardBodyInk) ?? CardBodyInk,
+            CardInkSubtle = Hex(palette.CardInkSubtle) ?? CardInkSubtle,
+            PrimaryButton = Solid(palette.PrimaryButton) ?? PrimaryButton,
+            PrimaryButtonText = Hex(palette.PrimaryButtonText) ?? PrimaryButtonText,
+            SecondaryButton = Hex(palette.SecondaryButton) ?? SecondaryButton,
+            SecondaryButtonText = Hex(palette.SecondaryButtonText) ?? SecondaryButtonText,
+            Progress = Hex(palette.Progress) ?? Progress,
+            DisplayFont = palette.DisplayFont ?? DisplayFont,
+            BodyFont = palette.BodyFont ?? BodyFont,
+            UtilityFont = palette.UtilityFont ?? UtilityFont,
         };
     }
 
@@ -199,7 +198,7 @@ public sealed record ModeTheme
     private static Color? Hex(string? value)
     {
         if (string.IsNullOrWhiteSpace(value)) return null;
-        try   { return Color.FromArgb(value); }
+        try { return Color.FromArgb(value); }
         catch { return null; }   // content typo: keep the house colour
     }
 
@@ -212,24 +211,24 @@ public sealed record ModeTheme
     /// </summary>
     public static ModeTheme Baize { get; } = new()
     {
-        Name             = "Baize",
-        PageBackground   = Radial("#245546", "#174034", "#0E2A22", centerY: 0.28),
-        Accent           = Color.FromArgb("#E3C67F"),
-        AccentSoft       = Color.FromArgb("#8A7A55"),
-        PanelBackground  = Color.FromArgb("#16382E"),
-        PanelBorder      = Color.FromArgb("#4DC49E4C"),
-        CardStock        = Color.FromArgb("#FAF8F2"),
+        Name = "Baize",
+        PageBackground = Radial("#245546", "#174034", "#0E2A22", centerY: 0.28),
+        Accent = Color.FromArgb("#E3C67F"),
+        AccentSoft = Color.FromArgb("#8A7A55"),
+        PanelBackground = Color.FromArgb("#16382E"),
+        PanelBorder = Color.FromArgb("#4DC49E4C"),
+        CardStock = Color.FromArgb("#FAF8F2"),
         CardStockFlipped = Color.FromArgb("#FFF4DD"),
-        CardInk          = Color.FromArgb("#1F2126"),
-        CardBodyInk      = Color.FromArgb("#3B3A38"),
-        CardInkSubtle    = Color.FromArgb("#7C7466"),
-        CardRule         = new SolidColorBrush(Color.FromArgb("#8CC49E4C")),
-        PrimaryButton    = Vertical("#E3C67F", "#C49E4C"),
+        CardInk = Color.FromArgb("#1F2126"),
+        CardBodyInk = Color.FromArgb("#3B3A38"),
+        CardInkSubtle = Color.FromArgb("#7C7466"),
+        CardRule = new SolidColorBrush(Color.FromArgb("#8CC49E4C")),
+        PrimaryButton = Vertical("#E3C67F", "#C49E4C"),
         PrimaryButtonText = Color.FromArgb("#22160A"),
-        SecondaryButton  = Color.FromArgb("#4D000000"),
-        SecondaryButtonText   = Color.FromArgb("#E3C67F"),
+        SecondaryButton = Color.FromArgb("#4D000000"),
+        SecondaryButtonText = Color.FromArgb("#E3C67F"),
         SecondaryButtonBorder = Color.FromArgb("#73C49E4C"),
-        Progress         = Color.FromArgb("#C49E4C"),
+        Progress = Color.FromArgb("#C49E4C"),
     };
 
     /// <summary>
@@ -267,33 +266,33 @@ public sealed record ModeTheme
     /// </summary>
     public static ModeTheme AfterDark { get; } = new()
     {
-        Name             = "After Dark",
-        PageBackground   = Radial("#2B1B4A", "#1A1030", "#0B0718", centerY: 0.30),
-        Accent           = Color.FromArgb("#FF7AB0"),
-        AccentSoft       = Color.FromArgb("#9A8CC4"),
-        PanelBackground  = Color.FromArgb("#241640"),
-        PanelBorder      = Color.FromArgb("#59FF4D8D"),
+        Name = "After Dark",
+        PageBackground = Radial("#2B1B4A", "#1A1030", "#0B0718", centerY: 0.30),
+        Accent = Color.FromArgb("#FF7AB0"),
+        AccentSoft = Color.FromArgb("#9A8CC4"),
+        PanelBackground = Color.FromArgb("#241640"),
+        PanelBorder = Color.FromArgb("#59FF4D8D"),
 
         // Cooler and brighter than baize cream. Against an indigo room this
         // reads as lit paper rather than the warm ivory of a card table.
-        CardStock        = Color.FromArgb("#F7F4FF"),
+        CardStock = Color.FromArgb("#F7F4FF"),
         CardStockFlipped = Color.FromArgb("#E8FBF8"),   // cyan-tinted answer face
-        CardInk          = Color.FromArgb("#17102B"),
-        CardBodyInk      = Color.FromArgb("#332A4A"),
-        CardInkSubtle    = Color.FromArgb("#655A88"),
-        CardRule         = new SolidColorBrush(Color.FromArgb("#8CFF4D8D")),
+        CardInk = Color.FromArgb("#17102B"),
+        CardBodyInk = Color.FromArgb("#332A4A"),
+        CardInkSubtle = Color.FromArgb("#655A88"),
+        CardRule = new SolidColorBrush(Color.FromArgb("#8CFF4D8D")),
 
-        PrimaryButton    = Vertical("#FF8FBC", "#E63D80"),
+        PrimaryButton = Vertical("#FF8FBC", "#E63D80"),
         PrimaryButtonText = Color.FromArgb("#1A0410"),
 
         // "Chickened Out" is a legitimate move in this game, not a failure —
         // it has its own forfeit and its own comedy. Cyan-outlined and quiet,
         // readable but clearly the cooler of the two choices.
-        SecondaryButton       = Color.FromArgb("#59000000"),
-        SecondaryButtonText   = Color.FromArgb("#5FE8DC"),
+        SecondaryButton = Color.FromArgb("#59000000"),
+        SecondaryButtonText = Color.FromArgb("#5FE8DC"),
         SecondaryButtonBorder = Color.FromArgb("#7335E0D2"),
 
-        Progress         = Color.FromArgb("#FF4D8D"),
+        Progress = Color.FromArgb("#FF4D8D"),
     };
 
     // ── Brush helpers ─────────────────────────────────────────────────────────
@@ -305,8 +304,8 @@ public sealed record ModeTheme
             Center = new Point(0.5, centerY),
             Radius = 0.95,
         };
-        brush.GradientStops.Add(new GradientStop(Color.FromArgb(lit),  0.0f));
-        brush.GradientStops.Add(new GradientStop(Color.FromArgb(mid),  0.55f));
+        brush.GradientStops.Add(new GradientStop(Color.FromArgb(lit), 0.0f));
+        brush.GradientStops.Add(new GradientStop(Color.FromArgb(mid), 0.55f));
         brush.GradientStops.Add(new GradientStop(Color.FromArgb(deep), 1.0f));
         return brush;
     }
@@ -316,9 +315,9 @@ public sealed record ModeTheme
         var brush = new LinearGradientBrush
         {
             StartPoint = new Point(0, 0),
-            EndPoint   = new Point(0, 1),
+            EndPoint = new Point(0, 1),
         };
-        brush.GradientStops.Add(new GradientStop(Color.FromArgb(top),    0.0f));
+        brush.GradientStops.Add(new GradientStop(Color.FromArgb(top), 0.0f));
         brush.GradientStops.Add(new GradientStop(Color.FromArgb(bottom), 1.0f));
         return brush;
     }

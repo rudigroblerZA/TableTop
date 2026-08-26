@@ -12,7 +12,7 @@ public sealed class AndRestriction : IRestriction
     private readonly IRestriction _left;
     private readonly IRestriction _right;
 
-    internal IRestriction Left  => _left;
+    internal IRestriction Left => _left;
     internal IRestriction Right => _right;
 
     /// <summary>Initialises a new <see cref="AndRestriction"/> instance.</summary>
@@ -39,7 +39,7 @@ public sealed class OrRestriction : IRestriction
     private readonly IRestriction _left;
     private readonly IRestriction _right;
 
-    internal IRestriction Left  => _left;
+    internal IRestriction Left => _left;
     internal IRestriction Right => _right;
 
     /// <summary>Initialises a new <see cref="OrRestriction"/> instance.</summary>

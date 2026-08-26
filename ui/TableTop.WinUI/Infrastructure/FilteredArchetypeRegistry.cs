@@ -21,7 +21,7 @@ public sealed class FilteredArchetypeRegistry : IArchetypeRegistry
     /// <param name="minAgeRating">Floor — archetypes rated below this are hidden.</param>
     public FilteredArchetypeRegistry(IArchetypeRegistry inner, AgeRating minAgeRating)
     {
-        _inner         = inner;
+        _inner = inner;
         _filteredRoots = new ArchetypeFilter(minAgeRating: minAgeRating, maxAgeRating: AgeRating.Adult)
             .Apply(inner.RootArchetypes);
     }
@@ -52,9 +52,9 @@ public sealed class FilteredArchetypeRegistry : IArchetypeRegistry
 
     /// <inheritdoc />
     public IGameMode? SurpriseMe(
-        AgeRating maxAgeRating      = AgeRating.Adult,
-        bool      allowAdultContent = false,
-        int?      maxCards          = null)
+        AgeRating maxAgeRating = AgeRating.Adult,
+        bool allowAdultContent = false,
+        int? maxCards = null)
     {
         // Delegating to _inner.SurpriseMe would only respect the CEILING
         // parameter — it has no concept of this wrapper's floor, so it could

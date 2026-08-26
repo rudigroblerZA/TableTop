@@ -33,16 +33,16 @@ public sealed class StoryStartersMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Story told (+2)";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "→ Next card";
+    public override string SkipLabel => "→ Next card";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Starter"]    = "#42A5F5",
+            ["Starter"] = "#42A5F5",
             ["Constraint"] = "#FFCA28",
-            ["Twist"]      = "#EC407A",
-            ["Challenge"]  = "#AB47BC",
+            ["Twist"] = "#EC407A",
+            ["Challenge"] = "#AB47BC",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

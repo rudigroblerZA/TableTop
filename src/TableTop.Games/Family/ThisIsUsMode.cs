@@ -1,8 +1,8 @@
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
+using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
-using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Domain.Restrictions;
 using TableTop.Core.Domain.Scoring;
 using TableTop.Games.Base;
@@ -36,15 +36,15 @@ public sealed class ThisIsUsMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "→ Next";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "⤳ Skip";
+    public override string SkipLabel => "⤳ Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Memory"]  = "#42A5F5",
-            ["Debate"]  = "#FFCA28",
-            ["Reveal"]  = "#EC407A",
+            ["Memory"] = "#42A5F5",
+            ["Debate"] = "#FFCA28",
+            ["Reveal"] = "#EC407A",
             ["Stories"] = "#66BB6A",
         };
 
@@ -69,7 +69,7 @@ public static class ThisIsUsCardBank
     private static IReadOnlyList<ICard> Build()
     {
         var parentsOnly = new ParentOnlyRestriction();
-        var adultsOnly  = new AdultOnlyRestriction();
+        var adultsOnly = new AdultOnlyRestriction();
 
         return
         [

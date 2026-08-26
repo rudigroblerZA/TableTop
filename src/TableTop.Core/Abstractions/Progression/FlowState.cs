@@ -21,15 +21,15 @@ public sealed class FlowState
 {
     private Difficulty _difficulty;
     /// <summary>Creates a <see cref="FlowState"/> at the given starting position.</summary>
-    private FlowPace   _pace;
+    private FlowPace _pace;
 
     /// <summary>Creates a <see cref="FlowState"/> at the given starting difficulty and pace.</summary>
     public FlowState(
         Difficulty initialDifficulty = Difficulty.Easy,
-        FlowPace   initialPace       = FlowPace.Normal)
+        FlowPace initialPace = FlowPace.Normal)
     {
         _difficulty = initialDifficulty;
-        _pace       = initialPace;
+        _pace = initialPace;
     }
 
     // ── Current position ──────────────────────────────────────────────────────
@@ -51,10 +51,10 @@ public sealed class FlowState
     {
         var next = _difficulty switch
         {
-            Difficulty.Easy    => Difficulty.Medium,
-            Difficulty.Medium  => Difficulty.Hard,
-            Difficulty.Hard    => Difficulty.Extreme,
-            _                  => _difficulty
+            Difficulty.Easy => Difficulty.Medium,
+            Difficulty.Medium => Difficulty.Hard,
+            Difficulty.Hard => Difficulty.Extreme,
+            _ => _difficulty
         };
         if (next == _difficulty) return false;
         _difficulty = next;
@@ -71,9 +71,9 @@ public sealed class FlowState
         var prev = _difficulty switch
         {
             Difficulty.Extreme => Difficulty.Hard,
-            Difficulty.Hard    => Difficulty.Medium,
-            Difficulty.Medium  => Difficulty.Easy,
-            _                  => _difficulty
+            Difficulty.Hard => Difficulty.Medium,
+            Difficulty.Medium => Difficulty.Easy,
+            _ => _difficulty
         };
         if (prev == _difficulty) return false;
         _difficulty = prev;
@@ -93,10 +93,10 @@ public sealed class FlowState
     {
         var next = _pace switch
         {
-            FlowPace.Slow    => FlowPace.Normal,
-            FlowPace.Normal  => FlowPace.Fast,
-            FlowPace.Fast    => FlowPace.Sprint,
-            _                => _pace
+            FlowPace.Slow => FlowPace.Normal,
+            FlowPace.Normal => FlowPace.Fast,
+            FlowPace.Fast => FlowPace.Sprint,
+            _ => _pace
         };
         if (next == _pace) return false;
         _pace = next;
@@ -111,10 +111,10 @@ public sealed class FlowState
     {
         var prev = _pace switch
         {
-            FlowPace.Sprint  => FlowPace.Fast,
-            FlowPace.Fast    => FlowPace.Normal,
-            FlowPace.Normal  => FlowPace.Slow,
-            _                => _pace
+            FlowPace.Sprint => FlowPace.Fast,
+            FlowPace.Fast => FlowPace.Normal,
+            FlowPace.Normal => FlowPace.Slow,
+            _ => _pace
         };
         if (prev == _pace) return false;
         _pace = prev;
@@ -129,11 +129,11 @@ public sealed class FlowState
     /// <summary>Number of cards played at the current difficulty before auto-escalation kicks in.</summary>
     public int CardsBeforeEscalation => _pace switch
     {
-        FlowPace.Slow   => 8,
+        FlowPace.Slow => 8,
         FlowPace.Normal => 4,
-        FlowPace.Fast   => 2,
+        FlowPace.Fast => 2,
         FlowPace.Sprint => 1,
-        _               => 4
+        _ => 4
     };
 
     /// <summary>Total cards played at the current difficulty level this session.</summary>

@@ -27,19 +27,19 @@ public sealed class ExpertFactOrFictionMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Guess";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "→ Next";
+    public override string SkipLabel => "→ Next";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["History"]       = "#8B4513",
-            ["Science"]       = "#1E90FF",
-            ["Pop Culture"]   = "#FF69B4",
-            ["Sports"]        = "#228B22",
-            ["Geography"]     = "#FF8C00",
-            ["Literature"]    = "#4B0082",
-            ["Urban Legend"]  = "#DC143C",
+            ["History"] = "#8B4513",
+            ["Science"] = "#1E90FF",
+            ["Pop Culture"] = "#FF69B4",
+            ["Sports"] = "#228B22",
+            ["Geography"] = "#FF8C00",
+            ["Literature"] = "#4B0082",
+            ["Urban Legend"] = "#DC143C",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

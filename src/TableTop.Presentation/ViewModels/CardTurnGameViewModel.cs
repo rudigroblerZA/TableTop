@@ -152,9 +152,9 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
     /// <summary>Hex colour for <see cref="HintUrgency"/> — data, not a platform <c>Color</c>, for the same reason the strip colours don't live here.</summary>
     public string HintColor => _hintUrgency switch
     {
-        "Strong"   => "#EF4444",
+        "Strong" => "#EF4444",
         "Moderate" => "#F59E0B",
-        _          => "#C49E4C",
+        _ => "#C49E4C",
     };
 
     // ── Undo / Save ───────────────────────────────────────────────────────────
@@ -208,13 +208,13 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
     public ICommand QuitCommand { get; }
 
     /// <summary>Nudge difficulty and pace for everyone at the table.</summary>
-    public ICommand LevelUpCommand   { get; }
+    public ICommand LevelUpCommand { get; }
     /// <inheritdoc cref="LevelUpCommand" />
     public ICommand LevelDownCommand { get; }
     /// <inheritdoc cref="LevelUpCommand" />
-    public ICommand SpeedUpCommand   { get; }
+    public ICommand SpeedUpCommand { get; }
     /// <inheritdoc cref="LevelUpCommand" />
-    public ICommand SlowDownCommand  { get; }
+    public ICommand SlowDownCommand { get; }
 
     /// <summary>False for modes whose progression strategy isn't flow-aware.</summary>
     public bool SupportsFlow => _controller?.SupportsFlow ?? false;
@@ -246,40 +246,40 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         INavigator navigator, IGameMode mode, ICardTurnController controller,
         bool timerEnabled, int timerSeconds, bool showCardCount)
     {
-        _navigator     = navigator;
-        _controller    = controller;
-        _timerEnabled  = timerEnabled;
+        _navigator = navigator;
+        _controller = controller;
+        _timerEnabled = timerEnabled;
         _secondsRemaining = timerSeconds;
-        ShowCardCount  = showCardCount;
+        ShowCardCount = showCardCount;
 
         var def = mode as TableTop.Games.Base.BaseGameModeDefinition;
         CompleteLabel = def?.ResolvedCompleteLabel ?? "Completed";
-        SkipLabel     = def?.ResolvedSkipLabel     ?? "Skip";
-        ModeTitle     = def?.DisplayName           ?? mode.Name;
+        SkipLabel = def?.ResolvedSkipLabel ?? "Skip";
+        ModeTitle = def?.DisplayName ?? mode.Name;
 
         _styleNames = mode is IGameModeDefinition gmd
             ? ChoiceCards.ExtractStyleNames(gmd.GetCards([]).Select(c => c.Description))
             : new Dictionary<char, string>();
 
-        CompleteCommand  = new RelayCommand(() => Complete(),  () => IsPlaying);
-        SkipCommand      = new RelayCommand(() => Skip(),      () => IsPlaying);
-        QuitCommand      = new RelayCommand(() => Quit());
-        SaveCommand      = new RelayCommand(() => SaveSession(), () => CanSave);
-        UndoCommand      = new RelayCommand(() => UndoLastTurn(), () => CanUndo);
-        FlipCommand      = new RelayCommand(() => FlipCard(),   () => HasBack);
-        LevelUpCommand   = new RelayCommand(() => LevelUp(),    () => SupportsFlow);
-        LevelDownCommand = new RelayCommand(() => LevelDown(),  () => SupportsFlow);
-        SpeedUpCommand   = new RelayCommand(() => SpeedUp(),    () => SupportsFlow);
-        SlowDownCommand  = new RelayCommand(() => SlowDown(),   () => SupportsFlow);
+        CompleteCommand = new RelayCommand(() => Complete(), () => IsPlaying);
+        SkipCommand = new RelayCommand(() => Skip(), () => IsPlaying);
+        QuitCommand = new RelayCommand(() => Quit());
+        SaveCommand = new RelayCommand(() => SaveSession(), () => CanSave);
+        UndoCommand = new RelayCommand(() => UndoLastTurn(), () => CanUndo);
+        FlipCommand = new RelayCommand(() => FlipCard(), () => HasBack);
+        LevelUpCommand = new RelayCommand(() => LevelUp(), () => SupportsFlow);
+        LevelDownCommand = new RelayCommand(() => LevelDown(), () => SupportsFlow);
+        SpeedUpCommand = new RelayCommand(() => SpeedUp(), () => SupportsFlow);
+        SlowDownCommand = new RelayCommand(() => SlowDown(), () => SupportsFlow);
 
-        _controller.CardReady     += OnCardReady;
-        _controller.TurnResult    += OnTurnResult;
-        _controller.TurnSkipped   += OnTurnSkipped;
+        _controller.CardReady += OnCardReady;
+        _controller.TurnResult += OnTurnResult;
+        _controller.TurnSkipped += OnTurnSkipped;
         _controller.SkipAttempted += OnSkipAttempted;
-        _controller.TurnUndone    += OnTurnUndone;
-        _controller.GameEnded     += OnGameEnded;
-        _controller.SessionSaved  += (_, _) => FlashText = "Session saved";
-        _controller.NextTurnHint  += (_, e) => { HintText = e.HintText; HintUrgency = e.Urgency; };
+        _controller.TurnUndone += OnTurnUndone;
+        _controller.GameEnded += OnGameEnded;
+        _controller.SessionSaved += (_, _) => FlashText = "Session saved";
+        _controller.NextTurnHint += (_, e) => { HintText = e.HintText; HintUrgency = e.Urgency; };
 
         _controller.Start(); // fires the first CardReady synchronously
     }
@@ -287,24 +287,24 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
     /// <summary>Error-state constructor: no controller, just a message.</summary>
     private CardTurnGameViewModel(INavigator navigator, string loadError, bool showCardCount)
     {
-        _navigator    = navigator;
-        _loadError    = loadError;
+        _navigator = navigator;
+        _loadError = loadError;
         ShowCardCount = showCardCount;
         CompleteLabel = "Completed";
-        SkipLabel     = "Skip";
-        ModeTitle     = "";
-        _styleNames   = new Dictionary<char, string>();
+        SkipLabel = "Skip";
+        ModeTitle = "";
+        _styleNames = new Dictionary<char, string>();
 
-        CompleteCommand  = new RelayCommand(() => { }, () => false);
-        SkipCommand      = new RelayCommand(() => { }, () => false);
-        QuitCommand      = new RelayCommand(() => navigator.GoBack());
-        SaveCommand      = new RelayCommand(() => { }, () => false);
-        UndoCommand      = new RelayCommand(() => { }, () => false);
-        FlipCommand      = new RelayCommand(() => { }, () => false);
-        LevelUpCommand   = new RelayCommand(() => { }, () => false);
+        CompleteCommand = new RelayCommand(() => { }, () => false);
+        SkipCommand = new RelayCommand(() => { }, () => false);
+        QuitCommand = new RelayCommand(() => navigator.GoBack());
+        SaveCommand = new RelayCommand(() => { }, () => false);
+        UndoCommand = new RelayCommand(() => { }, () => false);
+        FlipCommand = new RelayCommand(() => { }, () => false);
+        LevelUpCommand = new RelayCommand(() => { }, () => false);
         LevelDownCommand = new RelayCommand(() => { }, () => false);
-        SpeedUpCommand   = new RelayCommand(() => { }, () => false);
-        SlowDownCommand  = new RelayCommand(() => { }, () => false);
+        SpeedUpCommand = new RelayCommand(() => { }, () => false);
+        SlowDownCommand = new RelayCommand(() => { }, () => false);
     }
 
     /// <summary>
@@ -321,9 +321,9 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         {
             var gameplayOptions = new GameplayOptions
             {
-                ShuffleDeck    = settings.ShuffleCards,
-                MinDifficulty  = (Difficulty)(settings.MinDifficulty + 1),
-                MaxDifficulty  = (Difficulty)(settings.MaxDifficulty + 1),
+                ShuffleDeck = settings.ShuffleCards,
+                MinDifficulty = (Difficulty)(settings.MinDifficulty + 1),
+                MaxDifficulty = (Difficulty)(settings.MaxDifficulty + 1),
                 CardsPerPlayer = settings.CardsPerPlayer > 0 ? settings.CardsPerPlayer : null,
             };
 
@@ -354,17 +354,17 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         // card arrives rather than lingering over someone else's turn.
         HintText = "";
 
-        PlayerName     = e.PlayerName;
-        Round          = e.Round;
-        CardCountText  = $"Round {e.Round}  ·  {_controller?.CardsRemaining ?? 0} cards left";
-        CardTitle      = e.CardTitle;
-        CardCategory   = e.Category;
+        PlayerName = e.PlayerName;
+        Round = e.Round;
+        CardCountText = $"Round {e.Round}  ·  {_controller?.CardsRemaining ?? 0} cards left";
+        CardTitle = e.CardTitle;
+        CardCategory = e.Category;
         CardDifficulty = e.Card.Difficulty.ToString();
 
         var plain = CardText.StripHtml(e.CardText);
         var (front, back) = CardFaces.Split(plain);
         _frontText = front;
-        _backText  = back;
+        _backText = back;
         _isFlipped = false;
 
         Choices.Clear();
@@ -394,7 +394,7 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         {
             > 0 => $"{e.PlayerName}  +{e.ScoreDelta}",
             < 0 => $"{e.PlayerName}  {e.ScoreDelta}",
-            _   => FlashText.Contains(" picked ") ? FlashText : $"{e.PlayerName}  ·",
+            _ => FlashText.Contains(" picked ") ? FlashText : $"{e.PlayerName}  ·",
         };
     }
 
@@ -453,7 +453,7 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         }
 
         SummaryText = string.Join("\n", lines);
-        IsGameOver  = true; // must be set before the event, so a subscriber reading it sees the final state
+        IsGameOver = true; // must be set before the event, so a subscriber reading it sees the final state
         GameOver?.Invoke(SummaryText);
     }
 
@@ -516,20 +516,20 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
     }
 
     /// <summary>Nudges everyone's difficulty up.</summary>
-    public void LevelUp()   => ForEachPlayer(id => _controller!.LevelUp(id));
+    public void LevelUp() => ForEachPlayer(id => _controller!.LevelUp(id));
     /// <inheritdoc cref="LevelUp" />
     public void LevelDown() => ForEachPlayer(id => _controller!.LevelDown(id));
     /// <inheritdoc cref="LevelUp" />
-    public void SpeedUp()   => ForEachPlayer(id => _controller!.SpeedUp(id));
+    public void SpeedUp() => ForEachPlayer(id => _controller!.SpeedUp(id));
     /// <inheritdoc cref="LevelUp" />
-    public void SlowDown()  => ForEachPlayer(id => _controller!.SlowDown(id));
+    public void SlowDown() => ForEachPlayer(id => _controller!.SlowDown(id));
 
     private void RaiseActionState()
     {
         (CompleteCommand as RelayCommand)?.RaiseCanExecuteChanged();
-        (SkipCommand     as RelayCommand)?.RaiseCanExecuteChanged();
-        (SaveCommand     as RelayCommand)?.RaiseCanExecuteChanged();
-        (UndoCommand     as RelayCommand)?.RaiseCanExecuteChanged();
+        (SkipCommand as RelayCommand)?.RaiseCanExecuteChanged();
+        (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
+        (UndoCommand as RelayCommand)?.RaiseCanExecuteChanged();
     }
 
     // ── Timer ─────────────────────────────────────────────────────────────────
@@ -561,12 +561,12 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         StopTimer();
         if (_controller is not null)
         {
-            _controller.CardReady     -= OnCardReady;
-            _controller.TurnResult    -= OnTurnResult;
-            _controller.TurnSkipped   -= OnTurnSkipped;
+            _controller.CardReady -= OnCardReady;
+            _controller.TurnResult -= OnTurnResult;
+            _controller.TurnSkipped -= OnTurnSkipped;
             _controller.SkipAttempted -= OnSkipAttempted;
-            _controller.TurnUndone    -= OnTurnUndone;
-            _controller.GameEnded     -= OnGameEnded;
+            _controller.TurnUndone -= OnTurnUndone;
+            _controller.GameEnded -= OnGameEnded;
             _controller.Dispose();
         }
     }
@@ -585,9 +585,9 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
 
         internal ChoiceItem(char letter, string text, CardTurnGameViewModel owner)
         {
-            Letter  = letter;
+            Letter = letter;
             Display = $"{letter}) {text}";
-            _owner  = owner;
+            _owner = owner;
             ChooseCommand = new RelayCommand(() => owner.RecordChoice(letter));
         }
 

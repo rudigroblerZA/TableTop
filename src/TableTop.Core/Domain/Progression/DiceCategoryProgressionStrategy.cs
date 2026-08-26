@@ -29,9 +29,9 @@ namespace TableTop.Core.Domain.Progression;
 /// </summary>
 public sealed class DiceCategoryProgressionStrategy : IProgressionStrategy
 {
-    private readonly Random                 _rng;
-    private readonly IReadOnlyList<string>  _categoriesInOrder;
-    private readonly Func<int, string>      _totalToCategory;
+    private readonly Random _rng;
+    private readonly IReadOnlyList<string> _categoriesInOrder;
+    private readonly Func<int, string> _totalToCategory;
     private string? _overrideCategory;
 
     /// <summary>
@@ -45,17 +45,17 @@ public sealed class DiceCategoryProgressionStrategy : IProgressionStrategy
     /// <param name="totalToCategory">Maps a dice total (2–12) to one of <paramref name="categoriesInOrder"/>.</param>
     /// <param name="rng">Random source; omit to use <see cref="Random.Shared"/>.</param>
     public DiceCategoryProgressionStrategy(
-        IReadOnlyList<string>  categoriesInOrder,
-        Func<int, string>      totalToCategory,
-        Random?                rng = null)
+        IReadOnlyList<string> categoriesInOrder,
+        Func<int, string> totalToCategory,
+        Random? rng = null)
     {
         ArgumentNullException.ThrowIfNull(totalToCategory);
         if (categoriesInOrder is null || categoriesInOrder.Count == 0)
             throw new ArgumentException("At least one category is required.", nameof(categoriesInOrder));
 
         _categoriesInOrder = categoriesInOrder;
-        _totalToCategory   = totalToCategory;
-        _rng               = rng ?? Random.Shared;
+        _totalToCategory = totalToCategory;
+        _rng = rng ?? Random.Shared;
     }
 
     /// <summary>The dice result from the most recent <see cref="SelectCandidate"/> call.</summary>

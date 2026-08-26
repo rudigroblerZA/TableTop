@@ -1,5 +1,5 @@
 using TableTop.Core.Domain.Progression;
-using TableTop.Games.Data;
+using TableTop.Games.Couples;
 using TableTop.Hosting.Controllers;
 using TableTop.Hosting.Events;
 
@@ -7,17 +7,17 @@ namespace TableTop.Tests;
 
 public sealed class MonogamyTests
 {
-    private static Player Male(string name   = "Adam")   => Player.Create(name, attributes: new Dictionary<string, string> { ["gender"] = "male" });
-    private static Player Female(string name = "Eve")    => Player.Create(name, attributes: new Dictionary<string, string> { ["gender"] = "female" });
+    private static Player Male(string name = "Adam") => Player.Create(name, attributes: new Dictionary<string, string> { ["gender"] = "male" });
+    private static Player Female(string name = "Eve") => Player.Create(name, attributes: new Dictionary<string, string> { ["gender"] = "female" });
 
     private static MonogamyController BuildController(
-        IReadOnlyList<MonogamyCard>? cards          = null,
-        IReadOnlyList<Player>?       players        = null,
-        int                          winningTokens  = 10,
-        Random?                      rng            = null)
+        IReadOnlyList<MonogamyCard>? cards = null,
+        IReadOnlyList<Player>? players = null,
+        int winningTokens = 10,
+        Random? rng = null)
     {
         var p = players ?? [Male(), Female()];
-        var c = cards   ?? MonogamyCardBank.All.ToList();
+        var c = cards ?? MonogamyCardBank.All.ToList();
         return new MonogamyController(
             p.Cast<Core.Abstractions.Players.IPlayer>().ToList().AsReadOnly(),
             c, winningTokens, rng);
@@ -44,9 +44,9 @@ public sealed class MonogamyTests
     public void MonogamyCard_ZoneMapsToCorrectDifficulty()
     {
         MonogamyCard.CreateNeutral("F", "d", MonogamyZone.Foreplay, CardTarget.ForBoth).Difficulty.Should().Be(Difficulty.Easy);
-        MonogamyCard.CreateNeutral("S", "d", MonogamyZone.Sensual,  CardTarget.ForBoth).Difficulty.Should().Be(Difficulty.Medium);
-        MonogamyCard.CreateNeutral("St","d", MonogamyZone.Steamy,   CardTarget.ForBoth).Difficulty.Should().Be(Difficulty.Hard);
-        MonogamyCard.CreateNeutral("W", "d", MonogamyZone.Wild,     CardTarget.ForBoth).Difficulty.Should().Be(Difficulty.Extreme);
+        MonogamyCard.CreateNeutral("S", "d", MonogamyZone.Sensual, CardTarget.ForBoth).Difficulty.Should().Be(Difficulty.Medium);
+        MonogamyCard.CreateNeutral("St", "d", MonogamyZone.Steamy, CardTarget.ForBoth).Difficulty.Should().Be(Difficulty.Hard);
+        MonogamyCard.CreateNeutral("W", "d", MonogamyZone.Wild, CardTarget.ForBoth).Difficulty.Should().Be(Difficulty.Extreme);
     }
 
     [Fact]
@@ -160,7 +160,7 @@ public sealed class MonogamyTests
     public void Controller_CardReady_EmittedAfterNonDoubles()
     {
         // Force a non-doubles roll with fixed seed
-        var rng  = FindNonDoublesRng();
+        var rng = FindNonDoublesRng();
         var ctrl = BuildController(rng: rng);
 
         MonogamyCardReadyEvent? evt = null;
@@ -174,7 +174,7 @@ public sealed class MonogamyTests
     [Fact]
     public void Controller_CompleteCard_AwardsTokens()
     {
-        var rng  = FindNonDoublesRng();
+        var rng = FindNonDoublesRng();
         var ctrl = BuildController(rng: rng);
 
         TokensAwardedEvent? evt = null;
@@ -190,7 +190,7 @@ public sealed class MonogamyTests
     [Fact]
     public void Controller_SkipCard_AwardsNoTokens()
     {
-        var rng  = FindNonDoublesRng();
+        var rng = FindNonDoublesRng();
         var ctrl = BuildController(rng: rng);
 
         TokensAwardedEvent? awarded = null;
@@ -206,7 +206,7 @@ public sealed class MonogamyTests
     {
         // Use a Wild card (4 tokens) to verify halving
         var card = MonogamyCard.CreateNeutral("Wild", "d", MonogamyZone.Wild, CardTarget.ForBoth, tokenValue: 4);
-        var rng  = FindNonDoublesRng();
+        var rng = FindNonDoublesRng();
         var ctrl = BuildController(cards: [card], rng: rng);
 
         TokensAwardedEvent? evt = null;
@@ -223,7 +223,7 @@ public sealed class MonogamyTests
     {
         // Single-token card, win at 1 token
         var card = MonogamyCard.CreateNeutral("T", "d", MonogamyZone.Foreplay, CardTarget.ForBoth, tokenValue: 1);
-        var rng  = FindNonDoublesRng();
+        var rng = FindNonDoublesRng();
         var ctrl = BuildController(cards: [card], winningTokens: 1, rng: rng);
 
         MonogamyGameEndedEvent? ended = null;
@@ -258,7 +258,7 @@ public sealed class MonogamyTests
         DoublesRolledEvent? doublesEvt = null;
         MonogamyCardReadyEvent? cardEvt = null;
         ctrl.DoublesRolled += (_, e) => doublesEvt = e;
-        ctrl.CardReady     += (_, e) => cardEvt   = e;
+        ctrl.CardReady += (_, e) => cardEvt = e;
         ctrl.Start();
 
         doublesEvt.Should().NotBeNull();
@@ -274,8 +274,8 @@ public sealed class MonogamyTests
     public void Controller_TokensByZone_TracksPerZone()
     {
         var foreplayCard = MonogamyCard.CreateNeutral("F", "d", MonogamyZone.Foreplay, CardTarget.ForBoth, tokenValue: 2);
-        var rng          = FindNonDoublesRng();
-        var ctrl         = BuildController(cards: [foreplayCard, foreplayCard], rng: rng);
+        var rng = FindNonDoublesRng();
+        var ctrl = BuildController(cards: [foreplayCard, foreplayCard], rng: rng);
 
         ctrl.Start();
         ctrl.CompleteCard();
@@ -316,7 +316,7 @@ public sealed class MonogamyTests
 
         foreach (var card in genderedCards.OfType<IPromptCard>())
         {
-            var maleText   = card.ResolvePrompt(Male());
+            var maleText = card.ResolvePrompt(Male());
             var femaleText = card.ResolvePrompt(Female());
             // At least some cards should differ — not all are neutral
             maleText.Should().NotBeNullOrEmpty();

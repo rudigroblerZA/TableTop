@@ -29,7 +29,7 @@ namespace TableTop.Games.School;
 public sealed class WrongAnswersOnlyMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Wrong Answers Only";
+    public override string Name => "Wrong Answers Only";
     /// <inheritdoc />
     public override string Description =>
         "The real answer is read first — then everyone competes to invent the best WRONG one. Comprehension in disguise.";
@@ -37,16 +37,16 @@ public sealed class WrongAnswersOnlyMode : BaseGameModeDefinition
     /// <summary>Label shown on the button that records the round's winner.</summary>
     public override string CompleteLabel => "Best Wrong";
     /// <summary>Label shown on the button that skips the current card.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Science"]   = "#26C6DA",
-            ["History"]   = "#FFA726",
+            ["Science"] = "#26C6DA",
+            ["History"] = "#FFA726",
             ["Geography"] = "#66BB6A",
-            ["Nature"]    = "#9CCC65",
+            ["Nature"] = "#9CCC65",
             ["How It Works"] = "#AB47BC",
             ["Word Origins"] = "#EC407A",
         };

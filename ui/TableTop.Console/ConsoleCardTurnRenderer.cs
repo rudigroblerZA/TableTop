@@ -1,10 +1,9 @@
-using TableTop.Hosting;
-using SC = System.Console;
-using CC = System.ConsoleColor;
-using CK = System.ConsoleKey;
 using TableTop.Core.Abstractions.Scoring;
+using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Events;
+using CC = System.ConsoleColor;
+using SC = System.Console;
 
 namespace TableTop.Console;
 
@@ -15,23 +14,23 @@ namespace TableTop.Console;
 internal sealed class ConsoleCardTurnRenderer
 {
     private readonly ICardTurnController _controller;
-    private readonly string              _gameTitle;
-    private CardReadyEvent?              _currentCard;
-    private bool                         _waitingForInput;
+    private readonly string _gameTitle;
+    private CardReadyEvent? _currentCard;
+    private bool _waitingForInput;
 
     public ConsoleCardTurnRenderer(ICardTurnController controller, string gameTitle)
     {
         _controller = controller;
-        _gameTitle  = gameTitle;
+        _gameTitle = gameTitle;
 
-        controller.CardReady   += OnCardReady;
-        controller.FlowChanged   += OnFlowChanged;
-        controller.NextTurnHint  += OnNextTurnHint;
-        controller.TurnResult  += OnTurnResult;
+        controller.CardReady += OnCardReady;
+        controller.FlowChanged += OnFlowChanged;
+        controller.NextTurnHint += OnNextTurnHint;
+        controller.TurnResult += OnTurnResult;
         controller.TurnSkipped += OnTurnSkipped;
-        controller.TurnUndone  += OnTurnUndone;
-        controller.GameEnded   += OnGameEnded;
-        controller.GamePaused  += OnGamePaused;
+        controller.TurnUndone += OnTurnUndone;
+        controller.GameEnded += OnGameEnded;
+        controller.GamePaused += OnGamePaused;
     }
 
     /// <summary>Starts the controller and blocks until the game ends.</summary>
@@ -67,8 +66,8 @@ internal sealed class ConsoleCardTurnRenderer
 
     private void OnCardReady(object? sender, CardReadyEvent e)
     {
-        _currentCard   = e;
-        _playerIds   = _playerIds.Length == 0 && e.Player is not null
+        _currentCard = e;
+        _playerIds = _playerIds.Length == 0 && e.Player is not null
             ? [e.Player.Id]
             : _playerIds;
 
@@ -149,9 +148,9 @@ internal sealed class ConsoleCardTurnRenderer
     {
         SC.ForegroundColor = e.Urgency switch
         {
-            "Strong"   => CC.Cyan,
+            "Strong" => CC.Cyan,
             "Moderate" => CC.DarkCyan,
-            _          => CC.DarkGray,
+            _ => CC.DarkGray,
         };
         SC.WriteLine($"\n  💡  {e.HintText}");
         SC.ResetColor();
@@ -165,8 +164,8 @@ internal sealed class ConsoleCardTurnRenderer
         switch (input)
         {
             case "c": _controller.RecordOutcome(CardOutcome.Completed); break;
-            case "s": _controller.RecordOutcome(CardOutcome.Skipped);   break;
-            case "f": _controller.RecordOutcome(CardOutcome.Failed);    break;
+            case "s": _controller.RecordOutcome(CardOutcome.Skipped); break;
+            case "f": _controller.RecordOutcome(CardOutcome.Failed); break;
             case "p": _controller.TogglePause(); break;
             case "u":
                 // UndoLastTurn returns false rather than throwing when there is
@@ -190,16 +189,20 @@ internal sealed class ConsoleCardTurnRenderer
                 break;
 
             // ── Flow commands (only active when strategy supports flow) ───────
-            case "+": case "lu":
+            case "+":
+            case "lu":
                 FlowAll(id => _controller.LevelUp(id), "Level Up");
                 break;
-            case "-": case "ld":
+            case "-":
+            case "ld":
                 FlowAll(id => _controller.LevelDown(id), "Level Down");
                 break;
-            case ">": case "su":
+            case ">":
+            case "su":
                 FlowAll(id => _controller.SpeedUp(id), "Speed Up");
                 break;
-            case "<": case "sd":
+            case "<":
+            case "sd":
                 FlowAll(id => _controller.SlowDown(id), "Slow Down");
                 break;
             case "r":

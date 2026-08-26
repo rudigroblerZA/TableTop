@@ -27,7 +27,7 @@ namespace TableTop.Games.Family;
 public sealed class PredictThisMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Predict This";
+    public override string Name => "Predict This";
     /// <inheritdoc />
     public override string Description =>
         "Bet points on what someone will answer. Guess correctly, win double.";
@@ -35,17 +35,17 @@ public sealed class PredictThisMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Answered";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Preferences"]  = "#42A5F5",
-            ["Choices"]      = "#66BB6A",
+            ["Preferences"] = "#42A5F5",
+            ["Choices"] = "#66BB6A",
             ["Personality"] = "#AB47BC",
-            ["Secrets"]      = "#EC407A",
-            ["Lies"]         = "#EF5350",
+            ["Secrets"] = "#EC407A",
+            ["Lies"] = "#EF5350",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

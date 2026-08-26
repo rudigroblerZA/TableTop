@@ -27,7 +27,7 @@ namespace TableTop.Games.Family;
 public sealed class CelebrityImpersonatorMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Celebrity Impersonator";
+    public override string Name => "Celebrity Impersonator";
     /// <inheritdoc />
     public override string Description =>
         "Act like someone famous. Voice, mannerisms, catchphrases. Can others guess you?";
@@ -35,17 +35,17 @@ public sealed class CelebrityImpersonatorMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Performed";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Celebrity"]    = "#EC407A",
-            ["Historical"]   = "#42A5F5",
-            ["Fictional"]    = "#FFCA28",
-            ["Absurd"]       = "#AB47BC",
-            ["Cultural"]     = "#66BB6A",
+            ["Celebrity"] = "#EC407A",
+            ["Historical"] = "#42A5F5",
+            ["Fictional"] = "#FFCA28",
+            ["Absurd"] = "#AB47BC",
+            ["Cultural"] = "#66BB6A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

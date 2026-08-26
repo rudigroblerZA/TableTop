@@ -1,5 +1,4 @@
 using TableTop.Core.Abstractions.Cards;
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
@@ -50,10 +49,10 @@ public sealed class ThisOrThatMode : BaseGameModeDefinition
         new Dictionary<string, string>
         {
             ["How To Play"] = "#26A69A",
-            ["Everyday"]    = "#42A5F5",
-            ["Food"]        = "#FFA726",
-            ["Would You"]   = "#AB47BC",
-            ["Deep End"]    = "#EF5350",
+            ["Everyday"] = "#42A5F5",
+            ["Food"] = "#FFA726",
+            ["Would You"] = "#AB47BC",
+            ["Deep End"] = "#EF5350",
         };
 
     /// <summary>The rules card explains simultaneous picking, which the mode depends on.</summary>

@@ -1,10 +1,8 @@
-using SC = System.Console;
-using CC = System.ConsoleColor;
-using CK = System.ConsoleKey;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Domain.Players;
 using TableTop.Core.Domain.Progression;
 using TableTop.Hosting.Persistence;
+using CC = System.ConsoleColor;
+using SC = System.Console;
 
 namespace TableTop.Console;
 
@@ -75,7 +73,7 @@ internal static class ConsolePlayerSetup
     private static List<PlayerProfile> EditPlayer(List<PlayerProfile> profiles)
     {
         PrintProfileList(profiles);
-        var idx     = ConsoleUi.PromptInt("Edit player number", 1, profiles.Count) - 1;
+        var idx = ConsoleUi.PromptInt("Edit player number", 1, profiles.Count) - 1;
         ConsoleUi.SectionHeader($"Editing {profiles[idx].Name}");
         ConsoleUi.PrintMessage("(Press ENTER to keep current value)");
         SC.WriteLine();
@@ -88,7 +86,7 @@ internal static class ConsolePlayerSetup
     private static List<PlayerProfile> CreateNewProfiles()
     {
         ConsoleUi.SectionHeader("PLAYER SETUP");
-        var count    = ConsoleUi.PromptInt("How many players?", 2, 8);
+        var count = ConsoleUi.PromptInt("How many players?", 2, 8);
         var profiles = new List<PlayerProfile>(count);
         for (var i = 1; i <= count; i++)
         {
@@ -109,12 +107,12 @@ internal static class ConsolePlayerSetup
 
         return new PlayerProfile
         {
-            Id             = existing?.Id ?? Guid.NewGuid(),
-            Name           = name.Trim(),
-            Gender         = PromptGender(existing?.Gender),
-            Age            = PromptAge(existing?.Age),
-            IsParent       = ConsoleUi.PromptYesNo($"Parent?{BoolHint(existing?.IsParent)}"),
-            IsMarried      = ConsoleUi.PromptYesNo($"Married?{BoolHint(existing?.IsMarried)}"),
+            Id = existing?.Id ?? Guid.NewGuid(),
+            Name = name.Trim(),
+            Gender = PromptGender(existing?.Gender),
+            Age = PromptAge(existing?.Age),
+            IsParent = ConsoleUi.PromptYesNo($"Parent?{BoolHint(existing?.IsParent)}"),
+            IsMarried = ConsoleUi.PromptYesNo($"Married?{BoolHint(existing?.IsMarried)}"),
             IsCoupleMember = ConsoleUi.PromptYesNo($"Partner also playing?{BoolHint(existing?.IsCoupleMember)}"),
         }.Also(p => ConsoleUi.PrintSuccess($"{p.Name} ready."));
     }
@@ -134,10 +132,10 @@ internal static class ConsolePlayerSetup
             if (string.IsNullOrEmpty(raw) && current is not null) return current;
             var result = raw switch
             {
-                "m" or "male"   => "male",
+                "m" or "male" => "male",
                 "f" or "female" => "female",
-                "o" or "other"  => "other",
-                _               => ""
+                "o" or "other" => "other",
+                _ => ""
             };
             if (result.Length > 0) return result;
             ConsoleUi.PrintError("Enter m, f, or o.");
@@ -167,8 +165,8 @@ internal static class ConsolePlayerSetup
             SC.Write($"  {i + 1}. {p.Name,-16}");
             SC.ForegroundColor = CC.DarkGray;
             var tags = new List<string> { p.Gender, $"age {p.Age}" };
-            if (p.IsParent)       tags.Add("parent");
-            if (p.IsMarried)      tags.Add("married");
+            if (p.IsParent) tags.Add("parent");
+            if (p.IsMarried) tags.Add("married");
             if (p.IsCoupleMember) tags.Add("couple");
             SC.WriteLine(string.Join(", ", tags));
         }

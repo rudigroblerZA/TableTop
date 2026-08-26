@@ -1,4 +1,3 @@
-using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Domain.Cards;
 
 namespace TableTop.Core.Abstractions.Game;

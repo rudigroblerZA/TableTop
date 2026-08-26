@@ -28,7 +28,7 @@ namespace TableTop.Games.Couples;
 public sealed class FutureUsMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Future Us";
+    public override string Name => "Future Us";
     /// <inheritdoc />
     public override string Description =>
         "A forward-looking conversation for couples — from next year's plans to your wildest shared dreams.";
@@ -36,16 +36,16 @@ public sealed class FutureUsMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Shared";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Soon"]        = "#66BB6A",
-            ["Someday"]     = "#42A5F5",
+            ["Soon"] = "#66BB6A",
+            ["Someday"] = "#42A5F5",
             ["Big Picture"] = "#AB47BC",
-            ["Dream"]       = "#EC407A",
+            ["Dream"] = "#EC407A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

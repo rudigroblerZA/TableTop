@@ -42,15 +42,15 @@ public sealed class SharedRandomSource : IRandomSource
     private SharedRandomSource() { }
 
     /// <inheritdoc />
-    public int    Next(int maxValue)             => Random.Shared.Next(maxValue);
+    public int Next(int maxValue) => Random.Shared.Next(maxValue);
     /// <inheritdoc />
-    public int    Next(int minValue, int maxValue) => Random.Shared.Next(minValue, maxValue);
+    public int Next(int minValue, int maxValue) => Random.Shared.Next(minValue, maxValue);
     /// <inheritdoc />
-    public int    Next()                         => Random.Shared.Next();
+    public int Next() => Random.Shared.Next();
     /// <inheritdoc />
-    public double NextDouble()                   => Random.Shared.NextDouble();
+    public double NextDouble() => Random.Shared.NextDouble();
     /// <inheritdoc />
-    public void   NextBytes(Span<byte> buffer)   => Random.Shared.NextBytes(buffer);
+    public void NextBytes(Span<byte> buffer) => Random.Shared.NextBytes(buffer);
 }
 
 /// <summary>
@@ -72,13 +72,13 @@ public sealed class SeededRandomSource : IRandomSource
     }
 
     /// <inheritdoc />
-    public int    Next(int maxValue)             => _rng.Next(maxValue);
+    public int Next(int maxValue) => _rng.Next(maxValue);
     /// <inheritdoc />
-    public int    Next(int minValue, int maxValue) => _rng.Next(minValue, maxValue);
+    public int Next(int minValue, int maxValue) => _rng.Next(minValue, maxValue);
     /// <inheritdoc />
-    public int    Next()                         => _rng.Next();
+    public int Next() => _rng.Next();
     /// <inheritdoc />
-    public double NextDouble()                   => _rng.NextDouble();
+    public double NextDouble() => _rng.NextDouble();
     /// <inheritdoc />
-    public void   NextBytes(Span<byte> buffer)   => _rng.NextBytes(buffer);
+    public void NextBytes(Span<byte> buffer) => _rng.NextBytes(buffer);
 }

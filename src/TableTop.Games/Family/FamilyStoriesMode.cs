@@ -36,16 +36,16 @@ public sealed class FamilyStoriesMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "→ Story done";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "⤳ Skip";
+    public override string SkipLabel => "⤳ Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Opening"]    = "#42A5F5",
+            ["Opening"] = "#42A5F5",
             ["Constraint"] = "#FFCA28",
-            ["Twist"]      = "#EC407A",
-            ["Solo"]       = "#AB47BC",
+            ["Twist"] = "#EC407A",
+            ["Solo"] = "#AB47BC",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

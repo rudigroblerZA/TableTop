@@ -19,11 +19,11 @@ public sealed class BoolToVisibilityConverter : IValueConverter
         // count. Anything else is falsey.
         var flag = value switch
         {
-            bool b       => b,
-            string s2    => !string.IsNullOrWhiteSpace(s2),
-            int i        => i != 0,
-            null         => false,
-            _            => true,
+            bool b => b,
+            string s2 => !string.IsNullOrWhiteSpace(s2),
+            int i => i != 0,
+            null => false,
+            _ => true,
         };
         if (parameter is string s && s.Equals("invert", StringComparison.OrdinalIgnoreCase))
             flag = !flag;

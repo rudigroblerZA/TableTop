@@ -1,7 +1,5 @@
-using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Scoring;
 using TableTop.Games.Base;
 using TableTop.Games.Family;

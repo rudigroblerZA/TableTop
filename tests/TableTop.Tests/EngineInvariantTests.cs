@@ -1,12 +1,9 @@
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Rules;
-using TableTop.Core.Domain.Cards;
-using TableTop.Core.Domain.Players;
 using TableTop.Core.Domain.Rules;
 using TableTop.Core.Domain.Scoring;
 using TableTop.Core.Engine;
-using TableTop.Tests.Helpers;
 
 namespace TableTop.Tests;
 
@@ -19,10 +16,10 @@ public sealed class EngineInvariantTests
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private static IGame DirectGame(
-        IReadOnlyList<ICard>    cards,
-        IReadOnlyList<IPlayer>? players     = null,
-        int?                    maxRounds   = null,
-        IEnumerable<IRule>?     rules       = null,
+        IReadOnlyList<ICard> cards,
+        IReadOnlyList<IPlayer>? players = null,
+        int? maxRounds = null,
+        IEnumerable<IRule>? rules = null,
         SpecialCardScoringPolicy specialPolicy = SpecialCardScoringPolicy.NoScore)
     {
         var ps = (players ?? [Player.Create("Alice"), Player.Create("Bob")])
@@ -53,9 +50,9 @@ public sealed class EngineInvariantTests
     public void Issue1_FinalScore_IsScoringStrategyPlusRuleScoreDelta()
     {
         // DifficultyScoreRule adds +1 for Hard/Extreme cards
-        var card  = StandardCard.Create("Hard", "d", Difficulty.Hard, "Test");
+        var card = StandardCard.Create("Hard", "d", Difficulty.Hard, "Test");
         var alice = Player.Create("Alice");
-        var game  = DirectGame([card, ..TestFactory.MakeCards(5)],
+        var game = DirectGame([card, .. TestFactory.MakeCards(5)],
             players: [alice],
             rules: [new NoDuplicateCardRule(), new DifficultyScoreRule()]);
 
@@ -71,7 +68,7 @@ public sealed class EngineInvariantTests
     public void Issue1_DeniedRule_DoesNotApplyScoreDelta()
     {
         // Even with a DifficultyScoreRule, a denied card should never reach RecordOutcome
-        var card  = StandardCard.Create("Easy", "d", Difficulty.Easy, "Test");
+        var card = StandardCard.Create("Easy", "d", Difficulty.Easy, "Test");
         var alice = Player.Create("Alice");
 
         // RestrictionRule will block adult card for non-adult player
@@ -117,7 +114,7 @@ public sealed class EngineInvariantTests
     {
         var cards = TestFactory.MakeCards(5);
         var alice = Player.Create("Alice");
-        var game  = DirectGame(cards, players: [alice]);
+        var game = DirectGame(cards, players: [alice]);
 
         game.Start();
         var c1 = game.AdvanceTurn()!;
@@ -137,8 +134,8 @@ public sealed class EngineInvariantTests
     {
         var cards = TestFactory.MakeCards(20);
         var alice = Player.Create("Alice");
-        var bob   = Player.Create("Bob");
-        var game  = DirectGame(cards, players: [alice, bob]);
+        var bob = Player.Create("Bob");
+        var game = DirectGame(cards, players: [alice, bob]);
 
         game.Start();
         game.Round.Should().Be(1);
@@ -155,9 +152,9 @@ public sealed class EngineInvariantTests
     {
         var cards = TestFactory.MakeCards(20);
         var alice = Player.Create("Alice");
-        var bob   = Player.Create("Bob");
+        var bob = Player.Create("Bob");
         var carol = Player.Create("Carol");
-        var game  = DirectGame(cards, players: [alice, bob, carol]);
+        var game = DirectGame(cards, players: [alice, bob, carol]);
 
         game.Start();
         // Snapshot at round start: 3 active players
@@ -186,7 +183,7 @@ public sealed class EngineInvariantTests
     {
         var cards = TestFactory.MakeCards(20);
         var alice = Player.Create("Alice");
-        var game  = DirectGame(cards, players: [alice], maxRounds: 2);
+        var game = DirectGame(cards, players: [alice], maxRounds: 2);
 
         game.Start();
 
@@ -208,7 +205,7 @@ public sealed class EngineInvariantTests
     [Fact]
     public void Issue5_PlayerManager_AcceptsAnyIPlayer()
     {
-        var mgr  = new RoundRobinPlayerManager();
+        var mgr = new RoundRobinPlayerManager();
         var stub = new StubPlayer("test-player");
 
         // Should not throw — any IPlayer is accepted
@@ -219,7 +216,7 @@ public sealed class EngineInvariantTests
     [Fact]
     public void Issue5_PlayerManager_ScoreAndStatus_ReflectManagerState()
     {
-        var mgr   = new RoundRobinPlayerManager();
+        var mgr = new RoundRobinPlayerManager();
         var alice = Player.Create("Alice");
         mgr.AddPlayer(alice);
 
@@ -237,7 +234,7 @@ public sealed class EngineInvariantTests
     [Fact]
     public void Issue6_Players_ReturnsSameReference_WhenUnchanged()
     {
-        var mgr   = new RoundRobinPlayerManager();
+        var mgr = new RoundRobinPlayerManager();
         var alice = Player.Create("Alice");
         mgr.AddPlayer(alice);
 
@@ -250,7 +247,7 @@ public sealed class EngineInvariantTests
     [Fact]
     public void Issue6_ActivePlayers_CacheInvalidated_OnStatusChange()
     {
-        var mgr   = new RoundRobinPlayerManager();
+        var mgr = new RoundRobinPlayerManager();
         var alice = Player.Create("Alice");
         mgr.AddPlayer(alice);
 
@@ -271,7 +268,7 @@ public sealed class EngineInvariantTests
         cardList.AddRange(TestFactory.MakeCards(3));
         var cards = cardList.ToArray();
         var alice = Player.Create("Alice");
-        var game  = DirectGame(cards, players: [alice],
+        var game = DirectGame(cards, players: [alice],
             specialPolicy: SpecialCardScoringPolicy.NoScore);
 
         game.Start();
@@ -311,9 +308,9 @@ public sealed class EngineInvariantTests
     [Fact]
     public void Issue10_GameMetadata_TracksPlayedCards_WithTypedApi()
     {
-        var meta   = new GameMetadata();
+        var meta = new GameMetadata();
         var player = Guid.NewGuid();
-        var card   = Guid.NewGuid();
+        var card = Guid.NewGuid();
 
         meta.HasCardBeenPlayedBy(player, card).Should().BeFalse();
         meta.MarkCardPlayed(player, card);
@@ -324,9 +321,9 @@ public sealed class EngineInvariantTests
     public void Issue10_NoDuplicateRule_UsesTypedMetadata()
     {
         // After a card is played, the same card should not be offered again
-        var card  = StandardCard.Create("X", "d", Difficulty.Easy, "T");
+        var card = StandardCard.Create("X", "d", Difficulty.Easy, "T");
         var alice = Player.Create("Alice");
-        var game  = DirectGame([card, ..TestFactory.MakeCards(5)],
+        var game = DirectGame([card, .. TestFactory.MakeCards(5)],
             players: [alice]);
 
         game.Start();
@@ -348,9 +345,9 @@ public sealed class EngineInvariantTests
 
 internal sealed class StubPlayer(string name) : IPlayer
 {
-    public Guid   Id           { get; } = Guid.NewGuid();
-    public string DisplayName  { get; } = name;
-    public int    Score        => 0;
+    public Guid Id { get; } = Guid.NewGuid();
+    public string DisplayName { get; } = name;
+    public int Score => 0;
     public PlayerStatus Status => PlayerStatus.Active;
     public IReadOnlyDictionary<string, string> Attributes =>
         new Dictionary<string, string>();

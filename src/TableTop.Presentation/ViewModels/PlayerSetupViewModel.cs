@@ -32,12 +32,12 @@ public sealed class PlayerSetupViewModel : ViewModelBase
 {
     private static readonly string[] GenderChoices = ["", "male", "female", "other"];
 
-    private readonly IGameMode   _mode;
+    private readonly IGameMode _mode;
     private readonly IAppSettings _settings;
 
     private string _newName = "", _newAge = "", _selectedGender = "";
     private string _error = "", _rosterStatus = "";
-    private bool   _newIsCouple;
+    private bool _newIsCouple;
 
     /// <summary>The players added so far.</summary>
     public ObservableCollection<PlayerEntry> Players { get; } = [];
@@ -49,13 +49,13 @@ public sealed class PlayerSetupViewModel : ViewModelBase
     public IReadOnlyList<string> GenderOptions => GenderChoices;
 
     /// <summary>Adds the pending entry to <see cref="Players"/>.</summary>
-    public ICommand AddPlayerCommand    { get; }
+    public ICommand AddPlayerCommand { get; }
     /// <summary>Empties the roster.</summary>
     public ICommand ClearPlayersCommand { get; }
     /// <summary>Saves the roster as the remembered default.</summary>
-    public ICommand SaveRosterCommand   { get; }
+    public ICommand SaveRosterCommand { get; }
     /// <summary>Returns to the previous screen.</summary>
-    public ICommand BackCommand         { get; }
+    public ICommand BackCommand { get; }
 
     /// <summary>
     /// Validates the roster and hands the built players to the head.
@@ -64,7 +64,7 @@ public sealed class PlayerSetupViewModel : ViewModelBase
     /// swaps a ViewModel, MAUI pushes a Page. So the head supplies a callback
     /// and this owns only the part both do identically.
     /// </summary>
-    public ICommand StartCommand        { get; }
+    public ICommand StartCommand { get; }
 
     /// <summary>Name of the player being entered.</summary>
     public string NewName { get => _newName; set { SetField(ref _newName, value); RaiseAddState(); } }
@@ -129,20 +129,20 @@ public sealed class PlayerSetupViewModel : ViewModelBase
     /// own navigation here.
     /// </param>
     public PlayerSetupViewModel(
-        INavigator                             navigator,
-        IGameMode                              mode,
-        IAppSettings                           settings,
-        Func<IReadOnlyList<IPlayer>, Task>?    onStart = null)
+        INavigator navigator,
+        IGameMode mode,
+        IAppSettings settings,
+        Func<IReadOnlyList<IPlayer>, Task>? onStart = null)
     {
-        _mode     = mode;
+        _mode = mode;
         _settings = settings;
-        _onStart  = onStart;
+        _onStart = onStart;
 
-        AddPlayerCommand    = new RelayCommand(AddPlayer, () => NewName.Trim().Length > 0);
+        AddPlayerCommand = new RelayCommand(AddPlayer, () => NewName.Trim().Length > 0);
         ClearPlayersCommand = new RelayCommand(ClearPlayers);
-        SaveRosterCommand   = new RelayCommand(SaveRosterAsDefault);
-        BackCommand         = new RelayCommand(navigator.GoBack);
-        StartCommand        = new AsyncRelayCommand(StartAsync, onError: ex => Error = ex.Message);
+        SaveRosterCommand = new RelayCommand(SaveRosterAsDefault);
+        BackCommand = new RelayCommand(navigator.GoBack);
+        StartCommand = new AsyncRelayCommand(StartAsync, onError: ex => Error = ex.Message);
 
         // Prefill from the remembered roster. Saving is explicit in both heads
         // now — starting a game no longer overwrites it silently.
@@ -280,7 +280,7 @@ public sealed class PlayerSetupViewModel : ViewModelBase
         {
             var attrs = new Dictionary<string, string>();
             if (p.Gender is { Length: > 0 } g) attrs["gender"] = g;
-            if (p.Age is { } age)              attrs["age"]    = age.ToString();
+            if (p.Age is { } age) attrs["age"] = age.ToString();
 
             // Team membership rides on Attributes rather than a property on
             // IPlayer — see Teams. Written only when the mode uses teams AND
@@ -289,7 +289,7 @@ public sealed class PlayerSetupViewModel : ViewModelBase
 
             var tags = new List<string>();
             if (p.IsCoupleMember) tags.Add("couple-member");
-            if (p.Age is >= 18)   tags.Add("adult");
+            if (p.Age is >= 18) tags.Add("adult");
 
             return (IPlayer)new Player(Guid.NewGuid(), p.Name, attrs, tags);
         }).ToList();
@@ -324,7 +324,7 @@ public sealed class PlayerSetupViewModel : ViewModelBase
             return;
         }
 
-        var players     = BuildPlayers();
+        var players = BuildPlayers();
         var suitability = TableSuitability.Check(_mode, players);
         if (!suitability.Suits)
         {
@@ -342,13 +342,13 @@ public sealed class PlayerSetupViewModel : ViewModelBase
     public sealed class PlayerEntry
     {
         /// <summary>Display name.</summary>
-        public string  Name           { get; }
+        public string Name { get; }
         /// <summary>Gender, or null if unspecified.</summary>
-        public string? Gender         { get; }
+        public string? Gender { get; }
         /// <summary>Age, or null if unspecified.</summary>
-        public int?    Age            { get; }
+        public int? Age { get; }
         /// <summary>Whether this player is part of the couple.</summary>
-        public bool    IsCoupleMember { get; }
+        public bool IsCoupleMember { get; }
 
         /// <summary>First letter, for an avatar badge. Was WinUI-only.</summary>
         public string Initial => Name.Length > 0 ? Name[..1].ToUpperInvariant() : "?";
@@ -360,8 +360,8 @@ public sealed class PlayerSetupViewModel : ViewModelBase
             {
                 var bits = new List<string>();
                 if (Gender is { Length: > 0 } g) bits.Add(g);
-                if (Age is { } a)               bits.Add($"{a}");
-                if (IsCoupleMember)             bits.Add("couple");
+                if (Age is { } a) bits.Add($"{a}");
+                if (IsCoupleMember) bits.Add("couple");
                 return string.Join(" · ", bits);
             }
         }

@@ -31,7 +31,7 @@ namespace TableTop.Games.Family;
 public sealed class TouchAndTellMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Touch & Tell";
+    public override string Name => "Touch & Tell";
     /// <inheritdoc />
     public override string Description =>
         "Blindfolded. Feel the object. 30 seconds to guess what it is.";
@@ -39,17 +39,17 @@ public sealed class TouchAndTellMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Guessed";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Texture"]    = "#42A5F5",
+            ["Texture"] = "#42A5F5",
             ["Temperature"] = "#EF5350",
-            ["Shape"]      = "#FFCA28",
-            ["Food"]       = "#66BB6A",
-            ["Weird"]      = "#AB47BC",
+            ["Shape"] = "#FFCA28",
+            ["Food"] = "#66BB6A",
+            ["Weird"] = "#AB47BC",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

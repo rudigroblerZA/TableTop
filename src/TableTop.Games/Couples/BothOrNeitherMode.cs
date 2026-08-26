@@ -72,12 +72,12 @@ public sealed class BothOrNeitherMode : BaseGameModeDefinition, ITableShapeMode
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Consent"]     = "#26A69A",
-            ["Opening"]      = "#FFCA28",
-            ["Warmer"]       = "#FFA726",
-            ["Serious"]      = "#EF5350",
+            ["Consent"] = "#26A69A",
+            ["Opening"] = "#FFCA28",
+            ["Warmer"] = "#FFA726",
+            ["Serious"] = "#EF5350",
             ["No Mistaking"] = "#AD1457",
-            ["Aftercare"]    = "#7E57C2",
+            ["Aftercare"] = "#7E57C2",
         };
 
     /// <summary>

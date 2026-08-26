@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using TableTop.Core.Abstractions;
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Decks;
@@ -6,7 +7,6 @@ using TableTop.Core.Abstractions.Rules;
 using TableTop.Core.Domain.Decks;
 using TableTop.Core.Domain.Rules;
 using TableTop.Core.Engine;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace TableTop.Core.Extensions;
 

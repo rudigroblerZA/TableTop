@@ -85,11 +85,11 @@ public sealed class PhoneAFriendLifeline : ILifeline
         // Accuracy depends on difficulty
         double accuracy = card.Difficulty switch
         {
-            Difficulty.Easy    => 0.85,
-            Difficulty.Medium  => 0.65,
-            Difficulty.Hard    => 0.45,
+            Difficulty.Easy => 0.85,
+            Difficulty.Medium => 0.65,
+            Difficulty.Hard => 0.45,
             Difficulty.Extreme => 0.30,
-            _                  => 0.60
+            _ => 0.60
         };
 
         var givesCorrect = _random.NextDouble() < accuracy;
@@ -176,11 +176,11 @@ public sealed class AskTheAudienceLifeline : ILifeline
         // Correct answer gets a majority share that shrinks with difficulty
         double correctShare = card.Difficulty switch
         {
-            Difficulty.Easy    => 0.55 + _random.NextDouble() * 0.25,  // 55–80%
-            Difficulty.Medium  => 0.40 + _random.NextDouble() * 0.20,  // 40–60%
-            Difficulty.Hard    => 0.28 + _random.NextDouble() * 0.20,  // 28–48%
+            Difficulty.Easy => 0.55 + _random.NextDouble() * 0.25,  // 55–80%
+            Difficulty.Medium => 0.40 + _random.NextDouble() * 0.20,  // 40–60%
+            Difficulty.Hard => 0.28 + _random.NextDouble() * 0.20,  // 28–48%
             Difficulty.Extreme => 0.20 + _random.NextDouble() * 0.20,  // 20–40%
-            _                  => 0.50
+            _ => 0.50
         };
 
         var remaining = 1.0 - correctShare;

@@ -81,9 +81,9 @@ public sealed class DeckTitleConventionTests
             var groups = titles.GroupBy(t => t, StringComparer.OrdinalIgnoreCase).ToList();
 
             // Cards whose title is theirs alone, versus cards sharing a title.
-            var cardsWithOwnTitle    = groups.Count(g => g.Count() == 1);
+            var cardsWithOwnTitle = groups.Count(g => g.Count() == 1);
             var cardsUnderSharedName = groups.Where(g => g.Count() > 1).Sum(g => g.Count());
-            var total                = cardsWithOwnTitle + cardsUnderSharedName;
+            var total = cardsWithOwnTitle + cardsUnderSharedName;
             if (total == 0) continue;
 
             var dominant = Math.Max(cardsWithOwnTitle, cardsUnderSharedName) / (double)total;

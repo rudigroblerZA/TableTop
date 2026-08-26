@@ -35,7 +35,7 @@ namespace TableTop.Games.Party;
 public sealed class QuestionableChoicesMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Questionable Choices";
+    public override string Name => "Questionable Choices";
     /// <inheritdoc />
     public override string Description =>
         "Fill in the blank, worst-best answer wins. Dark, rude, and deeply tired — the judge decides. 18+.";
@@ -43,17 +43,17 @@ public sealed class QuestionableChoicesMode : BaseGameModeDefinition
     /// <summary>Label for awarding the round.</summary>
     public override string CompleteLabel => "🏆 Winner";
     /// <summary>Label for skipping a prompt.</summary>
-    public override string SkipLabel     => "⤳ Skip";
+    public override string SkipLabel => "⤳ Skip";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Modern Life"]   = "#42A5F5",
-            ["The Office"]    = "#78909C",
+            ["Modern Life"] = "#42A5F5",
+            ["The Office"] = "#78909C",
             ["Relationships"] = "#EC407A",
-            ["Existential"]   = "#7E57C2",
-            ["Chaos"]         = "#EF5350",
+            ["Existential"] = "#7E57C2",
+            ["Chaos"] = "#EF5350",
         };
 
     /// <summary>One point to whoever wins the round.</summary>

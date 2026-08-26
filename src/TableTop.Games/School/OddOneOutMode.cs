@@ -25,7 +25,7 @@ namespace TableTop.Games.School;
 public sealed class OddOneOutMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Odd One Out";
+    public override string Name => "Odd One Out";
     /// <inheritdoc />
     public override string Description =>
         "Four things, one impostor — everyone points on three, then flip for the rule. Clever alternative rules score too.";
@@ -33,17 +33,17 @@ public sealed class OddOneOutMode : BaseGameModeDefinition
     /// <summary>Label for the button that records a solved card.</summary>
     public override string CompleteLabel => "Got It";
     /// <summary>Label for the button that passes on a card.</summary>
-    public override string SkipLabel     => "Stumped";
+    public override string SkipLabel => "Stumped";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Animals"]  = "#66BB6A",
-            ["Food"]     = "#FFA726",
-            ["World"]    = "#42A5F5",
-            ["Words"]    = "#AB47BC",
-            ["Science"]  = "#26C6DA",
+            ["Animals"] = "#66BB6A",
+            ["Food"] = "#FFA726",
+            ["World"] = "#42A5F5",
+            ["Words"] = "#AB47BC",
+            ["Science"] = "#26C6DA",
         };
 
     /// <summary>One point per solved impostor.</summary>

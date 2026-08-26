@@ -1,5 +1,4 @@
 using TableTop.Presentation.ViewModels;
-using TableTop.Tests.Helpers;
 
 namespace TableTop.Tests;
 

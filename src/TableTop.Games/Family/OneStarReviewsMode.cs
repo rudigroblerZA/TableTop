@@ -23,7 +23,7 @@ namespace TableTop.Games.Family;
 public sealed class OneStarReviewsMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "One-Star Reviews";
+    public override string Name => "One-Star Reviews";
     /// <inheritdoc />
     public override string Description =>
         "Deliver a scathing one-star review of something universally beloved. Pettiest plausible grievance wins.";
@@ -31,17 +31,17 @@ public sealed class OneStarReviewsMode : BaseGameModeDefinition
     /// <summary>Label for the button that records the round's winning review.</summary>
     public override string CompleteLabel => "Devastating";
     /// <summary>Label for the button that skips a card.</summary>
-    public override string SkipLabel     => "5 Stars, Actually";
+    public override string SkipLabel => "5 Stars, Actually";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Nature"]      = "#66BB6A",
+            ["Nature"] = "#66BB6A",
             ["Simple Joys"] = "#FFA726",
-            ["Institutions"]= "#42A5F5",
-            ["Concepts"]    = "#AB47BC",
-            ["Crossover"]   = "#EF5350",
+            ["Institutions"] = "#42A5F5",
+            ["Concepts"] = "#AB47BC",
+            ["Crossover"] = "#EF5350",
         };
 
     /// <summary>One point to the group's voted-most-devastating review.</summary>

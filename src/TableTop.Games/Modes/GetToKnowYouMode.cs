@@ -1,11 +1,10 @@
-using TableTop.Games.Base;
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
-using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Domain.Restrictions;
 using TableTop.Core.Domain.Scoring;
+using TableTop.Games.Base;
 
 namespace TableTop.Games;
 
@@ -31,15 +30,15 @@ public sealed class GetToKnowYouMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Next";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
             ["Icebreaker"] = "#26C6DA",
-            ["Surface"]    = "#66BB6A",
-            ["Deeper"]     = "#FFCA28",
+            ["Surface"] = "#66BB6A",
+            ["Deeper"] = "#FFCA28",
             ["Vulnerable"] = "#EC407A",
         };
 
@@ -358,7 +357,7 @@ public sealed class GetToKnowYouMode : BaseGameModeDefinition
     private static IEnumerable<string> WrapText(string text, int width)
     {
         var words = text.Split(' ');
-        var line  = string.Empty;
+        var line = string.Empty;
         foreach (var word in words)
         {
             if ((line + word).Length > width)

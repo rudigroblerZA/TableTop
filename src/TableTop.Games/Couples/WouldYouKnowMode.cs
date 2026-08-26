@@ -26,7 +26,7 @@ namespace TableTop.Games.Couples;
 public sealed class WouldYouKnowMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Would You Know?";
+    public override string Name => "Would You Know?";
     /// <inheritdoc />
     public override string Description =>
         "Describe a moment from your relationship. Can your partner guess what happened next?";
@@ -34,18 +34,18 @@ public sealed class WouldYouKnowMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Guessed";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["How We Met"]      = "#42A5F5",
-            ["First Times"]     = "#EC407A",
-            ["Silly Moments"]   = "#FFCA28",
-            ["Arguments"]       = "#EF5350",
-            ["Decisions"]       = "#AB47BC",
-            ["Adventures"]      = "#66BB6A",
+            ["How We Met"] = "#42A5F5",
+            ["First Times"] = "#EC407A",
+            ["Silly Moments"] = "#FFCA28",
+            ["Arguments"] = "#EF5350",
+            ["Decisions"] = "#AB47BC",
+            ["Adventures"] = "#66BB6A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

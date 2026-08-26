@@ -1,8 +1,8 @@
-using SC = System.Console;
-using CC = System.ConsoleColor;
 using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Events;
+using CC = System.ConsoleColor;
+using SC = System.Console;
 
 namespace TableTop.Console;
 
@@ -29,10 +29,10 @@ internal sealed class ConsoleClaimedRenderer
     {
         _controller = controller;
         controller.TerritoryChallengeReady += (_, e) => _pending = e;
-        controller.TerritoryClaimed        += OnClaimed;
-        controller.TerritoryStolen         += OnStolen;
-        controller.ChallengeFailed         += OnFailed;
-        controller.GameEnded               += OnGameEnded;
+        controller.TerritoryClaimed += OnClaimed;
+        controller.TerritoryStolen += OnStolen;
+        controller.ChallengeFailed += OnFailed;
+        controller.GameEnded += OnGameEnded;
     }
 
     public void RunBlocking()

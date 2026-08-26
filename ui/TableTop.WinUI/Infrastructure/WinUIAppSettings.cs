@@ -1,6 +1,6 @@
-using TableTop.Presentation.Infrastructure;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using TableTop.Presentation.Infrastructure;
 
 namespace TableTop.WinUI.Infrastructure;
 
@@ -35,7 +35,7 @@ public sealed class WinUIAppSettings : TableTop.Presentation.Infrastructure.IApp
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        WriteIndented          = true,
+        WriteIndented = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     };
 
@@ -48,7 +48,7 @@ public sealed class WinUIAppSettings : TableTop.Presentation.Infrastructure.IApp
     private WinUIAppSettings(string? filePath = null)
     {
         _filePath = filePath ?? DefaultPath;
-        _data     = Load();
+        _data = Load();
     }
 
     /// <summary>Fired whenever any setting changes, with the changed property's name (or "*" for a full reset).</summary>
@@ -217,19 +217,19 @@ public sealed class WinUIAppSettings : TableTop.Presentation.Infrastructure.IApp
     /// <summary>Plain data shape serialised to <c>settings.json</c>.</summary>
     private sealed class SettingsData
     {
-        public string Theme               { get; set; } = "dark";
-        public int    CardFontSize        { get; set; } = 15;
-        public bool   ShuffleCards        { get; set; } = true;
-        public int    MinDifficulty       { get; set; } = 0;
-        public int    MaxDifficulty       { get; set; } = 3;
-        public int    MinAgeRating        { get; set; } = 0;
-        public int    CardsPerPlayer      { get; set; } = 0;
-        public bool   EnableTimer         { get; set; } = false;
-        public int    TimerSeconds        { get; set; } = 60;
-        public bool   AutoNextPlayer      { get; set; } = true;
-        public bool   ShowCardCount       { get; set; } = true;
-        public bool   ShowDifficultyBadge { get; set; } = true;
-        public bool   ShowCategoryBadge   { get; set; } = true;
+        public string Theme { get; set; } = "dark";
+        public int CardFontSize { get; set; } = 15;
+        public bool ShuffleCards { get; set; } = true;
+        public int MinDifficulty { get; set; } = 0;
+        public int MaxDifficulty { get; set; } = 3;
+        public int MinAgeRating { get; set; } = 0;
+        public int CardsPerPlayer { get; set; } = 0;
+        public bool EnableTimer { get; set; } = false;
+        public int TimerSeconds { get; set; } = 60;
+        public bool AutoNextPlayer { get; set; } = true;
+        public bool ShowCardCount { get; set; } = true;
+        public bool ShowDifficultyBadge { get; set; } = true;
+        public bool ShowCategoryBadge { get; set; } = true;
         public List<SavedPlayer> RecentPlayers { get; set; } = [];
     }
 }

@@ -1,10 +1,8 @@
-using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
+using TableTop.Maui.Services;
 using TableTop.Presentation.Infrastructure;
 using TableTop.Presentation.ViewModels;
-using Microsoft.Maui.Graphics;
-using TableTop.Maui.Services;
 
 namespace TableTop.Maui.ViewModels;
 
@@ -112,7 +110,7 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
         {
             if (_inner.IsFlipped) return "ANSWER";
             var parts = new List<string>(2);
-            if (ShowCategoryBadge   && _inner.CardCategory.Length   > 0) parts.Add(_inner.CardCategory);
+            if (ShowCategoryBadge && _inner.CardCategory.Length > 0) parts.Add(_inner.CardCategory);
             if (ShowDifficultyBadge && _inner.CardDifficulty.Length > 0) parts.Add(_inner.CardDifficulty);
             return string.Join("  ·  ", parts);
         }
@@ -134,11 +132,11 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
                 return Color.FromArgb(hex);
             return Color.FromArgb(_inner.CardDifficulty switch
             {
-                "Easy"    => "#2EA043",
-                "Medium"  => "#D29922",
-                "Hard"    => "#DB6D28",
+                "Easy" => "#2EA043",
+                "Medium" => "#D29922",
+                "Hard" => "#DB6D28",
                 "Extreme" => "#DA3633",
-                _         => "#C49E4C",
+                _ => "#C49E4C",
             });
         }
     }
@@ -296,11 +294,11 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
     {
         switch (key)
         {
-            case nameof(AppSettings.ShowCardCount):       OnPropertyChanged(nameof(ShowCardCount));       break;
+            case nameof(AppSettings.ShowCardCount): OnPropertyChanged(nameof(ShowCardCount)); break;
             case nameof(AppSettings.ShowDifficultyBadge): OnPropertyChanged(nameof(ShowDifficultyBadge)); RaiseStrip(); break;
-            case nameof(AppSettings.ShowCategoryBadge):   OnPropertyChanged(nameof(ShowCategoryBadge));   RaiseStrip(); break;
-            case nameof(AppSettings.CardFontSize):        OnPropertyChanged(nameof(CardFontSize));        break;
-            case "*":                                     OnPropertyChanged(null);                        break;
+            case nameof(AppSettings.ShowCategoryBadge): OnPropertyChanged(nameof(ShowCategoryBadge)); RaiseStrip(); break;
+            case nameof(AppSettings.CardFontSize): OnPropertyChanged(nameof(CardFontSize)); break;
+            case "*": OnPropertyChanged(null); break;
         }
     }
 

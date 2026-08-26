@@ -1,6 +1,5 @@
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Progression;
-using TableTop.Core.Domain.Progression;
 using TableTop.Hosting.Events;
 using TableTop.Hosting.Hints;
 
@@ -20,16 +19,16 @@ public sealed class HintEngineTests
     private static HintContext MakeCtx(
         IReadOnlyList<CardOutcome> outcomes,
         IReadOnlyList<Difficulty>? difficulties = null,
-        FlowState?                 flow         = null,
-        int                        skipCount    = 0,
-        int                        round        = 5) =>
+        FlowState? flow = null,
+        int skipCount = 0,
+        int round = 5) =>
         new(
-            RecentOutcomes:    outcomes,
+            RecentOutcomes: outcomes,
             RecentDifficulties: difficulties ?? outcomes.Select(_ => Difficulty.Medium).ToList().AsReadOnly(),
-            CurrentFlow:       flow,
-            SkipCount:         skipCount,
-            Round:             round,
-            Standings:         []);
+            CurrentFlow: flow,
+            SkipCount: skipCount,
+            Round: round,
+            Standings: []);
 
     private readonly DefaultHintEngine _engine = new();
 
@@ -79,7 +78,7 @@ public sealed class HintEngineTests
     public void GenerateHint_ThreeCompletionsOnHard_SuggestsExtreme()
     {
         var outcomes = Enumerable.Repeat(CardOutcome.Completed, 3).ToList().AsReadOnly();
-        var diffs    = Enumerable.Repeat(Difficulty.Hard, 3).ToList().AsReadOnly();
+        var diffs = Enumerable.Repeat(Difficulty.Hard, 3).ToList().AsReadOnly();
 
         var hint = _engine.GenerateHint(Male(), MakeCtx(outcomes, diffs));
 
@@ -93,7 +92,7 @@ public sealed class HintEngineTests
     public void GenerateHint_ThreeCompletionsOnExtreme_NoEscalation()
     {
         var outcomes = Enumerable.Repeat(CardOutcome.Completed, 3).ToList().AsReadOnly();
-        var diffs    = Enumerable.Repeat(Difficulty.Extreme, 3).ToList().AsReadOnly();
+        var diffs = Enumerable.Repeat(Difficulty.Extreme, 3).ToList().AsReadOnly();
 
         var hint = _engine.GenerateHint(Male(), MakeCtx(outcomes, diffs));
 
@@ -138,7 +137,7 @@ public sealed class HintEngineTests
     public void HintText_ForMale_ReturnsHimHint()
     {
         var outcomes = new[] { CardOutcome.Failed, CardOutcome.Failed }.ToList().AsReadOnly();
-        var diffs    = new[] { Difficulty.Medium, Difficulty.Medium }.ToList().AsReadOnly();
+        var diffs = new[] { Difficulty.Medium, Difficulty.Medium }.ToList().AsReadOnly();
 
         var hint = _engine.GenerateHint(Male("Bob"), MakeCtx(outcomes, diffs))!;
 
@@ -152,7 +151,7 @@ public sealed class HintEngineTests
     public void HintText_ForFemale_ReturnsDifferentText()
     {
         var outcomes = new[] { CardOutcome.Failed, CardOutcome.Failed }.ToList().AsReadOnly();
-        var diffs    = new[] { Difficulty.Medium, Difficulty.Medium }.ToList().AsReadOnly();
+        var diffs = new[] { Difficulty.Medium, Difficulty.Medium }.ToList().AsReadOnly();
 
         var hint = _engine.GenerateHint(Female("Alice"), MakeCtx(outcomes, diffs))!;
 
@@ -169,7 +168,7 @@ public sealed class HintEngineTests
     public void HintText_ForNeutralGender_ReturnsNeutralHint()
     {
         var outcomes = new[] { CardOutcome.Failed, CardOutcome.Failed }.ToList().AsReadOnly();
-        var hint     = _engine.GenerateHint(Neutral(), MakeCtx(outcomes))!;
+        var hint = _engine.GenerateHint(Neutral(), MakeCtx(outcomes))!;
         hint.ForPlayer(Neutral()).Should().Be(hint.NeutralHint);
     }
 
@@ -179,8 +178,8 @@ public sealed class HintEngineTests
     public void GenerateHint_WithFlowState_SuggestsPaceSlowDown_WhenStruggling()
     {
         var outcomes = new[] { CardOutcome.Failed, CardOutcome.Failed }.ToList().AsReadOnly();
-        var diffs    = new[] { Difficulty.Medium, Difficulty.Medium }.ToList().AsReadOnly();
-        var flow     = new FlowState(Difficulty.Medium, FlowPace.Fast);
+        var diffs = new[] { Difficulty.Medium, Difficulty.Medium }.ToList().AsReadOnly();
+        var flow = new FlowState(Difficulty.Medium, FlowPace.Fast);
 
         var hint = _engine.GenerateHint(Male(), MakeCtx(outcomes, diffs, flow));
 
@@ -191,8 +190,8 @@ public sealed class HintEngineTests
     public void GenerateHint_WithFlowState_SuggestsPaceSpeedUp_WhenExcelling()
     {
         var outcomes = Enumerable.Repeat(CardOutcome.Completed, 3).ToList().AsReadOnly();
-        var diffs    = Enumerable.Repeat(Difficulty.Hard, 3).ToList().AsReadOnly();
-        var flow     = new FlowState(Difficulty.Hard, FlowPace.Normal);
+        var diffs = Enumerable.Repeat(Difficulty.Hard, 3).ToList().AsReadOnly();
+        var flow = new FlowState(Difficulty.Hard, FlowPace.Normal);
 
         var hint = _engine.GenerateHint(Male(), MakeCtx(outcomes, diffs, flow));
 
@@ -204,9 +203,9 @@ public sealed class HintEngineTests
     [Fact]
     public void Controller_EmitsNextTurnHintEvent_AfterStruggling()
     {
-        var cards  = TestFactory.MakeCards(10, Difficulty.Hard);
-        var alice  = TestFactory.MakePlayer("Alice", gender: "female");
-        var ctrl   = TestFactory.BuildController(cards, [alice]);
+        var cards = TestFactory.MakeCards(10, Difficulty.Hard);
+        var alice = TestFactory.MakePlayer("Alice", gender: "female");
+        var ctrl = TestFactory.BuildController(cards, [alice]);
 
         var hints = new List<NextTurnHintEvent>();
         ctrl.NextTurnHint += (_, e) => hints.Add(e);
@@ -224,8 +223,8 @@ public sealed class HintEngineTests
     public void Controller_HintText_IsGenderResolvedForPlayer()
     {
         var cards = TestFactory.MakeCards(10, Difficulty.Hard);
-        var bob   = TestFactory.MakePlayer("Bob", gender: "male");
-        var ctrl  = TestFactory.BuildController(cards, [bob]);
+        var bob = TestFactory.MakePlayer("Bob", gender: "male");
+        var ctrl = TestFactory.BuildController(cards, [bob]);
 
         string? capturedHintText = null;
         ctrl.NextTurnHint += (_, e) => capturedHintText = e.HintText;
@@ -239,9 +238,9 @@ public sealed class HintEngineTests
     [Fact]
     public void Controller_NoHintOnFirstCard()
     {
-        var cards  = TestFactory.MakeCards(10);
-        var ctrl   = TestFactory.BuildController(cards);
-        var hints  = new List<NextTurnHintEvent>();
+        var cards = TestFactory.MakeCards(10);
+        var ctrl = TestFactory.BuildController(cards);
+        var hints = new List<NextTurnHintEvent>();
         ctrl.NextTurnHint += (_, e) => hints.Add(e);
 
         ctrl.Start();
@@ -255,8 +254,8 @@ public sealed class HintEngineTests
     public void Controller_CustomHintEngine_IsUsed()
     {
         var customEngine = new AlwaysStrugglingHintEngine();
-        var cards  = TestFactory.MakeCards(5);
-        var ctrl   = TestFactory.BuildController(cards, hintEngine: customEngine);
+        var cards = TestFactory.MakeCards(5);
+        var ctrl = TestFactory.BuildController(cards, hintEngine: customEngine);
 
         string? capturedReason = null;
         ctrl.NextTurnHint += (_, e) => capturedReason = e.Reason;
@@ -273,15 +272,15 @@ public sealed class HintEngineTests
     {
         // This test proves the hint engine works without any UI infrastructure:
         // no Console, no WPF, no rendering, no file I/O — pure logic.
-        var engine  = new DefaultHintEngine();
-        var player  = Player.Create("TestPlayer");
+        var engine = new DefaultHintEngine();
+        var player = Player.Create("TestPlayer");
         var context = new HintContext(
-            RecentOutcomes:     [CardOutcome.Failed, CardOutcome.Failed],
+            RecentOutcomes: [CardOutcome.Failed, CardOutcome.Failed],
             RecentDifficulties: [Difficulty.Medium, Difficulty.Medium],
-            CurrentFlow:        null,
-            SkipCount:          0,
-            Round:              3,
-            Standings:          [(player.Id, 0)]);
+            CurrentFlow: null,
+            SkipCount: 0,
+            Round: 3,
+            Standings: [(player.Id, 0)]);
 
         var hint = engine.GenerateHint(player, context);
 
@@ -298,9 +297,9 @@ internal sealed class AlwaysStrugglingHintEngine : IHintEngine
         new(
             SuggestedDifficulty: Difficulty.Easy,
             SuggestedPaceChange: PaceHint.SlowDown,
-            NeutralHint:         "Always struggling (test stub).",
-            HimHint:             null,
-            HerHint:             null,
-            Urgency:             HintUrgency.Strong,
-            Reason:              "AlwaysStruggling");
+            NeutralHint: "Always struggling (test stub).",
+            HimHint: null,
+            HerHint: null,
+            Urgency: HintUrgency.Strong,
+            Reason: "AlwaysStruggling");
 }

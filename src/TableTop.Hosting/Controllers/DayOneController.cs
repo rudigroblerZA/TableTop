@@ -14,7 +14,7 @@ namespace TableTop.Hosting.Controllers;
 internal sealed class DayOneSnapshot
 {
     public DateTimeOffset StartedAtUtc { get; set; }
-    public int            CompletedCount { get; set; }
+    public int CompletedCount { get; set; }
 }
 
 /// <inheritdoc cref="IDayOneController"/>
@@ -22,7 +22,7 @@ public sealed class DayOneController : IDayOneController
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        WriteIndented          = true,
+        WriteIndented = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     };
 
@@ -65,10 +65,10 @@ public sealed class DayOneController : IDayOneController
         if (deck.Count == 0)
             throw new ArgumentException("A Day One campaign needs at least one day.", nameof(deck));
 
-        _deck     = deck;
-        _players  = players;
-        _clock    = clock ?? new SystemClock();
-        var slug  = new string(modeName.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
+        _deck = deck;
+        _players = players;
+        _clock = clock ?? new SystemClock();
+        var slug = new string(modeName.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
         _filePath = filePath ?? Path.Combine(AppContext.BaseDirectory, $"dayone-{slug}.json");
     }
 
@@ -107,12 +107,12 @@ public sealed class DayOneController : IDayOneController
     private void Evaluate()
     {
         var elapsedWholeDays = (int)(_clock.UtcNow - _state.StartedAtUtc).TotalDays;
-        var unlockedCount    = Math.Min(TotalDays, elapsedWholeDays + 1);   // Day 1 unlocks immediately
-        var pendingIndex     = _state.CompletedCount;                      // 0-based, next card due
+        var unlockedCount = Math.Min(TotalDays, elapsedWholeDays + 1);   // Day 1 unlocks immediately
+        var pendingIndex = _state.CompletedCount;                      // 0-based, next card due
 
         if (pendingIndex >= TotalDays)
         {
-            DayNumber      = TotalDays;
+            DayNumber = TotalDays;
             HasPendingCard = false;
             CampaignComplete?.Invoke(this,
                 new CampaignCompleteEvent(TotalDays, _state.StartedAtUtc, _clock.UtcNow));
@@ -121,7 +121,7 @@ public sealed class DayOneController : IDayOneController
 
         if (pendingIndex < unlockedCount)
         {
-            DayNumber      = pendingIndex + 1;
+            DayNumber = pendingIndex + 1;
             HasPendingCard = true;
             var card = _deck[pendingIndex];
             var text = card is IPromptCard prompt
@@ -132,7 +132,7 @@ public sealed class DayOneController : IDayOneController
         }
 
         // Caught up: played everything unlocked so far, next day isn't here yet.
-        DayNumber      = pendingIndex;   // most recent day actually played
+        DayNumber = pendingIndex;   // most recent day actually played
         HasPendingCard = false;
         var nextUnlockAt = _state.StartedAtUtc + TimeSpan.FromDays(unlockedCount);
         AllCaughtUp?.Invoke(this,

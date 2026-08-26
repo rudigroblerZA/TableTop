@@ -16,7 +16,7 @@ public sealed class RelayCommand : ICommand
     /// <summary>Initialises the command with its action and optional guard.</summary>
     public RelayCommand(Action execute, Func<bool>? canExecute = null)
     {
-        _execute    = execute;
+        _execute = execute;
         _canExecute = canExecute;
     }
 

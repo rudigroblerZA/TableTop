@@ -66,7 +66,7 @@ public sealed class CartographersMode : BaseGameModeDefinition, ITableShapeMode
     public TableShape SuitableFor => TableShape.Couple;
 
     /// <inheritdoc />
-    public override string Name        => "The Cartographers";
+    public override string Name => "The Cartographers";
 
     /// <inheritdoc />
     public override string Description =>
@@ -79,7 +79,7 @@ public sealed class CartographersMode : BaseGameModeDefinition, ITableShapeMode
     /// Not "Skip" — on a map, a blank is a real answer, and the deck treats it
     /// as one.
     /// </summary>
-    public override string SkipLabel     => "Leave It Blank";
+    public override string SkipLabel => "Leave It Blank";
 
     /// <summary>
     /// The ages must run in order: you cannot name a mountain you have not
@@ -95,10 +95,10 @@ public sealed class CartographersMode : BaseGameModeDefinition, ITableShapeMode
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Survey"]          = "#8D6E63",
-            ["Terrain"]         = "#66BB6A",
-            ["Settlement"]      = "#FFA726",
-            ["Legend"]          = "#42A5F5",
+            ["Survey"] = "#8D6E63",
+            ["Terrain"] = "#66BB6A",
+            ["Settlement"] = "#FFA726",
+            ["Legend"] = "#42A5F5",
             ["Terra Incognita"] = "#7E57C2",
         };
 

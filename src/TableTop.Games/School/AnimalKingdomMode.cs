@@ -21,7 +21,7 @@ namespace TableTop.Games.School;
 public sealed class AnimalKingdomMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Animal Kingdom";
+    public override string Name => "Animal Kingdom";
     /// <inheritdoc />
     public override string Description =>
         "Nature & animals general knowledge — record-breakers, baby animals, animal groups, habitats, and adaptations. Multiple choice.";
@@ -29,17 +29,17 @@ public sealed class AnimalKingdomMode : BaseGameModeDefinition
     /// <summary>Label for a correctly answered card.</summary>
     public override string CompleteLabel => "Correct";
     /// <summary>Label for a passed card.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
             ["Record Breakers"] = "#EF5350",
-            ["Baby Animals"]    = "#FFB74D",
-            ["Animal Groups"]   = "#AB47BC",
-            ["Habitats"]        = "#66BB6A",
-            ["Adaptations"]     = "#26A69A",
+            ["Baby Animals"] = "#FFB74D",
+            ["Animal Groups"] = "#AB47BC",
+            ["Habitats"] = "#66BB6A",
+            ["Adaptations"] = "#26A69A",
         };
 
     /// <summary>Harder questions score more.</summary>

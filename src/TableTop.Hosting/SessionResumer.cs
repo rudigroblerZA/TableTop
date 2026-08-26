@@ -13,9 +13,9 @@ namespace TableTop.Hosting;
 /// <param name="Players">The roster, with attributes and tags restored.</param>
 /// <param name="Snapshot">The snapshot itself, to pass as <c>resumeFrom</c>.</param>
 public sealed record ResumableSession(
-    IGameMode              Mode,
+    IGameMode Mode,
     IReadOnlyList<IPlayer> Players,
-    SessionSnapshot        Snapshot)
+    SessionSnapshot Snapshot)
 {
     /// <summary>Round the session had reached, for a "continue from round 4?" prompt.</summary>
     public int Round => Snapshot.Round;
@@ -54,10 +54,10 @@ public static class SessionResumer
     /// </param>
     /// <param name="reason">Why null was returned, for logging or a message.</param>
     public static ResumableSession? TryResolve(
-        SessionSnapshot?         snapshot,
+        SessionSnapshot? snapshot,
         IReadOnlyList<IGameMode> availableModes,
-        IReadOnlyList<IPlayer>?  currentRoster,
-        out string               reason)
+        IReadOnlyList<IPlayer>? currentRoster,
+        out string reason)
     {
         if (snapshot is null)
         {

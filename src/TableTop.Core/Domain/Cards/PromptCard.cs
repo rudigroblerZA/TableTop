@@ -82,9 +82,9 @@ public sealed class PromptCard : BaseCard, IPromptCard
             defaultText: otherText,
             variantsByGender: new Dictionary<string, string>
             {
-                ["male"]   = maleText,
+                ["male"] = maleText,
                 ["female"] = femaleText,
-                ["other"]  = otherText,
+                ["other"] = otherText,
             });
 
         // Base description is the "other" text so plain ICard consumers still get useful text.

@@ -10,9 +10,9 @@ namespace TableTop.Hosting.Controllers.Services;
 /// </summary>
 public sealed class SkipPolicy
 {
-    private readonly int                    _penalty;
-    private readonly Dictionary<Guid, int>  _skipCounts    = [];
-    private readonly HashSet<Guid>          _freePassPlayers = [];
+    private readonly int _penalty;
+    private readonly Dictionary<Guid, int> _skipCounts = [];
+    private readonly HashSet<Guid> _freePassPlayers = [];
 
     /// <summary>Initialises a new <see cref="SkipPolicy"/> instance.</summary>
     public SkipPolicy(int penalty = -1) => _penalty = penalty;
@@ -51,7 +51,7 @@ public sealed class SkipPolicy
         _skipCounts.TryGetValue(player.Id, out var count);
         _skipCounts[player.Id] = count + 1;
 
-        var isFree  = count == 0;
+        var isFree = count == 0;
         var penalty = isFree ? 0 : _penalty;
 
         return new SkipAttemptedEvent(

@@ -34,18 +34,18 @@ public sealed class PersonalFactsMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Guess";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "→ Next Player";
+    public override string SkipLabel => "→ Next Player";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Icebreaker"]     = "#42A5F5",
-            ["Childhood"]      = "#66BB6A",
-            ["Experience"]     = "#FFCA28",
-            ["Embarrassing"]   = "#EC407A",
-            ["Weird Talent"]   = "#AB47BC",
-            ["Travel"]         = "#26C6DA",
+            ["Icebreaker"] = "#42A5F5",
+            ["Childhood"] = "#66BB6A",
+            ["Experience"] = "#FFCA28",
+            ["Embarrassing"] = "#EC407A",
+            ["Weird Talent"] = "#AB47BC",
+            ["Travel"] = "#26C6DA",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

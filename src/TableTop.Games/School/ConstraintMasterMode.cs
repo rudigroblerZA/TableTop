@@ -27,7 +27,7 @@ namespace TableTop.Games.School;
 public sealed class ConstraintMasterMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Constraint Master";
+    public override string Name => "Constraint Master";
     /// <inheritdoc />
     public override string Description =>
         "Write/speak the prompt following this weird rule. 90 seconds. Go.";
@@ -35,17 +35,17 @@ public sealed class ConstraintMasterMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Finished";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Grammar"]     = "#42A5F5",
-            ["Letter"]      = "#66BB6A",
-            ["Sound"]       = "#EC407A",
-            ["Structure"]   = "#AB47BC",
-            ["Impossible"]  = "#EF5350",
+            ["Grammar"] = "#42A5F5",
+            ["Letter"] = "#66BB6A",
+            ["Sound"] = "#EC407A",
+            ["Structure"] = "#AB47BC",
+            ["Impossible"] = "#EF5350",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

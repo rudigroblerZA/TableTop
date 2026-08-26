@@ -19,7 +19,7 @@ namespace TableTop.Games.School;
 public sealed class ScienceSprintMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Science Sprint";
+    public override string Name => "Science Sprint";
     /// <inheritdoc />
     public override string Description =>
         "Science general knowledge — the body, animals, space, and everyday physics and chemistry. Multiple choice, four difficulties.";
@@ -27,17 +27,17 @@ public sealed class ScienceSprintMode : BaseGameModeDefinition
     /// <summary>Label for a correctly answered card.</summary>
     public override string CompleteLabel => "Correct";
     /// <summary>Label for a passed card.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["The Body"]   = "#EF5350",
+            ["The Body"] = "#EF5350",
             ["Living World"] = "#66BB6A",
-            ["Space"]      = "#5C6BC0",
+            ["Space"] = "#5C6BC0",
             ["Everyday Science"] = "#42A5F5",
-            ["Elements"]   = "#FFA726",
+            ["Elements"] = "#FFA726",
         };
 
     /// <summary>Harder questions score more.</summary>

@@ -1,5 +1,3 @@
-using TableTop.Core.Abstractions.Cards;
-using TableTop.Core.Domain.Cards;
 using TableTop.Core.Domain.Decks;
 using TableTop.Core.Domain.Progression;
 
@@ -16,11 +14,11 @@ public sealed class DiceCategoryProgressionStrategyTests
 
     private static string Map(int total) => total switch
     {
-        <= 4  => "Warm-Up",
-        <= 6  => "Chat",
-        <= 8  => "Act",
+        <= 4 => "Warm-Up",
+        <= 6 => "Chat",
+        <= 8 => "Act",
         <= 10 => "Bold",
-        _     => "Wild Card",
+        _ => "Wild Card",
     };
 
     private static ICard Card(string category, string title) =>

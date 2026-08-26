@@ -16,21 +16,21 @@ public sealed class Archetype
 {
     /// <summary>Creates an archetype with the given identity and mode set.</summary>
     public Archetype(
-        string                       id,
-        string                       name,
-        string                       description,
-        string                       emoji,
-        IReadOnlyList<IGameMode>     modes,
-        IReadOnlyList<Archetype>?    subArchetypes = null,
-        AgeRating                    ageRating     = AgeRating.AllAges)
+        string id,
+        string name,
+        string description,
+        string emoji,
+        IReadOnlyList<IGameMode> modes,
+        IReadOnlyList<Archetype>? subArchetypes = null,
+        AgeRating ageRating = AgeRating.AllAges)
     {
-        Id            = id;
-        Name          = name;
-        Description   = description;
-        Emoji         = emoji;
-        Modes         = modes;
+        Id = id;
+        Name = name;
+        Description = description;
+        Emoji = emoji;
+        Modes = modes;
         SubArchetypes = subArchetypes ?? [];
-        AgeRating     = ageRating;
+        AgeRating = ageRating;
     }
 
     /// <summary>Stable machine identifier (e.g. "classroom", "couples.intimate").</summary>
@@ -94,16 +94,16 @@ public sealed class Archetype
     /// When true, adult content is allowed.
     /// </param>
     public IGameMode? SurpriseMe(
-        int?      maxCards         = null,
-        AgeRating maxAgeRating     = AgeRating.Adult,
-        bool      requiresAdultContent = false)
+        int? maxCards = null,
+        AgeRating maxAgeRating = AgeRating.Adult,
+        bool requiresAdultContent = false)
     {
         var candidates = AllModes
             .Where(m =>
             {
                 var manifest = m.GetManifest();
                 if (maxCards.HasValue && manifest.TotalCards > maxCards.Value) return false;
-                if (!requiresAdultContent && manifest.HasAdultContent)          return false;
+                if (!requiresAdultContent && manifest.HasAdultContent) return false;
                 return true;
             })
             .ToList();

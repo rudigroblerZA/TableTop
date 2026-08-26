@@ -8,8 +8,8 @@ public sealed class ScoringTests
 
     [Theory]
     [InlineData(CardOutcome.Completed, 1)]
-    [InlineData(CardOutcome.Skipped,   0)]
-    [InlineData(CardOutcome.Failed,    0)]
+    [InlineData(CardOutcome.Skipped, 0)]
+    [InlineData(CardOutcome.Failed, 0)]
     public void FixedScoring_ReturnsConfiguredPoints(CardOutcome outcome, int expected)
     {
         var strategy = new FixedScoringStrategy(1);
@@ -18,9 +18,9 @@ public sealed class ScoringTests
     }
 
     [Theory]
-    [InlineData(Difficulty.Easy,    1)]
-    [InlineData(Difficulty.Medium,  2)]
-    [InlineData(Difficulty.Hard,    3)]
+    [InlineData(Difficulty.Easy, 1)]
+    [InlineData(Difficulty.Medium, 2)]
+    [InlineData(Difficulty.Hard, 3)]
     [InlineData(Difficulty.Extreme, 5)]
     public void DifficultyScoring_ReturnsCorrectPoints(Difficulty diff, int expected)
     {

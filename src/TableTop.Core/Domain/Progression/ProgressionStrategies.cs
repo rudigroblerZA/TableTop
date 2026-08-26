@@ -63,7 +63,7 @@ public sealed class DifficultyProgressionStrategy : IProgressionStrategy
     /// <inheritdoc />
     public Guid? SelectCandidate(IPlayer player, IDeck deck, IProgressionContext context)
     {
-        var tierIndex        = Math.Min(context.Round / 3, _order.Length - 1);
+        var tierIndex = Math.Min(context.Round / 3, _order.Length - 1);
         var targetDifficulty = _order[tierIndex];
 
         return (deck.Peek(c => c.Difficulty == targetDifficulty)
@@ -96,7 +96,7 @@ public sealed class CategoryProgressionStrategy : IProgressionStrategy
     {
         for (var attempt = 0; attempt < _categories.Count; attempt++)
         {
-            var category  = _categories[_categoryIndex % _categories.Count];
+            var category = _categories[_categoryIndex % _categories.Count];
             _categoryIndex++;
 
             var candidate = deck.Peek(c =>
@@ -123,7 +123,7 @@ public sealed class ScoreBasedProgressionStrategy : IProgressionStrategy
 
         var maxScore = allPlayers.Max(p => p.Score);
         var minScore = allPlayers.Min(p => p.Score);
-        var range    = maxScore - minScore;
+        var range = maxScore - minScore;
 
         var targetDifficulty = range == 0 || player.Score <= minScore
             ? Difficulty.Easy

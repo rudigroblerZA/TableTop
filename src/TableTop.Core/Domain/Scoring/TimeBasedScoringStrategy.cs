@@ -39,21 +39,21 @@ public sealed class TimeBasedScoringStrategy : IScoringStrategy
     /// <param name="mediumPoints">Points for medium answers. Default: 2.</param>
     /// <param name="slowPoints">Points for slow answers. Default: 1.</param>
     public TimeBasedScoringStrategy(
-        TimeSpan? fastThreshold   = null,
+        TimeSpan? fastThreshold = null,
         TimeSpan? mediumThreshold = null,
-        TimeSpan? slowThreshold   = null,
-        int fastPoints   = TableTopDefaults.TimeScoring.FastPoints,
+        TimeSpan? slowThreshold = null,
+        int fastPoints = TableTopDefaults.TimeScoring.FastPoints,
         int mediumPoints = TableTopDefaults.TimeScoring.MediumPoints,
-        int slowPoints   = TableTopDefaults.TimeScoring.SlowPoints)
+        int slowPoints = TableTopDefaults.TimeScoring.SlowPoints)
     {
-        _fastThreshold   = fastThreshold   ?? TimeSpan.FromSeconds(TableTopDefaults.TimeScoring.FastSeconds);
+        _fastThreshold = fastThreshold ?? TimeSpan.FromSeconds(TableTopDefaults.TimeScoring.FastSeconds);
         _mediumThreshold = mediumThreshold ?? TimeSpan.FromSeconds(TableTopDefaults.TimeScoring.MediumSeconds);
-        _slowThreshold   = slowThreshold   ?? TimeSpan.FromSeconds(TableTopDefaults.TimeScoring.SlowSeconds);
-        _fastPoints      = fastPoints;
-        _mediumPoints    = mediumPoints;
-        _slowPoints      = slowPoints;
+        _slowThreshold = slowThreshold ?? TimeSpan.FromSeconds(TableTopDefaults.TimeScoring.SlowSeconds);
+        _fastPoints = fastPoints;
+        _mediumPoints = mediumPoints;
+        _slowPoints = slowPoints;
     }
-/// <inheritdoc />
+    /// <inheritdoc />
 
     public string Name => "TimeBased";
 
@@ -63,10 +63,10 @@ public sealed class TimeBasedScoringStrategy : IScoringStrategy
     /// falls back to 1 point for completion.
     /// </summary>
     public int CalculateScore(
-        ICard       card,
-        IPlayer     player,
+        ICard card,
+        IPlayer player,
         CardOutcome outcome,
-        TimeSpan?   elapsed = null)
+        TimeSpan? elapsed = null)
     {
         if (outcome != CardOutcome.Completed) return 0;
 
@@ -74,9 +74,9 @@ public sealed class TimeBasedScoringStrategy : IScoringStrategy
         if (elapsed is null || elapsed == TimeSpan.Zero)
             return 1;
 
-        if (elapsed <= _fastThreshold)   return _fastPoints;
+        if (elapsed <= _fastThreshold) return _fastPoints;
         if (elapsed <= _mediumThreshold) return _mediumPoints;
-        if (elapsed <= _slowThreshold)   return _slowPoints;
+        if (elapsed <= _slowThreshold) return _slowPoints;
         return 0;
     }
 

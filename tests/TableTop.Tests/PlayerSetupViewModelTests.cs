@@ -1,10 +1,7 @@
-using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Rules;
-using TableTop.Core.Abstractions.Scoring;
 using TableTop.Presentation.ViewModels;
-using TableTop.Tests.Helpers;
 
 namespace TableTop.Tests;
 
@@ -109,7 +106,7 @@ public sealed class PlayerSetupViewModelTests
     {
         var (vm, _, _) = Build();
         vm.NewName = "Alice"; vm.AddPlayer();
-        vm.NewName = "Bob";   vm.AddPlayer();
+        vm.NewName = "Bob"; vm.AddPlayer();
         var alice = vm.Players.First(p => p.Name == "Alice");
 
         vm.RemovePlayer(alice);

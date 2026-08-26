@@ -1,12 +1,8 @@
-using FluentAssertions;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Domain.Players;
 using TableTop.Games;
 using TableTop.Games.Couples;
 using TableTop.Games.Party;
-using TableTop.Hosting;
-using Xunit;
 
 namespace TableTop.Tests;
 

@@ -26,7 +26,7 @@ namespace TableTop.Games.School;
 public sealed class MentalMathsSprintMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Mental Maths Sprint";
+    public override string Name => "Mental Maths Sprint";
     /// <inheritdoc />
     public override string Description =>
         "Rapid-fire mental arithmetic for Grade 6 — times tables, fractions, percentages, and BODMAS. No paper allowed.";
@@ -34,17 +34,17 @@ public sealed class MentalMathsSprintMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Correct";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "✗ Pass";
+    public override string SkipLabel => "✗ Pass";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Number"]      = "#42A5F5",
-            ["Fractions"]   = "#66BB6A",
+            ["Number"] = "#42A5F5",
+            ["Fractions"] = "#66BB6A",
             ["Percentages"] = "#FFA726",
-            ["BODMAS"]      = "#AB47BC",
-            ["Word Problem"]= "#EC407A",
+            ["BODMAS"] = "#AB47BC",
+            ["Word Problem"] = "#EC407A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

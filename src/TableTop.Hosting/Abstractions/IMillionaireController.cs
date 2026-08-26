@@ -10,19 +10,19 @@ namespace TableTop.Hosting.Abstractions;
 public interface IMillionaireController : IGameController
 {
     /// <summary>HotSeatBegan.</summary>
-    event EventHandler<HotSeatBeganEvent>       HotSeatBegan;
+    event EventHandler<HotSeatBeganEvent> HotSeatBegan;
     /// <summary>QuestionReady.</summary>
-    event EventHandler<QuestionReadyEvent>      QuestionReady;
+    event EventHandler<QuestionReadyEvent> QuestionReady;
     /// <summary>LifelineUsed.</summary>
-    event EventHandler<LifelineUsedEvent>       LifelineUsed;
+    event EventHandler<LifelineUsedEvent> LifelineUsed;
     /// <summary>AnswerCorrect.</summary>
-    event EventHandler<AnswerCorrectEvent>      AnswerCorrect;
+    event EventHandler<AnswerCorrectEvent> AnswerCorrect;
     /// <summary>AnswerWrong.</summary>
-    event EventHandler<AnswerWrongEvent>        AnswerWrong;
+    event EventHandler<AnswerWrongEvent> AnswerWrong;
     /// <summary>WalkedAway.</summary>
-    event EventHandler<WalkedAwayEvent>         WalkedAway;
+    event EventHandler<WalkedAwayEvent> WalkedAway;
     /// <summary>MillionaireWon.</summary>
-    event EventHandler<MillionaireWonEvent>     MillionaireWon;
+    event EventHandler<MillionaireWonEvent> MillionaireWon;
     /// <summary>GameEnded.</summary>
     event EventHandler<MillionaireGameEndedEvent> GameEnded;
 

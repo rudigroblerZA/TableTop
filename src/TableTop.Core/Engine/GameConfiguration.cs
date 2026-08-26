@@ -35,9 +35,9 @@ public sealed class GameConfiguration : IGameConfiguration
         ScoringStrategy = scoringStrategy
             ?? throw new ArgumentNullException(nameof(scoringStrategy));
         Rules = (rules ?? Enumerable.Empty<IRule>()).ToList().AsReadOnly();
-        MaxRounds                = maxRounds;
+        MaxRounds = maxRounds;
         SpecialCardScoringPolicy = specialCardScoringPolicy;
-        SpecialCardBonusScore    = specialCardBonusScore;
+        SpecialCardBonusScore = specialCardBonusScore;
     }
 
     /// <inheritdoc />

@@ -21,7 +21,7 @@ public interface IArchetypeRegistry
     /// Returns null when no mode satisfies the constraints.
     /// </summary>
     IGameMode? SurpriseMe(
-        AgeRating maxAgeRating      = AgeRating.Adult,
-        bool      allowAdultContent = false,
-        int?      maxCards          = null);
+        AgeRating maxAgeRating = AgeRating.Adult,
+        bool allowAdultContent = false,
+        int? maxCards = null);
 }

@@ -1,16 +1,14 @@
-using TableTop.Core.Abstractions.Decks;
-using TableTop.Hosting.Controllers.Services;
-using TableTop.Hosting.Hints;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Decks;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Abstractions.Progression;
-using TableTop.Core.Domain.Cards;
-using TableTop.Core.Domain.Decks;
+using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Engine;
 using TableTop.Hosting.Abstractions;
+using TableTop.Hosting.Controllers.Services;
 using TableTop.Hosting.Events;
+using TableTop.Hosting.Hints;
 using TableTop.Hosting.Persistence;
 
 namespace TableTop.Hosting.Controllers;
@@ -28,14 +26,14 @@ namespace TableTop.Hosting.Controllers;
 /// </summary>
 public sealed class CardTurnController : ICardTurnController
 {
-    private readonly IGame                       _game;
-    private readonly IDeck                       _deck;
-    private readonly IReadOnlyList<IPlayer>      _players;
-    private readonly string                             _modeName;
-    private readonly string?                            _modeFilePath;
+    private readonly IGame _game;
+    private readonly IDeck _deck;
+    private readonly IReadOnlyList<IPlayer> _players;
+    private readonly string _modeName;
+    private readonly string? _modeFilePath;
     private readonly TableTop.Core.Abstractions.IEngineDiagnostics _diagnostics;
-    private readonly Dictionary<Guid, List<CardOutcome>> _outcomeHistory    = [];
-    private readonly Dictionary<Guid, List<Difficulty>>  _difficultyHistory = [];
+    private readonly Dictionary<Guid, List<CardOutcome>> _outcomeHistory = [];
+    private readonly Dictionary<Guid, List<Difficulty>> _difficultyHistory = [];
 
     // ── Thread-safety ─────────────────────────────────────────────────────────
     // CardTurnController is single-threaded. Ownership transfers to the caller
@@ -44,14 +42,14 @@ public sealed class CardTurnController : ICardTurnController
     private readonly ThreadingGuard _threadGuard = new();
 
     // ── Extracted services ────────────────────────────────────────────────────
-    private SkipPolicy?              _skipPolicy;
-    private EffectApplicator?        _effectApplicator;
-    private TurnHistoryTracker?      _historyTracker;
-    private SpecialCardCoordinator?  _specialCards;
-    private FlowCoordinator?         _flow;
-    private PersistenceCoordinator?  _persistence;
-    private HintCoordinator?         _hints;
-    private UndoCoordinator?         _undo;
+    private SkipPolicy? _skipPolicy;
+    private EffectApplicator? _effectApplicator;
+    private TurnHistoryTracker? _historyTracker;
+    private SpecialCardCoordinator? _specialCards;
+    private FlowCoordinator? _flow;
+    private PersistenceCoordinator? _persistence;
+    private HintCoordinator? _hints;
+    private UndoCoordinator? _undo;
 
     /// <summary>Score penalty per skip after the first (default: -1).</summary>
     public int SkipPenalty { get; init; } = -1;
@@ -79,36 +77,36 @@ public sealed class CardTurnController : ICardTurnController
     // ── Events ────────────────────────────────────────────────────────────────
 
     /// <summary>CardReady.</summary>
-    public event EventHandler<CardReadyEvent>?            CardReady;
+    public event EventHandler<CardReadyEvent>? CardReady;
     /// <summary>TurnResult.</summary>
-    public event EventHandler<TurnResultEvent>?           TurnResult;
+    public event EventHandler<TurnResultEvent>? TurnResult;
     /// <summary>TurnSkipped.</summary>
-    public event EventHandler<TurnSkippedEvent>?          TurnSkipped;
+    public event EventHandler<TurnSkippedEvent>? TurnSkipped;
     /// <summary>SkipAttempted.</summary>
-    public event EventHandler<SkipAttemptedEvent>?        SkipAttempted;
+    public event EventHandler<SkipAttemptedEvent>? SkipAttempted;
     /// <summary>GameEnded.</summary>
-    public event EventHandler<GameEndedEvent>?            GameEnded;
+    public event EventHandler<GameEndedEvent>? GameEnded;
     /// <summary>GamePaused.</summary>
-    public event EventHandler<GamePausedEvent>?           GamePaused;
+    public event EventHandler<GamePausedEvent>? GamePaused;
     /// <summary>BreakCardDrawn.</summary>
-    public event EventHandler<BreakCardDrawnEvent>?       BreakCardDrawn;
+    public event EventHandler<BreakCardDrawnEvent>? BreakCardDrawn;
     /// <summary>RewardCardDrawn.</summary>
-    public event EventHandler<RewardCardDrawnEvent>?      RewardCardDrawn;
+    public event EventHandler<RewardCardDrawnEvent>? RewardCardDrawn;
     /// <summary>InspirationCardDrawn.</summary>
     public event EventHandler<InspirationCardDrawnEvent>? InspirationCardDrawn;
     /// <summary>SessionSaved.</summary>
-    public event EventHandler<SessionSavedEvent>?         SessionSaved;
+    public event EventHandler<SessionSavedEvent>? SessionSaved;
     /// <summary>FlowChanged.</summary>
-    public event EventHandler<FlowChangedEvent>?          FlowChanged;
+    public event EventHandler<FlowChangedEvent>? FlowChanged;
     /// <summary>NextTurnHint.</summary>
-    public event EventHandler<NextTurnHintEvent>?         NextTurnHint;
+    public event EventHandler<NextTurnHintEvent>? NextTurnHint;
     /// <summary>TurnUndone.</summary>
-    public event EventHandler<TurnUndoneEvent>?           TurnUndone;
+    public event EventHandler<TurnUndoneEvent>? TurnUndone;
     /// <summary>
     /// Raised by an external timer component when a per-card time limit expires.
     /// Subscribe from the UI layer (WPF, MAUI) to receive expiry notifications.
     /// </summary>
-    public event EventHandler<TimerExpiredEvent>?         TimerExpired;
+    public event EventHandler<TimerExpiredEvent>? TimerExpired;
 
     /// <summary>
     /// Raises <see cref="TimerExpired"/>. A host owning the countdown calls this
@@ -126,8 +124,8 @@ public sealed class CardTurnController : ICardTurnController
         _threadGuard.Assert();
         TimerExpired?.Invoke(this, new TimerExpiredEvent(
             PlayerName: player.DisplayName,
-            CardTitle:  card.Title,
-            Elapsed:    allowed));
+            CardTitle: card.Title,
+            Elapsed: allowed));
     }
 
     /// <inheritdoc />
@@ -145,12 +143,12 @@ public sealed class CardTurnController : ICardTurnController
     /// preferred entry point and does not block — see backlog B.3.
     /// </summary>
     public CardTurnController(
-        IGameModeDefinition          definition,
-        IReadOnlyList<IPlayer>       players,
-        string                       modeName,
-        int                          maxRounds,
+        IGameModeDefinition definition,
+        IReadOnlyList<IPlayer> players,
+        string modeName,
+        int maxRounds,
         Core.Abstractions.Progression.IProgressionStrategy progression,
-        CardTurnControllerOptions?   options = null)
+        CardTurnControllerOptions? options = null)
         : this(
             SessionDeckFactory.Build(definition, players, modeName,
                 (options ?? CardTurnControllerOptions.Default).Gameplay ?? GameplayOptions.Default),
@@ -165,27 +163,27 @@ public sealed class CardTurnController : ICardTurnController
     /// constructor above keeps its synchronous signature.
     /// </summary>
     private CardTurnController(
-        IDeck                        deck,
-        IGameModeDefinition          definition,
-        IReadOnlyList<IPlayer>       players,
-        string                       modeName,
-        int                          maxRounds,
+        IDeck deck,
+        IGameModeDefinition definition,
+        IReadOnlyList<IPlayer> players,
+        string modeName,
+        int maxRounds,
         Core.Abstractions.Progression.IProgressionStrategy progression,
-        CardTurnControllerOptions    options)
+        CardTurnControllerOptions options)
     {
-        _players           = players;
-        _modeName          = modeName;
-        _modeFilePath      = options.ModeFilePath;
-        var repository       = options.SessionRepository ?? new JsonSessionRepository();
+        _players = players;
+        _modeName = modeName;
+        _modeFilePath = options.ModeFilePath;
+        var repository = options.SessionRepository ?? new JsonSessionRepository();
         RewardChanceInterval = options.RewardChanceInterval;
-        SkipPenalty          = options.SkipPenalty;
-        _diagnostics         = options.Diagnostics ?? Core.Abstractions.NullEngineDiagnostics.Instance;
+        SkipPenalty = options.SkipPenalty;
+        _diagnostics = options.Diagnostics ?? Core.Abstractions.NullEngineDiagnostics.Instance;
 
         if (options.BonusPool is not null) _bonusPool.AddRange(options.BonusPool);
 
         // Initialise extracted services
-        _skipPolicy       = new SkipPolicy(options.SkipPenalty);
-        _historyTracker   = new TurnHistoryTracker();
+        _skipPolicy = new SkipPolicy(options.SkipPenalty);
+        _historyTracker = new TurnHistoryTracker();
         _skipPolicy.Initialise(players);
         _historyTracker.Initialise(players);
 
@@ -200,7 +198,7 @@ public sealed class CardTurnController : ICardTurnController
         _deck = deck;
 
         var flowStrategy = progression as IFlowAwareProgressionStrategy;
-        var hints        = options.HintEngine ?? new DefaultHintEngine();
+        var hints = options.HintEngine ?? new DefaultHintEngine();
 
         _game = new GameBuilder()
             // Deck order pins them; this keeps the progression strategy
@@ -226,17 +224,17 @@ public sealed class CardTurnController : ICardTurnController
             _playerInspirations,
             _bonusPool,
             RewardChanceInterval,
-            buildScores:       BuildScores,
-            onBreakCard:       e => BreakCardDrawn?.Invoke(this, e),
-            onRewardCard:      e => RewardCardDrawn?.Invoke(this, e),
+            buildScores: BuildScores,
+            onBreakCard: e => BreakCardDrawn?.Invoke(this, e),
+            onRewardCard: e => RewardCardDrawn?.Invoke(this, e),
             onInspirationCard: e => InspirationCardDrawn?.Invoke(this, e),
-            onCardReady:       e => CardReady?.Invoke(this, e));
+            onCardReady: e => CardReady?.Invoke(this, e));
 
         _flow = new FlowCoordinator(
             flowStrategy,
             players,
             onFlowChanged: e => FlowChanged?.Invoke(this, e),
-            getRound:      () => _game.Round);
+            getRound: () => _game.Round);
 
         _persistence = new PersistenceCoordinator(
             _game,
@@ -256,18 +254,18 @@ public sealed class CardTurnController : ICardTurnController
             flowStrategy,
             players,
             getRound: () => _game.Round,
-            onHint:   e => NextTurnHint?.Invoke(this, e));
+            onHint: e => NextTurnHint?.Invoke(this, e));
 
         _undo = new UndoCoordinator(
             _game,
             _historyTracker,
             _diagnostics,
-            buildScores:  BuildScores,
+            buildScores: BuildScores,
             onTurnUndone: e => TurnUndone?.Invoke(this, e),
-            onCardReady:  e => CardReady?.Invoke(this, e));
+            onCardReady: e => CardReady?.Invoke(this, e));
 
         _game.TurnCompleted += OnTurnCompleted;
-        _game.GameEnded     += OnGameEnded;
+        _game.GameEnded += OnGameEnded;
 
         // Restore mid-session state if resuming
         if (options.ResumeFrom is not null)
@@ -290,13 +288,13 @@ public sealed class CardTurnController : ICardTurnController
     /// The public constructor remains available and still builds synchronously.
     /// </summary>
     public static async Task<CardTurnController> CreateAsync(
-        IGameModeDefinition          definition,
-        IReadOnlyList<IPlayer>       players,
-        string                       modeName,
-        int                          maxRounds,
+        IGameModeDefinition definition,
+        IReadOnlyList<IPlayer> players,
+        string modeName,
+        int maxRounds,
         Core.Abstractions.Progression.IProgressionStrategy progression,
-        CardTurnControllerOptions?   options = null,
-        CancellationToken            ct      = default)
+        CardTurnControllerOptions? options = null,
+        CancellationToken ct = default)
     {
         ct.ThrowIfCancellationRequested();
 
@@ -390,13 +388,13 @@ public sealed class CardTurnController : ICardTurnController
     public FlowState? GetFlowState(Guid playerId) => _flow!.GetFlowState(playerId);
 
     /// <inheritdoc />
-    public void LevelUp(Guid playerId)   { _threadGuard.Assert(); _flow!.LevelUp(playerId); }
+    public void LevelUp(Guid playerId) { _threadGuard.Assert(); _flow!.LevelUp(playerId); }
     /// <inheritdoc />
     public void LevelDown(Guid playerId) { _threadGuard.Assert(); _flow!.LevelDown(playerId); }
     /// <inheritdoc />
-    public void SpeedUp(Guid playerId)   { _threadGuard.Assert(); _flow!.SpeedUp(playerId); }
+    public void SpeedUp(Guid playerId) { _threadGuard.Assert(); _flow!.SpeedUp(playerId); }
     /// <inheritdoc />
-    public void SlowDown(Guid playerId)  { _threadGuard.Assert(); _flow!.SlowDown(playerId); }
+    public void SlowDown(Guid playerId) { _threadGuard.Assert(); _flow!.SlowDown(playerId); }
 
     /// <inheritdoc />
     public void JumpTo(Guid playerId, Core.Abstractions.Cards.Difficulty difficulty)
@@ -421,7 +419,7 @@ public sealed class CardTurnController : ICardTurnController
     {
         _threadGuard.Assert();
         _game.PlayerManager.ApplyScore(fromPlayerId, -points);
-        _game.PlayerManager.ApplyScore(toPlayerId,   +points);
+        _game.PlayerManager.ApplyScore(toPlayerId, +points);
     }
 
     // ── Skip policy ───────────────────────────────────────────────────────────
@@ -465,7 +463,7 @@ public sealed class CardTurnController : ICardTurnController
         // deck is unplayable for this table and ending is the honest outcome —
         // GameEnded fires normally so UIs show the results screen rather than
         // hanging or crashing.
-        var skipBudget       = Math.Max(1, _players.Count);
+        var skipBudget = Math.Max(1, _players.Count);
         var consecutiveSkips = 0;
 
         while (true)
@@ -474,9 +472,9 @@ public sealed class CardTurnController : ICardTurnController
 
             // Bonus injection — delegated to SpecialCardCoordinator
             if (_specialCards!.TryInjectBonus(
-                    advanceTurn:   () => _game.AdvanceTurn(),
+                    advanceTurn: () => _game.AdvanceTurn(),
                     currentPlayer: () => _game.CurrentPlayer,
-                    round:         _game.Round))
+                    round: _game.Round))
                 return;
 
             var card = _game.AdvanceTurn();
@@ -556,15 +554,15 @@ public sealed class CardTurnController : ICardTurnController
             : card.Description;
 
         CardReady?.Invoke(this, new CardReadyEvent(
-            Player:      player,
-            PlayerName:  player.DisplayName,
-            Card:        card,
-            CardTitle:   card.Title,
-            CardText:    text,
-            Category:    card.Category,
-            Difficulty:  card.Difficulty.ToString(),
+            Player: player,
+            PlayerName: player.DisplayName,
+            Card: card,
+            CardTitle: card.Title,
+            CardText: text,
+            Category: card.Category,
+            Difficulty: card.Difficulty.ToString(),
             Restriction: card.Restriction?.Description,
-            Round:       _game.Round));
+            Round: _game.Round));
     }
 
     // ── Engine event forwarding ───────────────────────────────────────────────
@@ -580,22 +578,22 @@ public sealed class CardTurnController : ICardTurnController
                 : e.Player.Score;
 
             _historyTracker!.Record(
-                player:     e.Player,
-                card:       lastCard,
-                outcome:    e.Outcome,
+                player: e.Player,
+                card: lastCard,
+                outcome: e.Outcome,
                 scoreDelta: e.ScoreDelta,
                 scoreAfter: scoreAfter,
-                round:      e.Round,
-                elapsed:    _pendingElapsed);
+                round: e.Round,
+                elapsed: _pendingElapsed);
 
             _diagnostics.TurnRecorded(e.Player, lastCard, e.Outcome, e.ScoreDelta, e.Round);
         }
 
         TurnResult?.Invoke(this, new TurnResultEvent(
-            PlayerName:    e.Player.DisplayName,
-            Outcome:       e.Outcome,
-            ScoreDelta:    e.ScoreDelta,
-            Round:         e.Round,
+            PlayerName: e.Player.DisplayName,
+            Outcome: e.Outcome,
+            ScoreDelta: e.ScoreDelta,
+            Round: e.Round,
             CurrentScores: BuildScores()));
 
         // Generate and emit hint
@@ -616,11 +614,11 @@ public sealed class CardTurnController : ICardTurnController
     {
         // Build the session report from the full turn history
         var duration = DateTimeOffset.UtcNow - _sessionStartedAt;
-        var report   = Core.Domain.Game.SessionReport.Build(
-            turns:       _historyTracker!.AllTurns,
-            players:     _players,
+        var report = Core.Domain.Game.SessionReport.Build(
+            turns: _historyTracker!.AllTurns,
+            players: _players,
             totalRounds: e.TotalRounds,
-            duration:    duration);
+            duration: duration);
 
         SessionReport = report;
 
@@ -630,7 +628,7 @@ public sealed class CardTurnController : ICardTurnController
             FinalStandings: e.FinalStandings.Select(p =>
                 new ScoreEntry(p.DisplayName, p.Score)).ToList().AsReadOnly(),
             TotalRounds: e.TotalRounds,
-            Report:      report));
+            Report: report));
 
         // Clean up saved session on natural game end
         _ = _persistence!.DeleteAsync();
@@ -663,23 +661,23 @@ public sealed class CardTurnController : ICardTurnController
 
         // Unsubscribe from game events — breaks the reference the Game holds to this controller
         _game.TurnCompleted -= OnTurnCompleted;
-        _game.GameEnded     -= OnGameEnded;
+        _game.GameEnded -= OnGameEnded;
 
         // Null out all public event fields so any remaining UI subscribers
         // can be collected without waiting for the controller to be GC'd
-        CardReady            = null;
-        TurnResult           = null;
-        TurnSkipped          = null;
-        SkipAttempted        = null;
-        GameEnded            = null;
-        GamePaused           = null;
-        BreakCardDrawn       = null;
-        RewardCardDrawn      = null;
+        CardReady = null;
+        TurnResult = null;
+        TurnSkipped = null;
+        SkipAttempted = null;
+        GameEnded = null;
+        GamePaused = null;
+        BreakCardDrawn = null;
+        RewardCardDrawn = null;
         InspirationCardDrawn = null;
-        SessionSaved         = null;
-        FlowChanged          = null;
-        NextTurnHint         = null;
-        TurnUndone           = null;
-        TimerExpired         = null;
+        SessionSaved = null;
+        FlowChanged = null;
+        NextTurnHint = null;
+        TurnUndone = null;
+        TimerExpired = null;
     }
 }

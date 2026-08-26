@@ -23,16 +23,16 @@ namespace TableTop.Core.Domain.Progression;
 public sealed class FlowAwareProgressionStrategy : IFlowAwareProgressionStrategy
 {
     private readonly Dictionary<Guid, FlowState> _states = [];
-    private readonly Difficulty                  _initialDifficulty;
-    private readonly FlowPace                    _initialPace;
+    private readonly Difficulty _initialDifficulty;
+    private readonly FlowPace _initialPace;
 
     /// <summary>Initialises a new <see cref="FlowAwareProgressionStrategy"/> instance.</summary>
     public FlowAwareProgressionStrategy(
         Difficulty initialDifficulty = Difficulty.Easy,
-        FlowPace   initialPace       = FlowPace.Normal)
+        FlowPace initialPace = FlowPace.Normal)
     {
         _initialDifficulty = initialDifficulty;
-        _initialPace       = initialPace;
+        _initialPace = initialPace;
     }
 
     /// <inheritdoc />
@@ -63,7 +63,7 @@ public sealed class FlowAwareProgressionStrategy : IFlowAwareProgressionStrategy
     /// <inheritdoc />
     public Guid? SelectCandidate(IPlayer player, IDeck deck, IProgressionContext context)
     {
-        var flow      = GetFlowState(player.Id);
+        var flow = GetFlowState(player.Id);
         var preferred = flow.CurrentDifficulty;
 
         // Peek only — no deck mutation

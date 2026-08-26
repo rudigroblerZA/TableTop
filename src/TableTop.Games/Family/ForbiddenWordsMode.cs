@@ -27,7 +27,7 @@ namespace TableTop.Games.Family;
 public sealed class ForbiddenWordsMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Forbidden Words";
+    public override string Name => "Forbidden Words";
     /// <inheritdoc />
     public override string Description =>
         "Describe the word without saying the three words you most want to say. Fast, loud party classic.";
@@ -35,18 +35,18 @@ public sealed class ForbiddenWordsMode : BaseGameModeDefinition
     /// <summary>Label shown on the button that records a completed round.</summary>
     public override string CompleteLabel => "Guessed";
     /// <summary>Label shown on the button that skips the current card.</summary>
-    public override string SkipLabel     => "Busted";
+    public override string SkipLabel => "Busted";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Food"]     = "#FFA726",
-            ["Places"]   = "#42A5F5",
-            ["Things"]   = "#AB47BC",
-            ["Actions"]  = "#EC407A",
-            ["People"]   = "#66BB6A",
-            ["Hard Mode"]= "#EF5350",
+            ["Food"] = "#FFA726",
+            ["Places"] = "#42A5F5",
+            ["Things"] = "#AB47BC",
+            ["Actions"] = "#EC407A",
+            ["People"] = "#66BB6A",
+            ["Hard Mode"] = "#EF5350",
         };
 
     /// <summary>Describer and guesser each score one on success.</summary>

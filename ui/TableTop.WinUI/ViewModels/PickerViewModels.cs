@@ -1,12 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using TableTop.Core.Abstractions.Game;
-using TableTop.Core.Abstractions.Players;
 using TableTop.Hosting;
-using TableTop.Hosting.Controllers;
-using TableTop.WinUI.Infrastructure;
 using TableTop.Presentation.Infrastructure;
 using TableTop.Presentation.ViewModels;
+using TableTop.WinUI.Infrastructure;
 
 namespace TableTop.WinUI.ViewModels;
 
@@ -20,15 +18,15 @@ public sealed class IntroViewModel : ViewModelBase
     private readonly SavedSessionLookup _savedSession = new();
 
     /// <summary>Command that begins the play flow.</summary>
-    public ICommand PlayCommand     { get; }
+    public ICommand PlayCommand { get; }
     /// <summary>Command that opens the settings screen.</summary>
     public ICommand SettingsCommand { get; }
 
     /// <summary>Continues the saved session. Hidden when there isn't one.</summary>
-    public ICommand ResumeCommand   { get; }
+    public ICommand ResumeCommand { get; }
 
     /// <summary>True when there is a session worth offering.</summary>
-    public bool   CanResume  => _savedSession.CanResume;
+    public bool CanResume => _savedSession.CanResume;
 
     /// <summary>"Alice, Bob · round 4" for the button, or empty.</summary>
     public string ResumeText => _savedSession.ResumeText;
@@ -36,9 +34,9 @@ public sealed class IntroViewModel : ViewModelBase
     /// <summary>Initialises the intro screen.</summary>
     public IntroViewModel(Navigator navigator)
     {
-        _navigator      = navigator;
-        PlayCommand     = new RelayCommand(Launch);
-        ResumeCommand   = new RelayCommand(Resume, () => CanResume);
+        _navigator = navigator;
+        PlayCommand = new RelayCommand(Launch);
+        ResumeCommand = new RelayCommand(Resume, () => CanResume);
         _ = LookForSavedSessionAsync();
         SettingsCommand = new RelayCommand(() => _navigator.Navigate(new SettingsViewModel(_navigator, WinUIAppSettings.Instance)));
     }
@@ -100,9 +98,9 @@ public sealed class ArchetypePickerViewModel : ViewModelBase
     public ArchetypePickerViewModel(Navigator navigator, IArchetypeRegistry registry)
     {
         _navigator = navigator;
-        _registry  = registry;
+        _registry = registry;
         Archetypes = new ObservableCollection<Archetype>(registry.RootArchetypes);
-        BackCommand   = new RelayCommand(() => _navigator.GoBack());
+        BackCommand = new RelayCommand(() => _navigator.GoBack());
         SelectCommand = new RelayCommandOf<Archetype>(a =>
         {
             if (a.SubArchetypes.Count > 0)
@@ -131,9 +129,9 @@ public sealed class SubArchetypePickerViewModel : ViewModelBase
     public SubArchetypePickerViewModel(Navigator navigator, Archetype parent)
     {
         _navigator = navigator;
-        Parent     = parent;
-        Children   = new ObservableCollection<Archetype>(parent.SubArchetypes);
-        BackCommand   = new RelayCommand(() => _navigator.GoBack());
+        Parent = parent;
+        Children = new ObservableCollection<Archetype>(parent.SubArchetypes);
+        BackCommand = new RelayCommand(() => _navigator.GoBack());
         SelectCommand = new RelayCommandOf<Archetype>(a =>
         {
             if (a.SubArchetypes.Count > 0)
@@ -174,9 +172,9 @@ public sealed class GameSelectionViewModel : ViewModelBase
     public GameSelectionViewModel(Navigator navigator, Archetype node)
     {
         _navigator = navigator;
-        Node       = node;
-        Modes      = new ObservableCollection<ModeListItem>(node.Modes.Select(m => new ModeListItem(m)));
-        BackCommand   = new RelayCommand(() => _navigator.GoBack());
+        Node = node;
+        Modes = new ObservableCollection<ModeListItem>(node.Modes.Select(m => new ModeListItem(m)));
+        BackCommand = new RelayCommand(() => _navigator.GoBack());
         SelectCommand = new RelayCommandOf<ModeListItem>(row =>
         {
             var m = row.Mode;

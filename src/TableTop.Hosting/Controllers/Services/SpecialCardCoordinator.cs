@@ -1,7 +1,5 @@
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Abstractions.Scoring;
-using TableTop.Core.Domain.Cards;
 using TableTop.Hosting.Events;
 using TableTop.Hosting.Persistence;
 
@@ -17,40 +15,40 @@ namespace TableTop.Hosting.Controllers.Services;
 /// </summary>
 internal sealed class SpecialCardCoordinator
 {
-    private readonly Func<IReadOnlyList<ScoreEntry>>           _buildScores;
-    private readonly Action<BreakCardDrawnEvent>               _onBreakCard;
-    private readonly Action<RewardCardDrawnEvent>              _onRewardCard;
-    private readonly Action<InspirationCardDrawnEvent>         _onInspirationCard;
-    private readonly Action<CardReadyEvent>                    _onCardReady;
-    private readonly EffectApplicator                          _effectApplicator;
-    private readonly Dictionary<Guid, List<SavedInspiration>>  _playerInspirations;
-    private readonly List<ICard>                               _bonusPool;
+    private readonly Func<IReadOnlyList<ScoreEntry>> _buildScores;
+    private readonly Action<BreakCardDrawnEvent> _onBreakCard;
+    private readonly Action<RewardCardDrawnEvent> _onRewardCard;
+    private readonly Action<InspirationCardDrawnEvent> _onInspirationCard;
+    private readonly Action<CardReadyEvent> _onCardReady;
+    private readonly EffectApplicator _effectApplicator;
+    private readonly Dictionary<Guid, List<SavedInspiration>> _playerInspirations;
+    private readonly List<ICard> _bonusPool;
 
     /// <inheritdoc />
-    public int  RewardChanceInterval { get; }
+    public int RewardChanceInterval { get; }
     /// <inheritdoc />
-    public int  RegularCardsSinceBonus { get; private set; }
+    public int RegularCardsSinceBonus { get; private set; }
 
     public SpecialCardCoordinator(
-        EffectApplicator                           effectApplicator,
-        Dictionary<Guid, List<SavedInspiration>>   playerInspirations,
-        List<ICard>                                bonusPool,
-        int                                        rewardChanceInterval,
-        Func<IReadOnlyList<ScoreEntry>>            buildScores,
-        Action<BreakCardDrawnEvent>                onBreakCard,
-        Action<RewardCardDrawnEvent>               onRewardCard,
-        Action<InspirationCardDrawnEvent>          onInspirationCard,
-        Action<CardReadyEvent>                     onCardReady)
+        EffectApplicator effectApplicator,
+        Dictionary<Guid, List<SavedInspiration>> playerInspirations,
+        List<ICard> bonusPool,
+        int rewardChanceInterval,
+        Func<IReadOnlyList<ScoreEntry>> buildScores,
+        Action<BreakCardDrawnEvent> onBreakCard,
+        Action<RewardCardDrawnEvent> onRewardCard,
+        Action<InspirationCardDrawnEvent> onInspirationCard,
+        Action<CardReadyEvent> onCardReady)
     {
-        _effectApplicator     = effectApplicator;
-        _playerInspirations   = playerInspirations;
-        _bonusPool            = bonusPool;
-        RewardChanceInterval  = rewardChanceInterval;
-        _buildScores          = buildScores;
-        _onBreakCard          = onBreakCard;
-        _onRewardCard         = onRewardCard;
-        _onInspirationCard    = onInspirationCard;
-        _onCardReady          = onCardReady;
+        _effectApplicator = effectApplicator;
+        _playerInspirations = playerInspirations;
+        _bonusPool = bonusPool;
+        RewardChanceInterval = rewardChanceInterval;
+        _buildScores = buildScores;
+        _onBreakCard = onBreakCard;
+        _onRewardCard = onRewardCard;
+        _onInspirationCard = onInspirationCard;
+        _onCardReady = onCardReady;
     }
 
     /// <summary>
@@ -68,7 +66,7 @@ internal sealed class SpecialCardCoordinator
         if (player is null) return true;
 
         var card = _bonusPool[Random.Shared.Next(_bonusPool.Count)];
-        if (card is IBreakCard bc)  { HandleBreakCard(bc, player, round);  return true; }
+        if (card is IBreakCard bc) { HandleBreakCard(bc, player, round); return true; }
         if (card is IRewardCard rc) { HandleRewardCard(rc, player, round); return true; }
 
         // Bonus is a regular card — present normally
@@ -92,13 +90,13 @@ internal sealed class SpecialCardCoordinator
         _effectApplicator.ApplyBreakEffect(card, player);
 
         _onBreakCard(new BreakCardDrawnEvent(
-            PlayerName:      player.DisplayName,
-            CardTitle:       card.Title,
-            CardText:        card.Description,
-            Scope:           card.Scope.ToString(),
-            EffectType:      card.Effect?.GetType().Name.Replace("Effect", "") ?? string.Empty,
-            Round:           round,
-            Activity:        card.Activity?.ToString() ?? string.Empty,
+            PlayerName: player.DisplayName,
+            CardTitle: card.Title,
+            CardText: card.Description,
+            Scope: card.Scope.ToString(),
+            EffectType: card.Effect?.GetType().Name.Replace("Effect", "") ?? string.Empty,
+            Round: round,
+            Activity: card.Activity?.ToString() ?? string.Empty,
             DurationMinutes: card.DurationMinutes));
     }
 
@@ -108,14 +106,14 @@ internal sealed class SpecialCardCoordinator
         var (scoreDelta, description) = _effectApplicator.ApplyRewardEffect(card.Effect, player);
 
         _onRewardCard(new RewardCardDrawnEvent(
-            PlayerName:        player.DisplayName,
-            CardTitle:         card.Title,
-            CardText:          card.Description,
-            EffectType:        card.Effect.GetType().Name.Replace("Effect", ""),
+            PlayerName: player.DisplayName,
+            CardTitle: card.Title,
+            CardText: card.Description,
+            EffectType: card.Effect.GetType().Name.Replace("Effect", ""),
             EffectDescription: description,
-            ScoreDelta:        scoreDelta,
-            Round:             round,
-            CurrentScores:     _buildScores()));
+            ScoreDelta: scoreDelta,
+            Round: round,
+            CurrentScores: _buildScores()));
     }
 
     /// <inheritdoc />
@@ -123,11 +121,11 @@ internal sealed class SpecialCardCoordinator
     {
         var saved = new SavedInspiration
         {
-            CardId              = card.Id,
-            Title               = card.Title,
-            InspirationText     = card.InspirationText,
+            CardId = card.Id,
+            Title = card.Title,
+            InspirationText = card.InspirationText,
             InspirationCategory = card.InspirationCategory,
-            SavedAt             = DateTimeOffset.UtcNow,
+            SavedAt = DateTimeOffset.UtcNow,
         };
 
         if (!_playerInspirations.ContainsKey(player.Id))
@@ -135,10 +133,10 @@ internal sealed class SpecialCardCoordinator
         _playerInspirations[player.Id].Add(saved);
 
         _onInspirationCard(new InspirationCardDrawnEvent(
-            PlayerName:          player.DisplayName,
-            CardTitle:           card.Title,
-            InspirationText:     card.InspirationText,
+            PlayerName: player.DisplayName,
+            CardTitle: card.Title,
+            InspirationText: card.InspirationText,
             InspirationCategory: card.InspirationCategory ?? string.Empty,
-            Round:               round));
+            Round: round));
     }
 }

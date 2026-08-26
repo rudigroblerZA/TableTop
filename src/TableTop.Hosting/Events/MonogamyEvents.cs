@@ -1,5 +1,3 @@
-using TableTop.Core.Abstractions.Cards;
-
 namespace TableTop.Hosting.Events;
 
 /// <summary>
@@ -8,13 +6,13 @@ namespace TableTop.Hosting.Events;
 /// to choose their zone before calling <c>ChooseZoneForDoubles</c>.
 /// </summary>
 public sealed record DiceRolledEvent(
-    string       PlayerName,
-    int          Die1,
-    int          Die2,
-    int          Total,
-    bool         IsDouble,
-    string       ResultingZone,   // "Foreplay", "Sensual", "Steamy", "Wild", "Fantasy"
-    int          Round
+    string PlayerName,
+    int Die1,
+    int Die2,
+    int Total,
+    bool IsDouble,
+    string ResultingZone,   // "Foreplay", "Sensual", "Steamy", "Wild", "Fantasy"
+    int Round
 );
 
 /// <summary>
@@ -22,15 +20,15 @@ public sealed record DiceRolledEvent(
 /// Extends the normal card-ready pattern with zone, target, token, and duration metadata.
 /// </summary>
 public sealed record MonogamyCardReadyEvent(
-    string       PlayerName,
-    string       PartnerName,     // the other player in a two-player game, or empty
-    string       CardTitle,
-    string       CardText,        // gender-resolved prompt
-    string       Zone,            // "Foreplay", "Sensual", "Steamy", "Wild", "Fantasy"
-    string       Target,          // "ForDrawer", "ForPartner", "ForBoth", "PlayerChoice"
-    int          TokenValue,
-    int?         DurationMinutes,
-    int          Round
+    string PlayerName,
+    string PartnerName,     // the other player in a two-player game, or empty
+    string CardTitle,
+    string CardText,        // gender-resolved prompt
+    string Zone,            // "Foreplay", "Sensual", "Steamy", "Wild", "Fantasy"
+    string Target,          // "ForDrawer", "ForPartner", "ForBoth", "PlayerChoice"
+    int TokenValue,
+    int? DurationMinutes,
+    int Round
 );
 
 /// <summary>
@@ -38,8 +36,8 @@ public sealed record MonogamyCardReadyEvent(
 /// </summary>
 public sealed record TokensAwardedEvent(
     string PlayerName,
-    int    TokensEarned,
-    int    TotalTokens,
+    int TokensEarned,
+    int TotalTokens,
     string Zone
 );
 
@@ -50,9 +48,9 @@ public sealed record TokensAwardedEvent(
 /// </summary>
 public sealed record DoublesRolledEvent(
     string PlayerName,
-    int    Die1,
-    int    Die2,
-    int    Round
+    int Die1,
+    int Die2,
+    int Round
 );
 
 /// <summary>
@@ -60,8 +58,8 @@ public sealed record DoublesRolledEvent(
 /// </summary>
 public sealed record MonogamyGameEndedEvent(
     IReadOnlyList<MonogamyStanding> FinalStandings,
-    string                          WinnerName,
-    int                             TotalRounds
+    string WinnerName,
+    int TotalRounds
 );
 
 /// <summary>
@@ -71,7 +69,7 @@ public sealed record MonogamyGameEndedEvent(
 public sealed record MonogamyTimedCardEvent(
     string PlayerName,
     string CardTitle,
-    int    DurationMinutes,
+    int DurationMinutes,
     string ActivityType    // "Massage", "Bath", "Shower", etc.
 );
 
@@ -81,15 +79,15 @@ public sealed record MonogamyTimedCardEvent(
 public sealed record MonogamyCardHistoryItem(
     string Zone,
     string Title,
-    bool   WasCompleted,
-    bool   WasNegotiated
+    bool WasCompleted,
+    bool WasNegotiated
 );
 
 /// <summary>Final standing for one player in a Monogamy session.</summary>
 public sealed record MonogamyStanding(
     string PlayerName,
-    int    Tokens,
-    int    CardsCompleted,
-    int    CardsSkipped,
+    int Tokens,
+    int CardsCompleted,
+    int CardsSkipped,
     IReadOnlyDictionary<string, int> TokensByZone  // zone name → tokens earned
 );

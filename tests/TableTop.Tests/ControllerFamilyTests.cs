@@ -1,7 +1,5 @@
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Domain.Players;
-using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Controllers;
 
@@ -32,11 +30,11 @@ public sealed class ControllerFamilyTests
     private static ControllerFamily FamilyOfController(IGameController controller) => controller switch
     {
         IMillionaireController => ControllerFamily.Quiz,
-        IMonogamyController    => ControllerFamily.Monogamy,
-        IHerdController        => ControllerFamily.SimultaneousAnswer,
-        IClaimedController     => ControllerFamily.AreaControl,
-        IDayOneController      => ControllerFamily.DailyCampaign,
-        ICardTurnController    => ControllerFamily.CardTurn,
+        IMonogamyController => ControllerFamily.Monogamy,
+        IHerdController => ControllerFamily.SimultaneousAnswer,
+        IClaimedController => ControllerFamily.AreaControl,
+        IDayOneController => ControllerFamily.DailyCampaign,
+        ICardTurnController => ControllerFamily.CardTurn,
         _ => throw new InvalidOperationException(
             $"Unmapped controller type {controller.GetType().Name} — ControllerFamily needs a new member."),
     };
@@ -55,7 +53,7 @@ public sealed class ControllerFamilyTests
             try
             {
                 var declared = ControllerFamilies.For(mode);
-                var actual   = FamilyOfController(controller);
+                var actual = FamilyOfController(controller);
                 if (declared != actual)
                     mismatches.Add($"{mode.Name}: declared {declared}, factory built {actual}");
             }
@@ -146,7 +144,7 @@ public sealed class ControllerFamilyTests
     {
         var mode = new TwoCapabilityMode();
 
-        var declared   = ControllerFamilies.For(mode);
+        var declared = ControllerFamilies.For(mode);
         var controller = new ControllerFactory().CreateAsync(mode, Players()).GetAwaiter().GetResult();
 
         try

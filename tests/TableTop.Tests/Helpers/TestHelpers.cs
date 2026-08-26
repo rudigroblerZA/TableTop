@@ -1,16 +1,12 @@
-using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
+using TableTop.Core.Abstractions.Progression;
 using TableTop.Core.Abstractions.Rules;
-using TableTop.Core.Abstractions.Scoring;
-using TableTop.Core.Domain.Cards;
+using TableTop.Core.Domain.Progression;
 using TableTop.Core.Domain.Rules;
 using TableTop.Core.Domain.Scoring;
-using TableTop.Core.Domain.Players;
 using TableTop.Hosting.Controllers;
 using TableTop.Hosting.Persistence;
-using TableTop.Core.Domain.Progression;
-using TableTop.Core.Abstractions.Progression;
 
 namespace TableTop.Tests.Helpers;
 
@@ -21,26 +17,26 @@ namespace TableTop.Tests.Helpers;
 /// </summary>
 public sealed class InlineModeDef : IGameMode, IGameModeDefinition
 {
-    private readonly IReadOnlyList<ICard>        _cards;
-    private readonly IScoringStrategy            _scoring;
-    private readonly IEnumerable<IRule>          _rules;
+    private readonly IReadOnlyList<ICard> _cards;
+    private readonly IScoringStrategy _scoring;
+    private readonly IEnumerable<IRule> _rules;
 
-    public string Name        => "InlineMode";
+    public string Name => "InlineMode";
     public string Description => "Test mode";
 
     public InlineModeDef(
-        IReadOnlyList<ICard>    cards,
-        IScoringStrategy?       scoring = null,
-        IEnumerable<IRule>?     rules   = null)
+        IReadOnlyList<ICard> cards,
+        IScoringStrategy? scoring = null,
+        IEnumerable<IRule>? rules = null)
     {
-        _cards   = cards;
+        _cards = cards;
         _scoring = scoring ?? new FixedScoringStrategy(1);
-        _rules   = rules   ?? [new RestrictionRule(), new NoDuplicateCardRule()];
+        _rules = rules ?? [new RestrictionRule(), new NoDuplicateCardRule()];
     }
 
     public IReadOnlyList<ICard> GetCards(IReadOnlyList<IPlayer> players) => _cards;
-    public IScoringStrategy     GetScoring()                              => _scoring;
-    public IEnumerable<IRule>   GetRules()                                => _rules;
+    public IScoringStrategy GetScoring() => _scoring;
+    public IEnumerable<IRule> GetRules() => _rules;
 }
 
 /// <summary>
@@ -65,13 +61,13 @@ public static class TestFactory
     /// <summary>Creates a named player with optional gender and tags.</summary>
     public static Player MakePlayer(
         string name,
-        string gender  = "other",
-        int    age     = 25,
-        bool   isAdult = true,
+        string gender = "other",
+        int age = 25,
+        bool isAdult = true,
         IEnumerable<string>? extraTags = null)
     {
         var attrs = new Dictionary<string, string> { ["gender"] = gender, ["age"] = age.ToString() };
-        var tags  = new List<string>();
+        var tags = new List<string>();
         if (isAdult) tags.Add("adult");
         if (extraTags is not null) tags.AddRange(extraTags);
         return Player.Create(name, attrs, tags);
@@ -82,37 +78,37 @@ public static class TestFactory
     /// All parameters are optional — sensible defaults used for quick test setup.
     /// </summary>
     public static CardTurnController BuildController(
-        IReadOnlyList<ICard>            cards,
-        IReadOnlyList<IPlayer>?         players          = null,
-        int                             maxRounds        = 20,
-        int                             skipPenalty      = -1,
-        IProgressionStrategy?           progression      = null,
-        IGamePersistence?               sessionRepository = null,
-        IEnumerable<ICard>?             bonusPool        = null,
-        int                             rewardInterval   = 0,
-        Hosting.Hints.IHintEngine?      hintEngine       = null,
-        SessionSnapshot?                resumeFrom       = null,
+        IReadOnlyList<ICard> cards,
+        IReadOnlyList<IPlayer>? players = null,
+        int maxRounds = 20,
+        int skipPenalty = -1,
+        IProgressionStrategy? progression = null,
+        IGamePersistence? sessionRepository = null,
+        IEnumerable<ICard>? bonusPool = null,
+        int rewardInterval = 0,
+        Hosting.Hints.IHintEngine? hintEngine = null,
+        SessionSnapshot? resumeFrom = null,
         TableTop.Core.Abstractions.IEngineDiagnostics? diagnostics = null)
     {
-        var playerList  = players ?? [MakePlayer("Alice"), MakePlayer("Bob")];
-        var strat       = progression ?? new LinearProgressionStrategy();
-        var def         = new InlineModeDef(cards);
+        var playerList = players ?? [MakePlayer("Alice"), MakePlayer("Bob")];
+        var strat = progression ?? new LinearProgressionStrategy();
+        var def = new InlineModeDef(cards);
 
         return new CardTurnController(
-            definition:  def,
-            players:     playerList,
-            modeName:    "Test",
-            maxRounds:   maxRounds,
+            definition: def,
+            players: playerList,
+            modeName: "Test",
+            maxRounds: maxRounds,
             progression: strat,
             options: new TableTop.Hosting.Controllers.CardTurnControllerOptions
             {
-                SessionRepository    = sessionRepository,
-                BonusPool            = bonusPool,
+                SessionRepository = sessionRepository,
+                BonusPool = bonusPool,
                 RewardChanceInterval = rewardInterval,
-                SkipPenalty          = skipPenalty,
-                ResumeFrom           = resumeFrom,
-                HintEngine           = hintEngine,
-                Diagnostics          = diagnostics,
+                SkipPenalty = skipPenalty,
+                ResumeFrom = resumeFrom,
+                HintEngine = hintEngine,
+                Diagnostics = diagnostics,
             });
     }
 

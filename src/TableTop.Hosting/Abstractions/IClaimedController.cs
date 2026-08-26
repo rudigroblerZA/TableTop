@@ -11,13 +11,13 @@ public interface IClaimedController : IGameController
     /// <summary>TerritoryChallengeReady.</summary>
     event EventHandler<TerritoryChallengeReadyEvent> TerritoryChallengeReady;
     /// <summary>TerritoryClaimed.</summary>
-    event EventHandler<TerritoryClaimedEvent>         TerritoryClaimed;
+    event EventHandler<TerritoryClaimedEvent> TerritoryClaimed;
     /// <summary>TerritoryStolen.</summary>
-    event EventHandler<TerritoryStolenEvent>          TerritoryStolen;
+    event EventHandler<TerritoryStolenEvent> TerritoryStolen;
     /// <summary>ChallengeFailed.</summary>
-    event EventHandler<ChallengeFailedEvent>          ChallengeFailed;
+    event EventHandler<ChallengeFailedEvent> ChallengeFailed;
     /// <summary>GameEnded.</summary>
-    event EventHandler<ClaimedGameEndedEvent>         GameEnded;
+    event EventHandler<ClaimedGameEndedEvent> GameEnded;
 
     /// <summary>Starts the session with the first player's turn.</summary>
     void Start();

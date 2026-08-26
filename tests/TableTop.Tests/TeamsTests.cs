@@ -1,13 +1,9 @@
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Abstractions.Scoring;
-using TableTop.Core.Domain.Players;
 using TableTop.Games.Fun;
-using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Controllers;
 using TableTop.Presentation.ViewModels;
-using TableTop.Tests.Helpers;
 
 namespace TableTop.Tests;
 

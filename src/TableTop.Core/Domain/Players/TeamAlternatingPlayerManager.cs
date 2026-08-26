@@ -104,7 +104,7 @@ public sealed class TeamAlternatingPlayerManager : IPlayerManager
         if (player is null) return;
 
         var teams = TeamKeys(ActivePlayers);
-        var team  = KeyFor(player);
+        var team = KeyFor(player);
 
         var teamIndex = teams.ToList().FindIndex(t => string.Equals(t, team, StringComparison.OrdinalIgnoreCase));
         if (teamIndex >= 0) _teamCursor = teamIndex;

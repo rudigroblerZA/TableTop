@@ -51,11 +51,11 @@ public partial class GameplayPage : ContentPage
         _vm.Dispose();
     }
 
-    private void OnUndoClicked(object sender, EventArgs e)      => _vm.UndoLastTurn();
-    private void OnLevelUpClicked(object sender, EventArgs e)   => _vm.LevelUp();
+    private void OnUndoClicked(object sender, EventArgs e) => _vm.UndoLastTurn();
+    private void OnLevelUpClicked(object sender, EventArgs e) => _vm.LevelUp();
     private void OnLevelDownClicked(object sender, EventArgs e) => _vm.LevelDown();
-    private void OnSaveClicked(object sender, EventArgs e)     => _vm.SaveSession();
-    private void OnSkipClicked(object sender, EventArgs e)     => _vm.Skip();
+    private void OnSaveClicked(object sender, EventArgs e) => _vm.SaveSession();
+    private void OnSkipClicked(object sender, EventArgs e) => _vm.Skip();
     private void OnCompleteClicked(object sender, EventArgs e) => _vm.Complete();
 
     /// <summary>
@@ -91,10 +91,10 @@ public partial class GameplayPage : ContentPage
         }
         catch { CardFrame.Opacity = 1; CardFrame.TranslationY = 0; }
     }
-    private void OnChoiceAClicked(object sender, EventArgs e)   => _vm.RecordChoice('A');
-    private void OnChoiceBClicked(object sender, EventArgs e)   => _vm.RecordChoice('B');
-    private void OnChoiceCClicked(object sender, EventArgs e)   => _vm.RecordChoice('C');
-    private void OnChoiceDClicked(object sender, EventArgs e)   => _vm.RecordChoice('D');
+    private void OnChoiceAClicked(object sender, EventArgs e) => _vm.RecordChoice('A');
+    private void OnChoiceBClicked(object sender, EventArgs e) => _vm.RecordChoice('B');
+    private void OnChoiceCClicked(object sender, EventArgs e) => _vm.RecordChoice('C');
+    private void OnChoiceDClicked(object sender, EventArgs e) => _vm.RecordChoice('D');
 
     private async void OnEndGameClicked(object sender, EventArgs e)
     {

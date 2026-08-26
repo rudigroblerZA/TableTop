@@ -33,18 +33,18 @@ public sealed class PunctuationWarsMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ All marks correct (+3)";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "→ Next card";
+    public override string SkipLabel => "→ Next card";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Apostrophe"]     = "#42A5F5",
-            ["Comma"]          = "#66BB6A",
-            ["Colon/Semicolon"]= "#FFCA28",
-            ["Speech Marks"]   = "#AB47BC",
-            ["Sentence"]       = "#EC407A",
-            ["Mixed"]          = "#26C6DA",
+            ["Apostrophe"] = "#42A5F5",
+            ["Comma"] = "#66BB6A",
+            ["Colon/Semicolon"] = "#FFCA28",
+            ["Speech Marks"] = "#AB47BC",
+            ["Sentence"] = "#EC407A",
+            ["Mixed"] = "#26C6DA",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

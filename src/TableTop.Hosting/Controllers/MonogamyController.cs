@@ -13,35 +13,35 @@ namespace TableTop.Hosting.Controllers;
 /// </summary>
 public sealed class MonogamyController : IMonogamyController
 {
-    private readonly IReadOnlyList<IPlayer>       _players;
-    private readonly List<MonogamyCard>           _deck;
-    private readonly Random                       _rng;
-    private readonly int?                         _winningTokenCount;
+    private readonly IReadOnlyList<IPlayer> _players;
+    private readonly List<MonogamyCard> _deck;
+    private readonly Random _rng;
+    private readonly int? _winningTokenCount;
 
     // ── Per-player tracking ───────────────────────────────────────────────────
 
-    private readonly Dictionary<Guid, int>                 _tokens        = [];
-    private readonly Dictionary<Guid, Dictionary<string, int>> _byZone   = [];
-    private readonly Dictionary<Guid, int>                 _completed     = [];
-    private readonly Dictionary<Guid, int>                 _skipped       = [];
+    private readonly Dictionary<Guid, int> _tokens = [];
+    private readonly Dictionary<Guid, Dictionary<string, int>> _byZone = [];
+    private readonly Dictionary<Guid, int> _completed = [];
+    private readonly Dictionary<Guid, int> _skipped = [];
 
-    private int     _currentPlayerIndex;
-    private int     _round;
-    private bool    _awaitingZoneChoice;
+    private int _currentPlayerIndex;
+    private int _round;
+    private bool _awaitingZoneChoice;
     private IMonogamyCard? _currentCard;
 
     // ── Events ────────────────────────────────────────────────────────────────
 
     /// <summary>DiceRolled.</summary>
-    public event EventHandler<DiceRolledEvent>?        DiceRolled;
+    public event EventHandler<DiceRolledEvent>? DiceRolled;
     /// <summary>TimedCardStarted.</summary>
-    public event EventHandler<MonogamyTimedCardEvent>?  TimedCardStarted;
+    public event EventHandler<MonogamyTimedCardEvent>? TimedCardStarted;
     /// <summary>DoublesRolled.</summary>
-    public event EventHandler<DoublesRolledEvent>?     DoublesRolled;
+    public event EventHandler<DoublesRolledEvent>? DoublesRolled;
     /// <summary>CardReady.</summary>
     public event EventHandler<MonogamyCardReadyEvent>? CardReady;
     /// <summary>TokensAwarded.</summary>
-    public event EventHandler<TokensAwardedEvent>?     TokensAwarded;
+    public event EventHandler<TokensAwardedEvent>? TokensAwarded;
     /// <summary>GameEnded.</summary>
     public event EventHandler<MonogamyGameEndedEvent>? GameEnded;
 
@@ -72,15 +72,15 @@ public sealed class MonogamyController : IMonogamyController
     public MonogamyController(
         IReadOnlyList<IPlayer> players,
         IReadOnlyList<MonogamyCard> cards,
-        int?   winningTokenCount = 10,
-        Random? rng              = null)
+        int? winningTokenCount = 10,
+        Random? rng = null)
     {
         if (players.Count < 2)
             throw new ArgumentException("Monogamy requires at least 2 players.", nameof(players));
 
-        _players           = players;
+        _players = players;
         _winningTokenCount = winningTokenCount;
-        _rng               = rng ?? Random.Shared;
+        _rng = rng ?? Random.Shared;
 
         // Build and shuffle deck
         _deck = Shuffle(cards.ToList(), rng ?? Random.Shared);
@@ -88,10 +88,10 @@ public sealed class MonogamyController : IMonogamyController
         // Initialise per-player tracking
         foreach (var p in players)
         {
-            _tokens[p.Id]    = 0;
-            _byZone[p.Id]    = [];
+            _tokens[p.Id] = 0;
+            _byZone[p.Id] = [];
             _completed[p.Id] = 0;
-            _skipped[p.Id]   = 0;
+            _skipped[p.Id] = 0;
         }
     }
 
@@ -101,7 +101,7 @@ public sealed class MonogamyController : IMonogamyController
     public void Start()
     {
         IsRunning = true;
-        _round    = 1;
+        _round = 1;
         BeginTurn();
     }
 
@@ -112,7 +112,7 @@ public sealed class MonogamyController : IMonogamyController
     {
         if (!_awaitingZoneChoice) return;
         _awaitingZoneChoice = false;
-        _pendingZone        = zone;
+        _pendingZone = zone;
         DrawCard();
     }
 
@@ -149,27 +149,27 @@ public sealed class MonogamyController : IMonogamyController
         _round++;
 
         var player = CurrentPlayer;
-        var roll   = DiceRoll.Roll(_rng);
-        _lastRoll  = roll;
+        var roll = DiceRoll.Roll(_rng);
+        _lastRoll = roll;
         _pendingZone = null;
 
         DiceRolled?.Invoke(this, new DiceRolledEvent(
-            PlayerName:    player.DisplayName,
-            Die1:          roll.Die1,
-            Die2:          roll.Die2,
-            Total:         roll.Total,
-            IsDouble:      roll.IsDouble,
+            PlayerName: player.DisplayName,
+            Die1: roll.Die1,
+            Die2: roll.Die2,
+            Total: roll.Total,
+            IsDouble: roll.IsDouble,
             ResultingZone: roll.ToZone().ToString(),
-            Round:         _round));
+            Round: _round));
 
         if (roll.IsDouble)
         {
             _awaitingZoneChoice = true;
             DoublesRolled?.Invoke(this, new DoublesRolledEvent(
                 PlayerName: player.DisplayName,
-                Die1:       roll.Die1,
-                Die2:       roll.Die2,
-                Round:      _round));
+                Die1: roll.Die1,
+                Die2: roll.Die2,
+                Round: _round));
             // Wait for ChooseZone() call
         }
         else
@@ -180,10 +180,10 @@ public sealed class MonogamyController : IMonogamyController
 
     private void DrawCard()
     {
-        var player  = CurrentPlayer;
+        var player = CurrentPlayer;
         var partner = PartnerOf(player);
 
-        var zone    = _pendingZone ?? _lastRoll?.ToZone() ?? MonogamyZone.Foreplay;
+        var zone = _pendingZone ?? _lastRoll?.ToZone() ?? MonogamyZone.Foreplay;
         _pendingZone = null;
 
         var card = DrawFromZone(zone)
@@ -206,24 +206,24 @@ public sealed class MonogamyController : IMonogamyController
             : card.Description;
 
         CardReady?.Invoke(this, new MonogamyCardReadyEvent(
-            PlayerName:     player.DisplayName,
-            PartnerName:    partner?.DisplayName ?? string.Empty,
-            CardTitle:      card.Title,
-            CardText:       text,
-            Zone:           card.Zone.ToString(),
-            Target:         card.Target.ToString(),
-            TokenValue:     card.TokenValue,
+            PlayerName: player.DisplayName,
+            PartnerName: partner?.DisplayName ?? string.Empty,
+            CardTitle: card.Title,
+            CardText: text,
+            Zone: card.Zone.ToString(),
+            Target: card.Target.ToString(),
+            TokenValue: card.TokenValue,
             DurationMinutes: card.DurationMinutes,
-            Round:          _round));
+            Round: _round));
 
         if (card.DurationMinutes.HasValue)
         {
             var activity = "Activity";
             TimedCardStarted?.Invoke(this, new MonogamyTimedCardEvent(
-                PlayerName:     player.DisplayName,
-                CardTitle:      card.Title,
+                PlayerName: player.DisplayName,
+                CardTitle: card.Title,
                 DurationMinutes: card.DurationMinutes.Value,
-                ActivityType:   activity));
+                ActivityType: activity));
         }
     }
 
@@ -231,9 +231,9 @@ public sealed class MonogamyController : IMonogamyController
     {
         if (_currentCard is null) return;
 
-        var player  = CurrentPlayer;
-        var zone    = _currentCard.Zone.ToString();
-        var tokens  = negotiated
+        var player = CurrentPlayer;
+        var zone = _currentCard.Zone.ToString();
+        var tokens = negotiated
             ? Math.Max(0, _currentCard.TokenValue / 2)
             : completed ? _currentCard.TokenValue : 0;
 
@@ -244,20 +244,20 @@ public sealed class MonogamyController : IMonogamyController
             _byZone[player.Id][zone] = zoneTotal + tokens;
 
             TokensAwarded?.Invoke(this, new TokensAwardedEvent(
-                PlayerName:  player.DisplayName,
+                PlayerName: player.DisplayName,
                 TokensEarned: tokens,
                 TotalTokens: _tokens[player.Id],
-                Zone:        zone));
+                Zone: zone));
         }
 
         if (completed || negotiated) _completed[player.Id]++;
-        else                         _skipped[player.Id]++;
+        else _skipped[player.Id]++;
 
         // Record history
         _history.Add(new MonogamyCardHistoryItem(
-            Zone:          (_currentCard?.Zone.ToString() ?? ""),
-            Title:         (_currentCard?.Title ?? ""),
-            WasCompleted:  completed,
+            Zone: (_currentCard?.Zone.ToString() ?? ""),
+            Title: (_currentCard?.Title ?? ""),
+            WasCompleted: completed,
             WasNegotiated: negotiated));
 
         _currentCard = null;
@@ -285,19 +285,19 @@ public sealed class MonogamyController : IMonogamyController
         var standings = _players
             .OrderByDescending(p => _tokens[p.Id])
             .Select(p => new MonogamyStanding(
-                PlayerName:    p.DisplayName,
-                Tokens:        _tokens[p.Id],
+                PlayerName: p.DisplayName,
+                Tokens: _tokens[p.Id],
                 CardsCompleted: _completed[p.Id],
-                CardsSkipped:  _skipped[p.Id],
-                TokensByZone:  _byZone[p.Id]))
+                CardsSkipped: _skipped[p.Id],
+                TokensByZone: _byZone[p.Id]))
             .ToList().AsReadOnly();
 
         var winner = standings.First();
 
         GameEnded?.Invoke(this, new MonogamyGameEndedEvent(
             FinalStandings: standings,
-            WinnerName:     winner.PlayerName,
-            TotalRounds:    _round));
+            WinnerName: winner.PlayerName,
+            TotalRounds: _round));
     }
 
     // ── Deck helpers ──────────────────────────────────────────────────────────

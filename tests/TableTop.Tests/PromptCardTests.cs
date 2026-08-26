@@ -12,9 +12,9 @@ public sealed class PromptCardTests
     {
         var card = PromptCard.CreateGenderDirected(
             title: "Test",
-            maleText:   "For males",
+            maleText: "For males",
             femaleText: "For females",
-            otherText:  "For others",
+            otherText: "For others",
             Difficulty.Easy, "Test");
 
         var player = MakePlayer("Bob", "male");
@@ -26,9 +26,9 @@ public sealed class PromptCardTests
     {
         var card = PromptCard.CreateGenderDirected(
             title: "Test",
-            maleText:   "For males",
+            maleText: "For males",
             femaleText: "For females",
-            otherText:  "For others",
+            otherText: "For others",
             Difficulty.Easy, "Test");
 
         var player = MakePlayer("Alice", "female");
@@ -40,9 +40,9 @@ public sealed class PromptCardTests
     {
         var card = PromptCard.CreateGenderDirected(
             title: "Test",
-            maleText:   "For males",
+            maleText: "For males",
             femaleText: "For females",
-            otherText:  "For others",
+            otherText: "For others",
             Difficulty.Easy, "Test");
 
         var player = MakePlayer("Alex", "other");
@@ -54,9 +54,9 @@ public sealed class PromptCardTests
     {
         var card = PromptCard.CreateGenderDirected(
             title: "Test",
-            maleText:   "For males",
+            maleText: "For males",
             femaleText: "For females",
-            otherText:  "Default fallback",
+            otherText: "Default fallback",
             Difficulty.Easy, "Test");
 
         var player = Player.Create("Unknown"); // no attributes
@@ -68,9 +68,9 @@ public sealed class PromptCardTests
     {
         var card = PromptCard.CreateGenderDirected(
             title: "Test",
-            maleText:   "For males",
+            maleText: "For males",
             femaleText: "For females",
-            otherText:  "For others",
+            otherText: "For others",
             Difficulty.Easy, "Test");
 
         var player = MakePlayer("Charlie", "MALE");
@@ -83,9 +83,9 @@ public sealed class PromptCardTests
         // A consumer that only knows ICard should still receive a non-null description.
         ICard card = PromptCard.CreateGenderDirected(
             title: "Test",
-            maleText:   "For males",
+            maleText: "For males",
             femaleText: "For females",
-            otherText:  "Base description",
+            otherText: "Base description",
             Difficulty.Easy, "Category");
 
         card.Description.Should().NotBeNullOrWhiteSpace();
@@ -101,12 +101,12 @@ public sealed class PromptCardTests
             defaultText: "Everyone",
             variants: new Dictionary<string, string>
             {
-                ["host"]  = "You organised this — own it.",
+                ["host"] = "You organised this — own it.",
                 ["guest"] = "You showed up — that counts.",
             },
             Difficulty.Easy, "Prompt");
 
-        var host  = Player.Create("Host",  attributes: new Dictionary<string, string> { ["role"] = "host" });
+        var host = Player.Create("Host", attributes: new Dictionary<string, string> { ["role"] = "host" });
         var guest = Player.Create("Guest", attributes: new Dictionary<string, string> { ["role"] = "guest" });
         var other = Player.Create("Other");
 

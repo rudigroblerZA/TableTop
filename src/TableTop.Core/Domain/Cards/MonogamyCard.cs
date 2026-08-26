@@ -16,39 +16,39 @@ public sealed class MonogamyCard : BaseCard, IMonogamyCard, IPromptCard
 
     /// <summary>Initialises a new <see cref="MonogamyCard"/> instance.</summary>
     public MonogamyCard(
-        Guid              id,
-        string            title,
-        string            baseDescription,
+        Guid id,
+        string title,
+        string baseDescription,
         ICardTextResolver resolver,
-        MonogamyZone      zone,
-        CardTarget        target,
-        int               tokenValue     = 1,
-        int?              durationMinutes = null,
-        IEnumerable<string>? tags        = null,
-        IRestriction?     restriction    = null)
+        MonogamyZone zone,
+        CardTarget target,
+        int tokenValue = 1,
+        int? durationMinutes = null,
+        IEnumerable<string>? tags = null,
+        IRestriction? restriction = null)
         : base(id, title, baseDescription,
                ZoneToDifficulty(zone), zone.ToString(), tags, restriction)
     {
-        _resolver       = resolver ?? throw new ArgumentNullException(nameof(resolver));
-        Zone            = zone;
-        Target          = target;
-        TokenValue      = tokenValue;
+        _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
+        Zone = zone;
+        Target = target;
+        TokenValue = tokenValue;
         DurationMinutes = durationMinutes;
     }
 
     // ── IMonogamyCard ─────────────────────────────────────────────────────────
 
     /// <inheritdoc />
-    public MonogamyZone Zone            { get; }
+    public MonogamyZone Zone { get; }
 
     /// <inheritdoc />
-    public CardTarget   Target          { get; }
+    public CardTarget Target { get; }
 
     /// <inheritdoc />
-    public int          TokenValue      { get; }
+    public int TokenValue { get; }
 
     /// <inheritdoc />
-    public int?         DurationMinutes { get; }
+    public int? DurationMinutes { get; }
 
     // ── IPromptCard ───────────────────────────────────────────────────────────
 
@@ -62,40 +62,40 @@ public sealed class MonogamyCard : BaseCard, IMonogamyCard, IPromptCard
     /// The resolver picks the text based on the drawing player's gender attribute.
     /// </summary>
     public static MonogamyCard Create(
-        string       title,
-        string       forHimText,
-        string       forHerText,
-        string       neutralText,
+        string title,
+        string forHimText,
+        string forHerText,
+        string neutralText,
         MonogamyZone zone,
-        CardTarget   target,
-        int          tokenValue      = 1,
-        int?         durationMinutes = null,
-        IEnumerable<string>? tags   = null,
-        IRestriction? restriction   = null) =>
+        CardTarget target,
+        int tokenValue = 1,
+        int? durationMinutes = null,
+        IEnumerable<string>? tags = null,
+        IRestriction? restriction = null) =>
         Create(Guid.NewGuid(), title, forHimText, forHerText, neutralText,
                zone, target, tokenValue, durationMinutes, tags, restriction);
 
     /// <summary>Overload that accepts a stable <see cref="Guid"/> (for JSON loading).</summary>
     public static MonogamyCard Create(
-        Guid         id,
-        string       title,
-        string       forHimText,
-        string       forHerText,
-        string       neutralText,
+        Guid id,
+        string title,
+        string forHimText,
+        string forHerText,
+        string neutralText,
         MonogamyZone zone,
-        CardTarget   target,
-        int          tokenValue      = 1,
-        int?         durationMinutes = null,
-        IEnumerable<string>? tags   = null,
-        IRestriction? restriction   = null)
+        CardTarget target,
+        int tokenValue = 1,
+        int? durationMinutes = null,
+        IEnumerable<string>? tags = null,
+        IRestriction? restriction = null)
     {
         var resolver = new GenderDirectedTextResolver(
             defaultText: neutralText,
             variantsByGender: new Dictionary<string, string>
             {
-                ["male"]   = forHimText,
+                ["male"] = forHimText,
                 ["female"] = forHerText,
-                ["other"]  = neutralText,
+                ["other"] = neutralText,
             });
 
         return new MonogamyCard(
@@ -108,28 +108,28 @@ public sealed class MonogamyCard : BaseCard, IMonogamyCard, IPromptCard
     /// Creates a Monogamy card with a single text shown to all players.
     /// </summary>
     public static MonogamyCard CreateNeutral(
-        string       title,
-        string       text,
+        string title,
+        string text,
         MonogamyZone zone,
-        CardTarget   target,
-        int          tokenValue      = 1,
-        int?         durationMinutes = null,
-        IEnumerable<string>? tags   = null,
-        IRestriction? restriction   = null) =>
+        CardTarget target,
+        int tokenValue = 1,
+        int? durationMinutes = null,
+        IEnumerable<string>? tags = null,
+        IRestriction? restriction = null) =>
         Create(Guid.NewGuid(), title, text, text, text, zone, target,
                tokenValue, durationMinutes, tags, restriction);
 
     /// <summary>Overload that accepts a stable <see cref="Guid"/> (for JSON loading).</summary>
     public static MonogamyCard CreateNeutral(
-        Guid         id,
-        string       title,
-        string       text,
+        Guid id,
+        string title,
+        string text,
         MonogamyZone zone,
-        CardTarget   target,
-        int          tokenValue      = 1,
-        int?         durationMinutes = null,
-        IEnumerable<string>? tags   = null,
-        IRestriction? restriction   = null) =>
+        CardTarget target,
+        int tokenValue = 1,
+        int? durationMinutes = null,
+        IEnumerable<string>? tags = null,
+        IRestriction? restriction = null) =>
         Create(id, title, text, text, text, zone, target,
                tokenValue, durationMinutes, tags, restriction);
 
@@ -138,9 +138,9 @@ public sealed class MonogamyCard : BaseCard, IMonogamyCard, IPromptCard
     private static Difficulty ZoneToDifficulty(MonogamyZone zone) => zone switch
     {
         MonogamyZone.Foreplay => Difficulty.Easy,
-        MonogamyZone.Sensual  => Difficulty.Medium,
-        MonogamyZone.Steamy   => Difficulty.Hard,
-        MonogamyZone.Wild     => Difficulty.Extreme,
-        _                     => Difficulty.Easy,
+        MonogamyZone.Sensual => Difficulty.Medium,
+        MonogamyZone.Steamy => Difficulty.Hard,
+        MonogamyZone.Wild => Difficulty.Extreme,
+        _ => Difficulty.Easy,
     };
 }

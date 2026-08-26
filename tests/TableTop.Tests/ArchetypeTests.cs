@@ -1,9 +1,8 @@
 using TableTop.Core.Abstractions.Game;
 using TableTop.Games;
-using TableTop.Hosting;
+using TableTop.Games.Couples;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Controllers;
-using TableTop.Hosting.Extensions;
 using TableTop.Hosting.Persistence;
 
 namespace TableTop.Tests;
@@ -101,7 +100,7 @@ public sealed class ArchetypeTests
     public void AllModes_IncludesModesFromAllSubArchetypes()
     {
         var classroom = ArchetypeRegistry.Default().FindById("classroom");
-        var allModes  = classroom!.AllModes;
+        var allModes = classroom!.AllModes;
 
         allModes.Should().Contain(m => m.Name.Contains("Millionaire"),
             "Quiz Night lives under Classroom");
@@ -161,9 +160,9 @@ public sealed class NewSchoolModeTests
     // Ids lost their "grade6" segment when that tier was flattened into
     // Classroom — the node held thirteen games and no modes of its own, which
     // made this branch one level deeper than any other.
-    [InlineData("classroom.words",       "Word Detectives")]
-    [InlineData("classroom.figurative",  "Figurative Language")]
-    [InlineData("classroom.stories",     "Story Starters")]
+    [InlineData("classroom.words", "Word Detectives")]
+    [InlineData("classroom.figurative", "Figurative Language")]
+    [InlineData("classroom.stories", "Story Starters")]
     [InlineData("classroom.punctuation", "Punctuation Wars")]
     public void CurriculumModes_RegisteredInArchetype(string id, string modeName)
     {
@@ -261,9 +260,9 @@ public sealed class CouplesGameTests
 {
     [Theory]
     [InlineData("couples.connection.questions", "Couples Questions")]
-    [InlineData("couples.connection.memory",    "Memory Lane")]
-    [InlineData("couples.connection.wish",      "Two Truths, One Wish")]
-    [InlineData("couples.dares.relationship",   "Relationship Dares")]
+    [InlineData("couples.connection.memory", "Memory Lane")]
+    [InlineData("couples.connection.wish", "Two Truths, One Wish")]
+    [InlineData("couples.dares.relationship", "Relationship Dares")]
     public void NewCouplesModes_RegisteredInArchetype(string id, string modeName)
     {
         var node = ArchetypeRegistry.Default().FindById(id);
@@ -375,11 +374,11 @@ public sealed class FamilyGameTests
     }
 
     [Theory]
-    [InlineData("fun.family.quiz",     "Family Quiz")]
-    [InlineData("fun.family.dares",    "Family Dares")]
-    [InlineData("fun.family.stories",  "Family Stories")]
+    [InlineData("fun.family.quiz", "Family Quiz")]
+    [InlineData("fun.family.dares", "Family Dares")]
+    [InlineData("fun.family.stories", "Family Stories")]
     [InlineData("fun.family.thisisus", "This Is Us")]
-    [InlineData("fun.family.laugh",    "Laugh or Groan")]
+    [InlineData("fun.family.laugh", "Laugh or Groan")]
     public void FamilyModes_RegisteredInArchetype(string id, string modeName)
     {
         var node = ArchetypeRegistry.Default().FindById(id);
@@ -605,7 +604,7 @@ public sealed class ArchitectureTests
             TestFactory.MakePlayer("Bob")
         };
 
-        var factory    = new ControllerFactory();
+        var factory = new ControllerFactory();
         var controller = await factory.CreateAsync(
             new TableTop.Games.Couples.CouplesQuestionsMode(), players, maxRounds: 5);
 
@@ -615,8 +614,8 @@ public sealed class ArchitectureTests
     [Fact]
     public async Task ControllerFactory_CreatesMillionaireController_ForMillionaireMode()
     {
-        var players    = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var factory    = new ControllerFactory();
+        var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
+        var factory = new ControllerFactory();
         var controller = await factory.CreateAsync(new MillionaireMode(), players);
 
         controller.Should().BeAssignableTo<IMillionaireController>();
@@ -630,7 +629,7 @@ public sealed class ArchitectureTests
             TestFactory.MakePlayer("Alice", gender: "female", extraTags: new[] { "couple-member", "married" }),
             TestFactory.MakePlayer("Bob",   gender: "male",   extraTags: new[] { "couple-member", "married" })
         };
-        var factory    = new ControllerFactory();
+        var factory = new ControllerFactory();
         var controller = await factory.CreateAsync(new MonogamyMode(), players);
 
         controller.Should().BeAssignableTo<IMonogamyController>();
@@ -639,9 +638,9 @@ public sealed class ArchitectureTests
     [Fact]
     public async Task CardTurnController_CreateAsync_BuildsDeckWithoutSyncOverAsync()
     {
-        var cards   = TestFactory.MakeCards(5);
+        var cards = TestFactory.MakeCards(5);
         var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var def     = new InlineModeDef(cards);
+        var def = new InlineModeDef(cards);
 
         // CreateAsync should complete without throwing
         var controller = await CardTurnController.CreateAsync(
@@ -695,8 +694,8 @@ public sealed class ArchitectureTests
     {
         // A brand-new mode the factory has never heard of, only implementing the
         // capability interface, must still route to the Millionaire controller.
-        var players    = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var factory    = new ControllerFactory();
+        var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
+        var factory = new ControllerFactory();
         var controller = await factory.CreateAsync(new CustomQuizMode(), players);
 
         controller.Should().BeAssignableTo<IMillionaireController>(
@@ -711,7 +710,7 @@ public sealed class ArchitectureTests
             TestFactory.MakePlayer("Alice", gender: "female", extraTags: new[] { "couple-member" }),
             TestFactory.MakePlayer("Bob",   gender: "male",   extraTags: new[] { "couple-member" })
         };
-        var factory    = new ControllerFactory();
+        var factory = new ControllerFactory();
         var controller = await factory.CreateAsync(new CustomMonogamyMode(), players);
 
         controller.Should().BeAssignableTo<IMonogamyController>(
@@ -757,8 +756,8 @@ public sealed class ArchitectureTests
     {
         // A brand-new mode the factory has never seen, only IFlowAwareMode + IGameModeDefinition,
         // must still route to a CardTurnController (not throw or fall through wrongly).
-        var players    = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
-        var factory    = new ControllerFactory();
+        var players = new[] { TestFactory.MakePlayer("Alice"), TestFactory.MakePlayer("Bob") };
+        var factory = new ControllerFactory();
         var controller = await factory.CreateAsync(new CustomFlowAwareMode(), players);
 
         controller.Should().BeAssignableTo<ICardTurnController>(
@@ -771,7 +770,7 @@ public sealed class ArchitectureTests
         // ControllerFactory must not reference any concrete game mode type.
         // Hosting may reference the Games assembly (for ArchetypeRegistry) but
         // the factory class itself must only reference capability interfaces.
-        var factoryType  = typeof(ControllerFactory);
+        var factoryType = typeof(ControllerFactory);
         var gamesAssembly = typeof(TableTop.Games.MillionaireMode).Assembly;
 
         // Collect every type directly referenced in ControllerFactory's methods
@@ -802,7 +801,7 @@ public sealed class ArchitectureTests
 internal sealed class StubGameMode(string name, string description)
     : TableTop.Core.Abstractions.Game.IGameMode
 {
-    public string Name        => name;
+    public string Name => name;
     public string Description => description;
 }
 
@@ -814,7 +813,7 @@ internal sealed class InMemoryPersistence : IGamePersistence
     private SessionSnapshot? _saved;
     public bool HasSavedSession => _saved is not null;
     public Task SaveAsync(SessionSnapshot s, CancellationToken ct = default) { _saved = s; return Task.CompletedTask; }
-    public Task<SessionSnapshot?> LoadAsync(CancellationToken ct = default)  => Task.FromResult(_saved);
+    public Task<SessionSnapshot?> LoadAsync(CancellationToken ct = default) => Task.FromResult(_saved);
     public Task DeleteAsync(CancellationToken ct = default) { _saved = null; return Task.CompletedTask; }
 }
 
@@ -826,7 +825,7 @@ internal sealed class CustomQuizMode
     : TableTop.Core.Abstractions.Game.IGameMode,
       TableTop.Core.Abstractions.Game.IQuestionBankProvider
 {
-    public string Name        => "Custom Quiz";
+    public string Name => "Custom Quiz";
     public string Description => "A bespoke quiz mode for testing capability dispatch.";
 
     public IReadOnlyList<TableTop.Core.Domain.Cards.MultipleChoiceCard> GetQuestionBank() =>
@@ -846,7 +845,7 @@ internal sealed class CustomFlowAwareMode
     : TableTop.Games.Base.BaseGameModeDefinition,
       TableTop.Core.Abstractions.Game.IFlowAwareMode
 {
-    public override string Name        => "Custom Flow Mode";
+    public override string Name => "Custom Flow Mode";
     public override string Description => "Testing flow-aware capability dispatch.";
 
     protected override TableTop.Core.Abstractions.Scoring.IScoringStrategy BuildScoring() =>
@@ -860,7 +859,7 @@ internal sealed class CustomMonogamyMode
     : TableTop.Core.Abstractions.Game.IGameMode,
       TableTop.Core.Abstractions.Game.IMonogamyDeckProvider
 {
-    public string Name        => "Custom Monogamy";
+    public string Name => "Custom Monogamy";
     public string Description => "A bespoke intimacy deck for testing capability dispatch.";
 
     public IReadOnlyList<TableTop.Core.Domain.Cards.MonogamyCard> GetDeck() =>

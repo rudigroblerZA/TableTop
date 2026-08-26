@@ -27,7 +27,7 @@ namespace TableTop.Games.Family;
 public sealed class SurviveThisMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Survive This!";
+    public override string Name => "Survive This!";
     /// <inheritdoc />
     public override string Description =>
         "Rate your survival chances 1-5. Explain your strategy. Discuss chaos.";
@@ -35,17 +35,17 @@ public sealed class SurviveThisMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Survived";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Forfeit";
+    public override string SkipLabel => "Forfeit";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Inconvenient"]  = "#FFCA28",
-            ["Ridiculous"]    = "#EC407A",
-            ["Impossible"]    = "#EF5350",
-            ["Weird"]         = "#AB47BC",
-            ["Social"]        = "#42A5F5",
+            ["Inconvenient"] = "#FFCA28",
+            ["Ridiculous"] = "#EC407A",
+            ["Impossible"] = "#EF5350",
+            ["Weird"] = "#AB47BC",
+            ["Social"] = "#42A5F5",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

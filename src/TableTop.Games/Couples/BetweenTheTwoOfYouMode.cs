@@ -1,5 +1,5 @@
-using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Cards;
+using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
@@ -39,7 +39,7 @@ public sealed class BetweenTheTwoOfYouMode : BaseGameModeDefinition, ITableShape
 
 
     /// <inheritdoc />
-    public override string Name        => "Between the Two of You";
+    public override string Name => "Between the Two of You";
     /// <inheritdoc />
     public override string Description =>
         "A self-knowledge quiz for couples on the dynamics of intimacy — lead/follow, give/receive, and more. Find your leans, then grow together.";
@@ -47,19 +47,19 @@ public sealed class BetweenTheTwoOfYouMode : BaseGameModeDefinition, ITableShape
     /// <summary>Label for a completed question.</summary>
     public override string CompleteLabel => "Noted";
     /// <summary>Label for a skipped question.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Lead & Follow"]   = "#7E57C2",
-            ["Give & Receive"]  = "#EC407A",
-            ["Plan & Spark"]    = "#42A5F5",
-            ["Words & Touch"]   = "#26A69A",
-            ["Bold & Cosy"]     = "#FFA726",
-            ["Results"]         = "#FFD700",
-            ["Grow Together"]   = "#66BB6A",
+            ["Lead & Follow"] = "#7E57C2",
+            ["Give & Receive"] = "#EC407A",
+            ["Plan & Spark"] = "#42A5F5",
+            ["Words & Touch"] = "#26A69A",
+            ["Bold & Cosy"] = "#FFA726",
+            ["Results"] = "#FFD700",
+            ["Grow Together"] = "#66BB6A",
         };
 
     /// <summary>Flat scoring — this is a self-knowledge quiz, not a contest.</summary>

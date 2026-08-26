@@ -1,7 +1,6 @@
 using TableTop.Hosting.Controllers;
 using TableTop.Hosting.Events;
 using TableTop.Hosting.Persistence;
-using TableTop.Games;
 
 namespace TableTop.Tests;
 
@@ -26,7 +25,7 @@ public sealed class GameMechanicsTests : IDisposable
     private static CardTurnController BuildController(
         IEnumerable<ICard> cards,
         IReadOnlyList<Core.Domain.Players.Player>? players = null,
-        int maxRounds   = 20,
+        int maxRounds = 20,
         int skipPenalty = -1,
         ISessionRepository? repo = null,
         IEnumerable<ICard>? bonusPool = null,
@@ -34,11 +33,11 @@ public sealed class GameMechanicsTests : IDisposable
         TestFactory.BuildController(
             cards.ToList(),
             players?.Cast<Core.Abstractions.Players.IPlayer>().ToList(),
-            maxRounds:        maxRounds,
-            skipPenalty:      skipPenalty,
+            maxRounds: maxRounds,
+            skipPenalty: skipPenalty,
             sessionRepository: repo,
-            bonusPool:        bonusPool,
-            rewardInterval:   rewardInterval);
+            bonusPool: bonusPool,
+            rewardInterval: rewardInterval);
 
     // ── Skip policy ───────────────────────────────────────────────────────────
 
@@ -111,7 +110,7 @@ public sealed class GameMechanicsTests : IDisposable
     public void BreakCardDrawnEvent_IncludesActivityAndDuration()
     {
         var breakCard = BreakCard.CreateShower("Shower", "Take a shower.", 10);
-        var alice     = Player.Create("Alice");
+        var alice = Player.Create("Alice");
         var breakList = new System.Collections.Generic.List<ICard> { breakCard }; breakList.AddRange(MakeCards(5));
         var ctrl = BuildController(breakList, [alice]);
 
@@ -141,7 +140,7 @@ public sealed class GameMechanicsTests : IDisposable
     [Fact]
     public void InspirationCard_SavedToPlayerList_EventRaised()
     {
-        var insp  = InspirationCard.Create("A", "B", "Do the thing.", "Growth");
+        var insp = InspirationCard.Create("A", "B", "Do the thing.", "Growth");
         var alice = Player.Create("Alice");
         var inspirationList = new System.Collections.Generic.List<ICard> { insp }; inspirationList.AddRange(MakeCards(5));
         var ctrl = BuildController(inspirationList, [alice]);
@@ -168,8 +167,8 @@ public sealed class GameMechanicsTests : IDisposable
     public async Task Save_CreatesSnapshotFile()
     {
         var filePath = Path.Combine(_dir, "session.json");
-        var repo     = new JsonSessionRepository(filePath);
-        var alice    = Player.Create("Alice");
+        var repo = new JsonSessionRepository(filePath);
+        var alice = Player.Create("Alice");
         var ctrl = BuildController(MakeCards(10), [alice], repo: repo);
 
         ctrl.Start();
@@ -184,8 +183,8 @@ public sealed class GameMechanicsTests : IDisposable
     public async Task Save_SnapshotContainsCorrectState()
     {
         var filePath = Path.Combine(_dir, "session2.json");
-        var repo     = new JsonSessionRepository(filePath);
-        var alice    = Player.Create("Alice");
+        var repo = new JsonSessionRepository(filePath);
+        var alice = Player.Create("Alice");
         var ctrl = BuildController(MakeCards(10), [alice], repo: repo, maxRounds: 5);
 
         ctrl.Start();
@@ -206,7 +205,7 @@ public sealed class GameMechanicsTests : IDisposable
     public async Task SessionSavedEvent_RaisedAfterSave()
     {
         var filePath = Path.Combine(_dir, "session3.json");
-        var repo     = new JsonSessionRepository(filePath);
+        var repo = new JsonSessionRepository(filePath);
         var ctrl = BuildController(MakeCards(5), repo: repo);
 
         SessionSavedEvent? evt = null;
@@ -222,7 +221,7 @@ public sealed class GameMechanicsTests : IDisposable
     public async Task SessionRepository_DeleteAsync_RemovesFile()
     {
         var filePath = Path.Combine(_dir, "session4.json");
-        var repo     = new JsonSessionRepository(filePath);
+        var repo = new JsonSessionRepository(filePath);
         await repo.SaveAsync(new SessionSnapshot { ModeName = "Test" });
         await repo.DeleteAsync();
         File.Exists(filePath).Should().BeFalse();

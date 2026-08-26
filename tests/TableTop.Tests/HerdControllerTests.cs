@@ -1,10 +1,6 @@
-using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Domain.Cards;
-using TableTop.Core.Domain.Players;
 using TableTop.Games.Fun;
-using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Controllers;
 using TableTop.Hosting.Events;
@@ -83,7 +79,7 @@ public sealed class HerdControllerTests
         controller.Start();
 
         controller.SubmitAnswers(new Dictionary<string, string>
-            { ["A"] = "cornflakes", ["B"] = "cornflakes", ["C"] = "cornflakes", ["D"] = "weetabix" });
+        { ["A"] = "cornflakes", ["B"] = "cornflakes", ["C"] = "cornflakes", ["D"] = "weetabix" });
 
         resolved!.HerdAnswer.Should().Be("cornflakes");
         resolved.Scores["A"].Should().Be(HerdController.HerdPoints);
@@ -104,7 +100,7 @@ public sealed class HerdControllerTests
         controller.Start();
 
         controller.SubmitAnswers(new Dictionary<string, string>
-            { ["A"] = "x", ["B"] = "x", ["C"] = "x", ["D"] = "alone" });
+        { ["A"] = "x", ["B"] = "x", ["C"] = "x", ["D"] = "alone" });
 
         resolved!.LoneVoiceName.Should().Be("D");
         resolved.Scores["D"].Should().Be(HerdController.LoneVoicePoints);
@@ -121,7 +117,7 @@ public sealed class HerdControllerTests
         controller.Start();
 
         controller.SubmitAnswers(new Dictionary<string, string>
-            { ["A"] = "w", ["B"] = "x", ["C"] = "y", ["D"] = "z" });
+        { ["A"] = "w", ["B"] = "x", ["C"] = "y", ["D"] = "z" });
 
         resolved!.HerdAnswer.Should().BeNull();
         resolved.LoneVoiceName.Should().BeNull();
@@ -137,7 +133,7 @@ public sealed class HerdControllerTests
         controller.Start();
 
         controller.SubmitAnswers(new Dictionary<string, string>
-            { ["A"] = "same", ["B"] = "same", ["C"] = "same", ["D"] = "same" });
+        { ["A"] = "same", ["B"] = "same", ["C"] = "same", ["D"] = "same" });
 
         resolved!.HerdAnswer.Should().Be("same");
         resolved.LoneVoiceName.Should().BeNull();
@@ -153,7 +149,7 @@ public sealed class HerdControllerTests
         controller.Start();
 
         controller.SubmitAnswers(new Dictionary<string, string>
-            { ["A"] = "x", ["B"] = "x", ["C"] = "y", ["D"] = "y" });
+        { ["A"] = "x", ["B"] = "x", ["C"] = "y", ["D"] = "y" });
 
         resolved!.HerdAnswer.Should().NotBeNull();
         resolved.LoneVoiceName.Should().BeNull("nobody stood alone in a 2-2 split");
@@ -170,7 +166,7 @@ public sealed class HerdControllerTests
         controller.Start();
 
         controller.SubmitAnswers(new Dictionary<string, string>
-            { ["A"] = "Corn Flakes", ["B"] = "corn flakes", ["C"] = " CORN FLAKES! ", ["D"] = "weetabix" });
+        { ["A"] = "Corn Flakes", ["B"] = "corn flakes", ["C"] = " CORN FLAKES! ", ["D"] = "weetabix" });
 
         resolved!.Groups[0].PlayerNames.Should().HaveCount(3);
     }
@@ -187,7 +183,7 @@ public sealed class HerdControllerTests
         controller.Start();
 
         controller.SubmitAnswers(new Dictionary<string, string>
-            { ["A"] = "corn flakes", ["B"] = "cornflakes", ["C"] = "x", ["D"] = "y" });
+        { ["A"] = "corn flakes", ["B"] = "cornflakes", ["C"] = "x", ["D"] = "y" });
 
         resolved!.HerdAnswer.Should().BeNull("no two answers matched");
     }
@@ -201,7 +197,7 @@ public sealed class HerdControllerTests
         controller.Start();
 
         controller.SubmitAnswers(new Dictionary<string, string>
-            { ["A"] = "x", ["B"] = "x", ["C"] = "   ", ["D"] = "" });
+        { ["A"] = "x", ["B"] = "x", ["C"] = "   ", ["D"] = "" });
 
         resolved!.Scores.Should().NotContainKey("C");
         resolved.Scores.Should().NotContainKey("D");
@@ -249,7 +245,7 @@ public sealed class HerdControllerTests
         controller.Start();
 
         controller.SubmitAnswers(new Dictionary<string, string>
-            { ["A"] = "x", ["B"] = "x", ["C"] = "y", ["D"] = "y" });
+        { ["A"] = "x", ["B"] = "x", ["C"] = "y", ["D"] = "y" });
 
         ended!.WinnerNames.Should().HaveCountGreaterThan(1);
     }

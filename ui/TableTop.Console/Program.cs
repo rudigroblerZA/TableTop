@@ -18,7 +18,7 @@ var provider = services.BuildServiceProvider();
 try
 {
     var launcher = new ConsoleGameLauncher(
-        repository:        provider.GetRequiredService<TableTop.Hosting.Persistence.IPlayerRepository>(),
+        repository: provider.GetRequiredService<TableTop.Hosting.Persistence.IPlayerRepository>(),
         controllerFactory: provider.GetRequiredService<TableTop.Hosting.Abstractions.IControllerFactory>());
 
     launcher.Run();

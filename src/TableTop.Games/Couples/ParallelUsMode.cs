@@ -29,7 +29,7 @@ namespace TableTop.Games.Couples;
 public sealed class ParallelUsMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Parallel Us";
+    public override string Name => "Parallel Us";
     /// <inheritdoc />
     public override string Description =>
         "Co-write the two of you into other eras, worlds, and what-ifs — alternating, 'yes-and', no points, all canon.";
@@ -37,20 +37,20 @@ public sealed class ParallelUsMode : BaseGameModeDefinition
     /// <summary>Label shown on the button that records a told story.</summary>
     public override string CompleteLabel => "Canon";
     /// <summary>Label shown on the button that skips the current card.</summary>
-    public override string SkipLabel     => "Different Timeline";
+    public override string SkipLabel => "Different Timeline";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Other Eras"]     = "#FFA726",
-            ["Other Worlds"]   = "#AB47BC",
-            ["Sliding Doors"]  = "#42A5F5",
-            ["Genre Swap"]     = "#EF5350",
+            ["Other Eras"] = "#FFA726",
+            ["Other Worlds"] = "#AB47BC",
+            ["Sliding Doors"] = "#42A5F5",
+            ["Genre Swap"] = "#EF5350",
             ["Remix the Real"] = "#EC407A",
-            ["Epilogues"]      = "#66BB6A",
+            ["Epilogues"] = "#66BB6A",
             ["Forbidden Timelines"] = "#B71C4A",
-            ["Tonight's Episode"]   = "#D97706",
+            ["Tonight's Episode"] = "#D97706",
         };
 
     /// <summary>Storytelling has no score — completion is its own reward.</summary>

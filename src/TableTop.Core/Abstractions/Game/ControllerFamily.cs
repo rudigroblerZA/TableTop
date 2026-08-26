@@ -94,18 +94,18 @@ public static class ControllerFamilies
         // catalogue actually contains, so read them as a floor and not a ceiling.
         return mode switch
         {
-            IMonogamyDeckProvider  => ControllerFamily.Monogamy,
-            IQuestionBankProvider  => ControllerFamily.Quiz,
-            IHerdDeckProvider      => ControllerFamily.SimultaneousAnswer,
-            IClaimedDeckProvider   => ControllerFamily.AreaControl,
-            IDailyDeckProvider     => ControllerFamily.DailyCampaign,
+            IMonogamyDeckProvider => ControllerFamily.Monogamy,
+            IQuestionBankProvider => ControllerFamily.Quiz,
+            IHerdDeckProvider => ControllerFamily.SimultaneousAnswer,
+            IClaimedDeckProvider => ControllerFamily.AreaControl,
+            IDailyDeckProvider => ControllerFamily.DailyCampaign,
 
             // Everything the factory can still build a card-turn controller for.
             // IFlowAwareMode and IDiceProgressionMode change the progression
             // strategy, not the controller type, so they are CardTurn too.
-            IGameModeDefinition    => ControllerFamily.CardTurn,
+            IGameModeDefinition => ControllerFamily.CardTurn,
 
-            _                      => null,
+            _ => null,
         };
     }
 

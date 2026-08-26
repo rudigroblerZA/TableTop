@@ -1,4 +1,3 @@
-using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Domain.Cards;
 
@@ -14,7 +13,7 @@ namespace TableTop.Games.School;
 public sealed class SchoolMillionaireMode : IGameMode, IQuestionBankProvider
 {
     /// <inheritdoc />
-    public string Name        => "School Millionaire (Grade 6)";
+    public string Name => "School Millionaire (Grade 6)";
     /// <inheritdoc />
     public string Description =>
         "Who Wants to Be a Millionaire? with curriculum-based Grade 6 questions. " +

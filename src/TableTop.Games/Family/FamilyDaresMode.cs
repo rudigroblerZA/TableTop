@@ -2,7 +2,6 @@ using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
-using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Domain.Scoring;
 using TableTop.Games.Base;
 
@@ -35,16 +34,16 @@ public sealed class FamilyDaresMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "✓ Did it!";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "~ Can't do it";
+    public override string SkipLabel => "~ Can't do it";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Physical"]     = "#66BB6A",
-            ["Performance"]  = "#FFCA28",
-            ["Memory"]       = "#42A5F5",
-            ["Teamwork"]     = "#26C6DA",
+            ["Physical"] = "#66BB6A",
+            ["Performance"] = "#FFCA28",
+            ["Memory"] = "#42A5F5",
+            ["Teamwork"] = "#26C6DA",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

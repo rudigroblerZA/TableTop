@@ -1,6 +1,5 @@
-using SC = System.Console;
 using CC = System.ConsoleColor;
-using CK = System.ConsoleKey;
+using SC = System.Console;
 namespace TableTop.Console;
 
 /// <summary>
@@ -9,14 +8,14 @@ namespace TableTop.Console;
 internal static class ConsoleUi
 {
     // ── Colour palette ────────────────────────────────────────────────────────
-    private static readonly ConsoleColor ColorHeading    = CC.Cyan;
-    private static readonly ConsoleColor ColorCard       = CC.Yellow;
-    private static readonly ConsoleColor ColorPlayer     = CC.Green;
+    private static readonly ConsoleColor ColorHeading = CC.Cyan;
+    private static readonly ConsoleColor ColorCard = CC.Yellow;
+    private static readonly ConsoleColor ColorPlayer = CC.Green;
     private static readonly ConsoleColor ColorRestricted = CC.DarkYellow;
-    private static readonly ConsoleColor ColorScore      = CC.Magenta;
-    private static readonly ConsoleColor ColorError      = CC.Red;
-    private static readonly ConsoleColor ColorMuted      = CC.DarkGray;
-    private static readonly ConsoleColor ColorSuccess    = CC.Green;
+    private static readonly ConsoleColor ColorScore = CC.Magenta;
+    private static readonly ConsoleColor ColorError = CC.Red;
+    private static readonly ConsoleColor ColorMuted = CC.DarkGray;
+    private static readonly ConsoleColor ColorSuccess = CC.Green;
 
     // ── Layout constants ──────────────────────────────────────────────────────
     private const int CardWidth = 60;
@@ -252,7 +251,7 @@ internal static class ConsoleUi
         {
             var raw = Prompt($"{message} (y/n):").ToLowerInvariant();
             if (raw is "y" or "yes") return true;
-            if (raw is "n" or "no")  return false;
+            if (raw is "n" or "no") return false;
 
             // See PromptInt: at EOF, answering "no" is what lets a piped run
             // finish instead of spinning.
@@ -283,7 +282,7 @@ internal static class ConsoleUi
     private static string Pad(string text, int width)
     {
         var used = 0;
-        var end  = text.Length;
+        var end = text.Length;
 
         // Walk grapheme clusters, so an emoji with a skin-tone or ZWJ sequence
         // counts once rather than per code point.
@@ -313,15 +312,15 @@ internal static class ConsoleUi
 
         // Emoji and pictographs
         if (rune is >= 0x1F300 and <= 0x1FAFF) return 2;
-        if (rune is >= 0x2600  and <= 0x27BF)  return 2;   // misc symbols, dingbats
+        if (rune is >= 0x2600 and <= 0x27BF) return 2;   // misc symbols, dingbats
         if (rune is >= 0x1F000 and <= 0x1F2FF) return 2;   // mahjong, cards, enclosed
         // East Asian Wide / Fullwidth
-        if (rune is >= 0x1100 and <= 0x115F)   return 2;   // Hangul Jamo
-        if (rune is >= 0x2E80  and <= 0xA4CF)  return 2;   // CJK
-        if (rune is >= 0xAC00  and <= 0xD7A3)  return 2;   // Hangul syllables
-        if (rune is >= 0xF900  and <= 0xFAFF)  return 2;   // CJK compatibility
-        if (rune is >= 0xFF00  and <= 0xFF60)  return 2;   // fullwidth forms
-        if (rune is >= 0xFFE0  and <= 0xFFE6)  return 2;
+        if (rune is >= 0x1100 and <= 0x115F) return 2;   // Hangul Jamo
+        if (rune is >= 0x2E80 and <= 0xA4CF) return 2;   // CJK
+        if (rune is >= 0xAC00 and <= 0xD7A3) return 2;   // Hangul syllables
+        if (rune is >= 0xF900 and <= 0xFAFF) return 2;   // CJK compatibility
+        if (rune is >= 0xFF00 and <= 0xFF60) return 2;   // fullwidth forms
+        if (rune is >= 0xFFE0 and <= 0xFFE6) return 2;
 
         return 1;
     }

@@ -28,7 +28,7 @@ namespace TableTop.Games.Family;
 public sealed class SpeedStealMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Speed Steal";
+    public override string Name => "Speed Steal";
     /// <inheritdoc />
     public override string Description =>
         "Answer quickly. Others challenge. Better answer = you steal their point.";
@@ -36,17 +36,17 @@ public sealed class SpeedStealMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Answered";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Personal"]    = "#42A5F5",
-            ["Creative"]    = "#FFCA28",
-            ["Preference"]  = "#EC407A",
-            ["Story"]       = "#66BB6A",
-            ["Opinion"]     = "#AB47BC",
+            ["Personal"] = "#42A5F5",
+            ["Creative"] = "#FFCA28",
+            ["Preference"] = "#EC407A",
+            ["Story"] = "#66BB6A",
+            ["Opinion"] = "#AB47BC",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

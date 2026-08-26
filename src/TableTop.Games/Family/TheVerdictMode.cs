@@ -26,7 +26,7 @@ namespace TableTop.Games.Family;
 public sealed class TheVerdictMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "The Verdict";
+    public override string Name => "The Verdict";
     /// <inheritdoc />
     public override string Description =>
         "Vote on silly statements. Debate. Find out who's reasonable and who's chaos.";
@@ -34,17 +34,17 @@ public sealed class TheVerdictMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Voted";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Pass";
+    public override string SkipLabel => "Pass";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Silly"]       = "#EC407A",
-            ["Food"]        = "#FFCA28",
-            ["Manners"]     = "#42A5F5",
-            ["Morality"]    = "#66BB6A",
-            ["Weird"]       = "#AB47BC",
+            ["Silly"] = "#EC407A",
+            ["Food"] = "#FFCA28",
+            ["Manners"] = "#42A5F5",
+            ["Morality"] = "#66BB6A",
+            ["Weird"] = "#AB47BC",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

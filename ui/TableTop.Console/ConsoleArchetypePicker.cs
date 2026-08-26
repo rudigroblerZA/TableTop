@@ -1,8 +1,7 @@
-using SC = System.Console;
-using CC = System.ConsoleColor;
-using CK = System.ConsoleKey;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Hosting;
+using CC = System.ConsoleColor;
+using SC = System.Console;
 
 namespace TableTop.Console;
 
@@ -165,9 +164,9 @@ internal static class ConsoleArchetypePicker
         var colour = archetype.AgeRating switch
         {
             AgeRating.AllAges => CC.Cyan,
-            AgeRating.Teen    => CC.Green,
-            AgeRating.Adult   => CC.Magenta,
-            _                 => CC.White,
+            AgeRating.Teen => CC.Green,
+            AgeRating.Adult => CC.Magenta,
+            _ => CC.White,
         };
 
         SC.ForegroundColor = colour;
@@ -191,8 +190,8 @@ internal static class AgeRatingExtensions
     public static string ToLabel(this AgeRating rating) => rating switch
     {
         AgeRating.AllAges => "All ages",
-        AgeRating.Teen    => "13+",
-        AgeRating.Adult   => "18+",
-        _                 => string.Empty,
+        AgeRating.Teen => "13+",
+        AgeRating.Adult => "18+",
+        _ => string.Empty,
     };
 }

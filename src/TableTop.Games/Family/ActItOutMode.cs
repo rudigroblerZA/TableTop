@@ -28,7 +28,7 @@ namespace TableTop.Games.Family;
 public sealed class ActItOutMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "Act It Out";
+    public override string Name => "Act It Out";
     /// <inheritdoc />
     public override string Description =>
         "Charades for the family — mime it, no words, no sounds. First to guess scores. Answer's on the back.";
@@ -36,15 +36,15 @@ public sealed class ActItOutMode : BaseGameModeDefinition
     /// <summary>Label for a guessed card.</summary>
     public override string CompleteLabel => "Guessed!";
     /// <summary>Label for a card nobody got.</summary>
-    public override string SkipLabel     => "Nobody got it";
+    public override string SkipLabel => "Nobody got it";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Animals"]  = "#66BB6A",
-            ["Actions"]  = "#42A5F5",
-            ["Jobs"]     = "#FFA726",
+            ["Animals"] = "#66BB6A",
+            ["Actions"] = "#42A5F5",
+            ["Jobs"] = "#FFA726",
             ["Movies & Shows"] = "#AB47BC",
             ["Whole Scenes"] = "#EF5350",
         };

@@ -28,7 +28,7 @@ namespace TableTop.Games.School;
 public sealed class TheParadoxMode : BaseGameModeDefinition
 {
     /// <inheritdoc />
-    public override string Name        => "The Paradox";
+    public override string Name => "The Paradox";
     /// <inheritdoc />
     public override string Description =>
         "Solve an impossible scenario. Best logic, creativity, or absurdity wins.";
@@ -36,17 +36,17 @@ public sealed class TheParadoxMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Solved";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Skip";
+    public override string SkipLabel => "Skip";
 
     /// <summary>CategoryColours.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Logic"]       = "#42A5F5",
-            ["Philosophy"]  = "#AB47BC",
-            ["Physics"]     = "#FFA726",
-            ["Riddle"]      = "#FFCA28",
-            ["Impossible"]  = "#EF5350",
+            ["Logic"] = "#42A5F5",
+            ["Philosophy"] = "#AB47BC",
+            ["Physics"] = "#FFA726",
+            ["Riddle"] = "#FFCA28",
+            ["Impossible"] = "#EF5350",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>

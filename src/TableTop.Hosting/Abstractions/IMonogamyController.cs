@@ -20,17 +20,17 @@ public interface IMonogamyController : IGameController
     // ── Events ────────────────────────────────────────────────────────────────
 
     /// <summary>DiceRolled.</summary>
-    event EventHandler<DiceRolledEvent>           DiceRolled;
+    event EventHandler<DiceRolledEvent> DiceRolled;
     /// <summary>DoublesRolled.</summary>
-    event EventHandler<DoublesRolledEvent>        DoublesRolled;
+    event EventHandler<DoublesRolledEvent> DoublesRolled;
     /// <summary>CardReady.</summary>
-    event EventHandler<MonogamyCardReadyEvent>    CardReady;
+    event EventHandler<MonogamyCardReadyEvent> CardReady;
     /// <summary>TokensAwarded.</summary>
-    event EventHandler<TokensAwardedEvent>        TokensAwarded;
+    event EventHandler<TokensAwardedEvent> TokensAwarded;
     /// <summary>GameEnded.</summary>
-    event EventHandler<MonogamyGameEndedEvent>    GameEnded;
+    event EventHandler<MonogamyGameEndedEvent> GameEnded;
     /// <summary>TimedCardStarted.</summary>
-    event EventHandler<MonogamyTimedCardEvent>    TimedCardStarted;
+    event EventHandler<MonogamyTimedCardEvent> TimedCardStarted;
 
     /// <summary>Running history of cards played this session.</summary>
     IReadOnlyList<MonogamyCardHistoryItem> CardHistory { get; }

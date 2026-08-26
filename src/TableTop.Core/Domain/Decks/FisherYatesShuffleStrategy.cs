@@ -43,13 +43,13 @@ internal sealed class LegacyRandomSource : IRandomSource
     private readonly Random _r;
     public LegacyRandomSource(Random r) => _r = r;
     /// <inheritdoc />
-    public int    Next(int max)              => _r.Next(max);
+    public int Next(int max) => _r.Next(max);
     /// <inheritdoc />
-    public int    Next(int min, int max)     => _r.Next(min, max);
+    public int Next(int min, int max) => _r.Next(min, max);
     /// <inheritdoc />
-    public int    Next()                     => _r.Next();
+    public int Next() => _r.Next();
     /// <inheritdoc />
-    public double NextDouble()               => _r.NextDouble();
+    public double NextDouble() => _r.NextDouble();
     /// <inheritdoc />
-    public void   NextBytes(Span<byte> buf)  => _r.NextBytes(buf);
+    public void NextBytes(Span<byte> buf) => _r.NextBytes(buf);
 }

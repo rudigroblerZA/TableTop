@@ -1,11 +1,10 @@
-using TableTop.Games.Base;
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
-using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Domain.Restrictions;
 using TableTop.Core.Domain.Scoring;
+using TableTop.Games.Base;
 
 namespace TableTop.Games;
 
@@ -30,7 +29,7 @@ public sealed class WouldYouRatherMode : BaseGameModeDefinition
     /// <summary>CompleteLabel.</summary>
     public override string CompleteLabel => "Revealed (+2 pts)";
     /// <summary>SkipLabel.</summary>
-    public override string SkipLabel     => "Skipped";
+    public override string SkipLabel => "Skipped";
 
 
     /// <summary>
@@ -49,7 +48,7 @@ public sealed class WouldYouRatherMode : BaseGameModeDefinition
     /// </summary>
     private IReadOnlyList<ICard> BuildBuiltInCards(IReadOnlyList<IPlayer> players)
     {
-        var adultsOnly  = new AdultOnlyRestriction();
+        var adultsOnly = new AdultOnlyRestriction();
         var couplesOnly = new CoupleOnlyRestriction();
         var parentsOnly = new ParentOnlyRestriction();
 
