@@ -324,12 +324,17 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
         /// <summary>Display name.</summary>
         public string Display => Zone.ToString();
 
+        /// <summary>Command that selects this zone. WinUI binds this.</summary>
+        public ICommand SelectCommand { get; }
+
         internal ZoneOption(MonogamyZone zone, MonogamyGameViewModel owner)
         {
-            Zone = zone; _owner = owner;
+            Zone   = zone;
+            _owner = owner;
+            SelectCommand = new RelayCommand(() => owner.ChooseZone(zone), () => owner.AwaitingZone);
         }
 
-        /// <summary>Selects this zone.</summary>
+        /// <summary>Selects this zone. Called directly by MAUI's buttons.</summary>
         public void Invoke() => _owner.ChooseZone(Zone);
     }
 }

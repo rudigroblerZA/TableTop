@@ -33,6 +33,27 @@ public sealed class MonogamyGameViewModelTests
             winningTokens,
             rng);
 
+    /// <summary>
+    /// Finds a seed whose opening roll is doubles, WITHOUT the flaw the
+    /// comment on <see cref="Complete_OnTheFirstNonDoublesTurn_LeavesTheNextCardVisible"/>
+    /// describes: this probes a raw <see cref="MonogamyController"/> directly,
+    /// never wraps the probed controller in a ViewModel, and discards it
+    /// entirely once found. The caller builds its own fresh controller with
+    /// the returned seed.
+    /// </summary>
+    private static int FindSeedWithOpeningDoubles()
+    {
+        for (var seed = 0; seed < 200; seed++)
+        {
+            using var probe = RealController(rng: new Random(seed));
+            var doubles = false;
+            probe.DoublesRolled += (_, _) => doubles = true;
+            probe.Start();
+            if (doubles) return seed;
+        }
+        throw new InvalidOperationException("No opening-doubles seed found in range 0-199.");
+    }
+
     // ── The bug itself ────────────────────────────────────────────────────────
 
     [Fact]
@@ -172,6 +193,60 @@ public sealed class MonogamyGameViewModelTests
 
         var act = () => vm.ChooseZone(MonogamyZone.Wild);
         act.Should().NotThrow();
+    }
+
+    [Fact]
+    public void ZoneOption_SelectCommand_ChoosesTheZone()
+    {
+        // WinUI's MonogamyGameView.xaml binds Command="{Binding SelectCommand}"
+        // inside the ZoneChoices ItemsControl's DataTemplate. ZoneOption had no
+        // such property until this fix — the binding resolved to nothing, so
+        // WinUI's zone-choice buttons after a doubles roll were silently
+        // inert. check-xaml-bindings.py did not catch it: it pools every
+        // property name declared ANYWHERE in the codebase into one set rather
+        // than resolving per-DataContext-type, and MillionaireGameViewModel's
+        // unrelated AnswerOption.SelectCommand put "SelectCommand" in that
+        // pool, so the name looked resolvable even though ZoneOption itself
+        // never declared it.
+        var seed = FindSeedWithOpeningDoubles();
+        using var ctrl = RealController(rng: new Random(seed));
+        var vm = new MonogamyGameViewModel(new FakeNavigator(), ctrl);
+
+        vm.AwaitingZone.Should().BeTrue("the seed was chosen for an opening doubles roll");
+        vm.ZoneChoices.Should().NotBeEmpty();
+
+        var option = vm.ZoneChoices[0];
+        option.SelectCommand.CanExecute(null).Should().BeTrue();
+
+        option.SelectCommand.Execute(null);
+
+        vm.AwaitingZone.Should().BeFalse("choosing a zone resolves the doubles prompt and deals the card");
+        vm.HasCard.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ZoneOption_SelectCommandAndInvoke_ChooseTheSameZone()
+    {
+        // MAUI's code-behind calls Invoke() directly (MonogamyGamePage.xaml.cs's
+        // OnZoneClicked); WinUI binds SelectCommand. Both must land on the same
+        // zone for the same choice, matching AnswerOption's duality in
+        // MillionaireGameViewModel — two fresh controllers on the same seed so
+        // the doubles roll and the offered zones are identical, one driven
+        // through each path.
+        var seed = FindSeedWithOpeningDoubles();
+
+        using var ctrlForCommand = RealController(rng: new Random(seed));
+        var vmForCommand = new MonogamyGameViewModel(new FakeNavigator(), ctrlForCommand);
+        var chosenZone = vmForCommand.ZoneChoices[0].Zone;
+        vmForCommand.ZoneChoices[0].SelectCommand.Execute(null);
+
+        using var ctrlForInvoke = RealController(rng: new Random(seed));
+        var vmForInvoke = new MonogamyGameViewModel(new FakeNavigator(), ctrlForInvoke);
+        vmForInvoke.ZoneChoices[0].Zone.Should().Be(chosenZone, "same seed must offer the same zones in the same order");
+        vmForInvoke.ZoneChoices[0].Invoke();
+
+        vmForCommand.Zone.Should().Be(chosenZone);
+        vmForInvoke.Zone.Should().Be(chosenZone, "SelectCommand and Invoke must choose the zone the same way");
     }
 
     [Fact]

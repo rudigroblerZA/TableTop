@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.25.0**, August 2026. This replaces the accumulated
+Current as of **1.25.1**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -294,6 +294,23 @@ initially numbered wrong:
   `_CannotYetPlay_` tests are gone with the gap they asserted; see item 4's
   own closure note for the ordering bug the new tests caught in
   `ClaimedGameViewModel` before this shipped.
+- **1.25.1** fixed a dead binding in WinUI's Monogamy screen, found while
+  reading that screen's pattern to build 1.25.0's new ones. `MonogamyGameView.xaml`
+  binds `Command="{Binding SelectCommand}"` on the zone-choice buttons shown
+  after a doubles roll; `MonogamyGameViewModel.ZoneOption` never declared a
+  `SelectCommand` — only `Zone`, `Display` and a plain `Invoke()` — so the
+  binding resolved to nothing and those buttons did nothing on WinUI. MAUI was
+  unaffected: its code-behind calls `Invoke()` directly. `check-xaml-bindings.py`
+  did not catch it and could not have: it pools every property name declared
+  *anywhere* in the codebase into one set rather than resolving per
+  DataContext type, and `MillionaireGameViewModel.AnswerOption` declares an
+  unrelated `SelectCommand` of its own, which put the name in the pool.
+  Fixed by giving `ZoneOption` the same `SelectCommand`/`Invoke()` duality
+  `AnswerOption` already has. A PATCH: pure bug fix, no public-API or
+  capability change. Confirmed as a real gap, not a false alarm, by removing
+  the property and watching the two new regression tests fail to *compile*
+  (`ZoneOption` has no `SelectCommand`) — a stronger proof than a runtime
+  assertion would have been.
 
 ## What genuinely doesn't exist here
 
