@@ -12,6 +12,9 @@
 *.trx
 coverage.*.xml
 coverage/
+# scripts/measure-coverage.ps1's reportgenerator output — a different name
+# from coverage/ above, so the pattern there doesn't catch it.
+coverage-report/
 
 # ── NuGet ─────────────────────────────────────────────────────────────────────
 *.nupkg
