@@ -2159,6 +2159,96 @@ public sealed class FillInTheBlankGamesTests
 }
 
 /// <summary>
+/// The Family Atlas — the family-facing sibling of The Cartographers.
+/// Same accumulate-on-one-page mechanic, no <see cref="TableShape"/>
+/// restriction (unlike the couples deck), registered under fun.family.
+/// </summary>
+public sealed class FamilyAtlasModeTests
+{
+    [Fact]
+    public void FamilyAtlas_IsRegistered_UnderFunFamily_AsAllAges()
+    {
+        var node = ArchetypeRegistry.Default().FindById("fun.family.atlas");
+        node.Should().NotBeNull();
+        node!.Modes.Count(m => m.Name == "The Family Atlas").Should().Be(1);
+        node.AgeRating.Should().Be(AgeRating.AllAges);
+    }
+
+    [Fact]
+    public void FamilyAtlas_Bank_EveryCardAddsToTheMap()
+    {
+        // Same premise as The Cartographers: every card places something
+        // permanent on one shared sheet, not just a spoken prompt.
+        var cards = TableTop.Games.Family.FamilyAtlasCardBank.All;
+        cards.Count.Should().BeGreaterThanOrEqualTo(30);
+        cards.Should().OnlyContain(c => c.Description.Contains("Add to the map:"));
+    }
+
+    [Fact]
+    public void FamilyAtlas_TheFiveStages_AreAllPresent()
+    {
+        var categories = TableTop.Games.Family.FamilyAtlasCardBank.All
+            .Select(c => c.Category).Distinct().ToList();
+
+        categories.Should().BeEquivalentTo(
+            ["Foundations", "Wilds", "Home Turf", "Legend", "Beyond the Map"]);
+    }
+
+    [Fact]
+    public void FamilyAtlas_PinsFoundationsFirstAndBeyondTheMapLast()
+    {
+        var mode = new TableTop.Games.Family.FamilyAtlasMode();
+
+        mode.CategoriesPinnedToStart.Should().Equal("Foundations");
+        mode.CategoriesPinnedToEnd.Should().Equal("Beyond the Map");
+    }
+
+    [Fact]
+    public void FamilyAtlas_LaterStages_ReferBackToWhatEarlierStagesDrew()
+    {
+        var legend = TableTop.Games.Family.FamilyAtlasCardBank.All
+            .Where(c => c.Category == "Legend")
+            .ToList();
+
+        legend.Should().Contain(c => c.Description.Contains("tallest mountain"),
+            "naming the mountain requires the Wilds card that drew it");
+        legend.Should().Contain(c => c.Description.Contains("Name the river"),
+            "naming the river requires the Wilds card that drew it");
+    }
+
+    [Fact]
+    public void FamilyAtlas_ScoresNothing_BecauseTheMapIsThePoint()
+    {
+        var manifest = new TableTop.Games.Family.FamilyAtlasMode().GetManifest();
+        manifest.TotalCards.Should().Be(
+            TableTop.Games.Family.FamilyAtlasCardBank.All.Count);
+    }
+
+    [Fact]
+    public void FamilyAtlas_DeclaresNoTableShape_SoAnyFamilyCanPlay()
+    {
+        // Unlike CartographersMode (which addresses a pair sharing one sheet
+        // of paper and so declares Couple), every card here speaks to
+        // whoever's at the table — no headcount or relationship assumed.
+        // Same permissive default the rest of this namespace's family modes
+        // use (e.g. ThisIsUsMode).
+        new TableTop.Games.Family.FamilyAtlasMode()
+            .Should().NotBeAssignableTo<ITableShapeMode>();
+    }
+
+    [Fact]
+    public void AllAgesDeck_StaysCleanForMixedAges()
+    {
+        // Sits in the family tree alongside Blank Slate — keep it genuinely
+        // family-safe for a table that may include kids.
+        var text = string.Join(" ",
+            TableTop.Games.Family.FamilyAtlasCardBank.All.Select(c => c.Description)).ToLowerInvariant();
+        foreach (var word in new[] { "sex", "drunk", "drug", "kill" })
+            text.Should().NotContain(word, $"the all-ages deck should not mention '{word}'");
+    }
+}
+
+/// <summary>
 /// Regression tests for the couples-tag gap.
 ///
 /// The bug: CoupleOnlyRestriction requires a "couple-member" TAG on at least

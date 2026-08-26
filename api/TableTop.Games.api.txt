@@ -386,6 +386,18 @@ sealed class TableTop.Games.Family.EmojiLegendsMode
     String Description { get; }
     String Name { get; }
     String SkipLabel { get; }
+static class TableTop.Games.Family.FamilyAtlasCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.FamilyAtlasMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; }
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
 static class TableTop.Games.Family.FamilyDaresCardBank
     IReadOnlyList<ICard> All { get; }
 sealed class TableTop.Games.Family.FamilyDaresMode

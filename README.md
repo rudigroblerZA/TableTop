@@ -14,7 +14,7 @@ A fully UI-agnostic card game engine for couples and party games.
 TableTop/
 ├── src/
 │   ├── TableTop.Core/         ← Abstractions, domain, deck/rule/scoring engine
-│   ├── TableTop.Games/        ← Game mode definitions (98 modes, 3,625 cards)
+│   ├── TableTop.Games/        ← Game mode definitions (99 modes, 3,657 cards)
 │   │                             cards live in the in-code banks; see ARCHITECTURE.md
 │   ├── TableTop.Hosting/      ← Controllers, events, hints, persistence
 │   └── TableTop.Presentation/ ← ViewModels shared by WinUI + MAUI (plain net10.0)
@@ -129,7 +129,7 @@ and WinUI apps use the player repository; add players through their setup screen
 ## Versioning
 
 `VersionPrefix` in `Directory.Build.props` is the single place to bump; every
-project inherits it. Currently **1.22.1**. The public API of Core, Games and
+project inherits it. Currently **1.23.0**. The public API of Core, Games and
 Hosting is stable, so a breaking change to it needs a major bump;
 `AssemblyVersion` tracks the major only (1.0.0.0 across the whole 1.x line), so
 assemblies built against 1.0.0 keep binding without a rebuild.
