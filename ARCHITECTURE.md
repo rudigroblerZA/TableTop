@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.23.0**, August 2026. This replaces the accumulated
+Current as of **1.24.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -274,6 +274,13 @@ initially numbered wrong:
   no card here assumes a headcount or a relationship. Two new types in Games,
   no removals, no interface changes, so MINOR: a new mode, same as 1.22.0's
   precedent for `CartographersMode`.
+- **1.24.0** removed `MonogamyCardBankExtended` from Games. It had carried no
+  cards of its own since some earlier consolidation — both its members were
+  pass-throughs to `MonogamyCardBank.All` — and existed only as a
+  backward-compatibility alias for `MonogamyMode.GetDeck()` and Console's
+  Monogamy dispatch, which now call `MonogamyCardBank.All` directly. A removal
+  that breaks nothing in-tree (its only two callers were fixed in the same
+  change), so MINOR under the carve-out above rather than MAJOR.
 
 ## What genuinely doesn't exist here
 
