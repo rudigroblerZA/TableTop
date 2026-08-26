@@ -64,6 +64,20 @@ a naming mismatch. `py scripts/check-maui-xaml.py` works regardless.
 A seventh script, `scripts/check-ui-compiles.py`, additionally needs the .NET
 SDK and both UI workloads; it compiles the heads rather than reading them.
 
+### Dev container
+
+`.devcontainer/devcontainer.json` gives you .NET 10, Python 3.12, a JDK and
+Trivy pre-installed — the same toolchain the `xaml`, `build-and-test`, `lint`
+and `trivy` CI jobs use, so the Quick Start commands and the six checks above
+all just work, with no host setup and no Windows `python`/`python3` alias trap
+(see above). Open the repo in VS Code with the Dev Containers extension, or
+in a GitHub Codespace, and it builds itself on first open.
+
+It does **not** cover `build-windows-heads` or `build-maui`: WinUI needs an
+actual Windows SDK a Linux container can't provide, and the MAUI Android
+workload needs the Android SDK/NDK, heavy enough that it isn't installed by
+default. Those two stay native-runner-only, in the container and in CI alike.
+
 ---
 
 ## UI-specific setup

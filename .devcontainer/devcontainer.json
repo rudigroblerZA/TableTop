@@ -1,0 +1,46 @@
+{
+  "name": "TableTop",
+  // .NET 10 SDK, matching Directory.Build.props and every csproj's
+  // TargetFramework in this solution. "-noble" pins the Ubuntu base so the
+  // image doesn't drift out from under this file on its own schedule.
+  "image": "mcr.microsoft.com/devcontainers/dotnet:10.0-noble",
+
+  // Everything ci.yml needs that the base image doesn't already have.
+  // WinUI (Windows SDK) and MAUI's Android workload are deliberately absent
+  // — build-windows-heads needs an actual Windows runner and build-maui
+  // needs the Android SDK/NDK, neither of which a Linux container can give
+  // you. This container covers the xaml, build-and-test, lint and trivy
+  // jobs: the engine, Console, and every check-*.py script.
+  "features": {
+    // check-*.py scripts pin 3.12 to match CI's setup-python step exactly.
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    },
+    // dotnet-sonarscanner (see .config/dotnet-tools.json) can drive its own
+    // JRE auto-provisioning, but having a real JDK here means `dotnet
+    // sonarscanner begin/end` behaves the same locally as it will once
+    // SONAR_TOKEN is configured in CI — see ci.yml's sonarcloud job.
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    // Same tool ci.yml's trivy job runs, so `trivy fs .` gives the identical
+    // answer locally before a push finds it.
+    "ghcr.io/dhoeric/features/trivy:1": {}
+  },
+
+  // Restores the engine solution and the local tool manifest (reportgenerator,
+  // dotnet-sonarscanner) once, at container creation, so the first `dotnet
+  // build` or `dotnet test` a person runs isn't also a cold restore.
+  "postCreateCommand": "dotnet restore TableTop.Engine.slnx && dotnet tool restore",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csdevkit",
+        "ms-python.python",
+        "editorconfig.editorconfig"
+      ]
+    }
+  }
+}
