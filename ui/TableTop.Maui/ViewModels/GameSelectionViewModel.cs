@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Hosting;
-using TableTop.Maui.Services;
 using TableTop.Presentation.Infrastructure;
 
 namespace TableTop.Maui.ViewModels;
@@ -11,6 +10,7 @@ public sealed class GameSelectionViewModel : BindableObject
     // Was a duplicate of WinUI's IntroViewModel resume lookup, near
     // byte-for-byte. One implementation now, in TableTop.Presentation.
     private readonly SavedSessionLookup _savedSession = new();
+    private readonly IAppSettings _settings;
 
     /// <summary>True when there is a saved session worth offering.</summary>
     public bool CanResume => _savedSession.CanResume;
@@ -58,8 +58,9 @@ public sealed class GameSelectionViewModel : BindableObject
     public ObservableCollection<Archetype> SubArchetypes { get; } = [];
     /// <summary>
     /// Rows for the game list. <see cref="GameModeItem"/> rather than raw
-    /// <c>IGameMode</c> so a deck's JSON title, description and accent can be
-    /// shown — binding the domain object directly could never surface them.
+    /// <c>IGameMode</c> so a <c>BaseGameModeDefinition</c> subclass's own name
+    /// and description can be shown — binding the domain object directly
+    /// could never surface them, since <c>IGameMode</c> has no such members.
     /// </summary>
     public ObservableCollection<GameModeItem> GameModes { get; } = [];
 
@@ -121,11 +122,11 @@ public sealed class GameSelectionViewModel : BindableObject
         set => SelectedGameMode = value?.Mode;
     }
 
-    public GameSelectionViewModel()
+    public GameSelectionViewModel(IAppSettings settings)
     {
+        _settings = settings;
         Archetypes = new ObservableCollection<Archetype>(BuildFilteredArchetypes());
-        AppSettings.Instance.Changed += OnSettingsChanged;
-
+        _settings.Changed += OnSettingsChanged;
     }
 
     /// <summary>
@@ -134,7 +135,7 @@ public sealed class GameSelectionViewModel : BindableObject
     /// hid anything — <see cref="ArchetypeFilter"/> is what makes the
     /// setting real.
     /// </summary>
-    private static IReadOnlyList<Archetype> BuildFilteredArchetypes()
+    private IReadOnlyList<Archetype> BuildFilteredArchetypes()
     {
         // AppSettings.MinAgeRating is genuinely a FLOOR here — the Settings
         // page's own label says "Hides games BELOW the selected rating", so
@@ -143,14 +144,14 @@ public sealed class GameSelectionViewModel : BindableObject
         // it reads unusually (most apps want a ceiling), but it's consistent
         // across the property name, its doc comment, and the settings label,
         // so that's the real, deliberate behaviour to honour.
-        var floor = (AgeRating)AppSettings.Instance.MinAgeRating;
+        var floor = (AgeRating)_settings.MinAgeRating;
         return new ArchetypeFilter(minAgeRating: floor, maxAgeRating: AgeRating.Adult)
             .Apply(ArchetypeRegistry.Default().RootArchetypes);
     }
 
     private void OnSettingsChanged(object? sender, string key)
     {
-        if (key != nameof(AppSettings.MinAgeRating) && key != "*") return;
+        if (key != nameof(IAppSettings.MinAgeRating) && key != "*") return;
 
         Archetypes.Clear();
         foreach (var a in BuildFilteredArchetypes()) Archetypes.Add(a);

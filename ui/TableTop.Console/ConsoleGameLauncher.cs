@@ -187,19 +187,29 @@ internal sealed class ConsoleGameLauncher
         var existing = _repository.LoadAsync().GetAwaiter().GetResult();
         if (existing.Count > 0) return;
 
-        _repository.SaveAsync([
-            new PlayerProfile
-            {
-                Id = Guid.NewGuid(), Name = "Bob",
-                Gender = "male",   Age = 44,
-                IsMarried = true,  IsCoupleMember = true,
-            },
-            new PlayerProfile
-            {
-                Id = Guid.NewGuid(), Name = "Alice",
-                Gender = "female", Age = 39,
-                IsMarried = true,  IsCoupleMember = true,
-            },
-        ]).GetAwaiter().GetResult();
+        // Internal bookkeeping, not something the player asked for — same
+        // standing as a settings save (backlog item 19), so a failure here
+        // is worth swallowing rather than crashing the app before the setup
+        // screen even appears. Worst case, the "returning players" list is
+        // empty and CreateNewProfiles runs instead, same as any other
+        // first-run machine.
+        try
+        {
+            _repository.SaveAsync([
+                new PlayerProfile
+                {
+                    Id = Guid.NewGuid(), Name = "Bob",
+                    Gender = "male",   Age = 44,
+                    IsMarried = true,  IsCoupleMember = true,
+                },
+                new PlayerProfile
+                {
+                    Id = Guid.NewGuid(), Name = "Alice",
+                    Gender = "female", Age = 39,
+                    IsMarried = true,  IsCoupleMember = true,
+                },
+            ]).GetAwaiter().GetResult();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
     }
 }
