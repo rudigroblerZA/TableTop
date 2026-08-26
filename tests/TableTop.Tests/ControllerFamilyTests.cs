@@ -248,6 +248,24 @@ public sealed class HeadFamilyCoverageTests
         ControllerFamily.Quiz,
     ];
 
+    /// <summary>
+    /// Mirrors <c>GameViewModelFactory.SupportedFamilies</c>. WinUI needs the
+    /// Windows App SDK, so — same reasoning as <see cref="MauiSupported"/> —
+    /// this project cannot reference it and reads a copy instead.
+    ///
+    /// Until backlog item 12 closed this, WinUI had no declaration at all: it
+    /// was "the flagship head" with less coverage than either of the other two.
+    /// Its routing switch has always handled these same four families; only the
+    /// declaration was missing.
+    /// </summary>
+    private static readonly ControllerFamily[] WinUiSupported =
+    [
+        ControllerFamily.CardTurn,
+        ControllerFamily.Quiz,
+        ControllerFamily.Monogamy,
+        ControllerFamily.DailyCampaign,
+    ];
+
     [Fact]
     public void EveryModeInTheRegistry_MapsToAKnownFamily()
     {
@@ -270,6 +288,19 @@ public sealed class HeadFamilyCoverageTests
     }
 
     [Fact]
+    public void WinUi_CannotYetPlay_AreaControlOrSimultaneousAnswer()
+    {
+        // Same shape as the MAUI test above, and the same gap: neither
+        // graphical head has an AreaControl or SimultaneousAnswer screen yet.
+        var unsupported = ControllerFamilies.UnsupportedIn(AllModes(), WinUiSupported);
+
+        unsupported.Should().NotBeEmpty();
+        unsupported.Select(ControllerFamilies.For).Distinct()
+            .Should().OnlyContain(f => f == ControllerFamily.AreaControl
+                                    || f == ControllerFamily.SimultaneousAnswer);
+    }
+
+    [Fact]
     public void Console_SupportsFewerFamilies_AndSaysSo()
     {
         var unsupported = ControllerFamilies.UnsupportedIn(AllModes(), ConsoleSupported);
@@ -281,20 +312,26 @@ public sealed class HeadFamilyCoverageTests
             .Should().OnlyContain(f => !ConsoleSupported.Contains(f));
     }
 
-    [Fact]
-    public void NoHeadSilentlyDropsAFamilyItClaimsToSupport()
-    {
-        // The actual invariant worth protecting: a mode whose family a head
-        // declares must be playable there.
-        foreach (var (head, supported) in new[]
-                 {
-                     ("MAUI", MauiSupported),
-                     ("Console", ConsoleSupported),
-                 })
-        {
-            var claimed = AllModes().Where(m => supported.Contains(ControllerFamilies.For(m)));
-            claimed.Should().OnlyContain(m => supported.Contains(ControllerFamilies.For(m)),
-                $"{head} must be able to play every mode in a family it declares");
-        }
-    }
+    // REMOVED: NoHeadSilentlyDropsAFamilyItClaimsToSupport
+    //
+    // Backlog item 12. It filtered AllModes() to those whose family is in
+    // `supported`, then asserted those same modes' families are in `supported`
+    // — the predicate was the filter, so it could not fail for any input. Its
+    // docstring called it "the actual invariant worth protecting," which made
+    // the false confidence worse than having no test at all.
+    //
+    // The real invariant — a head's SupportedFamilies array actually matches
+    // what its routing switch handles — cannot be checked here. MauiSupported
+    // and WinUiSupported above are hand-typed copies of properties that live in
+    // projects this one cannot reference (they need the MAUI and WinUI SDKs).
+    // No amount of rewriting this test changes that: comparing a copy to itself
+    // is tautological regardless of phrasing, because there is no independent
+    // ground truth reachable from C# in this project.
+    //
+    // scripts/check-head-family-coverage.py is the real fix, and it fits the
+    // pattern the five existing check-*.py gates already use: it reads the
+    // SupportedFamilies literal out of each head's own source file — not a
+    // copy — and diffs it against the arrays above. That catches exactly what
+    // this test's docstring claimed to catch, and unlike this test, it can
+    // actually fail.
 }

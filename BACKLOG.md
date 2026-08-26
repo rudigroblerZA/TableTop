@@ -1,6 +1,6 @@
 # TableTop — Backlog
 
-Current as of **1.22.0**, August 2026. Open items only; git history has the rest.
+Current as of **1.22.1**, August 2026. Open items only; git history has the rest.
 
 Items 1–8 predate the 1.18.0 review and keep their numbers — rewriting a
 numbered item in place is how item 7 vanished once (see its note). Items 9–16
@@ -20,13 +20,17 @@ across the existing numbering rather than adding to it.
 
 | | Item | Why it matters |
 |---|---|---|
-| **P0** | **4** + **12** — controller-family coverage | MAUI has no AreaControl or SimultaneousAnswer screen; Console additionally lacks Monogamy and DailyCampaign. WinUI declares no supported families at all, and its unsupported-mode message sends players to Console for the two modes Console also cannot play. |
+| **P0** | **4** — build the missing screens | MAUI has no AreaControl or SimultaneousAnswer page; Console additionally lacks a renderer for Monogamy/DailyCampaign-family modes beyond the one hardcoded `MonogamyMode` special case. Four to six screens across two heads — the coverage *mechanism* (item 12) is now trustworthy; this is the actual gap it's reporting. |
 | **P0** | **5** — real composition roots | MAUI registers pages and ViewModels DI cannot resolve, then constructs them by hand; WinUI has no composition root. Injected hosting services and test doubles are plumbed in but never used in production. |
 | **P1** | **18** — remove or restore the inert presentation layer | `ModePresentation` and every `Resolved*` member pass compiled values straight through. Delete the abstraction, or move the palettes into C# so MAUI theming means something again. |
-| **P1** | **12** (second half) — consolidate routing metadata | Not a repeat of the P0 row above — that's the missing screens; this is the mechanism that lets them go missing unnoticed. MAUI and Console support lists are hand-copied into tests; WinUI has none, and `NoHeadSilentlyDropsAFamilyItClaimsToSupport` cannot fail (its predicate is its own filter). A coverage gate that can't fail reads as protection and isn't — raised from P2 because that's a false sense of safety, not just missing tidiness. |
 | **P2** | **19** — normalise persistence failure handling | WinUI settings swallow `IOException` and raise `Changed` anyway, so a failed save is indistinguishable from a good one. MAUI bypasses `IAppSettings` entirely for nine reads, going straight to a singleton. |
 | **P2** | **20** — reduce UI-thread blocking | Four UI call sites run async controller and session creation through `.GetAwaiter().GetResult()`, two of them in page constructors. Costs responsiveness now; risks a synchronisation-context deadlock later. |
 | **P2** | **21** — stale UI comments | Nineteen surviving WPF references; several describe the WinUI file they sit in as WPF. One user-facing settings label may be wrong too. |
+
+**Item 12 is closed** and has dropped out of this table entirely — both halves
+(WinUI's missing declaration and the hand-copied test arrays) are fixed; see
+its own section below. What's left under item 4 is real UI construction, not a
+metadata gap, which is why it's reworded above rather than removed.
 
 Items 1, 2, 3, 8, 13, 15 and 16 sit below this — real, but none of them is
 between a player and a working game.
@@ -120,6 +124,19 @@ screens is real work — choose it deliberately.
 *Two claims in the paragraph above are now known to be false — see items 10 and
 12. Left standing here rather than quietly edited, because the difference
 between what this item claimed and what's true is the point.*
+
+**A third nuance, found while closing item 12 and worth the same treatment.**
+"Console lacks... Monogamy" isn't quite right either. `ConsoleGameLauncher.RunMode`
+special-cases `mode is MonogamyMode` before the family switch runs, and plays it
+— but `SupportedFamilies` still declares `[CardTurn, Quiz]`, with no `Monogamy`.
+So Console can play *the one built-in Monogamy mode* through a bespoke path that
+sits outside the family/coverage system entirely, while its own declared support
+list says it can't play Monogamy at all. Not a safety problem — the permissive
+direction this backlog generally prefers, same as `ArchetypeFilter`'s default —
+but it means the declaration undersells what Console actually does, which is
+its own small honesty gap. Left as a note rather than a fix: folding the special
+case into the family system, or declaring it accurately, is a design choice for
+whoever picks up the screens work above, not a one-line change made in passing.
 
 ### 5. Composition-root DI — bypass closed, wiring not
 
@@ -347,7 +364,7 @@ there — with the rationale corrected to say why.
 assign the `JsonDeckLoader.Diagnostics` static, so it went with the static. That
 closes half of item 14 as a side effect — see there.
 
-### 12. WinUI is outside head-family coverage, and one coverage test is a tautology
+### 12. WinUI is outside head-family coverage, and one coverage test is a tautology — **CLOSED**
 
 `HeadFamilyCoverageTests` covers MAUI and Console. **WinUI has no
 `SupportedFamilies` declaration and is not asserted anywhere.** It's the
@@ -384,6 +401,56 @@ still match. Backlog item 4 claims writing a missing page "fails the test until
 the declaration is updated" — but the test reads its own copy, so updating the
 head alone changes nothing. A `check-*.py` gate parsing the two declarations
 out of the head sources would close it, and fits the existing pattern exactly.
+
+**All four findings closed, each the way this item's own text pointed to.**
+
+- **WinUI now declares `SupportedFamilies`** on `GameViewModelFactory` —
+  `[CardTurn, Quiz, Monogamy, DailyCampaign]`, the same four its switch always
+  handled. `HeadFamilyCoverageTests` gained `WinUiSupported` and
+  `WinUi_CannotYetPlay_AreaControlOrSimultaneousAnswer`, mirroring the MAUI
+  pair exactly. The flagship head is no longer the one with the least
+  coverage.
+
+- **`NoHeadSilentlyDropsAFamilyItClaimsToSupport` is deleted, not repaired.**
+  Rewriting it cannot make it real: the "invariant" it wanted to check —
+  a head's `SupportedFamilies` actually matches what its routing switch
+  handles — needs the head's own source, and `TableTop.Tests` cannot reference
+  either graphical head (both need SDKs it doesn't have). Comparing the test's
+  copy to itself is tautological no matter how it's phrased, because there is
+  no independent ground truth reachable from C# in that project. The removal
+  is recorded in place, same as `DeckManifestTests` was when its subject went
+  in 1.19.0.
+
+- **The real check is `scripts/check-head-family-coverage.py`**, which is what
+  makes the paragraph above true rather than aspirational. It parses the
+  `SupportedFamilies` literal out of each head's own source file and diffs it
+  against the test's copy — the actual invariant the deleted test's docstring
+  claimed to protect, checked where it's actually checkable. Verified it
+  catches drift, not just that it passes: adding a family to WinUI's
+  declaration without updating the test's copy made it fail with a message
+  naming exactly which head and which family; reverting made it pass again.
+  Wired into CI's `xaml` job alongside the other five.
+
+- **`UnsupportedModeViewModel.Message` no longer suggests Console.** It read
+  *"isn't playable on this screen yet — try it in Console, or check back
+  soon"* unconditionally. The only two modes that ever reach this screen are
+  Claimed! and Herd, and Console cannot play either — so the suggestion was
+  false every time a player saw it. Took the "drop the second clause" option
+  this item offered, since deriving the suggestion from Console's declared
+  families would need a project reference WinUI has no other reason to carry.
+  **Not verified by a running test** — `TableTop.UiTests` is the project that
+  could exercise this and doesn't cover `UnsupportedModeViewModel` yet; the
+  change is a string-literal removal, reviewed by reading the diff rather than
+  by a passing assertion.
+
+**Found while fixing the WinUI message, and deliberately left alone: Console
+has the identical bug.** `ConsoleGameLauncher`'s own fallback path says *"Try
+this mode in the Windows or mobile app instead"* for any mode outside its two
+supported families — true for Day One (MAUI plays it), false for Claimed! and
+Herd (nobody does, yet). Same shape, same fix, different file. Left out of this
+change because it wasn't what this item named and pulling it in would have
+widened the diff past what a reviewer signed up for; flagged separately so it
+doesn't quietly vanish.
 
 ### 13. The doc counts disagree — **mode count CLOSED in 1.21.0; card and test counts still open**
 
@@ -763,10 +830,11 @@ to what it catches, fix the false positive — don't delete the check.
 | `check-shared-usings.py` | shared type used without importing it | same missing-using broke a build three times |
 | `check-xaml-bindings.py` | bindings resolving to nothing — silently empty UI | a dropped `StartCommand` binding |
 | `check-mvvm-method-parity.py` | MAUI page calling a method a shared VM only exposes as `ICommand` | four call sites broke in one build |
+| `check-head-family-coverage.py` | a head's declared `SupportedFamilies` drifting from `HeadFamilyCoverageTests`' copy of it | WinUI shipped with no declaration at all, and the coverage test that should have caught that read only its own copy |
 | `PublicApiSurfaceTests` | unnoticed breaking change to public surface | written proactively |
 | `ModeManifestExtensions` dispatch | a mode's manifest reporting zero cards | `Claimed!` excluded from capped `SurpriseMe` for a version |
 
-All five `check-*.py` gates pass, verified by actually running them on Windows
+All six `check-*.py` gates pass, verified by actually running them on Windows
 with Python 3.12 (matching CI's pin). `check-ui-compiles.py` passes too, on a
 machine that has both Python and the .NET SDK — the first time that has been
 confirmed rather than assumed.
@@ -792,9 +860,15 @@ other directory that happens to end in `.xaml`.
 JSON deck pipeline — the correct end for a guard whose subject no longer exists,
 as distinct from deleting one that still has a job.
 
-**One entry in this table is still not doing its job:**
+**Two entries in this table used to not be doing their job. Both are fixed now,
+and both are worth remembering for the next one.**
 
-- `NoHeadSilentlyDropsAFamilyItClaimsToSupport` cannot fail (item 12).
+`NoHeadSilentlyDropsAFamilyItClaimsToSupport` could not fail — its assertion
+filtered by the same predicate it then asserted, so it passed on every input by
+construction. Closed in item 12 by deleting it rather than rewriting it: no
+phrasing makes a C# test compare a copy to itself and get a real answer. The
+`check-head-family-coverage.py` row above is what actually does the job the
+deleted test's docstring claimed to.
 
 `ModeManifestExtensions` dispatch was the other. It had acquired the exact bug it
 was written to prevent, one interface over — fixed in 1.20.0 by removing the
@@ -802,6 +876,12 @@ dispatch rather than repairing it: the manifest now derives from
 `ControllerFamilies.TryFor` and has no order of its own to get wrong. That is the
 better shape of fix for this table generally. A guard that re-implements a
 decision made elsewhere can drift from it; one that reads that decision cannot.
+
+Both fixes land on the same lesson from different angles: a guard that
+duplicates the thing it's checking, rather than reading it from a single
+source, is the shape that rots. `check-head-family-coverage.py` reads the
+head's own declaration instead of trusting a copy; the manifest reads
+`ControllerFamilies.TryFor` instead of repeating its dispatch chain.
 
 The pattern is the same each time: the guard was written against the specific
 bug that shipped, and the next instance arrived one position along. Worth
