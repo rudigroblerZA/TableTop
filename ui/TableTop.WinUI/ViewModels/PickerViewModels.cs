@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using Microsoft.Extensions.DependencyInjection;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Hosting;
 using TableTop.Presentation.Infrastructure;
@@ -178,8 +179,12 @@ public sealed class GameSelectionViewModel : ViewModelBase
         SelectCommand = new RelayCommandOf<ModeListItem>(row =>
         {
             var m = row.Mode;
+            // Backlog item 5: resolved from the composition root instead of
+            // the hand-picked WinUIAppSettings.Instance singleton, so an
+            // IAppSettings override registered in App.xaml.cs's container
+            // actually reaches the screen that declares it as a dependency.
             _navigator.Navigate(new PlayerSetupViewModel(
-                _navigator, m, WinUIAppSettings.Instance,
+                _navigator, m, _navigator.Services.GetRequiredService<IAppSettings>(),
                 onStart: async players =>
                     _navigator.Navigate(await GameViewModelFactory.CreateAsync(_navigator, m, players))));
         });

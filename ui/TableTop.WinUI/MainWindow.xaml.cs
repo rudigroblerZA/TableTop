@@ -8,11 +8,13 @@ namespace TableTop.WinUI;
 /// <summary>Root window: hosts whichever view the Navigator's current ViewModel maps to.</summary>
 public sealed partial class MainWindow : Window
 {
-    private readonly Navigator _navigator = new();
+    private readonly Navigator _navigator;
 
     /// <summary>Initialises the window and navigates to the intro screen.</summary>
-    public MainWindow()
+    /// <param name="services">The app's composition root, built once in App.xaml.cs.</param>
+    public MainWindow(IServiceProvider services)
     {
+        _navigator = new Navigator(services);
         InitializeComponent();
         Title = "TableTop";
         _navigator.PropertyChanged += (_, e) =>

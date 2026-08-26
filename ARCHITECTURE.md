@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.26.0**, August 2026. This replaces the accumulated
+Current as of **1.27.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -334,6 +334,46 @@ initially numbered wrong:
   nothing in-tree (every reference here already compiled against the new
   location) is MINOR under the removal carve-out above, same reasoning as
   1.24.0's `MonogamyCardBankExtended` removal.
+- **1.27.0** closed backlog item 5: gave WinUI and MAUI a real composition
+  root instead of ignored/unresolvable DI registrations. WinUI had none at
+  all — `App.xaml.cs` now builds an `IServiceProvider`
+  (`AddTableTopHosting()` plus `IAppSettings` bound to `WinUIAppSettings.Instance`)
+  and threads it through `MainWindow` into `Navigator`, which exposes it as
+  `Services`; `GameViewModelFactory.CreateAsync` and the
+  `PlayerSetupViewModel` construction in `PickerViewModels.cs` now resolve
+  `IControllerFactory`/`IAppSettings` from there instead of defaulting to
+  `new ControllerFactory()` or reading `WinUIAppSettings.Instance` directly.
+  MAUI already had a container, but `MauiProgram.cs` registered
+  `PlayerSetupPage`, `GameplayPage`, `PlayerSetupViewModel` and
+  `GameplayViewModel` — all four provably unresolvable, since their
+  constructors need a per-session `IGameMode`/`List<IPlayer>` nothing
+  registers. Those four registrations are gone; `IAppSettings` is registered
+  against the existing `AppSettings` singleton instead, and MAUI's
+  `GameplayViewModel` now reaches the container through the ambient
+  `IPlatformApplication.Current!.Services` handle its call site already sat
+  inside, rather than the plan's original sketch of threading a fifth
+  `IServiceProvider` constructor parameter through four types — same
+  outcome, smaller diff, one fewer thing for every future page in that chain
+  to remember to pass along. Both heads' only path into
+  `CardTurnGameViewModel.CreateAsync` — the shared seam this whole item
+  turned on — now passes a container-resolved `IControllerFactory`, so a
+  registration overriding it actually takes effect on a real session for the
+  first time. Along the way, closed a stale claim in item 5's own text: the
+  `JsonDeckLoader.Diagnostics` static-assignment concern it described was
+  already fixed by items 11 and 14, per `ServiceCollectionExtensions.cs`'s
+  own comment. MINOR: new capability (a container override now genuinely
+  reaches a real session), same reasoning class as 1.25.0's UI-only bump.
+  Deliberately out of scope: Millionaire/Monogamy/DayOne/Claimed/Herd's own
+  `Create(...)` factories still build their controllers directly, bypassing
+  `IControllerFactory` entirely — a separate, pre-existing duplication this
+  item didn't touch — and the other `AppSettings.Instance`/
+  `WinUIAppSettings.Instance` reads scattered elsewhere are item 19's
+  territory, not this one's. This exact behavior — a custom
+  `IControllerFactory` being the one actually used — can't be asserted from
+  `TableTop.Tests`, since it lives in the two UI-head projects that suite
+  deliberately never references; verified by reading the diff and by both
+  heads building clean, the same honest gap item 17 recorded for its own
+  WinUI/MAUI wiring.
 
 ## What genuinely doesn't exist here
 
