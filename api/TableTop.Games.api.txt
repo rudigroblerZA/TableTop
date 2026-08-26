@@ -156,6 +156,14 @@ sealed class TableTop.Games.Couples.ModernLoveMillionaireMode
     String Name { get; }
 static class TableTop.Games.Couples.ModernLoveQuestionBank
     IReadOnlyList<MultipleChoiceCard> All { get; }
+static class TableTop.Games.Couples.MonogamyCardBank
+    IReadOnlyList<MonogamyCard> All { get; }
+sealed class TableTop.Games.Couples.MonogamyMode
+    .ctor()
+    IReadOnlyList<MonogamyCard> GetDeck()
+    Nullable<Int32> WinningTokenCount { get; }
+    String Description { get; }
+    String Name { get; }
 sealed class TableTop.Games.Couples.OutLoudMode
     .ctor()
     IReadOnlyDictionary<String, String> CategoryColours { get; }
@@ -261,8 +269,6 @@ sealed class TableTop.Games.Couples.WouldYouKnowMode
     String Description { get; }
     String Name { get; }
     String SkipLabel { get; }
-static class TableTop.Games.Data.MonogamyCardBank
-    IReadOnlyList<MonogamyCard> All { get; }
 static class TableTop.Games.FactOrFiction.ExpertFactOrFictionCardBank
     IReadOnlyList<ICard> All { get; }
 sealed class TableTop.Games.FactOrFiction.ExpertFactOrFictionMode
@@ -744,12 +750,6 @@ sealed class TableTop.Games.MillionaireMode
     String Name { get; }
 static class TableTop.Games.MillionaireQuestionBank
     IReadOnlyList<MultipleChoiceCard> All { get; }
-sealed class TableTop.Games.MonogamyMode
-    .ctor()
-    IReadOnlyList<MonogamyCard> GetDeck()
-    Nullable<Int32> WinningTokenCount { get; }
-    String Description { get; }
-    String Name { get; }
 static class TableTop.Games.Party.LastOrdersCardBank
     IReadOnlyList<ICard> All { get; }
 sealed class TableTop.Games.Party.LastOrdersMode

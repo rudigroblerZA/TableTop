@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.25.1**, August 2026. This replaces the accumulated
+Current as of **1.26.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -311,6 +311,29 @@ initially numbered wrong:
   the property and watching the two new regression tests fail to *compile*
   (`ZoneOption` has no `SelectCommand`) — a stronger proof than a runtime
   assertion would have been.
+- **1.26.0** formatting and file-organisation cleanup, no behaviour change.
+  Added a `.editorconfig` (brace/spacing/naming conventions, closely following
+  the .NET runtime's own) and reformatted the codebase to match it — the bulk
+  of the diff, and purely mechanical: hand-aligned columns collapsed to a
+  single space, brace and spacing style normalised, no logic touched. Verified
+  by running the full 862-test suite before and after: identical pass count.
+  Alongside that, two deck-builder classes moved out of the miscellaneous
+  `Data/` folder and into the mode file that actually uses them —
+  `MillionaireQuestionBank` into `Modes/MillionaireMode.cs` and
+  `MonogamyCardBank` into what's now `Couples/MonogamyMode.cs` — the same
+  Data-folder-namespace mismatch backlog item 9's history already flagged for
+  `MillionaireQuestionBank` specifically (`namespace TableTop.Games` despite
+  living in `Data/`). `MonogamyMode` itself also moved from `Modes/` to
+  `Couples/`, alongside every other couples mode (`CartographersMode`,
+  `AfterglowMode`, etc.) instead of sitting apart from them.
+  Both moves change `TableTop.Games`'s public namespaces
+  (`TableTop.Games.MonogamyMode` → `TableTop.Games.Couples.MonogamyMode`,
+  `TableTop.Games.Data.MonogamyCardBank` → `TableTop.Games.Couples.MonogamyCardBank`),
+  so `PublicApiSurfaceTests` correctly flagged it; the snapshot update was
+  missing from the branch and is included in this merge. A move that breaks
+  nothing in-tree (every reference here already compiled against the new
+  location) is MINOR under the removal carve-out above, same reasoning as
+  1.24.0's `MonogamyCardBankExtended` removal.
 
 ## What genuinely doesn't exist here
 
