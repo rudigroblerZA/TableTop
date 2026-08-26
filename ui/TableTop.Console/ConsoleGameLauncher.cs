@@ -158,7 +158,6 @@ internal sealed class ConsoleGameLauncher
                 SC.WriteLine($"  '{mode.Name}' needs a {ControllerFamilies.For(mode)} screen, "
                            + "which the console app doesn't have.");
                 SC.ResetColor();
-                SC.WriteLine("  Try this mode in the Windows or mobile app instead.");
                 SC.WriteLine();
                 ctrl.Dispose();
                 break;
