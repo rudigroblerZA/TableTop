@@ -1,6 +1,6 @@
 # TableTop — Backlog
 
-Current as of **1.26.0**, August 2026. Open items only; git history has the rest.
+Current as of **1.27.0**, August 2026. Open items only; git history has the rest.
 
 Items 1–8 predate the 1.18.0 review and keep their numbers — rewriting a
 numbered item in place is how item 7 vanished once (see its note). Items 9–16
@@ -20,17 +20,26 @@ across the existing numbering rather than adding to it.
 
 | | Item | Why it matters |
 |---|---|---|
-| **P0** | **5** — real composition roots | MAUI registers pages and ViewModels DI cannot resolve, then constructs them by hand; WinUI has no composition root. Injected hosting services and test doubles are plumbed in but never used in production. |
 | **P1** | **18** — remove or restore the inert presentation layer | `ModePresentation` and every `Resolved*` member pass compiled values straight through. Delete the abstraction, or move the palettes into C# so MAUI theming means something again. |
 | **P2** | **19** — normalise persistence failure handling | WinUI settings swallow `IOException` and raise `Changed` anyway, so a failed save is indistinguishable from a good one. MAUI bypasses `IAppSettings` entirely for nine reads, going straight to a singleton. |
 | **P2** | **20** — reduce UI-thread blocking | Four UI call sites run async controller and session creation through `.GetAwaiter().GetResult()`, two of them in page constructors. Costs responsiveness now; risks a synchronisation-context deadlock later. |
 | **P2** | **21** — stale UI comments | Nineteen surviving WPF references; several describe the WinUI file they sit in as WPF. One user-facing settings label may be wrong too. |
 
-**Items 4 and 12 are both closed** and have dropped out of this table
+**Items 4, 5 and 12 are all closed** and have dropped out of this table
 entirely. Item 12 closed the coverage *mechanism* — the declarations and the
 gate that keeps them honest. Item 4 closed the actual gap that mechanism was
-reporting: real screens on every head for every family in the catalogue. See
-both items' own sections below.
+reporting: real screens on every head for every family in the catalogue. Item
+5 gave both heads a real composition root, so a container-registered
+`IControllerFactory`/`IAppSettings` now actually reaches the one path that
+was silently ignoring it. See each item's own section below.
+
+Note for whoever picks up item 19 next: closing item 5 registered
+`IAppSettings` in both heads' containers (it wasn't registered at all before),
+but the *other* nine-plus `AppSettings.Instance`/`WinUIAppSettings.Instance`
+reads item 19 names are untouched — only the one call site each head's
+CardTurn path used was moved onto the registration. Don't read "item 5 closed"
+as "item 19 is partly done"; the registration existing is a precondition item
+19 can now build on, not progress on item 19 itself.
 
 Items 2, 3, 8, 13, 15 and 16 sit below this — real, but none of them is
 between a player and a working game.
@@ -219,7 +228,7 @@ produce:
   `-p:TreatWarningsAsErrors=true`, the 860-test suite (11 of them new,
   including the ordering bug above), and all seven static gates.
 
-### 5. Composition-root DI — bypass closed, wiring not
+### 5. Composition-root DI — CLOSED
 
 All six `new ControllerFactory()` sites accept an injected `IControllerFactory`,
 falling back only when none is passed. Proved with a recording spy that
@@ -228,24 +237,75 @@ injection takes effect, not just that it compiles.
 Also corrected: this backlog once called `SavedSessionLookup`'s "session found"
 path *structurally untestable*. It wasn't — it was this bypass, misdiagnosed.
 
-**Open:** heads don't pass anything yet. MAUI registers services but pages
-construct ViewModels directly; WinUI has no composition root. Plumbing in,
-wiring out — production still takes the default path.
+**Was open: heads didn't pass anything.** MAUI registered services but pages
+constructed ViewModels directly; WinUI had no composition root. Plumbing in,
+wiring out — production took the default path regardless of what either
+container had registered.
 
-**Sharpened by review — the MAUI registrations are not merely unused, they are
-unresolvable.** `MauiProgram` registers `PlayerSetupPage`, `GameplayPage`,
+**Sharpened by review — the MAUI registrations were not merely unused, they
+were unresolvable.** `MauiProgram` registered `PlayerSetupPage`, `GameplayPage`,
 `PlayerSetupViewModel` and `GameplayViewModel`, and every one of those
-constructors takes a runtime value the container has no registration for:
+constructors took a runtime value the container had no registration for:
 `PlayerSetupPage(IGameMode)`, `GameplayPage(IGameMode, List<IPlayer>, …)`.
-Resolving any of them throws. So "wire the heads up" is not a small change —
-it needs a factory or parameterised-resolution seam for the per-session values
-first. Budget for that rather than discovering it mid-change.
+Resolving any of them threw. So "wire the heads up" needed a
+parameterised-resolution seam for the per-session values first, not a bigger
+container.
 
-Also: `AddTableTopHosting` registers `IControllerFactory` transient with the
-comment *"a new factory is cheap and carries no state of its own."* Its
-constructor assigns the process-wide `JsonDeckLoader.Diagnostics` static
-unconditionally, including to null. It carries global state, and transient
-means every resolution reassigns it. See items 11 and 14.
+**One diagnosis in this item's own text turned out to be stale, caught while
+closing it.** The paragraph that used to sit here — "`AddTableTopHosting`
+registers `IControllerFactory` transient... its constructor assigns the
+process-wide `JsonDeckLoader.Diagnostics` static unconditionally" — described
+pre-1.19.0 code. `ServiceCollectionExtensions.cs`'s own comment at that
+registration already says so: *"Until 1.19.0 that comment was false... The
+JSON deck path and that static are both gone."* Items 11 and 14 closed it as a
+side effect; this backlog paragraph just never caught up. Left here as a
+record of the drift, same reason item 4's now-false claims were left standing
+rather than quietly edited.
+
+**Closed.** Both heads now have a real composition root reaching the one seam
+that actually mattered:
+
+- `CardTurnGameViewModel.CreateAsync` (`TableTop.Presentation`) has always
+  taken `IControllerFactory? controllerFactory = null`, falling back to
+  `new ControllerFactory()`. Neither head's only call site into it ever passed
+  one — a custom `IControllerFactory` registered in either container had
+  **zero effect** on a real game session. Same shape for `IAppSettings`:
+  `WinUIAppSettings.Instance` / `AppSettings.Instance` were read as hand-picked
+  singletons at the same call sites, instead of the interface each constructor
+  already declared.
+- **WinUI**: `App.xaml.cs` now builds a real `IServiceProvider`
+  (`AddTableTopHosting()` + `IAppSettings`) and hands it to `MainWindow`,
+  which gives it to `Navigator`. `Navigator` is already threaded through every
+  ViewModel as `_navigator`, so `Navigator.Services` is what makes the
+  container reachable from the existing chain — no other ViewModel
+  constructor needed to change. `GameViewModelFactory.CreateAsync` and the
+  `PlayerSetupViewModel` construction site now resolve from it instead of
+  defaulting silently.
+- **MAUI**: `MauiProgram.cs` now also registers `IAppSettings` (previously
+  only the concrete `AppSettings` type was registered), and drops the four
+  registrations confirmed unresolvable above rather than leaving them as
+  decoration. `GameplayViewModel`'s constructor — the one place MAUI's
+  CardTurn path actually builds a controller — resolves `IControllerFactory`
+  and `IAppSettings` via `IPlatformApplication.Current!.Services`, the same
+  ambient-container idiom `GameSelectionPage.xaml.cs` already used to reach
+  `SettingsPage`. No page constructor needed threading a service provider
+  through by hand; the idiom was already sitting in the codebase.
+- **Deliberately not touched**: Millionaire/Monogamy/DayOne/Claimed/Herd's own
+  `Create(...)` factories on both heads construct their concrete controllers
+  directly (`new MonogamyController(...)`, `new ClaimedController(...)`, …)
+  and never went through `IControllerFactory` at all — a separate,
+  pre-existing duplication of `ControllerFactory`'s own dispatch logic, not
+  the ignored-seam bug this item closes. Threading a service provider into
+  those five page types would have no consumer waiting for it today.
+- **Not verified by a passing assertion** — "a container-registered
+  `IControllerFactory` is the one actually used" can't be unit-tested in
+  `TableTop.Tests`, because `GameViewModelFactory` and MAUI's
+  `GameplayViewModel` live in the two UI-head projects that project
+  deliberately cannot reference (WinUI needs the Windows SDK, MAUI needs its
+  workload — same reasoning `HeadFamilyCoverageTests` documents for keeping
+  hand-typed copies instead). Verified by reading the diff and by both heads
+  building clean under the full solution build; the same honest gap item 17
+  recorded for its own WinUI/MAUI wiring.
 
 ### 6. Content loading is fallback-first, not integrity-first — **CLOSED in 1.21.0**
 

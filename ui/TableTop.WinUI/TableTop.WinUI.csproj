@@ -49,6 +49,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+    <!-- Backlog item 5: gives App.xaml.cs a real composition root instead of
+         the hand-`new`'d chain every ViewModel used to be built through. -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
 
   <ItemGroup>

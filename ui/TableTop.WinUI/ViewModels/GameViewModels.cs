@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using Microsoft.Extensions.DependencyInjection;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Hosting.Abstractions;
@@ -63,7 +64,13 @@ public static class GameViewModelFactory
             CardsPerPlayer = s.CardsPerPlayer > 0 ? s.CardsPerPlayer : null,
         };
 
-        var controller = await (controllerFactory ?? new ControllerFactory()).CreateAsync(
+        // Backlog item 5: a controllerFactory registered in the app's
+        // container (Navigator.Services) now actually reaches here — this
+        // used to default straight to `new ControllerFactory()` regardless of
+        // anything the composition root had registered, since nothing built
+        // one to pass in the first place.
+        var factory = controllerFactory ?? navigator.Services.GetRequiredService<IControllerFactory>();
+        var controller = await factory.CreateAsync(
             mode, players, maxRounds: 10, gameplayOptions: gameplayOptions, resumeFrom: resumeFrom);
 
         // Route the built controller to the ViewModel that drives its family.

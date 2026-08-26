@@ -1,5 +1,6 @@
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
+using TableTop.Hosting.Abstractions;
 using TableTop.Maui.Services;
 using TableTop.Presentation.Infrastructure;
 using TableTop.Presentation.ViewModels;
@@ -274,12 +275,23 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
         var definition = gameMode as TableTop.Games.Base.BaseGameModeDefinition;
         _categoryColours = definition?.ResolvedCategoryColours ?? new Dictionary<string, string>();
 
+        // Backlog item 5: IControllerFactory/IAppSettings resolved from the
+        // app's container (MauiProgram.cs's AddTableTopHosting()) rather than
+        // AppSettings.Instance and an implicit `new ControllerFactory()`
+        // inside CreateAsync — same idiom GameSelectionPage.xaml.cs already
+        // uses to reach SettingsPage from code that isn't itself
+        // DI-constructed. A custom IControllerFactory registered in the
+        // container had no effect on a real session before this.
+        var services = IPlatformApplication.Current!.Services;
+        var settings = services.GetRequiredService<IAppSettings>();
+        var controllerFactory = services.GetRequiredService<IControllerFactory>();
+
         // Blocking is deadlock-free here, same as every prior MAUI merge
         // (MillionaireGamePage, DayOneGamePage) — CreateAsync itself catches
         // a controller-build failure into LoadError, so this constructor
         // needs no try/catch of its own the way the old implementation did.
         _inner = CardTurnGameViewModel.CreateAsync(
-                navigator, gameMode, players.AsReadOnly(), AppSettings.Instance, resumeFrom)
+                navigator, gameMode, players.AsReadOnly(), settings, resumeFrom, controllerFactory)
             .GetAwaiter().GetResult();
 
         // Forwards every property-changed notification 1:1 — this is what
