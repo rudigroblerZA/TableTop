@@ -43,13 +43,19 @@ re-check that claim before trusting it.
 
 ---
 
-**How the review was done, so you know what to trust.** The five static gates
-were run and all pass. Nothing was compiled or executed: this sandbox has no
-`dotnet` at all, so `check-ui-compiles.py`, `offline-build.sh` and the test
-suite were all unavailable. Everything below is from reading source against
-docs. Item 9 is the one place I'm asserting a test is *red* rather than
-describing a design gap — the reasoning is spelled out so you can check it in
+**How the 1.21.0 review was done, so you know what to trust.** The five static
+gates were run and all pass. Nothing was compiled or executed: that sandbox had
+no `dotnet` at all, so `check-ui-compiles.py`, `offline-build.sh` and the test
+suite were all unavailable. Everything below it is from reading source against
+docs. Item 9 is the one place that review asserted a test was *red* rather than
+describing a design gap — the reasoning is spelled out so it can be checked in
 about a minute on a machine with the SDK.
+
+**That constraint no longer applies, and several items below were written under
+it.** As of 1.22.0 the working machine has the .NET 10 SDK, NuGet access and
+Python 3.12: the full solution builds, the suite runs, and all six scripts in
+`scripts/` execute. Anything below marked "not verified by a build" was true
+when written and is now simply checkable — check it rather than trusting it.
 
 ---
 
@@ -760,7 +766,27 @@ to what it catches, fix the false positive — don't delete the check.
 | `PublicApiSurfaceTests` | unnoticed breaking change to public surface | written proactively |
 | `ModeManifestExtensions` dispatch | a mode's manifest reporting zero cards | `Claimed!` excluded from capped `SurpriseMe` for a version |
 
-All five `check-*.py` gates pass as of 1.19.0.
+All five `check-*.py` gates pass, verified by actually running them on Windows
+with Python 3.12 (matching CI's pin). `check-ui-compiles.py` passes too, on a
+machine that has both Python and the .NET SDK — the first time that has been
+confirmed rather than assumed.
+
+**Two of them had to be fixed before they could run at all, and the reason is
+worth keeping.** `check-maui-xaml.py` and `check-xaml-bindings.py` both did
+`rglob("*.xaml")` filtering only `obj`, not `bin`. A local MAUI build leaves a
+*directory* named `Microsoft.UI.Xaml` under `bin/`, Windows path matching is
+case-insensitive, and `rglob` yields directories as readily as files — so both
+gates tried to open a directory and died with a `PermissionError` traceback.
+`check-winui-xaml.py` filtered both and was fine; `check-xaml-bindings.py`
+filtered both for its `.cs` walk and only `obj` for its XAML walk, in the same
+file.
+
+CI never saw any of it, because a fresh checkout has no `bin/`. That is the
+general shape to watch for: **a gate that only ever runs on clean CI can carry a
+bug that fires for every developer who runs it locally** — and a gate that
+crashes on a developer's machine is one they stop running. Both now filter
+`bin` and `obj` and require `is_file()`, which also makes them immune to any
+other directory that happens to end in `.xaml`.
 
 `DeckManifestTests` used to be in this table. It was removed in 1.19.0 with the
 JSON deck pipeline — the correct end for a guard whose subject no longer exists,

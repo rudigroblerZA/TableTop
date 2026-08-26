@@ -39,14 +39,29 @@ dotnet test  TableTop.Engine.slnx
 dotnet run --project ui/TableTop.Console
 ```
 
-Two static checks run in CI and need only Python — worth running before a push,
-since they catch XAML faults that produce no exception and no build error:
+Five static checks run in CI and need only **Python 3.12+** and the standard
+library — no pip install. Worth running before a push, since they catch faults
+that produce no exception and no build error:
 
 ```bash
-python3 scripts/check-maui-xaml.py        # MAUI properties that don't exist on the control
-python3 scripts/check-winui-xaml.py       # WinUI properties that don't exist at all
-python3 scripts/check-xaml-bindings.py    # bindings that resolve to nothing (render empty)
+python3 scripts/check-maui-xaml.py           # MAUI properties that don't exist on the control
+python3 scripts/check-winui-xaml.py          # WinUI properties that don't exist at all
+python3 scripts/check-xaml-bindings.py       # bindings that resolve to nothing (render empty)
+python3 scripts/check-shared-usings.py       # shared type used without importing its namespace
+python3 scripts/check-mvvm-method-parity.py  # MAUI page calling a VM method that isn't there
 ```
+
+**On Windows, use `python` — not `python3`.** Install with
+`winget install Python.Python.3.12`, which provides `python.exe` and the `py`
+launcher but no `python3.exe`. There is a trap here worth knowing about: Windows
+ships alias stubs at `WindowsApps\python.exe` and `python3.exe` that are not an
+interpreter — they print "Python was not found" and exit non-zero. With a real
+Python installed, `python` resolves to it but `python3` still hits the stub, so
+a `python3` command fails in a way that reads like a broken script rather than
+a naming mismatch. `py scripts/check-maui-xaml.py` works regardless.
+
+A sixth script, `scripts/check-ui-compiles.py`, additionally needs the .NET SDK
+and both UI workloads; it compiles the heads rather than reading them.
 
 ---
 

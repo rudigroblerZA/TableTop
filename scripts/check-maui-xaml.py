@@ -93,8 +93,23 @@ def main() -> int:
               f"(WinUI has a different control surface). Nothing checked.")
         return 2
 
-    files = sorted(root.rglob("*.xaml"))
-    problems = [p for f in files if "obj" not in f.parts for p in check(f)]
+    # Skip build output, and skip anything that isn't a regular file.
+    #
+    # Both halves are load-bearing on a developer machine and neither is on CI,
+    # which is why this went unnoticed: a fresh checkout has no bin/ or obj/ at
+    # all. Locally, `bin/` holds a DIRECTORY named `Microsoft.UI.Xaml` — and
+    # rglob("*.xaml") matches it, because Windows path matching is
+    # case-insensitive and rglob yields directories as readily as files. Opening
+    # it raised PermissionError and took the whole gate down with a traceback.
+    #
+    # check-winui-xaml.py already filtered both bin and obj; this one filtered
+    # only obj. is_file() is the belt-and-braces half: it makes the check immune
+    # to any other directory that happens to end in .xaml, wherever it appears.
+    files = sorted(
+        f for f in root.rglob("*.xaml")
+        if f.is_file() and not {"bin", "obj"} & set(f.parts)
+    )
+    problems = [p for f in files for p in check(f)]
 
     hints = {
         "Border": "use Stroke / StrokeThickness / StrokeShape instead",

@@ -162,7 +162,16 @@ def main() -> int:
     problems = []
 
     for head in heads:
-        xamls = [f for f in sorted(head.rglob("*.xaml")) if "obj" not in f.parts]
+        # Skip build output and non-files. The .cs walk at the top of
+        # collect_properties() already excluded both bin and obj; this line
+        # excluded only obj, so a local MAUI build — whose bin/ contains a
+        # DIRECTORY named `Microsoft.UI.Xaml`, matched by this case-insensitive
+        # glob — crashed the gate with a PermissionError traceback. CI never saw
+        # it because a fresh checkout has no bin/.
+        xamls = [
+            f for f in sorted(head.rglob("*.xaml"))
+            if f.is_file() and not {"bin", "obj"} & set(f.parts)
+        ]
         if not xamls:
             continue
         instance, static = collect_properties([head] + engine)
