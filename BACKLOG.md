@@ -20,26 +20,21 @@ across the existing numbering rather than adding to it.
 
 | | Item | Why it matters |
 |---|---|---|
-| **P2** | **19** — normalise persistence failure handling | WinUI settings swallow `IOException` and raise `Changed` anyway, so a failed save is indistinguishable from a good one. MAUI bypasses `IAppSettings` entirely for nine reads, going straight to a singleton. |
 | **P2** | **20** — reduce UI-thread blocking | Four UI call sites run async controller and session creation through `.GetAwaiter().GetResult()`, two of them in page constructors. Costs responsiveness now; risks a synchronisation-context deadlock later. |
 | **P2** | **21** — stale UI comments | Nineteen surviving WPF references; several describe the WinUI file they sit in as WPF. One user-facing settings label may be wrong too. |
 
-**Items 4, 5, 12 and 18 are all closed** and have dropped out of this table
-entirely. Item 12 closed the coverage *mechanism* — the declarations and the
-gate that keeps them honest. Item 4 closed the actual gap that mechanism was
-reporting: real screens on every head for every family in the catalogue. Item
-5 gave both heads a real composition root, so a container-registered
-`IControllerFactory`/`IAppSettings` now actually reaches the one path that
-was silently ignoring it. Item 18 deleted the inert `Presentation`/`Resolved*`
-layer rather than resurrecting it. See each item's own section below.
-
-Note for whoever picks up item 19 next: closing item 5 registered
-`IAppSettings` in both heads' containers (it wasn't registered at all before),
-but the *other* nine-plus `AppSettings.Instance`/`WinUIAppSettings.Instance`
-reads item 19 names are untouched — only the one call site each head's
-CardTurn path used was moved onto the registration. Don't read "item 5 closed"
-as "item 19 is partly done"; the registration existing is a precondition item
-19 can now build on, not progress on item 19 itself.
+**Items 4, 5, 12, 18 and 19 are all closed** and have dropped out of this
+table entirely. Item 12 closed the coverage *mechanism* — the declarations
+and the gate that keeps them honest. Item 4 closed the actual gap that
+mechanism was reporting: real screens on every head for every family in the
+catalogue. Item 5 gave both heads a real composition root, so a
+container-registered `IControllerFactory`/`IAppSettings` now actually
+reaches the one path that was silently ignoring it. Item 18 deleted the
+inert `Presentation`/`Resolved*` layer rather than resurrecting it. Item 19
+finished what item 5 started — MAUI's remaining nine `AppSettings.Instance`
+reads now go through the injected `IAppSettings` — and fixed the one
+persistence path that most needed it: a saved session failing silently.
+See each item's own section below.
 
 Items 2, 3, 8, 13, 15 and 16 sit below this — real, but none of them is
 between a player and a working game.
@@ -888,7 +883,7 @@ executes) — so the `GameSelectionPage.xaml` layout change is confirmed to
 build and bind correctly (`check-xaml-bindings.py`, `check-maui-xaml.py`) but
 not confirmed by a running UI test or by eyes on the actual screen.
 
-### 19. Persistence failures are handled three different ways, none of them visibly
+### 19. Persistence failures are handled three different ways, none of them visibly — **CLOSED**
 
 **P2.** Verified in the tree:
 
@@ -917,6 +912,71 @@ and probably wants doing with it.
 
 Note the singleton is also why `GameplayViewModel` is hard to test: item 7 calls
 that wrapper "unvalidated by comparison", and this is a large part of why.
+
+**Closed, addressing both decisions this item posed rather than picking one.**
+
+- **The saved-session path — "certainly yes" — is fixed.**
+  `CardTurnGameViewModel.SaveSession()` was fire-and-forget
+  (`_ = _controller!.SaveAsync();`); a write failure became an unobserved
+  task exception and the player who explicitly asked to save got no feedback
+  at all, worse than any of the three behaviors this item catalogued. It now
+  awaits the save and reports a failure through `FlashText` — the same
+  channel a successful save already used (`"Session saved"`) — so both
+  outcomes go through one visible path instead of only one of them doing so.
+- **MAUI's nine `AppSettings.Instance` reads are gone.** `App.xaml.cs`
+  resolves `IAppSettings` from its `IServiceProvider`; `GameplayViewModel`
+  keeps the `IAppSettings` it already resolved (it was resolving one and
+  then reaching past it for the singleton anyway) as a field instead of
+  re-fetching the singleton at each of six call sites;
+  `GameSelectionViewModel` gained an `IAppSettings` constructor parameter,
+  supplied automatically since it's container-registered
+  (`AddSingleton<GameSelectionViewModel>()` in `MauiProgram.cs`), which also
+  meant de-static-ing the private helper that read the old singleton. A
+  custom `IAppSettings` registered in the container now actually reaches
+  every read these three files make, not just the one CardTurn path item 5
+  already fixed.
+- **WinUI's swallow is broadened to match what it already claimed to do.**
+  `catch (IOException)` didn't catch `UnauthorizedAccessException` — so a
+  permissions failure, the second cause this item names by name, was never
+  actually swallowed; it threw straight through the comment claiming
+  best-effort handling. Both are now caught. `Changed` still fires
+  unconditionally either way, per this item's own "for settings, arguably
+  not \[reported\]" — a setting's in-memory value is genuinely correct for
+  the rest of the session regardless of whether the write landed, so there
+  is nothing false in what `Changed` tells a subscriber.
+- **Console's player-profile saves no longer crash the app.** The
+  player-initiated save in `ConsolePlayerSetup.Run` now reports success or
+  failure via `ConsoleUi`, the same standing as the saved-session fix above.
+  The first-run seed write in `ConsoleGameLauncher.SeedDefaultsIfEmpty` is
+  internal bookkeeping the player never asked for — same category as a
+  settings save — so it's caught and swallowed rather than reported;
+  worst case a fresh machine falls through to `CreateNewProfiles()` instead
+  of offering Bob and Alice, same as it always does with no repository at
+  all.
+
+**Deliberately not touched:** MAUI's `AppSettings` (the `Preferences`-backed
+concrete class) gained no new exception handling. `Preferences.Set` is not
+file I/O and this item's own text names disk-full and permissions as the
+failure modes worth normalising — both are WinUI/Console problems, not ones
+this class has. Two more `AppSettings.Instance` sites this item's "nine"
+count didn't include — `SettingsPage.xaml.cs` and `PlayerSetupPage.xaml.cs`,
+both passing the singleton into a constructor that declares `IAppSettings` —
+are left alone; they already hand a real `IAppSettings`-typed instance to a
+properly-typed parameter, which is a smaller and different gap than the nine
+this item measured.
+
+**Verified with a full build and test run.** All four engine assemblies,
+Console, WinUI (`-p:Platform=x64`) and MAUI (Windows target) build with zero
+errors; the 861-test suite passes in full (three new
+`CardTurnGameViewModelTests`: an `IOException` and an
+`UnauthorizedAccessException` from a throwing `IGamePersistence` fake both
+report failure through `FlashText` without throwing, and a success case
+confirms `"Session saved"` still fires unchanged); all seven static gates
+pass, including `check-mvvm-method-parity.py` and
+`check-head-family-coverage.py` after the `GameSelectionViewModel`
+constructor change. **Not verified:** `tests/TableTop.UiTests` — same
+pre-existing WinUI test-host `FileNotFoundException` recorded under item 18,
+unrelated to this change.
 
 ### 20. Async work is run synchronously on UI threads
 

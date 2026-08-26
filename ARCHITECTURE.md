@@ -377,6 +377,29 @@ initially numbered wrong:
   heads building clean, the same honest gap item 17 recorded for its own
   WinUI/MAUI wiring.
 
+**Backlog item 19, closed.** Persistence failures were handled three
+different ways with nothing consistent about any of them: WinUI's settings
+save swallowed `IOException` only (a permissions failure threw
+`UnauthorizedAccessException` straight through, contradicting its own
+"best-effort" comment), MAUI bypassed `IAppSettings` for nine reads across
+`App.xaml.cs`, `GameplayViewModel` and `GameSelectionViewModel` so a
+container-registered settings implementation had no effect there, a saved
+*session* — the one persistence path the player explicitly asks for — was
+fire-and-forget (`_ = _controller!.SaveAsync();`) with a write failure
+becoming a silently unobserved task exception, and Console's player-profile
+save had no catch at all, so the same failure crashed the whole app instead.
+Fixed: WinUI's catch now covers both real causes; the nine MAUI reads resolve
+`IAppSettings` from the container instead of `AppSettings.Instance`;
+`CardTurnGameViewModel.SaveSession` awaits the save and reports a failure
+through `FlashText`, the same channel a successful save already used;
+Console's two player-profile save sites catch and report instead of
+crashing (a first-run seed failure is swallowed, matching item 19's own
+"for settings, arguably not \[reported\]" allowance for internal
+bookkeeping the player didn't ask for). Verified by a full build of all
+three heads, the 861-test suite, and all static gates — including two new
+`CardTurnGameViewModelTests` pinning the save-failure report and one
+confirming the success path is unchanged.
+
 ## What genuinely doesn't exist here
 
 - **A visual deck editor, or any content authoring at all outside the repo.**

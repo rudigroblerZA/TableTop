@@ -1,5 +1,5 @@
 using TableTop.Maui.Pages;
-using TableTop.Maui.Services;
+using TableTop.Presentation.Infrastructure;
 
 namespace TableTop.Maui;
 
@@ -22,8 +22,11 @@ public partial class App : Application
         InitializeComponent();
         _services = services;
 
-        // Apply saved theme before any page renders
-        UserAppTheme = AppSettings.Instance.Theme switch
+        // Apply saved theme before any page renders. Resolved from the
+        // container rather than AppSettings.Instance — a custom IAppSettings
+        // registered in MauiProgram had no effect on this read before
+        // (backlog item 19).
+        UserAppTheme = _services.GetRequiredService<IAppSettings>().Theme switch
         {
             "light" => AppTheme.Light,
             "system" => AppTheme.Unspecified,

@@ -20,8 +20,20 @@ internal static class ConsolePlayerSetup
             ? EditSavedProfiles(saved)
             : CreateNewProfiles();
 
-        repository.SaveAsync(profiles).GetAwaiter().GetResult();
-        ConsoleUi.PrintSuccess("Player profiles saved.");
+        // Player-initiated save (same standing as a saved game session, backlog
+        // item 19) — reported either way rather than left to an unhandled
+        // IOException/UnauthorizedAccessException, which used to take the
+        // whole console app down mid-setup on a disk-full or permissions
+        // failure instead of just failing this one save.
+        try
+        {
+            repository.SaveAsync(profiles).GetAwaiter().GetResult();
+            ConsoleUi.PrintSuccess("Player profiles saved.");
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            ConsoleUi.PrintError("Couldn't save player profiles — check disk space and permissions.");
+        }
         SC.WriteLine();
 
         return profiles.Select(p => (IPlayer)p.ToPlayer()).ToList().AsReadOnly();

@@ -471,8 +471,28 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         else _navigator.GoBack();
     }
 
-    /// <summary>Saves the session so it can be resumed.</summary>
-    public void SaveSession() { if (CanSave) _ = _controller!.SaveAsync(); }
+    /// <summary>
+    /// Saves the session so it can be resumed.
+    ///
+    /// Was fire-and-forget (<c>_ = _controller!.SaveAsync();</c>): a write
+    /// failure became an unobserved task exception, and the player who just
+    /// asked to save got no feedback at all — worse than silent, since even
+    /// <see cref="FlashText"/> never changed to say anything went wrong. Saved
+    /// sessions are the one persistence path in this app the player explicitly
+    /// asks for, so unlike settings, a failure here is always worth reporting.
+    /// </summary>
+    public async void SaveSession()
+    {
+        if (!CanSave) return;
+        try
+        {
+            await _controller!.SaveAsync();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            FlashText = "Couldn't save — check disk space and permissions";
+        }
+    }
 
     /// <summary>Reverses the last turn and re-presents its card.</summary>
     public void UndoLastTurn() => _controller?.UndoLastTurn();

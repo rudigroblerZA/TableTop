@@ -1,7 +1,6 @@
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Hosting.Abstractions;
-using TableTop.Maui.Services;
 using TableTop.Presentation.Infrastructure;
 using TableTop.Presentation.ViewModels;
 
@@ -32,7 +31,7 @@ namespace TableTop.Maui.ViewModels;
 /// The shared class's <c>ShowCardCount</c> is fixed once, at construction —
 /// correct for WinUI, which has never re-read settings mid-session. MAUI's
 /// page must, because a player can background the app, change a setting, and
-/// come back to the same screen. <see cref="AppSettings.Instance"/>.Changed
+/// come back to the same screen. The container-resolved <see cref="IAppSettings"/>
 /// stays subscribed here, re-raising only the four properties actually
 /// affected (see <see cref="OnSettingChanged"/>) — the shared instance never
 /// needs to know this exists.
@@ -54,6 +53,7 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
 {
     private readonly CardTurnGameViewModel _inner;
     private readonly IReadOnlyDictionary<string, string> _categoryColours;
+    private readonly IAppSettings _settings;
 
     /// <summary>The visual skin for this mode. Defaults to baize for anything with no dedicated palette.</summary>
     public Theming.ModeTheme Theme { get; }
@@ -91,13 +91,13 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
     // ── Settings passthrough — live, unlike the shared class's ctor-only copy ──
 
     /// <summary>Whether to show the deck-count line.</summary>
-    public bool ShowCardCount => AppSettings.Instance.ShowCardCount;
+    public bool ShowCardCount => _settings.ShowCardCount;
     /// <summary>Whether the card strip shows the difficulty badge.</summary>
-    public bool ShowDifficultyBadge => AppSettings.Instance.ShowDifficultyBadge;
+    public bool ShowDifficultyBadge => _settings.ShowDifficultyBadge;
     /// <summary>Whether the card strip shows the category badge.</summary>
-    public bool ShowCategoryBadge => AppSettings.Instance.ShowCategoryBadge;
+    public bool ShowCategoryBadge => _settings.ShowCategoryBadge;
     /// <summary>Card body font size, settings-driven.</summary>
-    public double CardFontSize => AppSettings.Instance.CardFontSize;
+    public double CardFontSize => _settings.CardFontSize;
 
     // ── Card face / strip colour — platform Color, computed from shared state ──
 
@@ -283,7 +283,7 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
         // DI-constructed. A custom IControllerFactory registered in the
         // container had no effect on a real session before this.
         var services = IPlatformApplication.Current!.Services;
-        var settings = services.GetRequiredService<IAppSettings>();
+        _settings = services.GetRequiredService<IAppSettings>();
         var controllerFactory = services.GetRequiredService<IControllerFactory>();
 
         // Blocking is deadlock-free here, same as every prior MAUI merge
@@ -291,7 +291,7 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
         // a controller-build failure into LoadError, so this constructor
         // needs no try/catch of its own the way the old implementation did.
         _inner = CardTurnGameViewModel.CreateAsync(
-                navigator, gameMode, players.AsReadOnly(), settings, resumeFrom, controllerFactory)
+                navigator, gameMode, players.AsReadOnly(), _settings, resumeFrom, controllerFactory)
             .GetAwaiter().GetResult();
 
         // Forwards every property-changed notification 1:1 — this is what
@@ -299,17 +299,17 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
         // needing its own explicit re-raise.
         _inner.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
 
-        AppSettings.Instance.Changed += OnSettingChanged;
+        _settings.Changed += OnSettingChanged;
     }
 
     private void OnSettingChanged(object? sender, string key)
     {
         switch (key)
         {
-            case nameof(AppSettings.ShowCardCount): OnPropertyChanged(nameof(ShowCardCount)); break;
-            case nameof(AppSettings.ShowDifficultyBadge): OnPropertyChanged(nameof(ShowDifficultyBadge)); RaiseStrip(); break;
-            case nameof(AppSettings.ShowCategoryBadge): OnPropertyChanged(nameof(ShowCategoryBadge)); RaiseStrip(); break;
-            case nameof(AppSettings.CardFontSize): OnPropertyChanged(nameof(CardFontSize)); break;
+            case nameof(IAppSettings.ShowCardCount): OnPropertyChanged(nameof(ShowCardCount)); break;
+            case nameof(IAppSettings.ShowDifficultyBadge): OnPropertyChanged(nameof(ShowDifficultyBadge)); RaiseStrip(); break;
+            case nameof(IAppSettings.ShowCategoryBadge): OnPropertyChanged(nameof(ShowCategoryBadge)); RaiseStrip(); break;
+            case nameof(IAppSettings.CardFontSize): OnPropertyChanged(nameof(CardFontSize)); break;
             case "*": OnPropertyChanged(null); break;
         }
     }
@@ -325,7 +325,7 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
     /// <inheritdoc />
     public void Dispose()
     {
-        AppSettings.Instance.Changed -= OnSettingChanged;
+        _settings.Changed -= OnSettingChanged;
         _inner.Dispose();
     }
 }

@@ -209,7 +209,15 @@ public sealed class WinUIAppSettings : TableTop.Presentation.Infrastructure.IApp
             File.WriteAllText(tmp, JsonSerializer.Serialize(_data, JsonOptions));
             File.Move(tmp, _filePath, overwrite: true);
         }
-        catch (IOException) { /* best-effort — a failed save shouldn't crash the app */ }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // Best-effort — a failed save shouldn't crash the app. Both are
+            // named explicitly because they're the two real causes (disk full,
+            // permissions denied) and only the first used to be caught here:
+            // a permissions failure threw UnauthorizedAccessException straight
+            // through this method instead of being swallowed like this comment
+            // always claimed.
+        }
 
         Changed?.Invoke(this, changedKey);
     }
