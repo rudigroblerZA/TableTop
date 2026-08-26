@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
+    x:Class="TableTop.Maui.Pages.SettingsPage"
+    Title="Settings"
+    Background="{StaticResource BaizeBrush}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="8">
+
+            <!-- ══ APPEARANCE ═══════════════════════════════════════════════ -->
+            <Label Text="Appearance"
+                   Style="{StaticResource SubheaderLabelStyle}"
+                   Margin="0,8,0,4"/>
+
+            <Frame Style="{StaticResource CardStyle}" Padding="0">
+                <VerticalStackLayout>
+
+                    <!-- Theme -->
+                    <VerticalStackLayout Padding="16,12">
+                        <Label Text="Theme"
+                               FontSize="14" FontAttributes="Bold"
+                               TextColor="White"/>
+                        <Label Text="Dark, Light or follow device setting"
+                               FontSize="12" TextColor="{StaticResource TextSecondary}" Margin="0,2,0,8"/>
+                        <Picker ItemsSource="{Binding ThemeOptions}"
+                                SelectedIndex="{Binding ThemeIndex}"
+                                TextColor="White"
+                                Background="{StaticResource BaizeBrush}"/>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#3D3D55" Margin="16,0"/>
+
+                    <!-- Card text size -->
+                    <VerticalStackLayout Padding="16,12">
+                        <Label Text="Card Text Size"
+                               FontSize="14" FontAttributes="Bold"
+                               TextColor="White"/>
+                        <Label Text="How large the card body text appears"
+                               FontSize="12" TextColor="{StaticResource TextSecondary}" Margin="0,2,0,8"/>
+                        <Picker ItemsSource="{Binding FontSizeOptions}"
+                                SelectedIndex="{Binding FontSizeIndex}"
+                                TextColor="White"
+                                Background="{StaticResource BaizeBrush}"/>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- ══ GAMEPLAY ══════════════════════════════════════════════════ -->
+            <Label Text="Gameplay"
+                   Style="{StaticResource SubheaderLabelStyle}"
+                   Margin="0,16,0,4"/>
+
+            <Frame Style="{StaticResource CardStyle}" Padding="0">
+                <VerticalStackLayout>
+
+                    <!-- Shuffle cards -->
+                    <HorizontalStackLayout Padding="16,14" Spacing="12">
+                        <VerticalStackLayout HorizontalOptions="FillAndExpand">
+                            <Label Text="Shuffle Cards"
+                                   FontSize="14" FontAttributes="Bold"
+                                   TextColor="White"/>
+                            <Label Text="Randomise card order each game"
+                                   FontSize="12" TextColor="{StaticResource TextSecondary}"/>
+                        </VerticalStackLayout>
+                        <Switch IsToggled="{Binding ShuffleCards}"
+                                OnColor="{StaticResource PrimaryColor}"
+                                VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#3D3D55" Margin="16,0"/>
+
+                    <!-- Minimum difficulty -->
+                    <VerticalStackLayout Padding="16,12">
+                        <Label Text="Minimum Difficulty"
+                               FontSize="14" FontAttributes="Bold"
+                               TextColor="White"/>
+                        <Label Text="Cards easier than this are skipped"
+                               FontSize="12" TextColor="{StaticResource TextSecondary}" Margin="0,2,0,8"/>
+                        <Picker ItemsSource="{Binding DifficultyOptions}"
+                                SelectedIndex="{Binding MinDifficultyIndex}"
+                                TextColor="White"
+                                Background="{StaticResource BaizeBrush}"/>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#3D3D55" Margin="16,0"/>
+
+                    <!-- Maximum difficulty -->
+                    <VerticalStackLayout Padding="16,12">
+                        <Label Text="Maximum Difficulty"
+                               FontSize="14" FontAttributes="Bold"
+                               TextColor="White"/>
+                        <Label Text="Cards harder than this are skipped"
+                               FontSize="12" TextColor="{StaticResource TextSecondary}" Margin="0,2,0,8"/>
+                        <Picker ItemsSource="{Binding DifficultyOptions}"
+                                SelectedIndex="{Binding MaxDifficultyIndex}"
+                                TextColor="White"
+                                Background="{StaticResource BaizeBrush}"/>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#3D3D55" Margin="16,0"/>
+
+                    <!-- Age rating -->
+                    <VerticalStackLayout Padding="16,12">
+                        <Label Text="Content Filter"
+                               FontSize="14" FontAttributes="Bold"
+                               TextColor="White"/>
+                        <Label Text="Hides games below the selected age rating"
+                               FontSize="12" TextColor="{StaticResource TextSecondary}" Margin="0,2,0,8"/>
+                        <Picker ItemsSource="{Binding AgeOptions}"
+                                SelectedIndex="{Binding MinAgeRatingIndex}"
+                                TextColor="White"
+                                Background="{StaticResource BaizeBrush}"/>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#3D3D55" Margin="16,0"/>
+
+                    <!-- Cards per player. WinUI had this; MAUI didn't, so a MAUI
+                         player could not cap the deck length at all. -->
+                    <VerticalStackLayout Padding="16,14">
+                        <Label Text="Cards per player"
+                               FontSize="15" TextColor="White"/>
+                        <Label Text="0 uses the whole deck"
+                               FontSize="12" TextColor="{StaticResource TextSecondary}" Margin="0,2,0,8"/>
+                        <Stepper Minimum="0" Maximum="50" Increment="1"
+                                 Value="{Binding CardsPerPlayer}"
+                                 HorizontalOptions="Start"/>
+                        <Label Text="{Binding CardsPerPlayer, StringFormat='{0} cards'}"
+                               FontSize="13" TextColor="{StaticResource TextSecondary}" Margin="0,4,0,0"/>
+                    </VerticalStackLayout>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#3D3D55" Margin="16,0"/>
+
+                    <!-- Auto-advance player -->
+                    <HorizontalStackLayout Padding="16,14" Spacing="12">
+                        <VerticalStackLayout HorizontalOptions="FillAndExpand">
+                            <Label Text="Auto-advance Player"
+                                   FontSize="14" FontAttributes="Bold"
+                                   TextColor="White"/>
+                            <Label Text="Rotate to next player after each card"
+                                   FontSize="12" TextColor="{StaticResource TextSecondary}"/>
+                        </VerticalStackLayout>
+                        <Switch IsToggled="{Binding AutoNextPlayer}"
+                                OnColor="{StaticResource PrimaryColor}"
+                                VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- ══ TIMER ══════════════════════════════════════════════════════ -->
+            <Label Text="Timer"
+                   Style="{StaticResource SubheaderLabelStyle}"
+                   Margin="0,16,0,4"/>
+
+            <Frame Style="{StaticResource CardStyle}" Padding="0">
+                <VerticalStackLayout>
+
+                    <!-- Enable timer -->
+                    <HorizontalStackLayout Padding="16,14" Spacing="12">
+                        <VerticalStackLayout HorizontalOptions="FillAndExpand">
+                            <Label Text="Per-Card Timer"
+                                   FontSize="14" FontAttributes="Bold"
+                                   TextColor="White"/>
+                            <Label Text="Show a countdown on each card"
+                                   FontSize="12" TextColor="{StaticResource TextSecondary}"/>
+                        </VerticalStackLayout>
+                        <Switch IsToggled="{Binding EnableTimer}"
+                                OnColor="{StaticResource PrimaryColor}"
+                                VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#3D3D55" Margin="16,0"/>
+
+                    <!-- Timer duration -->
+                    <VerticalStackLayout Padding="16,12">
+                        <Label Text="Timer Duration"
+                               FontSize="14" FontAttributes="Bold"
+                               TextColor="White"/>
+                        <Label Text="How long each player has per card"
+                               FontSize="12" TextColor="{StaticResource TextSecondary}" Margin="0,2,0,8"/>
+                        <Picker ItemsSource="{Binding TimerOptions}"
+                                SelectedIndex="{Binding TimerIndex}"
+                                IsEnabled="{Binding EnableTimer}"
+                                TextColor="White"
+                                Background="{StaticResource BaizeBrush}"/>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- ══ DISPLAY ════════════════════════════════════════════════════ -->
+            <Label Text="Display"
+                   Style="{StaticResource SubheaderLabelStyle}"
+                   Margin="0,16,0,4"/>
+
+            <Frame Style="{StaticResource CardStyle}" Padding="0">
+                <VerticalStackLayout>
+
+                    <!-- Show card count -->
+                    <HorizontalStackLayout Padding="16,14" Spacing="12">
+                        <VerticalStackLayout HorizontalOptions="FillAndExpand">
+                            <Label Text="Show Card Count"
+                                   FontSize="14" FontAttributes="Bold"
+                                   TextColor="White"/>
+                            <Label Text="Show 'Card X of Y' during gameplay"
+                                   FontSize="12" TextColor="{StaticResource TextSecondary}"/>
+                        </VerticalStackLayout>
+                        <Switch IsToggled="{Binding ShowCardCount}"
+                                OnColor="{StaticResource PrimaryColor}"
+                                VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#3D3D55" Margin="16,0"/>
+
+                    <!-- Show difficulty badge -->
+                    <HorizontalStackLayout Padding="16,14" Spacing="12">
+                        <VerticalStackLayout HorizontalOptions="FillAndExpand">
+                            <Label Text="Show Difficulty Badge"
+                                   FontSize="14" FontAttributes="Bold"
+                                   TextColor="White"/>
+                            <Label Text="Show ⭐ Easy / Medium / Hard on cards"
+                                   FontSize="12" TextColor="{StaticResource TextSecondary}"/>
+                        </VerticalStackLayout>
+                        <Switch IsToggled="{Binding ShowDifficultyBadge}"
+                                OnColor="{StaticResource PrimaryColor}"
+                                VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <BoxView HeightRequest="1" BackgroundColor="#3D3D55" Margin="16,0"/>
+
+                    <!-- Show category badge -->
+                    <HorizontalStackLayout Padding="16,14" Spacing="12">
+                        <VerticalStackLayout HorizontalOptions="FillAndExpand">
+                            <Label Text="Show Category Badge"
+                                   FontSize="14" FontAttributes="Bold"
+                                   TextColor="White"/>
+                            <Label Text="Show category label on each card"
+                                   FontSize="12" TextColor="{StaticResource TextSecondary}"/>
+                        </VerticalStackLayout>
+                        <Switch IsToggled="{Binding ShowCategoryBadge}"
+                                OnColor="{StaticResource PrimaryColor}"
+                                VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- ══ RESET ══════════════════════════════════════════════════════ -->
+            <Button Text="Reset to Defaults"
+                    x:Name="ResetButton"
+                    Clicked="OnResetClicked"
+                    BackgroundColor="#EF4444"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    Padding="12"
+                    CornerRadius="8"
+                    HorizontalOptions="FillAndExpand"
+                    Margin="0,24,0,0"/>
+
+            <Label Text="All settings are saved automatically."
+                   FontSize="12"
+                   TextColor="{StaticResource TextSecondary}"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,8,0,32"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

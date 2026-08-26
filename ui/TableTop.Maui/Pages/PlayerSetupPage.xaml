@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
+    x:Class="TableTop.Maui.Pages.PlayerSetupPage"
+    Title="Add Players"
+    Background="{StaticResource BaizeBrush}">
+
+    <VerticalStackLayout Padding="16" Spacing="16">
+
+        <!-- Game Mode Info -->
+        <Frame Style="{StaticResource CardStyle}">
+            <VerticalStackLayout Spacing="8">
+                <Label
+                    Text="{Binding Mode.Name}"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    TextColor="White" />
+                <Label
+                    Text="{Binding Mode.Description}"
+                    FontSize="13"
+                    TextColor="{StaticResource TextSecondary}"
+                    LineHeight="1.4" />
+            </VerticalStackLayout>
+        </Frame>
+
+        <!-- Add Player Section -->
+        <Label
+            Text="Add Players"
+            Style="{StaticResource SubheaderLabelStyle}"
+            Margin="0,8,0,0" />
+
+        <HorizontalStackLayout Spacing="8">
+            <!-- Entry supports neither Padding nor CornerRadius in MAUI, so the
+                 Border provides both and the Entry sits transparent inside it. -->
+            <Border BackgroundColor="#16382E" Stroke="#4DC49E4C" StrokeThickness="1"
+                    Padding="12,2" HorizontalOptions="FillAndExpand">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Entry
+                    x:Name="PlayerNameEntry"
+                    Placeholder="Player name..."
+                    Text="{Binding NewName}"
+                    PlaceholderColor="#8A7A55"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource TextPrimary}"
+                    FontFamily="{StaticResource BodyFont}"
+                    HeightRequest="46" />
+            </Border>
+
+            <Button
+                x:Name="AddButton"
+                Text="+"
+                Clicked="OnAddPlayerClicked"
+                Style="{StaticResource PrimaryButtonStyle}"
+                WidthRequest="48"
+                Padding="0" />
+        </HorizontalStackLayout>
+
+        <!-- Optional details: gender feeds gender-directed prompts and
+             male/female-only cards; age feeds minimum-age cards. Both optional. -->
+        <HorizontalStackLayout Spacing="8" Margin="0,8,0,0">
+            <Picker
+                x:Name="GenderPicker"
+                Title="Gender (optional)"
+                ItemsSource="{Binding GenderOptions}"
+                SelectedItem="{Binding SelectedGender}"
+                BackgroundColor="{StaticResource CardBackground}"
+                TextColor="White"
+                TitleColor="{StaticResource TextSecondary}"
+                HorizontalOptions="FillAndExpand" />
+
+            <Border BackgroundColor="#16382E" Stroke="#4DC49E4C" StrokeThickness="1"
+                    Padding="12,2" WidthRequest="96">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Entry
+                    x:Name="AgeEntry"
+                    Placeholder="Age"
+                    Text="{Binding NewAge}"
+                    Keyboard="Numeric"
+                    PlaceholderColor="#8A7A55"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource TextPrimary}"
+                    FontFamily="{StaticResource BodyFont}"
+                    HeightRequest="46" />
+            </Border>
+        </HorizontalStackLayout>
+
+        <!-- Playing as a couple: unlocks couples-only cards, which the engine
+             gates behind a "couple-member" tag. -->
+        <HorizontalStackLayout Spacing="8" Margin="0,8,0,0">
+            <CheckBox x:Name="CoupleCheck" IsChecked="{Binding NewIsCouple}" Color="#D4AF37" />
+            <Label Text="Playing as a couple" TextColor="White" VerticalOptions="Center" />
+        </HorizontalStackLayout>
+
+        <!-- Validation and save feedback. WinUI showed both; MAUI showed
+             neither, so a rejected duplicate name or a successful save produced
+             no visible response at all. The shared ViewModel already carried
+             Error and RosterStatus. -->
+        <Label Text="{Binding Error}"
+               IsVisible="{Binding HasError}"
+               TextColor="#F87171" FontSize="14" Margin="0,8,0,0" />
+        <Label Text="{Binding RosterStatus}"
+               IsVisible="{Binding HasRosterStatus}"
+               TextColor="{StaticResource AccentColor}" FontSize="14" Margin="0,4,0,0" />
+
+        <!-- Players List -->
+        <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,16,0,0">
+            <Label
+                Grid.Column="0"
+                Text="{Binding Players.Count, StringFormat='Players ({0})'}"
+                Style="{StaticResource SubheaderLabelStyle}"
+                VerticalOptions="Center" />
+            <!--
+                Backlog J.1, closed. Saving is explicit only — starting a game no
+                longer overwrites the remembered roster, matching WinUI.
+            -->
+            <Button
+                Grid.Column="1"
+                Text="Save roster"
+                Clicked="OnSaveRosterClicked"
+                BackgroundColor="Transparent"
+                TextColor="{StaticResource TextSecondary}"
+                FontSize="13"
+                Padding="8,4" />
+            <Button
+                Grid.Column="2"
+                Text="Clear all"
+                Clicked="OnClearPlayersClicked"
+                IsVisible="{Binding HasPlayers}"
+                BackgroundColor="Transparent"
+                TextColor="{StaticResource TextSecondary}"
+                FontSize="13"
+                Padding="8,4" />
+        </Grid>
+
+        <CollectionView ItemsSource="{Binding Players}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Style="{StaticResource CardStyle}">
+                        <HorizontalStackLayout Spacing="12">
+                            <!-- Initial badge. WinUI had one; MAUI listed names
+                                 with nothing to scan by. PlayerEntry.Initial was
+                                 already on the shared ViewModel. -->
+                            <Border WidthRequest="36" HeightRequest="36"
+                                    StrokeShape="RoundRectangle 18"
+                                    BackgroundColor="{StaticResource BaizeLitColor}"
+                                    Stroke="{StaticResource GoldColor}" StrokeThickness="1"
+                                    VerticalOptions="Center">
+                                <Label Text="{Binding Initial}"
+                                       FontFamily="{StaticResource DisplayFont}"
+                                       FontSize="16" TextColor="{StaticResource GoldBrightColor}"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+
+                            <VerticalStackLayout HorizontalOptions="FillAndExpand" VerticalOptions="Center" Spacing="2">
+                                <Label
+                                    Text="{Binding Name}"
+                                    FontFamily="{StaticResource DisplayFont}"
+                                    FontSize="17"
+                                    FontAttributes="Bold"
+                                    TextColor="{StaticResource TextPrimary}" />
+                                <Label
+                                    Text="{Binding Detail}"
+                                    FontFamily="{StaticResource UtilityFont}"
+                                    FontSize="12"
+                                    TextColor="{StaticResource TextSecondary}"
+                                    IsVisible="{Binding HasDetail}" />
+                            </VerticalStackLayout>
+
+                            <Button
+                                x:Name="RemoveButton"
+                                Text="✕"
+                                Clicked="OnRemovePlayerClicked"
+                                BackgroundColor="#EF4444"
+                                TextColor="White"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                Padding="0"
+                                CornerRadius="8" />
+                        </HorizontalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Start Game Button -->
+        <Button
+            x:Name="StartGameButton"
+            Text="Start Game →"
+            Style="{StaticResource PrimaryButtonStyle}"
+            Clicked="OnStartGameClicked"
+            Margin="0,24,0,0" />
+
+    </VerticalStackLayout>
+
+</ContentPage>

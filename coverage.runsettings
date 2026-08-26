@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <!--
+    Scopes coverage to what a real number should mean, and points every local
+    or CI run at the same rules so nobody sees a different figure depending on
+    where they ran it from.
+
+    Without the exclusions below, the denominator gets diluted by things that
+    were never candidates for a test in the first place — this project's own
+    verification harnesses under tests/_g and tests/_full (created and deleted
+    within a single assistant turn, never committed, but excluded here in case
+    one is ever left behind), and DTOs/records whose only members are
+    auto-implemented properties with no logic to cover.
+  -->
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <Exclude>[*.Tests]*,[full]*,[g]*</Exclude>
+          <ExcludeByFile>**/tests/_g/**/*.cs,**/tests/_full/**/*.cs</ExcludeByFile>
+          <ExcludeByAttribute>GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+          <SkipAutoProps>true</SkipAutoProps>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

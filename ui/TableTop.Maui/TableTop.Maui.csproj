@@ -1,0 +1,207 @@
+<!--
+  MAUI project — requires the .NET MAUI workload.
+
+  QUICK START (Windows):
+      dotnet workload install maui-windows
+      dotnet build ui/TableTop.Maui/TableTop.Maui.csproj -f net10.0-windows10.0.19041.0
+
+  QUICK START (macOS):
+      dotnet workload install maui-maccatalyst
+      dotnet build ui/TableTop.Maui/TableTop.Maui.csproj -f net10.0-maccatalyst
+
+  To also target Android or iOS:
+      dotnet workload install maui-android   # then build -f net10.0-android
+      dotnet workload install maui-ios       # then build -f net10.0-ios
+
+  Building via TableTop.slnx without the MAUI workload installed will skip
+  this project automatically — see the <TargetFrameworks> conditions below.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!--
+      Default: each OS builds only the framework it can target without extra SDKs.
+        • Windows → net10.0-windows10.0.19041.0
+        • macOS   → net10.0-maccatalyst
+        • Other   → net10.0-windows10.0.19041.0 (safe fallback; CI skips this project)
+
+      To build for Android or iOS, pass the TFM explicitly on the command line:
+          dotnet build -f net10.0-android
+          dotnet build -f net10.0-ios
+      or set the MAUI_ALL_PLATFORMS environment variable to any non-empty value to
+      enable all four targets in one build.
+    -->
+    <TargetFrameworks Condition="'$(MAUI_ALL_PLATFORMS)' != ''">net10.0-android;net10.0-ios;net10.0-maccatalyst;net10.0-windows10.0.19041.0</TargetFrameworks>
+    <!--
+      Default targets when MAUI_ALL_PLATFORMS isn't set. Android builds
+      everywhere (it needs no host-OS SDK the way iOS/Mac need macOS), so it's
+      a first-class default alongside the desktop head:
+        • macOS     → Android + Mac Catalyst
+        • non-macOS → Android + Windows
+      Build a single head with, e.g., `dotnet build -f net10.0-android`.
+    -->
+    <TargetFrameworks Condition="'$(MAUI_ALL_PLATFORMS)' == '' AND $([MSBuild]::IsOSPlatform('macOS'))">net10.0-android;net10.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="'$(MAUI_ALL_PLATFORMS)' == '' AND !$([MSBuild]::IsOSPlatform('macOS'))">net10.0-android;net10.0-windows10.0.19041.0</TargetFrameworks>
+
+    <OutputType>Exe</OutputType>
+    <UseMaui>true</UseMaui>
+    <SingleProject>true</SingleProject>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+
+    <ApplicationTitle>TableTop</ApplicationTitle>
+    <ApplicationId>com.tabletop.game</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+
+    <!--
+      Both derive from VersionPrefix so the app cannot drift from the engine.
+
+      ApplicationDisplayVersion was hardcoded "1.0". MAUI feeds it into the
+      PackageVersion *property*, and Central Package Management uses
+      PackageVersion as an *item* name — with the solution on 1.2.0 and this on
+      1.0, restore failed with NU1105 and left project.assets.json with no
+      targets at all, so the Windows TFM silently vanished from the build.
+
+      Setting PackageVersion explicitly is what actually resolves the NU1105;
+      pointing ApplicationDisplayVersion at the same source removes the
+      divergence rather than just the symptom.
+    -->
+    <ApplicationDisplayVersion>$(VersionPrefix)</ApplicationDisplayVersion>
+    <PackageVersion>$(VersionPrefix)</PackageVersion>
+
+    <!-- Minimum OS versions -->
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">12.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</SupportedOSPlatformVersion>
+
+    <!-- Run unpackaged on Windows so `dotnet run` / F5 works without MSIX signing. -->
+    <WindowsPackageType Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">None</WindowsPackageType>
+  </PropertyGroup>
+
+  <!-- App icon -->
+  <!--
+    ANDROID RELEASE SAFETY.
+
+    Debug deployments do not run the linker; Release builds do. That single
+    difference is the usual reason an app works over the debugger and then
+    fails once packaged and disconnected — reflection-reached code gets
+    trimmed away and only breaks at runtime.
+
+    SdkOnly links the BCL but leaves application assemblies alone, and the
+    engine assemblies are explicitly rooted so the card types reached
+    reflectively by System.Text.Json survive regardless of link mode.
+  -->
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' AND '$(Configuration)' == 'Release'">
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <PublishTrimmed>false</PublishTrimmed>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <TrimmerRootAssembly Include="TableTop.Core" />
+    <TrimmerRootAssembly Include="TableTop.Games" />
+    <TrimmerRootAssembly Include="TableTop.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <MauiIcon Include="Resources/Images/appicon.svg" />
+  </ItemGroup>
+
+  <!-- Splash screen -->
+  <ItemGroup>
+    <!-- Color MUST match splash.svg's background (#174034, baize): MAUI uses it
+         to letterbox the splash on screens that aren't square. It was #1E1E2E,
+         left over from the placeholder art, which would have framed the new
+         artwork in near-black bands on every tall phone. -->
+    <MauiSplashScreen Include="Resources/Images/splash.svg" Color="#174034" BaseSize="456,456" />
+  </ItemGroup>
+
+  <!-- Engine references -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TableTop.Core\TableTop.Core.csproj" />
+    <ProjectReference Include="..\..\src\TableTop.Games\TableTop.Games.csproj" />
+    <ProjectReference Include="..\..\src\TableTop.Hosting\TableTop.Hosting.csproj" />
+    <ProjectReference Include="..\..\src\TableTop.Presentation\TableTop.Presentation.csproj" />
+  </ItemGroup>
+
+  <!--
+    Explicit platform-folder exclusions.
+    The MAUI Single Project SDK normally excludes non-target platform folders
+    automatically — but ONLY when the MAUI workload is installed. Without the
+    workload the raw SDK compiles everything, causing CS0246 errors for Android
+    and iOS types. These Remove items replicate what the workload would do so
+    the project compiles regardless of workload state.
+  -->
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'android'">
+    <Compile Remove="Platforms/Android/**/*.cs" />
+    <None   Include="Platforms/Android/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'ios'">
+    <Compile Remove="Platforms/iOS/**/*.cs" />
+    <None   Include="Platforms/iOS/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'maccatalyst'">
+    <Compile Remove="Platforms/MacCatalyst/**/*.cs" />
+    <None   Include="Platforms/MacCatalyst/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'windows'">
+    <Compile Remove="Platforms/Windows/**/*.cs" />
+    <None   Include="Platforms/Windows/**/*.cs" />
+  </ItemGroup>
+
+  <!--
+    Optional CI escape hatch: building WITHOUT the MAUI workload.
+
+    By default every source file compiles — this is the normal path for anyone
+    who has run `dotnet workload install maui-windows` (or maui-maccatalyst).
+
+    A machine without the workload can still get a green solution build by
+    passing -p:SkipMauiCode=true (or setting the SkipMauiCode env var); the
+    project then produces an empty but valid assembly instead of failing.
+
+    NOTE: an earlier revision keyed this guard on $(_MauiWorkloadInstalled),
+    which is NOT a property the workload actually defines — so the guard fired
+    even when the workload WAS installed, stripping MauiProgram/App/Pages from
+    the compile and yielding CS5001 "no static 'Main'". Do not resurrect it.
+  -->
+  <ItemGroup Condition="'$(SkipMauiCode)' == 'true'">
+    <Compile Remove="App.xaml.cs" />
+    <Compile Remove="AssemblyInfo.cs" />
+    <Compile Remove="MauiProgram.cs" />
+    <Compile Remove="Pages/**/*.cs" />
+    <Compile Remove="ViewModels/**/*.cs" />
+    <None Include="App.xaml.cs" />
+    <None Include="AssemblyInfo.cs" />
+    <None Include="MauiProgram.cs" />
+    <None Include="Pages/**/*.cs" />
+    <None Include="ViewModels/**/*.cs" />
+    <!-- Exclude XAML files too — the XAML compiler is part of the workload -->
+    <MauiXaml Remove="**/*.xaml" />
+    <None Include="**/*.xaml" />
+  </ItemGroup>
+
+  <!--
+    Since .NET 9, MAUI is delivered as NuGet packages: the workload supplies the
+    build tooling and platform bindings, but the Microsoft.Maui.Controls package
+    reference below is REQUIRED for the framework types (ContentPage, MauiApp,
+    BindableObject, …) to resolve. Omitting it produces a wall of CS0246 errors
+    even with the workload installed.
+
+    Version is centrally managed in Directory.Packages.props like every other
+    package in this solution — previously pinned to $(MauiVersion) (the
+    installed workload's own version) via VersionOverride, which auto-tracked
+    the local tooling but meant the version lived outside the usual place. See
+    the comment in Directory.Packages.props for why a fixed version here is
+    safe for non-MAUI machines to evaluate. Bump it there when picking up a
+    newer MAUI release; the workload just needs to be new enough to support it.
+    The SkipMauiCode condition keeps the workload-free CI escape hatch working.
+  -->
+  <ItemGroup Condition="'$(SkipMauiCode)' != 'true'">
+    <PackageReference Include="Microsoft.Maui.Controls" />
+  </ItemGroup>
+
+</Project>

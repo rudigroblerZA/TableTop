@@ -1,0 +1,337 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TableTop.Maui.App">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- ══ BOARD-GAME PALETTE ═══════════════════════════════════════
+                 The table is felt baize in a walnut frame. Gold and cream card
+                 stock carry over unchanged from the WPF/WinUI heads so the
+                 brand is recognisable across every platform.
+
+                 Historic key names are KEPT (CardStyle, PrimaryButtonStyle,
+                 TextPrimary…) so every existing page keeps binding correctly —
+                 only the colours behind them moved onto the tabletop.      -->
+            <Color x:Key="BaizeColor">#174034</Color>
+            <Color x:Key="BaizeLitColor">#245546</Color>
+            <Color x:Key="BaizeDeepColor">#0E2A22</Color>
+            <Color x:Key="WalnutColor">#4A2E1D</Color>
+            <Color x:Key="GoldColor">#C49E4C</Color>
+            <Color x:Key="GoldBrightColor">#E3C67F</Color>
+            <Color x:Key="BrassDimColor">#8A7A55</Color>
+
+            <Color x:Key="PageBackgroundColor">#174034</Color>
+            <Color x:Key="CardStockColor">#FAF8F2</Color>
+            <Color x:Key="AnswerStockColor">#FFF4DD</Color>
+            <Color x:Key="CardInkColor">#1F2126</Color>
+            <Color x:Key="CardInkSubtle">#7C7466</Color>
+
+            <Color x:Key="PrimaryColor">#C49E4C</Color>
+            <Color x:Key="SecondaryColor">#E3C67F</Color>
+            <Color x:Key="AccentColor">#E3C67F</Color>
+            <Color x:Key="TextPrimary">#EDE7D6</Color>
+            <Color x:Key="TextSecondary">#8A7A55</Color>
+            <Color x:Key="CardBackground">#16382E</Color>
+            <Color x:Key="ButtonBackground">#C49E4C</Color>
+            <Color x:Key="ButtonHover">#E3C67F</Color>
+
+            <!-- The felt surface. A radial gradient reads as cloth lit from
+                 above rather than a flat fill. -->
+            <RadialGradientBrush x:Key="BaizeBrush" Center="0.5,0.28" Radius="0.95">
+                <GradientStop Color="{StaticResource BaizeLitColor}" Offset="0.0" />
+                <GradientStop Color="{StaticResource BaizeColor}"    Offset="0.55" />
+                <GradientStop Color="{StaticResource BaizeDeepColor}" Offset="1.0" />
+            </RadialGradientBrush>
+
+            <!-- Card stock with a faint warm rake, so it isn't flat white. -->
+            <!-- Walnut table edge. The bright sliver in the first 2% is the
+                 specular highlight along the rail's top arris — it's what makes
+                 the frame read as a lifted lip rather than a painted band. -->
+            <LinearGradientBrush x:Key="WalnutFrameBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#8A5E3C" Offset="0.00" />
+                <GradientStop Color="#5C3A24" Offset="0.02" />
+                <GradientStop Color="#4A2E1D" Offset="0.35" />
+                <GradientStop Color="#2B1A10" Offset="1.00" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="CardFaceBrush" StartPoint="0,0" EndPoint="0.4,1">
+                <GradientStop Color="#FFFDF8" Offset="0.0" />
+                <GradientStop Color="#FAF8F2" Offset="0.55" />
+                <GradientStop Color="#EFE9DB" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <!-- Brass button fill -->
+            <LinearGradientBrush x:Key="BrassBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="{StaticResource GoldBrightColor}" Offset="0.0" />
+                <GradientStop Color="{StaticResource GoldColor}"       Offset="1.0" />
+            </LinearGradientBrush>
+
+            <!-- ══ TYPE — PLATFORM AWARE ════════════════════════════════════
+                 Constantia and Georgia are Windows faces and DO NOT exist on
+                 Android, where asking for them silently falls back to Roboto
+                 and loses the whole parlour feel. So each platform gets a real
+                 local serif:
+                   Android  — "serif" (the system alias for Noto Serif)
+                   iOS/Mac  — Georgia (genuinely present on Apple platforms)
+                   Windows  — Constantia, matching the WinUI head
+                 No font files are bundled, so this adds nothing to app size. -->
+            <OnPlatform x:Key="DisplayFont" x:TypeArguments="x:String">
+                <On Platform="Android" Value="serif" />
+                <On Platform="iOS, MacCatalyst" Value="Georgia" />
+                <On Platform="WinUI" Value="Constantia" />
+            </OnPlatform>
+            <OnPlatform x:Key="BodyFont" x:TypeArguments="x:String">
+                <On Platform="Android" Value="serif" />
+                <On Platform="iOS, MacCatalyst" Value="Georgia" />
+                <On Platform="WinUI" Value="Georgia" />
+            </OnPlatform>
+            <OnPlatform x:Key="UtilityFont" x:TypeArguments="x:String">
+                <On Platform="Android" Value="monospace" />
+                <On Platform="iOS, MacCatalyst" Value="Menlo" />
+                <On Platform="WinUI" Value="Consolas" />
+            </OnPlatform>
+
+            <!-- ══ TEXT STYLES ══════════════════════════════════════════════
+                 Sizes are deliberately a little larger than the desktop heads:
+                 this is read at arm's length on a phone, often in poor light,
+                 and often passed between people mid-game.                   -->
+            <Style TargetType="Label" x:Key="HeaderLabelStyle">
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+                <Setter Property="FontSize" Value="28" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="Margin" Value="0,0,0,16" />
+            </Style>
+
+            <Style TargetType="Label" x:Key="SubheaderLabelStyle">
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+                <Setter Property="FontSize" Value="19" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="Margin" Value="0,0,0,12" />
+            </Style>
+
+            <Style TargetType="Label" x:Key="BodyLabelStyle">
+                <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+            </Style>
+
+            <!-- Small mono label: pips, counters, captions -->
+            <Style TargetType="Label" x:Key="PipLabelStyle">
+                <Setter Property="FontFamily" Value="{StaticResource UtilityFont}" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+            </Style>
+
+            <!-- ══ SURFACES ═════════════════════════════════════════════════ -->
+
+            <!-- A raised felt panel -->
+            <Style TargetType="Frame" x:Key="CardStyle">
+                <Setter Property="BackgroundColor" Value="{StaticResource CardBackground}" />
+                <Setter Property="BorderColor" Value="#4DC49E4C" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="Padding" Value="16" />
+                <Setter Property="HasShadow" Value="False" />
+            </Style>
+
+            <!-- Printed playing card: cream stock, sits on the felt.
+
+                 NOTE: GameplayPage no longer uses this style's colours. That
+                 page is skinned per mode from Theming/ModeTheme.cs and binds
+                 its own BackgroundColor, because a mode's palette is data and
+                 a ResourceDictionary can only hold one palette at a time.
+                 The style is still applied there for shape, padding and
+                 shadow, and is used whole by the other pages. Colours defined
+                 here are deliberately NOT duplicated into ModeTheme — one
+                 palette, one place, whichever place that is. -->
+            <Style TargetType="Frame" x:Key="PlayingCardStyle">
+                <!-- Warm rake across the face rather than flat stock, matching
+                     WinUI's CardFaceBrush so the two heads print the same card. -->
+                <Setter Property="Background" Value="{StaticResource CardFaceBrush}" />
+                <Setter Property="BorderColor" Value="#8CC49E4C" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="Padding" Value="22" />
+                <!-- HasShadow is the platform's default drop, which is flat and
+                     grey. An explicit Shadow can be tuned: offset down, wide
+                     radius, warm-black — the card lying on cloth under a lamp. -->
+                <Setter Property="HasShadow" Value="False" />
+                <Setter Property="Shadow">
+                    <Setter.Value>
+                        <Shadow Brush="#0E2A22" Offset="0,10" Radius="22" Opacity="0.55" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- ══ BUTTONS ══════════════════════════════════════════════════
+                 HeightRequest 50 keeps every primary action above the ~44dp
+                 minimum touch target on both Android and iOS. -->
+            <Style TargetType="Button" x:Key="PrimaryButtonStyle">
+                <Setter Property="Background" Value="{StaticResource BrassBrush}" />
+                <Setter Property="TextColor" Value="#22160A" />
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="HeightRequest" Value="50" />
+                <Setter Property="Padding" Value="20,0" />
+            </Style>
+
+            <!-- Secondary action: engraved, sits quietly on the felt -->
+            <!-- Lit from above, dark at the bottom: reads as a control seated
+                 into the rail rather than a rectangle painted onto the felt.
+                 Matches WinUI's FeltButtonStyle so the heads agree. -->
+            <Style TargetType="Button" x:Key="FeltButtonStyle">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="{StaticResource BaizeLitColor}" Offset="0.0" />
+                            <GradientStop Color="{StaticResource BaizeDeepColor}" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="TextColor" Value="{StaticResource GoldBrightColor}" />
+                <Setter Property="BorderColor" Value="#73C49E4C" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="15" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="HeightRequest" Value="50" />
+                <Setter Property="Padding" Value="18,0" />
+            </Style>
+
+            <!-- Quiet tertiary (Quit, Undo) -->
+            <Style TargetType="Button" x:Key="QuietButtonStyle">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+                <Setter Property="BorderColor" Value="#598A7A55" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+                <Setter Property="FontSize" Value="15" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="HeightRequest" Value="48" />
+                <Setter Property="Padding" Value="16,0" />
+            </Style>
+
+            <!-- ══ MONOGAMY: THE VELVET TABLE ═══════════════════════════════
+                 Monogamy is the couples intimacy game, so it swaps the green
+                 card-room felt for wine velvet under candlelight — same
+                 structure, warmer register. Zone colours are shared verbatim
+                 with the WinUI and WPF heads so a couple sees the same
+                 escalation on any device.                                   -->
+            <Color x:Key="VelvetColor">#2A0E1A</Color>
+            <Color x:Key="VelvetLitColor">#4A1A2E</Color>
+            <Color x:Key="VelvetDeepColor">#16060D</Color>
+            <Color x:Key="VelvetPanelColor">#3A1424</Color>
+            <Color x:Key="RoseGoldColor">#D9A166</Color>
+            <Color x:Key="RoseGoldBrightColor">#F0C89A</Color>
+
+            <Color x:Key="ZoneForeplayColor">#F0A0B4</Color>
+            <Color x:Key="ZoneSensualColor">#E8A85C</Color>
+            <Color x:Key="ZoneSteamyColor">#D9534F</Color>
+            <Color x:Key="ZoneWildColor">#B0306A</Color>
+            <Color x:Key="ZoneFantasyColor">#6B2D8C</Color>
+
+            <RadialGradientBrush x:Key="VelvetBrush" Center="0.5,0.3" Radius="0.95">
+                <GradientStop Color="{StaticResource VelvetLitColor}"  Offset="0.0" />
+                <GradientStop Color="{StaticResource VelvetColor}"     Offset="0.55" />
+                <GradientStop Color="{StaticResource VelvetDeepColor}" Offset="1.0" />
+            </RadialGradientBrush>
+
+            <LinearGradientBrush x:Key="RoseBrassBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="{StaticResource RoseGoldBrightColor}" Offset="0.0" />
+                <GradientStop Color="{StaticResource RoseGoldColor}"       Offset="1.0" />
+            </LinearGradientBrush>
+
+            <!-- Rose-brass primary action, same 50dp touch target as the rest -->
+            <Style TargetType="Button" x:Key="RoseButtonStyle">
+                <Setter Property="Background" Value="{StaticResource RoseBrassBrush}" />
+                <Setter Property="TextColor" Value="#2A0E1A" />
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="HeightRequest" Value="50" />
+                <Setter Property="Padding" Value="20,0" />
+            </Style>
+
+            <Style TargetType="Button" x:Key="VelvetButtonStyle">
+                <Setter Property="BackgroundColor" Value="{StaticResource VelvetPanelColor}" />
+                <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="BorderColor" Value="{StaticResource RoseGoldColor}" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+                <Setter Property="FontSize" Value="15" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="HeightRequest" Value="50" />
+                <Setter Property="Padding" Value="18,0" />
+            </Style>
+
+            <!-- ══ MILLIONAIRE: THE STUDIO ══════════════════════════════════
+                 The quiz-ladder family is a TV studio, not a table: deep
+                 midnight blue with a spotlight pool, silver-edged answer
+                 plates, gold money ladder. Shared verbatim with WinUI + WPF. -->
+            <Color x:Key="StudioColor">#0A1230</Color>
+            <Color x:Key="StudioLitColor">#16255C</Color>
+            <Color x:Key="StudioDeepColor">#04081A</Color>
+            <Color x:Key="PlateColor">#14224E</Color>
+            <Color x:Key="PlateEdgeColor">#6E82B8</Color>
+            <Color x:Key="QuizGoldColor">#FFC94A</Color>
+            <Color x:Key="QuizGoldBrightColor">#FFE9A3</Color>
+            <Color x:Key="CorrectColor">#35B45A</Color>
+            <Color x:Key="WrongColor">#E0524E</Color>
+
+            <RadialGradientBrush x:Key="StudioBrush" Center="0.5,0.32" Radius="0.95">
+                <GradientStop Color="{StaticResource StudioLitColor}"  Offset="0.0" />
+                <GradientStop Color="{StaticResource StudioColor}"     Offset="0.55" />
+                <GradientStop Color="{StaticResource StudioDeepColor}" Offset="1.0" />
+            </RadialGradientBrush>
+
+            <LinearGradientBrush x:Key="QuizBrassBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="{StaticResource QuizGoldBrightColor}" Offset="0.0" />
+                <GradientStop Color="{StaticResource QuizGoldColor}"       Offset="1.0" />
+            </LinearGradientBrush>
+
+            <!-- An answer plate. 56dp tall: these are the most-tapped controls
+                 in the app and often used at speed, so they get a bigger target
+                 than the 50dp standard. -->
+            <Style TargetType="Button" x:Key="AnswerPlateStyle">
+                <Setter Property="BackgroundColor" Value="{StaticResource PlateColor}" />
+                <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="BorderColor" Value="{StaticResource PlateEdgeColor}" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="HeightRequest" Value="56" />
+                <Setter Property="Padding" Value="16,0" />
+            </Style>
+
+            <Style TargetType="Button" x:Key="LifelineStyle">
+                <Setter Property="BackgroundColor" Value="{StaticResource PlateColor}" />
+                <Setter Property="TextColor" Value="{StaticResource QuizGoldBrightColor}" />
+                <Setter Property="BorderColor" Value="{StaticResource QuizGoldColor}" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="FontFamily" Value="{StaticResource UtilityFont}" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="CornerRadius" Value="22" />
+                <Setter Property="HeightRequest" Value="48" />
+                <Setter Property="Padding" Value="14,0" />
+            </Style>
+
+            <Style TargetType="Button" x:Key="QuizButtonStyle">
+                <Setter Property="Background" Value="{StaticResource QuizBrassBrush}" />
+                <Setter Property="TextColor" Value="#0A1230" />
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="HeightRequest" Value="50" />
+                <Setter Property="Padding" Value="20,0" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

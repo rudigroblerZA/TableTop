@@ -1,0 +1,1026 @@
+abstract class TableTop.Games.Base.BaseGameModeDefinition
+    IEnumerable<IRule> GetRules()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyDictionary<String, String> ResolvedCategoryColours { get; }
+    IReadOnlyList<ICard> GetCards(IReadOnlyList<IPlayer> players)
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; }
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    IReadOnlyList<String> ResolvedCategoriesPinnedToEnd { get; }
+    IReadOnlyList<String> ResolvedCategoriesPinnedToStart { get; }
+    IScoringStrategy GetScoring()
+    Int32 MinimumPlayers { get; }
+    Int32 ResolvedMinimumPlayers { get; }
+    ModePresentation Presentation { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String DisplayDescription { get; }
+    String DisplayName { get; }
+    String Name { get; }
+    String ResolvedCompleteLabel { get; }
+    String ResolvedSkipLabel { get; }
+    String SkipLabel { get; }
+    ThemePalette Theme { get; }
+static class TableTop.Games.Couples.AfterglowCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.AfterglowMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; }
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Couples.AllInCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.AllInMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Couples.BetweenTheTwoOfYouCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.BetweenTheTwoOfYouMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Couples.BothOrNeitherCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.BothOrNeitherMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; }
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Couples.CartographersCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.CartographersMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; }
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Couples.CouplesQuestionsCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.CouplesQuestionsMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Couples.DayOneCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.DayOneMode
+    .ctor()
+    IReadOnlyList<ICard> GetDailyDeck()
+    String Description { get; }
+    String Name { get; }
+static class TableTop.Games.Couples.FutureUsCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.FutureUsMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Couples.HeatCheckCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.HeatCheckMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Couples.InYourShoesCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.InYourShoesMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Couples.MemoryLaneCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.MemoryLaneMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Couples.MindMeldCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.MindMeldMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+sealed class TableTop.Games.Couples.ModernLoveMillionaireMode
+    .ctor()
+    IReadOnlyList<MultipleChoiceCard> GetQuestionBank()
+    String Description { get; }
+    String Name { get; }
+static class TableTop.Games.Couples.ModernLoveQuestionBank
+    IReadOnlyList<MultipleChoiceCard> All { get; }
+sealed class TableTop.Games.Couples.OutLoudMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Couples.ParallelUsCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.ParallelUsMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Couples.RelationshipDaresCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.RelationshipDaresMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Couples.SlowBurnCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.SlowBurnMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Couples.SpyVsSpouseCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.SpyVsSpouseMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Couples.TheLongGameCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.TheLongGameMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Couples.TheProphecyCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.TheProphecyMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Couples.TwoTruthsOneWishCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.TwoTruthsOneWishMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Couples.UndividedCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.UndividedMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; }
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Couples.WouldYouKnowCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.WouldYouKnowMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Data.MonogamyCardBank
+    IReadOnlyList<MonogamyCard> All { get; }
+static class TableTop.Games.Data.MonogamyCardBankExtended
+    IReadOnlyList<MonogamyCard> All { get; }
+    IReadOnlyList<MonogamyCard> FullDeck { get; }
+static class TableTop.Games.FactOrFiction.ExpertFactOrFictionCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.FactOrFiction.ExpertFactOrFictionMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.FactOrFiction.FactOrFictionCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.FactOrFiction.FactOrFictionMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.FactOrFiction.PersonalFactsCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.FactOrFiction.PersonalFactsMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.ActItOutCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.ActItOutMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.AlibiCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.AlibiMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.BackwardsStoryCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.BackwardsStoryMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.BlankSlateCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.BlankSlateMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.CaptionThisCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.CaptionThisMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.CelebrityImpersonatorCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.CelebrityImpersonatorMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.ChronologyChallengeCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.ChronologyChallengeMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.DrawItCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.DrawItMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.EmojiLegendsCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.EmojiLegendsMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.FamilyDaresCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.FamilyDaresMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.FamilyQuizCardBank
+    IReadOnlyList<MultipleChoiceCard> All { get; }
+sealed class TableTop.Games.Family.FamilyQuizMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<MultipleChoiceCard> GetQuestionBank()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.FamilyStoriesCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.FamilyStoriesMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.ForbiddenWordsCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.ForbiddenWordsMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.LaughOrGroanCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.LaughOrGroanMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.LetterRushCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.LetterRushMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.MonologueMadnessCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.MonologueMadnessMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.OneStarReviewsCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.OneStarReviewsMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.PredictThisCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.PredictThisMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.RankThisCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.RankThisMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.RhymeBattleCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.RhymeBattleMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.SixtySecondsCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.SixtySecondsMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.SoundDetectiveCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.SoundDetectiveMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.SpeedBlitzCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.SpeedBlitzMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.SpeedStealCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.SpeedStealMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.SurviveThisCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.SurviveThisMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.TasteTheColorsCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.TasteTheColorsMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.TheLiarCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.TheLiarMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.TheVerdictCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.TheVerdictMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.ThisIsUsCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.ThisIsUsMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.TouchAndTellCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.TouchAndTellMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Family.UselessSuperpowersCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Family.UselessSuperpowersMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.Fun.AllTogetherNowCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Fun.AllTogetherNowMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; }
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    Int32 MinimumPlayers { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+sealed class TableTop.Games.Fun.ClaimedMode
+    .ctor()
+    IReadOnlyList<ICard> GetClaimedDeck()
+    Int32 WinningTerritoryCount { get; }
+    String Description { get; }
+    String Name { get; }
+static class TableTop.Games.Fun.HerdCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Fun.HerdMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<ICard> GetHerdDeck()
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    Int32 MinimumPlayers { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Fun.LastOneStandingCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Fun.LastOneStandingMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; }
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    Int32 MinimumPlayers { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Fun.RivalsCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Fun.RivalsMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    Int32 MinimumPlayers { get; }
+    Int32 MinimumPlayersForTeams { get; }
+    Int32 PreferredTeamCount { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+sealed class TableTop.Games.Fun.RollWithItMode
+    .ctor()
+    IReadOnlyList<String> CategoriesInOrder { get; }
+    String CategoryForTotal(Int32 diceTotal)
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+sealed class TableTop.Games.Fun.SlangCheckMode
+    .ctor()
+    IReadOnlyList<MultipleChoiceCard> GetQuestionBank()
+    String Description { get; }
+    String Name { get; }
+static class TableTop.Games.Fun.SlangCheckQuestionBank
+    IReadOnlyList<MultipleChoiceCard> All { get; }
+static class TableTop.Games.Fun.SplitTheRoomCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Fun.SplitTheRoomMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; }
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    Int32 MinimumPlayers { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Fun.ThisOrThatCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Fun.ThisOrThatMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+sealed class TableTop.Games.GameOptions
+    .ctor(IProgressionStrategy Progression, Int32 MaxRounds, Boolean ShowScoreAfterEachTurn)
+    Boolean Equals(GameOptions other)
+    Boolean Equals(Object obj)
+    Boolean ShowScoreAfterEachTurn { get; set; }
+    GameOptions <Clone>$()
+    IProgressionStrategy Progression { get; set; }
+    Int32 GetHashCode()
+    Int32 MaxRounds { get; set; }
+    String ToString()
+    Void Deconstruct(IProgressionStrategy& Progression, Int32& MaxRounds, Boolean& ShowScoreAfterEachTurn)
+sealed class TableTop.Games.GetToKnowYouMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+sealed class TableTop.Games.MillionaireMode
+    .ctor()
+    IReadOnlyList<MultipleChoiceCard> GetQuestionBank()
+    String Description { get; }
+    String Name { get; }
+static class TableTop.Games.MillionaireQuestionBank
+    IReadOnlyList<MultipleChoiceCard> All { get; }
+sealed class TableTop.Games.MonogamyMode
+    .ctor()
+    IReadOnlyList<MonogamyCard> GetDeck()
+    Nullable<Int32> WinningTokenCount { get; }
+    String Description { get; }
+    String Name { get; }
+static class TableTop.Games.Party.LastOrdersCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Party.LastOrdersMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; }
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+static class TableTop.Games.Party.QuestionableChoicesCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Party.QuestionableChoicesMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.AnimalKingdomCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.AnimalKingdomMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.ConstraintMasterCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.ConstraintMasterMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.EstimationStationCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.EstimationStationMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+sealed class TableTop.Games.School.ExplainItBackMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.FigurativeLanguageCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.FigurativeLanguageMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.Grade6QuestionBank
+    IReadOnlyList<MultipleChoiceCard> All { get; }
+static class TableTop.Games.School.GrammarQuestCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.GrammarQuestMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.LogicLabCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.LogicLabMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.MentalMathsSprintCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.MentalMathsSprintMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.NumberWorldCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.NumberWorldMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.OddOneOutCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.OddOneOutMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.OneWordWonderCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.OneWordWonderMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.PunctuationWarsCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.PunctuationWarsMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.ReadingComprehensionCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.ReadingComprehensionMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+sealed class TableTop.Games.School.SchoolMillionaireMode
+    .ctor()
+    IReadOnlyList<MultipleChoiceCard> GetQuestionBank()
+    String Description { get; }
+    String Name { get; }
+static class TableTop.Games.School.ScienceSprintCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.ScienceSprintMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.SoundAndSongCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.SoundAndSongMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.SpellingBeeCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.SpellingBeeMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.SportingChanceCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.SportingChanceMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.StoryStartersCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.StoryStartersMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.TheParadoxCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.TheParadoxMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.ThroughTheAgesCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.ThroughTheAgesMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.VocabularyBuilderCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.VocabularyBuilderMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.WordDetectivesCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.WordDetectivesMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.WorldExplorerCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.WorldExplorerMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.WrongAnswersOnlyCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.WrongAnswersOnlyMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.TruthOrDareCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.TruthOrDareMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+sealed class TableTop.Games.WouldYouRatherMode
+    .ctor()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }

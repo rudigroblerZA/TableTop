@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>TableTop.Hosting</AssemblyName>
+    <RootNamespace>TableTop.Hosting</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      LoggerEngineDiagnostics uses ILogger. This compiled only because Core
+      transitively supplied it via the ASP.NET Core shared framework; now that
+      Core no longer does, the dependency has to be stated here.
+    -->
+    
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TableTop.Core\TableTop.Core.csproj" />
+    <ProjectReference Include="..\TableTop.Games\TableTop.Games.csproj" />
+  </ItemGroup>
+</Project>

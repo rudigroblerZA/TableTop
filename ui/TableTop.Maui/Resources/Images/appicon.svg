@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108">
+  <!--
+    TableTop app icon.
+
+    Drawn to the palette the app actually uses (App.xaml): baize #174034,
+    walnut #4A2E1D, brass #C49E4C, card stock #FAF8F2. The previous icon was a
+    generic indigo square with a letter T, using #1E1E2E/#6366F1 — colours that
+    appear nowhere else in the product.
+
+    Three fanned cards rather than a letterform: the app is a card game, the
+    shape reads at a glance, and it survives being shrunk to a launcher tile
+    where any text would turn to mush. The fan is deliberately asymmetric —
+    a real hand doesn't splay evenly.
+
+    Two things found by rendering it, not by reading the markup: the walnut
+    frame was eating ~22% of a 48px tile (thinned), and the back cards drawn as
+    translucent white read as grey shadows against dark felt rather than as
+    cards (given explicit warm tints instead).
+
+    Safe area: Android adaptive icons crop to a circle of roughly 66% width.
+    Everything meaningful sits within r=36 of centre (54,54); the frame and
+    outer baize are allowed to be cropped away.
+  -->
+
+  <defs>
+    <radialGradient id="feltLight" cx="50%" cy="30%" r="78%">
+      <stop offset="0%"   stop-color="#245546"/>
+      <stop offset="70%"  stop-color="#174034"/>
+      <stop offset="100%" stop-color="#0E2A22"/>
+    </radialGradient>
+    <linearGradient id="walnut" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#5C3A25"/>
+      <stop offset="100%" stop-color="#3A2416"/>
+    </linearGradient>
+    <linearGradient id="stock" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%"   stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F2EDE0"/>
+    </linearGradient>
+    <linearGradient id="brass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#E3C67F"/>
+      <stop offset="55%"  stop-color="#C49E4C"/>
+      <stop offset="100%" stop-color="#9A7A38"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Walnut table edge -->
+  <rect width="108" height="108" rx="24" fill="url(#walnut)"/>
+
+  <!-- Baize playing surface, inset like real felt in a frame -->
+  <rect x="4" y="4" width="100" height="100" rx="21" fill="url(#feltLight)"/>
+
+  <!-- Brass hairline where felt meets frame -->
+  <rect x="4.75" y="4.75" width="98.5" height="98.5" rx="20.4"
+        fill="none" stroke="#C49E4C" stroke-opacity="0.34" stroke-width="1.5"/>
+
+  <!-- Three fanned cards, back to front so the near card overlaps cleanly. -->
+  <g transform="translate(54 58)">
+    <g transform="rotate(-20) translate(0 -3)">
+      <rect x="-16" y="-23" width="32" height="46" rx="4.5"
+            fill="#C9C4B4" opacity="0.85"/>
+    </g>
+    <g transform="rotate(-1)">
+      <rect x="-16" y="-24" width="32" height="48" rx="4.5"
+            fill="#E4DFD0" opacity="0.95"/>
+    </g>
+    <g transform="rotate(17) translate(1 1)">
+      <rect x="-16.5" y="-24.5" width="33" height="49" rx="5" fill="url(#stock)"/>
+      <!-- Brass pip on the face card: the app's accent, and enough detail to
+           stop the icon reading as a blank rectangle at large sizes. -->
+      <circle cx="0" cy="0" r="6.5" fill="url(#brass)"/>
+      <circle cx="0" cy="0" r="6.5" fill="none" stroke="#8A6A2E"
+              stroke-opacity="0.5" stroke-width="0.8"/>
+    </g>
+  </g>
+</svg>

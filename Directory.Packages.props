@@ -1,0 +1,82 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <!-- Test packages -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk"                    Version="18.8.1" />
+    <PackageVersion Include="xunit"                                      Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio"                  Version="3.1.5" />
+    <PackageVersion Include="coverlet.collector"                         Version="10.0.1" />
+    <PackageVersion Include="Moq"                                        Version="4.20.72" />
+    <!--
+      FluentAssertions 8.0 (Jan 2025) relicensed from Apache 2.0 to the Xceed
+      Community License: free for non-commercial and open-source use, but any
+      commercial use requires a paid Xceed licence (~$130 per developer per
+      year). This project was on 8.10.0, which means shipping TableTop
+      commercially would have needed a seat for every developer.
+
+      7.x stays under Apache 2.0 — the maintainer has said it remains free
+      indefinitely and still gets critical fixes; 7.2.2 was published in March
+      2026, so the line is alive rather than abandoned.
+
+      The version is bracketed, which in NuGet means EXACTLY this version. A
+      plain "7.2.2" is a minimum and would let a restore quietly resolve 8.x
+      again, putting the project back in breach without anyone touching a file.
+      Do not remove the brackets.
+
+      All 37 assertion methods this suite uses predate 7.0, so the downgrade
+      needs no source changes. If you would rather stay on an actively
+      developed library, AwesomeAssertions is a drop-in Apache-2.0 fork that
+      keeps the FluentAssertions namespace — swapping to it is a package-name
+      change here plus GlobalUsings.cs, and nothing else.
+    -->
+    <PackageVersion Include="FluentAssertions"                           Version="[7.2.2]" />
+  </ItemGroup>
+
+  <!--
+    Core/hosting packages.
+
+    These are the framework-independent abstractions the engine needs, and they
+    replace the old <FrameworkReference Include="Microsoft.AspNetCore.App" /> in
+    TableTop.Core, which dragged the whole ASP.NET Core shared framework into a
+    card-game engine and caused runtime-identifier conflicts on Android and iOS.
+
+    Versions track the target framework: 10.0.x for net10.0. If the solution is
+    ever retargeted back, move these in the same step — a 10.0.x package cannot
+    restore against net8.0, and 8.0.x is stale on net10.0.
+  -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection"              Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions"             Version="10.0.10" />
+  </ItemGroup>
+
+  <!-- WinUI 3 / Windows App SDK packages -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.WindowsAppSDK"                     Version="2.3.1" />
+    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools"            Version="10.0.28000.2526" />
+  </ItemGroup>
+
+  <!--
+    MAUI packages.
+
+    Unlike the rest of this file, Microsoft.Maui.Controls' version here is a
+    FIXED number, not a workload-tracked one — TableTop.Maui.csproj used to pin
+    it to $(MauiVersion) (an MSBuild property the installed MAUI workload
+    defines) via VersionOverride specifically to keep a *workload-dependent*
+    value out of this shared file, since non-MAUI machines evaluate this file
+    too and $(MauiVersion) may not exist for them.
+
+    A literal version string doesn't have that problem — it's inert on a
+    machine that never references the package, the same as the unused
+    other Windows-only entries used to be. So it's centrally managed here like every
+    other package now. The tradeoff: this number no longer auto-tracks
+    whichever MAUI workload happens to be installed locally — bump it by hand
+    when the workload updates, the same as everything else in this file.
+  -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Maui.Controls"                     Version="10.0.90" />
+  </ItemGroup>
+</Project>

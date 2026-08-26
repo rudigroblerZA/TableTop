@@ -1,0 +1,265 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  # ── XAML gates ────────────────────────────────────────────────────────────
+  # Deliberately first, and deliberately independent of every other job: these
+  # are pure-Python static checks that need no SDK, no workload and no restore,
+  # so they still report when the build is broken. They catch two classes of
+  # bug that a XAML *compile* does not:
+  #
+  #   check-maui-xaml.py      MAUI properties that don't exist on the control
+  #   check-winui-xaml.py     WinUI properties that don't exist at all
+  #   check-xaml-bindings.py  bindings that resolve to nothing and render EMPTY
+  #
+  # Both existed as scripts before this job did, and neither had ever been run
+  # by CI — which is how the failures they describe reached shipped builds.
+  xaml:
+    name: XAML Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check MAUI control properties
+        run: python3 scripts/check-maui-xaml.py
+
+      # WinUI had no property check at all until a pip strip shipped with
+      # LetterSpacing — a CSS name; WinUI calls it CharacterSpacing. The file
+      # was well-formed, every binding resolved, every StaticResource resolved,
+      # and none of those can tell you a property does not exist.
+      - name: Check WinUI control properties
+        run: python3 scripts/check-winui-xaml.py
+
+      # Catches a missing using for a shared type. check-ui-compiles.py was
+      # written for this and structurally cannot do it: the compiler stops at
+      # 100 errors, and an unresolvable framework type masks a first-party one
+      # in the same expression. This checks the fact directly instead.
+      - name: Check shared-type usings
+        run: python3 scripts/check-shared-usings.py
+
+      # Catches a MAUI page calling a plain method a shared ViewModel doesn't
+      # expose — the ICommand-vs-plain-method duality (WinUI binds commands,
+      # MAUI's code-behind calls methods directly) went unchecked once and
+      # four call sites broke in one build.
+      - name: Check MVVM method parity
+        run: python3 scripts/check-mvvm-method-parity.py
+
+      - name: Check XAML bindings resolve (all heads)
+        run: python3 scripts/check-xaml-bindings.py
+
+      # Backlog K.4. Five directories literally named "{Base,Modes,Data}" and
+      # similar were committed — brace expansion run under sh, which doesn't
+      # expand braces. All empty, and one had an unbalanced brace, meaning that
+      # setup command was truncated.
+      - name: Reject brace-expansion artefact paths
+        run: |
+          found=$(find . -path ./.git -prune -o -name '*{*' -print)
+          if [ -n "$found" ]; then
+            echo "Paths containing '{' — almost certainly unexpanded brace expansion:"
+            echo "$found"
+            exit 1
+          fi
+          echo "no brace-expansion artefacts"
+
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      # ── Restore ──────────────────────────────────────────────────────────────
+
+      - name: Restore packages
+        run: dotnet restore TableTop.Engine.slnx
+
+      # ── Build engine (warnings treated as errors in CI) ───────────────────────
+      # We pass /p:TreatWarningsAsErrors=true here rather than baking it into
+      # Directory.Build.props so local developer builds remain warning-tolerant.
+
+      - name: Build Core
+        run: dotnet build src/TableTop.Core/TableTop.Core.csproj
+             --no-restore -c Release
+             /p:TreatWarningsAsErrors=true
+             /p:WarningsAsErrors="1591,1573,1572"
+
+      - name: Build Games
+        run: dotnet build src/TableTop.Games/TableTop.Games.csproj
+             --no-restore -c Release
+             /p:TreatWarningsAsErrors=true
+             /p:WarningsAsErrors="1591,1573,1572"
+
+      - name: Build Hosting
+        run: dotnet build src/TableTop.Hosting/TableTop.Hosting.csproj
+             --no-restore -c Release
+             /p:TreatWarningsAsErrors=true
+             /p:WarningsAsErrors="1591,1573,1572"
+
+      - name: Build Console UI
+        run: dotnet build ui/TableTop.Console/TableTop.Console.csproj
+             --no-restore -c Release /p:TreatWarningsAsErrors=true
+
+      # ── Tests ─────────────────────────────────────────────────────────────────
+
+      - name: Run tests
+        run: dotnet test tests/TableTop.Tests/TableTop.Tests.csproj
+             --no-restore -c Release
+             --logger "trx;LogFileName=test-results.trx"
+             --logger "console;verbosity=normal"
+             --collect:"XPlat Code Coverage"
+             --settings coverage.runsettings
+             --results-directory tests/TableTop.Tests/TestResults
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: tests/TableTop.Tests/TestResults/*.trx
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: tests/TableTop.Tests/TestResults/**/coverage.cobertura.xml
+
+      # Human-readable coverage summary, from the same run above — not a
+      # second test pass. reportgenerator turns the raw Cobertura XML into a
+      # number worth reading rather than an artifact worth downloading.
+      - name: Generate coverage summary
+        if: always()
+        run: |
+          dotnet tool restore
+          dotnet reportgenerator \
+            -reports:tests/TableTop.Tests/TestResults/**/coverage.cobertura.xml \
+            -targetdir:coverage-report \
+            -reporttypes:"TextSummary;Html"
+          cat coverage-report/Summary.txt
+
+      - name: Upload coverage summary
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage-report/
+
+  # ── UI heads ──────────────────────────────────────────────────────────────
+  # Until this existed, CI compiled the engine and Console only. The graphical
+  # heads reached the release zip without anything ever compiling them, so a
+  # renamed ViewModel property or a bad XAML attribute was found by a user, not
+  # by a build. (WPF was one of these heads; it has since been removed.)
+  #
+  # These jobs are slower and need a Windows runner and the MAUI workload. That
+  # cost is the point: these heads are the product.
+  #
+  # NOTE: TreatWarningsAsErrors is deliberately NOT set here yet. The engine has
+  # been building warning-clean for a while; these three have never been built
+  # in CI at all, so turning warnings into errors on day one would fail for
+  # reasons unrelated to any given change. Turn it on per-head once each is
+  # green — that's a small follow-up, not a reason to delay the jobs.
+
+  build-windows-heads:
+    name: Build WinUI
+    runs-on: windows-latest
+    needs: xaml
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      # WinUI declares <Platforms>x86;x64;ARM64</Platforms> with no AnyCPU, so
+      # an explicit platform is required or the build cannot pick one.
+      - name: Build WinUI
+        run: dotnet build ui/TableTop.WinUI/TableTop.WinUI.csproj -c Release -p:Platform=x64
+
+      # Backlog G.4. The only tests that touch a ViewModel. They reference
+      # TableTop.WinUI, so they run here rather than in the cross-platform job.
+      - name: Run UI tests
+        run: dotnet test tests/TableTop.UiTests/TableTop.UiTests.csproj -c Release -p:Platform=x64
+             --logger "trx;LogFileName=ui-test-results.trx"
+             --results-directory tests/TableTop.UiTests/TestResults
+
+      - name: Upload UI test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-test-results
+          path: tests/TableTop.UiTests/TestResults/*.trx
+
+  build-maui:
+    name: Build MAUI (Android)
+    runs-on: ubuntu-latest
+    needs: xaml
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android
+
+      # Android only. On a non-macOS host the project's own TargetFrameworks
+      # condition resolves to android + windows, and the windows TFM cannot be
+      # built on Linux — so the framework is pinned rather than left to chance.
+      - name: Build MAUI Android
+        run: dotnet build ui/TableTop.Maui/TableTop.Maui.csproj -c Release -f net10.0-android
+
+  lint:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore TableTop.Engine.slnx
+
+      # Check that the engine assemblies produce zero XML doc warnings.
+      # Missing <summary> tags surface as CS1591 — caught here, not locally.
+      - name: Check XML documentation completeness (Core)
+        run: dotnet build src/TableTop.Core/TableTop.Core.csproj
+             --no-restore -c Release
+             /p:TreatWarningsAsErrors=true
+             /p:GenerateDocumentationFile=true
+
+      - name: Check XML documentation completeness (Hosting)
+        run: dotnet build src/TableTop.Hosting/TableTop.Hosting.csproj
+             --no-restore -c Release
+             /p:TreatWarningsAsErrors=true
+             /p:GenerateDocumentationFile=true

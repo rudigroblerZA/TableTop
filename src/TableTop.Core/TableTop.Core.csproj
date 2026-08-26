@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>TableTop.Core</AssemblyName>
+    <RootNamespace>TableTop.Core</RootNamespace>
+    <Description>Framework-agnostic card game engine.</Description>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <!--
+      Core needs only the DI *abstractions* (IServiceCollection) for its
+      AddTableTop extension. It previously got them via a FrameworkReference to
+      Microsoft.AspNetCore.App, which pulled the
+      entire ASP.NET Core shared framework into a card-game engine and caused
+      runtime-identifier conflicts when the engine was referenced from the
+      Android and iOS heads. The targeted package has no such baggage.
+    -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+</Project>

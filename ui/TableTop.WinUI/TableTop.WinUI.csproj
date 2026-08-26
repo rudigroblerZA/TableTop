@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>TableTop.WinUI</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <UseWinUI>true</UseWinUI>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <!-- Unpackaged by default: F5-run without MSIX packaging/cert setup.
+         Delete this line to build a packaged MSIX instead. -->
+    <WindowsPackageType>None</WindowsPackageType>
+  </PropertyGroup>
+
+  <!--
+    AnyCPU fallback.
+
+    <Platforms> above lists x86;x64;ARM64 and deliberately omits AnyCPU, but that
+    element only declares which platforms are VALID — it does not change the
+    default. MSBuild still sets Platform=AnyCPU when nothing names one, and the
+    MSIX packaging targets then fail with:
+
+        Packaged .NET applications with an app host exe cannot be
+        ProcessorArchitecture neutral. Please specify a RuntimeIdentifier or a
+        Platform other than AnyCPU.
+
+    That fires on a plain `dotnet build ui/TableTop.WinUI/TableTop.WinUI.csproj`,
+    and on opening the full solution without picking a platform — despite
+    WindowsPackageType=None, because EnableMsixTooling still imports the
+    packaging targets and they validate regardless of whether an MSIX is produced.
+
+    Taking the error's own second suggestion: supply a RuntimeIdentifier, but
+    ONLY in the AnyCPU case that would otherwise fail outright. Overriding
+    Platform here instead would be unreliable — it is a global property, already
+    resolved before this file is evaluated and already used to select the
+    configuration.
+
+    Naming a platform explicitly still works and still wins; that is what CI does
+    (`-p:Platform=x64`) and what the solution file documents.
+  -->
+  <PropertyGroup Condition="'$(Platform)' == 'AnyCPU' And '$(RuntimeIdentifier)' == ''">
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TableTop.Core\TableTop.Core.csproj" />
+    <ProjectReference Include="..\..\src\TableTop.Games\TableTop.Games.csproj" />
+    <ProjectReference Include="..\..\src\TableTop.Hosting\TableTop.Hosting.csproj" />
+    <ProjectReference Include="..\..\src\TableTop.Presentation\TableTop.Presentation.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,332 @@
+<UserControl x:Class="TableTop.WinUI.Views.CardTurnGameView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <!-- Phase 1: the card turns edge-on (and dims slightly, as a real card
+             does as it catches less light). The text swap happens at the end of
+             this, while the card is invisible — which is what sells the turn. -->
+        <Storyboard x:Name="FlipOut">
+            <DoubleAnimation Storyboard.TargetName="CardTransform" Storyboard.TargetProperty="ScaleX"
+                             To="0" Duration="0:0:0.11">
+                <DoubleAnimation.EasingFunction>
+                    <QuadraticEase EasingMode="EaseIn"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="CardFace" Storyboard.TargetProperty="Opacity"
+                             To="0.72" Duration="0:0:0.11"/>
+        </Storyboard>
+
+        <!-- Phase 2: the other face opens out. -->
+        <Storyboard x:Name="FlipIn">
+            <DoubleAnimation Storyboard.TargetName="CardTransform" Storyboard.TargetProperty="ScaleX"
+                             To="1" Duration="0:0:0.13">
+                <DoubleAnimation.EasingFunction>
+                    <QuadraticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="CardFace" Storyboard.TargetProperty="Opacity"
+                             To="1" Duration="0:0:0.13"/>
+        </Storyboard>
+
+        <!-- Backlog S.4, the last piece of the approved visual direction. A new
+             card arrives from just above its resting position, faintly rotated
+             as if it hasn't quite landed square, and settles into place —
+             matching how a card actually comes to rest when dealt onto felt,
+             rather than simply appearing. Kept short and understated: this
+             plays every single turn, for as long as anyone plays the game, so
+             anything longer or bouncier would wear out fast.
+             Runs on CardTitle changing specifically, not any property — Flip()
+             (above) only raises CardBodyText and FlipButtonText, never
+             CardTitle, so turning a card over never re-triggers a deal. -->
+        <Storyboard x:Name="DealIn">
+            <DoubleAnimation Storyboard.TargetName="CardTransform" Storyboard.TargetProperty="TranslateY"
+                             From="-16" To="0" Duration="0:0:0.22">
+                <DoubleAnimation.EasingFunction>
+                    <QuadraticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="CardTransform" Storyboard.TargetProperty="Rotation"
+                             From="-1.5" To="0" Duration="0:0:0.22">
+                <DoubleAnimation.EasingFunction>
+                    <QuadraticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="CardFace" Storyboard.TargetProperty="Opacity"
+                             From="0" To="1" Duration="0:0:0.16"/>
+        </Storyboard>
+    </UserControl.Resources>
+
+    <Grid Padding="26,22,26,26">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>   <!-- hint banner, collapses when empty -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Round strip: whose turn, and the running scores, engraved on felt -->
+        <Grid Grid.Row="0" Margin="0,0,0,18">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="{Binding PlayerName}" FontSize="21"
+                           Style="{StaticResource EngravedTitleStyle}"
+                           Foreground="{StaticResource GoldBrightBrush}"/>
+                <!-- Deck count, as the mockup shows under the card stack and as
+                     MAUI has always shown. Brass-dim is the mockup's colour for
+                     this kind of chrome; TextDimBrush is that same #8A7A55. -->
+                <TextBlock Text="{Binding CardCountText}"
+                           Visibility="{Binding ShowCardCount, Converter={StaticResource BoolToVis}}"
+                           FontSize="12" Foreground="{StaticResource TextDimBrush}"/>
+            </StackPanel>
+            <!-- Backlog L.7. Brass pips rather than a bare scoreline: a table
+                 reads filled-vs-hollow from across the room without walking
+                 over. The numeral stays for the exact value and for anything
+                 past the pip cap. -->
+            <ItemsControl Grid.Column="1" ItemsSource="{Binding Scores}"
+                          VerticalAlignment="Center" HorizontalAlignment="Right">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="16"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Name}"
+                                       Style="{StaticResource PipTextStyle}" VerticalAlignment="Center"/>
+                            <!-- CharacterSpacing, not LetterSpacing: WinUI has no LetterSpacing, and the
+                                 unit is 1/1000 em, so 120 is 0.12em. -->
+                            <TextBlock Text="{Binding Pips}" FontSize="11" CharacterSpacing="120"
+                                       Foreground="{StaticResource GoldBrush}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Score}"
+                                       Style="{StaticResource PipTextStyle}"
+                                       Foreground="{StaticResource GoldBrightBrush}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+
+        <!-- ══ THE CARD ══════════════════════════════════════════════════
+             Printed card stock sitting on the felt: a warm rake across the
+             face, a category pip, and a gold rule inset from the edge the
+             way a real printed card is trimmed.                          -->
+        <!-- Ambient shadow: soft, offset down, sized just past the card. -->
+        <Border Grid.Row="1" MaxWidth="732" Margin="-6,4,-6,-10" CornerRadius="18"
+                Background="#4A000000" IsHitTestVisible="False"/>
+        <!-- Contact shadow: tight and dark, right under the trailing edge. -->
+        <Border Grid.Row="1" MaxWidth="722" Margin="-1,3,-1,-3" CornerRadius="15"
+                Background="#5C000000" IsHitTestVisible="False"/>
+
+        <Border x:Name="CardFace" Grid.Row="1"
+                Background="{StaticResource CardFaceBrush}" CornerRadius="14"
+                MaxWidth="720" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                RenderTransformOrigin="0.5,0.5">
+            <Border.RenderTransform>
+                <CompositeTransform x:Name="CardTransform" ScaleX="1" ScaleY="1" TranslateY="0" Rotation="0"/>
+            </Border.RenderTransform>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Pip: category and difficulty, printed small in the corner -->
+                <Grid Grid.Row="0" Margin="26,22,26,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding CardCategory}"
+                               Style="{StaticResource PipTextStyle}" Foreground="#9C8A5E"/>
+                    <TextBlock Grid.Column="1" Text="{Binding CardDifficulty}"
+                               Style="{StaticResource PipTextStyle}" Foreground="#9C8A5E"/>
+                </Grid>
+
+                <ScrollViewer Grid.Row="1" Padding="26,16,26,8">
+                    <StackPanel Spacing="14">
+                        <TextBlock Text="{Binding CardTitle}" Style="{StaticResource CardTitleStyle}"/>
+                        <TextBlock Text="{Binding CardBodyText}" Style="{StaticResource CardBodyStyle}"/>
+
+                        <!-- Quiz choices (A–D), shown only for choice cards -->
+                        <ItemsControl ItemsSource="{Binding Choices}"
+                                      Visibility="{Binding HasChoices, Converter={StaticResource BoolToVis}}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Content="{Binding Display}" Command="{Binding ChooseCommand}"
+                                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                                            Margin="0,4" Padding="15,11"
+                                            FontFamily="Georgia" FontSize="15"
+                                            Background="#0F000000" Foreground="{StaticResource CardInkBrush}"
+                                            BorderBrush="{StaticResource CardRuleBrush}" BorderThickness="1"
+                                            CornerRadius="7"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Turn the card over (flip-backed decks carry their answer) -->
+                <Button Grid.Row="2" Content="{Binding FlipButtonText}" Click="OnFlipClick"
+                        Visibility="{Binding HasBack, Converter={StaticResource BoolToVis}}"
+                        HorizontalAlignment="Center" Margin="0,4,0,18" Padding="22,9"
+                        FontFamily="Constantia" FontWeight="Bold" CharacterSpacing="90"
+                        Background="Transparent" Foreground="#8A6D1F"
+                        BorderBrush="{StaticResource CardRuleBrush}" BorderThickness="1" CornerRadius="7">
+                    <!-- F-for-flip, mnemonic and unlikely to collide with anything
+                         else on this screen. Wired through Invoked rather than
+                         assumed to auto-fire Click: this button is Click-bound in
+                         code-behind, not Command-bound, and KeyboardAccelerator's
+                         behaviour on a Click-only button was not something to
+                         guess at without a Windows machine to check it on. -->
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="F" Invoked="OnFlipKeyboardAccelerator"/>
+                    </Button.KeyboardAccelerators>
+                </Button>
+
+                <!-- The inset gold rule, drawn over everything. Two hairlines:
+                     the gold rule, and a white one a pixel inside it. That pair
+                     is what reads as debossed rather than drawn on. -->
+                <Border Grid.RowSpan="3" Margin="9" CornerRadius="8" IsHitTestVisible="False"
+                        BorderBrush="{StaticResource CardRuleBrush}" BorderThickness="1"/>
+                <Border Grid.RowSpan="3" Margin="10" CornerRadius="7" IsHitTestVisible="False"
+                        BorderBrush="#E0FFFFFF" BorderThickness="1"/>
+            </Grid>
+        </Border>
+
+        <!-- Action bar -->
+        <!-- ══ HINT ═══════════════════════════════════════════════════════
+             The engine adapts difficulty as a table plays. Console has always
+             surfaced its reasoning; neither graphical head did, so the
+             adaptation happened invisibly. Collapses when there is no hint. -->
+        <Border Grid.Row="2" Margin="0,14,0,0" Padding="12,8" CornerRadius="8"
+                Background="#33000000" BorderThickness="1"
+                BorderBrush="{StaticResource CardRuleBrush}"
+                Visibility="{Binding HasHint, Converter={StaticResource BoolToVis}}">
+            <TextBlock Text="{Binding HintText}" TextWrapping="Wrap"
+                       Style="{StaticResource PipTextStyle}"
+                       Foreground="{StaticResource GoldBrightBrush}"/>
+        </Border>
+
+        <Grid Grid.Row="3" Margin="0,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                <Button Content="Quit" Command="{Binding QuitCommand}"
+                        Style="{StaticResource QuietButtonStyle}"/>
+                <!-- Backlog L.2. The style below has always been commented
+                     "Quiet tertiary (Quit, Undo)" — the button it was written
+                     for is finally here. -->
+                <Button Content="Undo" Command="{Binding UndoCommand}"
+                        Style="{StaticResource QuietButtonStyle}">
+                    <!-- Ctrl+Z, the near-universal undo shortcut everywhere else. -->
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="Z" Modifiers="Control"/>
+                    </Button.KeyboardAccelerators>
+                </Button>
+                <!-- Backlog L.1. -->
+                <Button Content="Save" Command="{Binding SaveCommand}"
+                        Style="{StaticResource QuietButtonStyle}">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="S" Modifiers="Control"/>
+                    </Button.KeyboardAccelerators>
+                </Button>
+
+                <!-- Flow controls. Console has had these forever; no graphical
+                     head reached them, so a table finding a mode too hard had
+                     no way to say so. Hidden entirely for modes whose
+                     progression strategy isn't flow-aware, rather than shown
+                     doing nothing.
+
+                     Arrow-key accelerators below are safe to leave active even
+                     while the button is Collapsed: LevelUpCommand and its
+                     siblings already gate on SupportsFlow in CanExecute
+                     (GameViewModels.cs), independent of the XAML Visibility
+                     binding — so a key press in a non-flow-aware mode is a
+                     no-op regardless of whatever WinUI does with an
+                     accelerator on a hidden element. -->
+                <Button Content="Easier"  Command="{Binding LevelDownCommand}"
+                        Visibility="{Binding SupportsFlow, Converter={StaticResource BoolToVis}}"
+                        Style="{StaticResource QuietButtonStyle}">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="Left"/>
+                    </Button.KeyboardAccelerators>
+                </Button>
+                <Button Content="Harder"  Command="{Binding LevelUpCommand}"
+                        Visibility="{Binding SupportsFlow, Converter={StaticResource BoolToVis}}"
+                        Style="{StaticResource QuietButtonStyle}">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="Right"/>
+                    </Button.KeyboardAccelerators>
+                </Button>
+                <Button Content="Slower"  Command="{Binding SlowDownCommand}"
+                        Visibility="{Binding SupportsFlow, Converter={StaticResource BoolToVis}}"
+                        Style="{StaticResource QuietButtonStyle}">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="Down"/>
+                    </Button.KeyboardAccelerators>
+                </Button>
+                <Button Content="Faster"  Command="{Binding SpeedUpCommand}"
+                        Visibility="{Binding SupportsFlow, Converter={StaticResource BoolToVis}}"
+                        Style="{StaticResource QuietButtonStyle}">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="Up"/>
+                    </Button.KeyboardAccelerators>
+                </Button>
+            </StackPanel>
+            <TextBlock Grid.Column="1" Text="{Binding FlashText}" Foreground="{StaticResource GoldBrightBrush}"
+                       FontFamily="Georgia" FontStyle="Italic"
+                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Button Grid.Column="2" Content="{Binding SkipLabel}" Command="{Binding SkipCommand}"
+                    Style="{StaticResource FeltButtonStyle}" Margin="0,0,10,0">
+                <!-- Escape reads naturally as "get me out of this card" — the
+                     same key closes a dialog everywhere else in Windows. Not
+                     Backspace: on a couch, a wireless keyboard's Backspace is
+                     easy to hit by accident reaching for something else. -->
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Escape"/>
+                </Button.KeyboardAccelerators>
+            </Button>
+            <Button Grid.Column="3" Content="{Binding CompleteLabel}" Command="{Binding CompleteCommand}"
+                    Style="{StaticResource BrassButtonStyle}">
+                <!-- Space: the single most-pressed key for the rest of the
+                     session, so it gets the easiest key to find without
+                     looking — a full-width bar at the bottom of any keyboard,
+                     found by feel from a couch. -->
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Space"/>
+                </Button.KeyboardAccelerators>
+            </Button>
+        </Grid>
+
+        <!-- Game-over: the results plaque -->
+        <Grid Grid.RowSpan="3" Background="#E60E2A22"
+              Visibility="{Binding IsGameOver, Converter={StaticResource BoolToVis}}">
+            <Border Background="{StaticResource CardFaceBrush}" CornerRadius="14" Padding="0"
+                    MaxWidth="480" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid>
+                    <StackPanel Spacing="16" Margin="34">
+                        <TextBlock Text="Final scores" FontSize="25"
+                                   Style="{StaticResource CardTitleStyle}"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding SummaryText}" Style="{StaticResource CardBodyStyle}"
+                                   HorizontalAlignment="Center" TextAlignment="Center"/>
+                        <Button Content="Back to games" Command="{Binding QuitCommand}"
+                                HorizontalAlignment="Center"
+                                Style="{StaticResource BrassButtonStyle}"/>
+                    </StackPanel>
+                    <Border Margin="9" CornerRadius="8" IsHitTestVisible="False"
+                            BorderBrush="{StaticResource CardRuleBrush}" BorderThickness="1"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

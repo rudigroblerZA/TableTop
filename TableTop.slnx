@@ -1,0 +1,61 @@
+<Solution>
+  <!--
+    TableTop full solution — engine + tests + all UIs.
+    Requires the .NET 10 SDK (see global.json).
+    Format: SLNX (XML solution) — no GUIDs, no config boilerplate.
+
+    WORKLOAD-DEPENDENT PROJECTS
+    ────────────────────────────
+    TableTop.Maui
+      Requires the MAUI workload BEFORE this solution will build cleanly:
+          dotnet workload install maui-windows        ← Windows
+          dotnet workload install maui-maccatalyst    ← macOS
+      Without the workload, open TableTop.Engine.slnx instead (engine + tests +
+      console only), or exclude TableTop.Maui from the build in Visual Studio
+      via Configuration Manager.
+
+    TableTop.WinUI
+      Windows only. Requires the Windows App SDK. Declares x86;x64;ARM64 and no
+      AnyCPU. Naming a platform is still the explicit, preferred form and is what
+      CI uses: -p:Platform=x64. A build that names none no longer fails outright —
+      the csproj falls back to RuntimeIdentifier=win-x64 in that case, because
+      <Platforms> declares which platforms are valid without changing the default,
+      and the MSIX targets reject AnyCPU even when WindowsPackageType=None.
+
+    To build only what works on any OS without extra installs:
+        dotnet build TableTop.Engine.slnx
+  -->
+
+  <Folder Name="/Solution Items/">
+    <File Path="global.json" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="README.md" />
+    <File Path=".github/workflows/ci.yml" />
+  </Folder>
+
+  <Folder Name="/Engine/">
+    <Project Path="src/TableTop.Core/TableTop.Core.csproj" />
+    <Project Path="src/TableTop.Games/TableTop.Games.csproj" />
+    <Project Path="src/TableTop.Hosting/TableTop.Hosting.csproj" />
+    <Project Path="src/TableTop.Presentation/TableTop.Presentation.csproj" />
+  </Folder>
+
+  <Folder Name="/Tests/">
+    <Project Path="tests/TableTop.Tests/TableTop.Tests.csproj" />
+    <Project Path="tests/TableTop.UiTests/TableTop.UiTests.csproj" />
+  </Folder>
+
+  <!--
+    UI implementations.
+    TableTop.Maui requires the MAUI workload — see note above.
+    If you get CS0246 errors from MAUI files, run:
+        dotnet workload install maui-windows
+    then rebuild.
+  -->
+  <Folder Name="/UI/">
+    <Project Path="ui/TableTop.Console/TableTop.Console.csproj" />
+    <Project Path="ui/TableTop.Maui/TableTop.Maui.csproj" />
+    <Project Path="ui/TableTop.WinUI/TableTop.WinUI.csproj" />
+  </Folder>
+</Solution>

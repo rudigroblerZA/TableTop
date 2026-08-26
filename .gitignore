@@ -1,0 +1,57 @@
+# ── Build output ─────────────────────────────────────────────────────────────
+# Every project here (Core, Games, Hosting, Tests, Console, WPF,
+# WinUI, MAUI) uses the classic per-project bin/obj layout — no
+# UseArtifactsOutput in Directory.Build.props — so these two patterns cover
+# the whole solution regardless of which head or TFM produced them.
+[Bb]in/
+[Oo]bj/
+
+# ── Test results & coverage ──────────────────────────────────────────────────
+# CI writes .trx and coverlet's cobertura output here (see ci.yml).
+[Tt]est[Rr]esults/
+*.trx
+coverage.*.xml
+coverage/
+
+# ── NuGet ─────────────────────────────────────────────────────────────────────
+*.nupkg
+*.snupkg
+# nuget.config is checked in and pins nuget.org explicitly — don't ignore it.
+.nuget/
+
+# ── Packaged app artifacts ────────────────────────────────────────────────────
+# WinUI/MSIX and MAUI publish output; Android/iOS build products if anyone
+# runs a local `dotnet publish` for a device or store package.
+AppPackages/
+BundleArtifacts/
+*.msix
+*.msixupload
+*.apk
+*.aab
+*.ipa
+*.appx
+*.appxbundle
+
+# ── Local dev/test overrides ──────────────────────────────────────────────────
+# JsonDataPaths.DataDirectoryOverride and the JSON persistence repositories
+# both default to paths outside the repo tree (%AppData%/TableTop, temp dirs
+# used by tests), so nothing from those needs an entry here — this is only
+# for anyone who scripts a repo-relative override for local debugging.
+/.local/
+
+# ── IDE / editor ───────────────────────────────────────────────────────────────
+.vs/
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.DotSettings.user
+
+# ── OS cruft ───────────────────────────────────────────────────────────────────
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini

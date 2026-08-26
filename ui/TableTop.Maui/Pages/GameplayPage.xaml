@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
+    x:Class="TableTop.Maui.Pages.GameplayPage"
+    Title="{Binding ModeTitle}"
+    Background="{Binding Theme.PageBackground}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+
+            <!-- Established across every merged screen (Monogamy, Millionaire,
+                 Day One): a controller-build failure surfaces here rather than
+                 an exception taking the app down. The old implementation faked
+                 a displayable "Couldn't start" card instead — CardTurnGameViewModel
+                 leaves CardTitle/CardBodyText empty on this path, by design,
+                 since HasLoadError/LoadError already say what's needed. -->
+            <Label Text="{Binding LoadError}" TextColor="#F87171" IsVisible="{Binding HasLoadError}" FontSize="15" />
+
+            <VerticalStackLayout IsVisible="{Binding IsPlaying}" Spacing="12">
+
+            <!-- Current Player -->
+            <Frame Style="{StaticResource CardStyle}"
+                   BackgroundColor="{Binding Theme.PanelBackground}"
+                   BorderColor="{Binding Theme.PanelBorder}">
+                <HorizontalStackLayout Spacing="12">
+                    <Label Text="🎮" FontSize="24" VerticalOptions="Center"/>
+                    <VerticalStackLayout VerticalOptions="Center">
+                        <Label Text="Current Player"
+                               FontSize="12" TextColor="{Binding Theme.AccentSoft}"/>
+                        <Label Text="{Binding PlayerName}"
+                               FontFamily="{Binding DisplayFont}"
+                               FontSize="20" FontAttributes="Bold"
+                               TextColor="{Binding Theme.Accent}"/>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Frame>
+
+            <!-- Live scoreboard (engine-driven) -->
+            <Frame Style="{StaticResource CardStyle}" IsVisible="{Binding HasScores}" Padding="12,8"
+                   BackgroundColor="{Binding Theme.PanelBackground}"
+                   BorderColor="{Binding Theme.PanelBorder}">
+                <HorizontalStackLayout Spacing="8">
+                    <Label Text="🏆" FontSize="16" VerticalOptions="Center"/>
+                    <Label Text="{Binding ScoresText}"
+                           FontFamily="{Binding UtilityFont}"
+                           FontSize="15" FontAttributes="Bold"
+                           TextColor="{Binding Theme.Accent}"
+                           VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+            </Frame>
+
+            <!-- Last event flash ("Alice +2", "Bob skipped (-1)") -->
+            <Label Text="{Binding FlashText}"
+                   IsVisible="{Binding HasFlash}"
+                   FontSize="13" TextColor="{Binding Theme.AccentSoft}"
+                   HorizontalTextAlignment="Center"/>
+
+            <!-- Progress (conditional on ShowCardCount) -->
+            <VerticalStackLayout IsVisible="{Binding ShowCardCount}">
+                <ProgressBar
+                    Progress="{Binding Progress}"
+                    ProgressColor="{Binding Theme.Progress}"
+                    HeightRequest="6"
+                    Margin="0,4,0,2"/>
+                <Label Text="{Binding CardCountText}"
+                       FontSize="12" TextColor="{Binding Theme.AccentSoft}"
+                       HorizontalTextAlignment="Center"/>
+            </VerticalStackLayout>
+
+            <!-- Timer (conditional on TimerEnabled) -->
+            <Frame Style="{StaticResource CardStyle}"
+                   IsVisible="{Binding TimerEnabled}"
+                   BorderColor="{Binding Theme.PanelBorder}"
+                   Background="{Binding Theme.PageBackground}">
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="8">
+                    <Label Text="⏱" FontSize="20" VerticalOptions="Center"/>
+                    <Label Text="{Binding TimerDisplay}"
+                           FontSize="28" FontAttributes="Bold"
+                           TextColor="{Binding Theme.Accent}"
+                           VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+            </Frame>
+
+            <!-- The playing card: cream stock + coloured strip, answer face
+                 warms via trigger. Flip/deal animations live in code-behind. -->
+            <!-- BackgroundColor is bound, not driven by DataTriggers: MAUI does
+                 not support bindings inside Setter.Value, so a themed flip has
+                 to be resolved in the view model. See CardFaceColor. -->
+            <Frame x:Name="CardFrame" Style="{StaticResource PlayingCardStyle}"
+                   BackgroundColor="{Binding CardFaceColor}">
+                <Grid>
+                <VerticalStackLayout Spacing="0">
+
+                    <!-- Category strip — difficulty-coloured, ANSWER-amber when flipped -->
+                    <Frame BackgroundColor="{Binding StripColor}"
+                           CornerRadius="0" Padding="14,10" Margin="0" HasShadow="False"
+                           IsVisible="{Binding HasStrip}">
+                        <Label Text="{Binding StripText}"
+                               FontSize="13" FontAttributes="Bold"
+                               TextColor="{Binding StripTextColor}" CharacterSpacing="1.2"/>
+                    </Frame>
+
+                    <VerticalStackLayout Spacing="10" Padding="18,14,18,18">
+                        <!-- Card title — ink on stock -->
+                        <Label Text="{Binding CardTitle}"
+                               FontFamily="{Binding DisplayFont}"
+                               FontSize="20" FontAttributes="Bold"
+                               TextColor="{Binding Theme.CardInk}"/>
+
+                        <!-- Card body — ink, settings-driven size -->
+                        <Label Text="{Binding CardBodyText}"
+                               FontFamily="{Binding BodyFont}"
+                               FontSize="{Binding CardFontSize}"
+                               TextColor="{Binding Theme.CardBodyInk}"
+                               LineHeight="1.6"/>
+
+                        <!-- Corner pip: round number, quiet -->
+                        <Label Text="{Binding Round, StringFormat='round {0}'}"
+                               FontFamily="{Binding UtilityFont}"
+                               FontSize="11"
+                               TextColor="{Binding Theme.CardInkSubtle}"
+                               HorizontalOptions="End"/>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                    <!-- The inset gold rule, as in the mock. Deliberately
+                         subtle at phone size and non-interactive so it can
+                         never intercept a tap on the card. -->
+                    <Border Margin="7" InputTransparent="True"
+                            Stroke="{Binding Theme.CardRule}" StrokeThickness="1"
+                            BackgroundColor="Transparent">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                    </Border>
+                </Grid>
+            </Frame>
+
+            <!-- Hint strip (only visible when engine has a suggestion) -->
+            <Frame BackgroundColor="{Binding HintColor}"
+                   Padding="12,8"
+                   CornerRadius="8"
+                   IsVisible="{Binding HasHint}"
+                   Opacity="0.92">
+                <HorizontalStackLayout Spacing="8">
+                    <Label Text="Hint:"
+                           FontSize="13"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           VerticalOptions="Center"/>
+                    <Label Text="{Binding HintText}"
+                           FontSize="13"
+                           TextColor="White"
+                           LineBreakMode="WordWrap"
+                           HorizontalOptions="FillAndExpand"
+                           VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+            </Frame>
+
+            <!-- Flip (answer-bearing cards): question up, tap to reveal -->
+            <Button Text="{Binding FlipButtonText}"
+                    Clicked="OnFlipClicked"
+                    IsVisible="{Binding HasBack}"
+                    BackgroundColor="{Binding Theme.SecondaryButton}"
+                    TextColor="{Binding Theme.SecondaryButtonText}"
+                    BorderColor="{Binding Theme.SecondaryButtonBorder}"
+                    BorderWidth="1"
+                    FontFamily="{Binding DisplayFont}"
+                    FontAttributes="Bold" Padding="12" CornerRadius="8"
+                    HeightRequest="50"
+                    Margin="0,8,0,0"
+                    HorizontalOptions="FillAndExpand"/>
+
+            <!-- Multiple-choice answers (personality quizzes) -->
+            <VerticalStackLayout Spacing="8" Margin="0,8,0,0"
+                                 IsVisible="{Binding HasChoices}">
+                <Button Text="A" Clicked="OnChoiceAClicked" Background="{Binding Theme.PrimaryButton}" TextColor="{Binding Theme.PrimaryButtonText}" FontFamily="{Binding DisplayFont}" FontAttributes="Bold" FontSize="16" HeightRequest="50" CornerRadius="10" HorizontalOptions="FillAndExpand"/>
+                <Button Text="B" Clicked="OnChoiceBClicked" Background="{Binding Theme.PrimaryButton}" TextColor="{Binding Theme.PrimaryButtonText}" FontFamily="{Binding DisplayFont}" FontAttributes="Bold" FontSize="16" HeightRequest="50" CornerRadius="10" HorizontalOptions="FillAndExpand"/>
+                <Button Text="C" Clicked="OnChoiceCClicked" Background="{Binding Theme.PrimaryButton}" TextColor="{Binding Theme.PrimaryButtonText}" FontFamily="{Binding DisplayFont}" FontAttributes="Bold" FontSize="16" HeightRequest="50" CornerRadius="10" HorizontalOptions="FillAndExpand"/>
+                <Button Text="D" Clicked="OnChoiceDClicked" Background="{Binding Theme.PrimaryButton}" TextColor="{Binding Theme.PrimaryButtonText}" FontFamily="{Binding DisplayFont}" FontAttributes="Bold" FontSize="16" HeightRequest="50" CornerRadius="10" HorizontalOptions="FillAndExpand"/>
+            </VerticalStackLayout>
+
+            <!-- Action buttons.
+                 Text comes from the MODE, not from here: Truth or Dare says
+                 "Did It" / "Chickened Out", Last Orders says "Pass (always
+                 fine)", the personality quizzes say "Reveal". These were
+                 hardcoded to "✓ Done" / "⤳ Skip" and threw all of that away. -->
+            <!-- The engine adapts difficulty as a table plays. Console has
+                 always surfaced its reasoning; MAUI never did, so the
+                 adaptation happened invisibly. Collapses when there's no hint. -->
+            <Border IsVisible="{Binding HasHint}"
+                    Margin="0,10,0,0" Padding="12,8"
+                    BackgroundColor="{Binding Theme.PanelBackground}"
+                    StrokeShape="RoundRectangle 8"
+                    Stroke="{Binding Theme.PanelBorder}">
+                <Label Text="{Binding HintText}"
+                       FontSize="14"
+                       TextColor="{Binding Theme.Accent}"
+                       LineBreakMode="WordWrap" />
+            </Border>
+
+            <!-- Backlog L.1 / L.2. Undo and Save were both reachable in the
+                 engine and from no head at all; App.xaml has carried a button
+                 style commented "Quiet tertiary (Quit, Undo)" the whole time. -->
+            <HorizontalStackLayout Spacing="8" Margin="0,8,0,0"
+                                   IsVisible="{Binding HasNoChoices}">
+                <Button Text="Easier"
+                        Clicked="OnLevelDownClicked"
+                        IsVisible="{Binding SupportsFlow}"
+                        Style="{StaticResource QuietButtonStyle}"
+                        WidthRequest="80" HeightRequest="50"/>
+
+                <Button Text="Harder"
+                        Clicked="OnLevelUpClicked"
+                        IsVisible="{Binding SupportsFlow}"
+                        Style="{StaticResource QuietButtonStyle}"
+                        WidthRequest="80" HeightRequest="50"/>
+
+                <Button Text="Undo"
+                        Clicked="OnUndoClicked"
+                        IsEnabled="{Binding CanUndo}"
+                        Style="{StaticResource QuietButtonStyle}"
+                        WidthRequest="86" HeightRequest="50"/>
+
+                <Button Text="Save"
+                        Clicked="OnSaveClicked"
+                        IsEnabled="{Binding CanSave}"
+                        Style="{StaticResource QuietButtonStyle}"
+                        WidthRequest="86" HeightRequest="50"/>
+
+                <Button Text="{Binding SkipLabel}"
+                        Clicked="OnSkipClicked"
+                        BackgroundColor="{Binding Theme.SecondaryButton}"
+                        TextColor="{Binding Theme.SecondaryButtonText}"
+                        BorderColor="{Binding Theme.SecondaryButtonBorder}"
+                        BorderWidth="1"
+                        FontFamily="{Binding DisplayFont}"
+                        FontAttributes="Bold"
+                        HorizontalOptions="FillAndExpand"
+                        HeightRequest="50"
+                        Padding="12" CornerRadius="8"/>
+
+                <Button Text="{Binding CompleteLabel}"
+                        Clicked="OnCompleteClicked"
+                        Background="{Binding Theme.PrimaryButton}"
+                        TextColor="{Binding Theme.PrimaryButtonText}"
+                        FontFamily="{Binding DisplayFont}"
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        HorizontalOptions="FillAndExpand"
+                        HeightRequest="50"
+                        Padding="12" CornerRadius="8"/>
+            </HorizontalStackLayout>
+
+            <Button Text="🏁 End Game"
+                    Clicked="OnEndGameClicked"
+                    BackgroundColor="#EF4444"
+                    TextColor="White"
+                    Padding="12" CornerRadius="8"
+                    HorizontalOptions="FillAndExpand"
+                    Margin="0,8,0,0"/>
+
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

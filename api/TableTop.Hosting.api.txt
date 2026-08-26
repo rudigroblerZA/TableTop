@@ -1,0 +1,1066 @@
+abstract interface TableTop.Hosting.Abstractions.ICardTurnController
+    Boolean SupportsFlow { get; }
+    Boolean UndoLastTurn()
+    FlowState GetFlowState(Guid playerId)
+    IReadOnlyDictionary<Guid, IReadOnlyList<SavedInspiration>> PlayerInspirations { get; }
+    IReadOnlyList<IPlayer> Players { get; }
+    Int32 CardsRemaining { get; }
+    SessionReport SessionReport { get; }
+    Task SaveAsync(CancellationToken ct = default)
+    Void ApplySteal(Guid fromPlayerId, Guid toPlayerId, Int32 points)
+    Void JumpTo(Guid playerId, Difficulty difficulty)
+    Void LevelDown(Guid playerId)
+    Void LevelUp(Guid playerId)
+    Void Quit()
+    Void RecordOutcome(CardOutcome outcome)
+    Void RecordTimedOutcome(CardOutcome outcome, TimeSpan elapsed)
+    Void ResetFlow(Guid playerId)
+    Void SlowDown(Guid playerId)
+    Void SpeedUp(Guid playerId)
+    Void Start()
+    Void TogglePause()
+    event EventHandler<BreakCardDrawnEvent> BreakCardDrawn
+    event EventHandler<CardReadyEvent> CardReady
+    event EventHandler<FlowChangedEvent> FlowChanged
+    event EventHandler<GameEndedEvent> GameEnded
+    event EventHandler<GamePausedEvent> GamePaused
+    event EventHandler<InspirationCardDrawnEvent> InspirationCardDrawn
+    event EventHandler<NextTurnHintEvent> NextTurnHint
+    event EventHandler<RewardCardDrawnEvent> RewardCardDrawn
+    event EventHandler<SessionSavedEvent> SessionSaved
+    event EventHandler<SkipAttemptedEvent> SkipAttempted
+    event EventHandler<TimerExpiredEvent> TimerExpired
+    event EventHandler<TurnResultEvent> TurnResult
+    event EventHandler<TurnSkippedEvent> TurnSkipped
+    event EventHandler<TurnUndoneEvent> TurnUndone
+abstract interface TableTop.Hosting.Abstractions.IClaimedController
+    IReadOnlyDictionary<String, String> TerritoryHolders { get; }
+    IReadOnlyList<String> ChallengeableTerritories { get; }
+    String CurrentPlayerName { get; }
+    Void ChallengeTerritory(String territoryName)
+    Void ResolveChallenge(Boolean succeeded)
+    Void Start()
+    event EventHandler<ChallengeFailedEvent> ChallengeFailed
+    event EventHandler<ClaimedGameEndedEvent> GameEnded
+    event EventHandler<TerritoryChallengeReadyEvent> TerritoryChallengeReady
+    event EventHandler<TerritoryClaimedEvent> TerritoryClaimed
+    event EventHandler<TerritoryStolenEvent> TerritoryStolen
+abstract interface TableTop.Hosting.Abstractions.IClock
+    DateTimeOffset UtcNow { get; }
+abstract interface TableTop.Hosting.Abstractions.IControllerFactory
+    Task<IGameController> CreateAsync(IGameMode mode, IReadOnlyList<IPlayer> players, Int32 maxRounds = default, GameplayOptions gameplayOptions = default, SessionSnapshot resumeFrom = default, CancellationToken ct = default)
+    Task<SessionSnapshot> LoadSavedSessionAsync(CancellationToken ct = default)
+abstract interface TableTop.Hosting.Abstractions.IDayOneController
+    Boolean HasPendingCard { get; }
+    Int32 DayNumber { get; }
+    Int32 TotalDays { get; }
+    Void CompleteToday()
+    Void Start()
+    event EventHandler<AllCaughtUpEvent> AllCaughtUp
+    event EventHandler<CampaignCompleteEvent> CampaignComplete
+    event EventHandler<DayReadyEvent> DayReady
+abstract interface TableTop.Hosting.Abstractions.IGameController
+    Boolean IsRunning { get; }
+abstract interface TableTop.Hosting.Abstractions.IHerdController
+    IReadOnlyDictionary<String, Int32> Scores { get; }
+    Int32 RoundNumber { get; }
+    Int32 TotalRounds { get; }
+    Void Quit()
+    Void Start()
+    Void SubmitAnswers(IReadOnlyDictionary<String, String> answers)
+    event EventHandler<HerdGameEndedEvent> GameEnded
+    event EventHandler<HerdPromptReadyEvent> PromptReady
+    event EventHandler<HerdRoundResolvedEvent> RoundResolved
+abstract interface TableTop.Hosting.Abstractions.IMillionaireController
+    IReadOnlyList<AnswerLabel> AvailableOptions { get; }
+    Void Start()
+    Void SubmitAnswer(AnswerLabel label)
+    Void UseLifeline(Int32 index)
+    Void WalkAway()
+    event EventHandler<AnswerCorrectEvent> AnswerCorrect
+    event EventHandler<AnswerWrongEvent> AnswerWrong
+    event EventHandler<HotSeatBeganEvent> HotSeatBegan
+    event EventHandler<LifelineUsedEvent> LifelineUsed
+    event EventHandler<MillionaireGameEndedEvent> GameEnded
+    event EventHandler<MillionaireWonEvent> MillionaireWon
+    event EventHandler<QuestionReadyEvent> QuestionReady
+    event EventHandler<WalkedAwayEvent> WalkedAway
+abstract interface TableTop.Hosting.Abstractions.IMonogamyController
+    IReadOnlyDictionary<Guid, Dictionary<String, Int32>> TokensByZone { get; }
+    IReadOnlyDictionary<Guid, Int32> Tokens { get; }
+    IReadOnlyDictionary<Guid, String> PlayerNames { get; }
+    IReadOnlyList<MonogamyCardHistoryItem> CardHistory { get; }
+    Nullable<Int32> WinningTokenCount { get; }
+    Void ChooseZone(MonogamyZone zone)
+    Void CompleteCard()
+    Void NegotiateCard()
+    Void Quit()
+    Void SkipCard()
+    Void Start()
+    event EventHandler<DiceRolledEvent> DiceRolled
+    event EventHandler<DoublesRolledEvent> DoublesRolled
+    event EventHandler<MonogamyCardReadyEvent> CardReady
+    event EventHandler<MonogamyGameEndedEvent> GameEnded
+    event EventHandler<MonogamyTimedCardEvent> TimedCardStarted
+    event EventHandler<TokensAwardedEvent> TokensAwarded
+sealed class TableTop.Hosting.Abstractions.SystemClock
+    .ctor()
+    DateTimeOffset UtcNow { get; }
+sealed enum TableTop.Hosting.AgeRating
+    Adult = 2
+    AllAges = 0
+    Teen = 1
+sealed class TableTop.Hosting.Archetype
+    .ctor(String id, String name, String description, String emoji, IReadOnlyList<IGameMode> modes, IReadOnlyList<Archetype> subArchetypes = default, AgeRating ageRating = default)
+    AgeRating AgeRating { get; }
+    Boolean HasSubArchetypes { get; }
+    IGameMode SurpriseMe(Nullable<Int32> maxCards = default, AgeRating maxAgeRating = default, Boolean requiresAdultContent = default)
+    IReadOnlyDictionary<IGameMode, ModeManifest> GetModeManifests()
+    IReadOnlyList<Archetype> SubArchetypes { get; }
+    IReadOnlyList<IGameMode> AllModes { get; }
+    IReadOnlyList<IGameMode> Modes { get; }
+    String Description { get; }
+    String Emoji { get; }
+    String Id { get; }
+    String Name { get; }
+sealed class TableTop.Hosting.ArchetypeFilter
+    .ctor(AgeRating maxAgeRating)
+    .ctor(AgeRating minAgeRating = default, AgeRating maxAgeRating = default, TableShape tableShape = default)
+    .ctor(TableComposition table, AgeRating maxAgeRating = default)
+    ArchetypeFilter ShowEverything { get; }
+    IReadOnlyList<Archetype> Apply(IReadOnlyList<Archetype> archetypes)
+    Int32 CountSurvivingModes(IReadOnlyList<Archetype> archetypes)
+sealed class TableTop.Hosting.ArchetypeRegistry
+    Archetype FindById(String id)
+    ArchetypeRegistry Default()
+    IGameMode SurpriseMe(AgeRating maxAgeRating = default, Boolean allowAdultContent = default, Nullable<Int32> maxCards = default)
+    IReadOnlyList<Archetype> RootArchetypes { get; }
+    IReadOnlyList<IGameMode> AllModes { get; }
+static class TableTop.Hosting.CardFaces
+    Boolean HasBack(String cardText)
+    ValueTuple<String, String> Split(String cardText)
+static class TableTop.Hosting.CardText
+    String StripHtml(String text)
+static class TableTop.Hosting.ChoiceCards
+    Boolean IsChoiceCard(String cardText)
+    IReadOnlyDictionary<Char, String> ExtractStyleNames(IEnumerable<String> cardTexts)
+    IReadOnlyList<ValueTuple<Char, String>> Extract(String cardText)
+    Nullable<Char> Dominant(IReadOnlyDictionary<Char, Int32> tally)
+    String Format(IReadOnlyDictionary<Char, Int32> tally)
+    String Verdict(IReadOnlyDictionary<Char, Int32> tally, IReadOnlyDictionary<Char, String> styles)
+sealed class TableTop.Hosting.Controllers.CardTurnController
+    .ctor(IGameModeDefinition definition, IReadOnlyList<IPlayer> players, String modeName, Int32 maxRounds, IProgressionStrategy progression, CardTurnControllerOptions options = default)
+    Boolean IsRunning { get; }
+    Boolean SupportsFlow { get; }
+    Boolean UndoLastTurn()
+    FlowState GetFlowState(Guid playerId)
+    IReadOnlyDictionary<Guid, IReadOnlyList<SavedInspiration>> PlayerInspirations { get; }
+    IReadOnlyList<IPlayer> Players { get; }
+    Int32 CardsRemaining { get; }
+    Int32 RewardChanceInterval { get; set; }
+    Int32 SkipPenalty { get; set; }
+    SessionReport SessionReport { get; set; }
+    Task SaveAsync(CancellationToken ct = default)
+    Task<CardTurnController> CreateAsync(IGameModeDefinition definition, IReadOnlyList<IPlayer> players, String modeName, Int32 maxRounds, IProgressionStrategy progression, CardTurnControllerOptions options = default, CancellationToken ct = default)
+    Void ApplySteal(Guid fromPlayerId, Guid toPlayerId, Int32 points)
+    Void Dispose()
+    Void JumpTo(Guid playerId, Difficulty difficulty)
+    Void LevelDown(Guid playerId)
+    Void LevelUp(Guid playerId)
+    Void NotifyTimerExpired(IPlayer player, ICard card, TimeSpan allowed)
+    Void Quit()
+    Void RecordOutcome(CardOutcome outcome)
+    Void RecordTimedOutcome(CardOutcome outcome, TimeSpan elapsed)
+    Void ResetFlow(Guid playerId)
+    Void SlowDown(Guid playerId)
+    Void SpeedUp(Guid playerId)
+    Void Start()
+    Void TogglePause()
+    event EventHandler<BreakCardDrawnEvent> BreakCardDrawn
+    event EventHandler<CardReadyEvent> CardReady
+    event EventHandler<FlowChangedEvent> FlowChanged
+    event EventHandler<GameEndedEvent> GameEnded
+    event EventHandler<GamePausedEvent> GamePaused
+    event EventHandler<InspirationCardDrawnEvent> InspirationCardDrawn
+    event EventHandler<NextTurnHintEvent> NextTurnHint
+    event EventHandler<RewardCardDrawnEvent> RewardCardDrawn
+    event EventHandler<SessionSavedEvent> SessionSaved
+    event EventHandler<SkipAttemptedEvent> SkipAttempted
+    event EventHandler<TimerExpiredEvent> TimerExpired
+    event EventHandler<TurnResultEvent> TurnResult
+    event EventHandler<TurnSkippedEvent> TurnSkipped
+    event EventHandler<TurnUndoneEvent> TurnUndone
+sealed class TableTop.Hosting.Controllers.CardTurnControllerOptions
+    .ctor()
+    Boolean Equals(CardTurnControllerOptions other)
+    Boolean Equals(Object obj)
+    CardTurnControllerOptions <Clone>$()
+    CardTurnControllerOptions Default { get; }
+    GameplayOptions Gameplay { get; set; }
+    IEngineDiagnostics Diagnostics { get; set; }
+    IEnumerable<ICard> BonusPool { get; set; }
+    IGamePersistence SessionRepository { get; set; }
+    IHintEngine HintEngine { get; set; }
+    Int32 GetHashCode()
+    Int32 RewardChanceInterval { get; set; }
+    Int32 SkipPenalty { get; set; }
+    SessionSnapshot ResumeFrom { get; set; }
+    String ModeFilePath { get; set; }
+    String ToString()
+sealed class TableTop.Hosting.Controllers.ClaimedController
+    .ctor(IReadOnlyList<IPlayer> players, IReadOnlyList<ICard> deck, Int32 winningTerritoryCount)
+    Boolean IsRunning { get; set; }
+    IReadOnlyDictionary<String, String> TerritoryHolders { get; }
+    IReadOnlyList<String> ChallengeableTerritories { get; }
+    String CurrentPlayerName { get; }
+    Void ChallengeTerritory(String territoryName)
+    Void Dispose()
+    Void ResolveChallenge(Boolean succeeded)
+    Void Start()
+    event EventHandler<ChallengeFailedEvent> ChallengeFailed
+    event EventHandler<ClaimedGameEndedEvent> GameEnded
+    event EventHandler<TerritoryChallengeReadyEvent> TerritoryChallengeReady
+    event EventHandler<TerritoryClaimedEvent> TerritoryClaimed
+    event EventHandler<TerritoryStolenEvent> TerritoryStolen
+sealed class TableTop.Hosting.Controllers.ControllerFactory
+    .ctor(IGamePersistence persistence = default)
+    Task<IGameController> CreateAsync(IGameMode mode, IReadOnlyList<IPlayer> players, Int32 maxRounds = default, GameplayOptions gameplayOptions = default, SessionSnapshot resumeFrom = default, CancellationToken ct = default)
+    Task<SessionSnapshot> LoadSavedSessionAsync(CancellationToken ct = default)
+sealed class TableTop.Hosting.Controllers.DayOneController
+    .ctor(IReadOnlyList<ICard> deck, IReadOnlyList<IPlayer> players, String modeName, IClock clock = default, String filePath = default)
+    Boolean HasPendingCard { get; set; }
+    Boolean IsRunning { get; set; }
+    Int32 DayNumber { get; set; }
+    Int32 TotalDays { get; }
+    Void CompleteToday()
+    Void Dispose()
+    Void Start()
+    event EventHandler<AllCaughtUpEvent> AllCaughtUp
+    event EventHandler<CampaignCompleteEvent> CampaignComplete
+    event EventHandler<DayReadyEvent> DayReady
+sealed class TableTop.Hosting.Controllers.HerdController
+    .ctor(IReadOnlyList<IPlayer> players, IReadOnlyList<ICard> deck)
+    Boolean IsRunning { get; set; }
+    IReadOnlyDictionary<String, Int32> Scores { get; }
+    Int32 HerdPoints
+    Int32 LoneVoicePoints
+    Int32 RoundNumber { get; }
+    Int32 TotalRounds { get; }
+    Void Dispose()
+    Void Quit()
+    Void Start()
+    Void SubmitAnswers(IReadOnlyDictionary<String, String> answers)
+    event EventHandler<HerdGameEndedEvent> GameEnded
+    event EventHandler<HerdPromptReadyEvent> PromptReady
+    event EventHandler<HerdRoundResolvedEvent> RoundResolved
+sealed class TableTop.Hosting.Controllers.JsonGamePersistence
+    .ctor(String filePath = default)
+    Boolean HasSavedSession { get; }
+    Task DeleteAsync(CancellationToken ct = default)
+    Task SaveAsync(SessionSnapshot s, CancellationToken ct = default)
+    Task<SessionSnapshot> LoadAsync(CancellationToken ct = default)
+sealed class TableTop.Hosting.Controllers.MillionaireController
+    .ctor(IReadOnlyList<IPlayer> players, IReadOnlyList<MultipleChoiceCard> questionBank = default)
+    Boolean IsRunning { get; set; }
+    IReadOnlyList<AnswerLabel> AvailableOptions { get; }
+    Void Dispose()
+    Void Start()
+    Void SubmitAnswer(AnswerLabel label)
+    Void UseLifeline(Int32 index)
+    Void WalkAway()
+    event EventHandler<AnswerCorrectEvent> AnswerCorrect
+    event EventHandler<AnswerWrongEvent> AnswerWrong
+    event EventHandler<HotSeatBeganEvent> HotSeatBegan
+    event EventHandler<LifelineUsedEvent> LifelineUsed
+    event EventHandler<MillionaireGameEndedEvent> GameEnded
+    event EventHandler<MillionaireWonEvent> MillionaireWon
+    event EventHandler<QuestionReadyEvent> QuestionReady
+    event EventHandler<WalkedAwayEvent> WalkedAway
+sealed class TableTop.Hosting.Controllers.MonogamyController
+    .ctor(IReadOnlyList<IPlayer> players, IReadOnlyList<MonogamyCard> cards, Nullable<Int32> winningTokenCount = default, Random rng = default)
+    Boolean IsRunning { get; set; }
+    IReadOnlyDictionary<Guid, Dictionary<String, Int32>> TokensByZone { get; }
+    IReadOnlyDictionary<Guid, Int32> Tokens { get; }
+    IReadOnlyDictionary<Guid, String> PlayerNames { get; }
+    IReadOnlyList<MonogamyCardHistoryItem> CardHistory { get; }
+    Nullable<Int32> WinningTokenCount { get; }
+    Void ChooseZone(MonogamyZone zone)
+    Void CompleteCard()
+    Void Dispose()
+    Void NegotiateCard()
+    Void Quit()
+    Void SkipCard()
+    Void Start()
+    event EventHandler<DiceRolledEvent> DiceRolled
+    event EventHandler<DoublesRolledEvent> DoublesRolled
+    event EventHandler<MonogamyCardReadyEvent> CardReady
+    event EventHandler<MonogamyGameEndedEvent> GameEnded
+    event EventHandler<MonogamyTimedCardEvent> TimedCardStarted
+    event EventHandler<TokensAwardedEvent> TokensAwarded
+sealed class TableTop.Hosting.Controllers.Services.EffectApplicator
+    .ctor(IPlayerManager playerManager, SkipPolicy skipPolicy)
+    Boolean ConsumeExtraCard(Guid playerId)
+    IReadOnlySet<Guid> ExtraCardPlayers { get; }
+    ValueTuple<Int32, String> ApplyRewardEffect(RewardEffect effect, IPlayer player)
+    Void ApplyBreakEffect(IBreakCard card, IPlayer player)
+sealed class TableTop.Hosting.Controllers.Services.SkipPolicy
+    .ctor(Int32 penalty = default)
+    Dictionary<String, Int32> Snapshot()
+    Int32 GetSkipCount(Guid playerId)
+    SkipAttemptedEvent ProcessSkip(IPlayer player, Int32 round, IReadOnlyList<ScoreEntry> scores)
+    Void GrantFreePass(Guid playerId)
+    Void Initialise(IReadOnlyList<IPlayer> players)
+    Void Restore(Dictionary<String, Int32> snapshot)
+sealed class TableTop.Hosting.Controllers.Services.TurnHistoryTracker
+    .ctor()
+    IReadOnlyList<CardOutcome> GetOutcomes(Guid playerId)
+    IReadOnlyList<Difficulty> GetDifficulties(Guid playerId)
+    IReadOnlyList<TurnRecord> AllTurns { get; }
+    TurnRecord LastTurn { get; }
+    Void Initialise(IReadOnlyList<IPlayer> players)
+    Void Record(Guid playerId, CardOutcome outcome, Difficulty difficulty)
+    Void Record(IPlayer player, ICard card, CardOutcome outcome, Int32 scoreDelta, Int32 scoreAfter, Int32 round, Nullable<TimeSpan> elapsed = default)
+    Void RemoveLastTurn()
+sealed class TableTop.Hosting.Controllers.ThreadingGuard_TestAccessor
+    .ctor()
+    Boolean Enabled { get; set; }
+    Void Assert(String method)
+    Void TransferOwnership()
+sealed class TableTop.Hosting.Diagnostics.LoggerEngineDiagnostics
+    .ctor(ILogger logger)
+    .ctor(ILogger<LoggerEngineDiagnostics> logger)
+    Void CardSelected(ICard card, IPlayer player, Int32 round)
+    Void GameEnded(String modeName, Int32 totalRounds, Int32 totalTurns)
+    Void GameStarted(String modeName, Int32 playerCount)
+    Void NoCardAvailable(IPlayer player, Int32 candidatesExhausted, Int32 round)
+    Void RuleAllowed(IRule rule, ICard card, IPlayer player, Int32 scoreDelta)
+    Void RuleDenied(IRule rule, ICard card, IPlayer player, String reason)
+    Void TurnRecorded(IPlayer player, ICard card, CardOutcome outcome, Int32 scoreDelta, Int32 round)
+    Void TurnUndone(IPlayer player, ICard card, CardOutcome reversed, Int32 scoreRestored)
+sealed class TableTop.Hosting.Events.AllCaughtUpEvent
+    .ctor(Int32 DayNumber, Int32 TotalDays, TimeSpan TimeUntilNextUnlock)
+    AllCaughtUpEvent <Clone>$()
+    Boolean Equals(AllCaughtUpEvent other)
+    Boolean Equals(Object obj)
+    Int32 DayNumber { get; set; }
+    Int32 GetHashCode()
+    Int32 TotalDays { get; set; }
+    String ToString()
+    TimeSpan TimeUntilNextUnlock { get; set; }
+    Void Deconstruct(Int32& DayNumber, Int32& TotalDays, TimeSpan& TimeUntilNextUnlock)
+sealed class TableTop.Hosting.Events.AnswerCorrectEvent
+    .ctor(Int64 PrizeWon, Boolean SafeHavenReached, Int64 GuaranteedPrize, PrizeLadderSnapshot Ladder)
+    AnswerCorrectEvent <Clone>$()
+    Boolean Equals(AnswerCorrectEvent other)
+    Boolean Equals(Object obj)
+    Boolean SafeHavenReached { get; set; }
+    Int32 GetHashCode()
+    Int64 GuaranteedPrize { get; set; }
+    Int64 PrizeWon { get; set; }
+    PrizeLadderSnapshot Ladder { get; set; }
+    String ToString()
+    Void Deconstruct(Int64& PrizeWon, Boolean& SafeHavenReached, Int64& GuaranteedPrize, PrizeLadderSnapshot& Ladder)
+sealed class TableTop.Hosting.Events.AnswerGroup
+    .ctor(String Answer, IReadOnlyList<String> PlayerNames)
+    AnswerGroup <Clone>$()
+    Boolean Equals(AnswerGroup other)
+    Boolean Equals(Object obj)
+    IReadOnlyList<String> PlayerNames { get; set; }
+    Int32 GetHashCode()
+    String Answer { get; set; }
+    String ToString()
+    Void Deconstruct(String& Answer, IReadOnlyList`1& PlayerNames)
+sealed class TableTop.Hosting.Events.AnswerWrongEvent
+    .ctor(AnswerLabel CorrectLabel, String CorrectText, Int64 GuaranteedPrize)
+    AnswerLabel CorrectLabel { get; set; }
+    AnswerWrongEvent <Clone>$()
+    Boolean Equals(AnswerWrongEvent other)
+    Boolean Equals(Object obj)
+    Int32 GetHashCode()
+    Int64 GuaranteedPrize { get; set; }
+    String CorrectText { get; set; }
+    String ToString()
+    Void Deconstruct(AnswerLabel& CorrectLabel, String& CorrectText, Int64& GuaranteedPrize)
+sealed class TableTop.Hosting.Events.BreakCardDrawnEvent
+    .ctor(String PlayerName, String CardTitle, String CardText, String Activity, Nullable<Int32> DurationMinutes, String Scope, String EffectType, Int32 Round)
+    Boolean Equals(BreakCardDrawnEvent other)
+    Boolean Equals(Object obj)
+    BreakCardDrawnEvent <Clone>$()
+    Int32 GetHashCode()
+    Int32 Round { get; set; }
+    Nullable<Int32> DurationMinutes { get; set; }
+    String Activity { get; set; }
+    String CardText { get; set; }
+    String CardTitle { get; set; }
+    String EffectType { get; set; }
+    String PlayerName { get; set; }
+    String Scope { get; set; }
+    String ToString()
+    Void Deconstruct(String& PlayerName, String& CardTitle, String& CardText, String& Activity, Nullable`1& DurationMinutes, String& Scope, String& EffectType, Int32& Round)
+sealed class TableTop.Hosting.Events.CampaignCompleteEvent
+    .ctor(Int32 TotalDays, DateTimeOffset StartedAt, DateTimeOffset CompletedAt)
+    Boolean Equals(CampaignCompleteEvent other)
+    Boolean Equals(Object obj)
+    CampaignCompleteEvent <Clone>$()
+    DateTimeOffset CompletedAt { get; set; }
+    DateTimeOffset StartedAt { get; set; }
+    Int32 GetHashCode()
+    Int32 TotalDays { get; set; }
+    String ToString()
+    Void Deconstruct(Int32& TotalDays, DateTimeOffset& StartedAt, DateTimeOffset& CompletedAt)
+sealed class TableTop.Hosting.Events.CardReadyEvent
+    .ctor(IPlayer Player, String PlayerName, ICard Card, String CardTitle, String CardText, String Category, String Difficulty, String Restriction, Int32 Round)
+    Boolean Equals(CardReadyEvent other)
+    Boolean Equals(Object obj)
+    CardReadyEvent <Clone>$()
+    ICard Card { get; set; }
+    IPlayer Player { get; set; }
+    Int32 GetHashCode()
+    Int32 Round { get; set; }
+    String CardText { get; set; }
+    String CardTitle { get; set; }
+    String Category { get; set; }
+    String Difficulty { get; set; }
+    String PlayerName { get; set; }
+    String Restriction { get; set; }
+    String ToString()
+    Void Deconstruct(IPlayer& Player, String& PlayerName, ICard& Card, String& CardTitle, String& CardText, String& Category, String& Difficulty, String& Restriction, Int32& Round)
+sealed class TableTop.Hosting.Events.ChallengeFailedEvent
+    .ctor(String PlayerName, String TerritoryName, Boolean WasRaid)
+    Boolean Equals(ChallengeFailedEvent other)
+    Boolean Equals(Object obj)
+    Boolean WasRaid { get; set; }
+    ChallengeFailedEvent <Clone>$()
+    Int32 GetHashCode()
+    String PlayerName { get; set; }
+    String TerritoryName { get; set; }
+    String ToString()
+    Void Deconstruct(String& PlayerName, String& TerritoryName, Boolean& WasRaid)
+sealed enum TableTop.Hosting.Events.ClaimedEndReason
+    DeckExhausted = 1
+    ThreeHeld = 0
+sealed class TableTop.Hosting.Events.ClaimedGameEndedEvent
+    .ctor(ClaimedEndReason Reason, IReadOnlyList<String> WinnerNames, IReadOnlyDictionary<String, IReadOnlyList<String>> FinalHoldings)
+    Boolean Equals(ClaimedGameEndedEvent other)
+    Boolean Equals(Object obj)
+    ClaimedEndReason Reason { get; set; }
+    ClaimedGameEndedEvent <Clone>$()
+    IReadOnlyDictionary<String, IReadOnlyList<String>> FinalHoldings { get; set; }
+    IReadOnlyList<String> WinnerNames { get; set; }
+    Int32 GetHashCode()
+    String ToString()
+    Void Deconstruct(ClaimedEndReason& Reason, IReadOnlyList`1& WinnerNames, IReadOnlyDictionary`2& FinalHoldings)
+sealed class TableTop.Hosting.Events.DayReadyEvent
+    .ctor(ICard Card, String CardText, Int32 DayNumber, Int32 TotalDays)
+    Boolean Equals(DayReadyEvent other)
+    Boolean Equals(Object obj)
+    DayReadyEvent <Clone>$()
+    ICard Card { get; set; }
+    Int32 DayNumber { get; set; }
+    Int32 GetHashCode()
+    Int32 TotalDays { get; set; }
+    String CardText { get; set; }
+    String ToString()
+    Void Deconstruct(ICard& Card, String& CardText, Int32& DayNumber, Int32& TotalDays)
+sealed class TableTop.Hosting.Events.DiceRolledEvent
+    .ctor(String PlayerName, Int32 Die1, Int32 Die2, Int32 Total, Boolean IsDouble, String ResultingZone, Int32 Round)
+    Boolean Equals(DiceRolledEvent other)
+    Boolean Equals(Object obj)
+    Boolean IsDouble { get; set; }
+    DiceRolledEvent <Clone>$()
+    Int32 Die1 { get; set; }
+    Int32 Die2 { get; set; }
+    Int32 GetHashCode()
+    Int32 Round { get; set; }
+    Int32 Total { get; set; }
+    String PlayerName { get; set; }
+    String ResultingZone { get; set; }
+    String ToString()
+    Void Deconstruct(String& PlayerName, Int32& Die1, Int32& Die2, Int32& Total, Boolean& IsDouble, String& ResultingZone, Int32& Round)
+sealed class TableTop.Hosting.Events.DoublesRolledEvent
+    .ctor(String PlayerName, Int32 Die1, Int32 Die2, Int32 Round)
+    Boolean Equals(DoublesRolledEvent other)
+    Boolean Equals(Object obj)
+    DoublesRolledEvent <Clone>$()
+    Int32 Die1 { get; set; }
+    Int32 Die2 { get; set; }
+    Int32 GetHashCode()
+    Int32 Round { get; set; }
+    String PlayerName { get; set; }
+    String ToString()
+    Void Deconstruct(String& PlayerName, Int32& Die1, Int32& Die2, Int32& Round)
+sealed class TableTop.Hosting.Events.FlowChangedEvent
+    .ctor(String PlayerName, String Change, String NewDifficulty, String NewPace, Int32 CardsBeforeEscalation, Int32 Round)
+    Boolean Equals(FlowChangedEvent other)
+    Boolean Equals(Object obj)
+    FlowChangedEvent <Clone>$()
+    Int32 CardsBeforeEscalation { get; set; }
+    Int32 GetHashCode()
+    Int32 Round { get; set; }
+    String Change { get; set; }
+    String NewDifficulty { get; set; }
+    String NewPace { get; set; }
+    String PlayerName { get; set; }
+    String ToString()
+    Void Deconstruct(String& PlayerName, String& Change, String& NewDifficulty, String& NewPace, Int32& CardsBeforeEscalation, Int32& Round)
+sealed class TableTop.Hosting.Events.GameEndedEvent
+    .ctor(IReadOnlyList<ScoreEntry> FinalStandings, Int32 TotalRounds, SessionReport Report)
+    Boolean Equals(GameEndedEvent other)
+    Boolean Equals(Object obj)
+    GameEndedEvent <Clone>$()
+    IReadOnlyList<ScoreEntry> FinalStandings { get; set; }
+    Int32 GetHashCode()
+    Int32 TotalRounds { get; set; }
+    SessionReport Report { get; set; }
+    String ToString()
+    Void Deconstruct(IReadOnlyList`1& FinalStandings, Int32& TotalRounds, SessionReport& Report)
+sealed class TableTop.Hosting.Events.GamePausedEvent
+    .ctor(Boolean IsPaused)
+    Boolean Equals(GamePausedEvent other)
+    Boolean Equals(Object obj)
+    Boolean IsPaused { get; set; }
+    GamePausedEvent <Clone>$()
+    Int32 GetHashCode()
+    String ToString()
+    Void Deconstruct(Boolean& IsPaused)
+sealed class TableTop.Hosting.Events.HerdGameEndedEvent
+    .ctor(IReadOnlyList<String> WinnerNames, IReadOnlyList<KeyValuePair<String, Int32>> FinalScores, Int32 RoundsPlayed)
+    Boolean Equals(HerdGameEndedEvent other)
+    Boolean Equals(Object obj)
+    HerdGameEndedEvent <Clone>$()
+    IReadOnlyList<KeyValuePair<String, Int32>> FinalScores { get; set; }
+    IReadOnlyList<String> WinnerNames { get; set; }
+    Int32 GetHashCode()
+    Int32 RoundsPlayed { get; set; }
+    String ToString()
+    Void Deconstruct(IReadOnlyList`1& WinnerNames, IReadOnlyList`1& FinalScores, Int32& RoundsPlayed)
+sealed class TableTop.Hosting.Events.HerdPromptReadyEvent
+    .ctor(Int32 RoundNumber, Int32 TotalRounds, String Prompt, String Category)
+    Boolean Equals(HerdPromptReadyEvent other)
+    Boolean Equals(Object obj)
+    HerdPromptReadyEvent <Clone>$()
+    Int32 GetHashCode()
+    Int32 RoundNumber { get; set; }
+    Int32 TotalRounds { get; set; }
+    String Category { get; set; }
+    String Prompt { get; set; }
+    String ToString()
+    Void Deconstruct(Int32& RoundNumber, Int32& TotalRounds, String& Prompt, String& Category)
+sealed class TableTop.Hosting.Events.HerdRoundResolvedEvent
+    .ctor(String Prompt, IReadOnlyList<AnswerGroup> Groups, String HerdAnswer, IReadOnlyDictionary<String, Int32> Scores, String LoneVoiceName)
+    Boolean Equals(HerdRoundResolvedEvent other)
+    Boolean Equals(Object obj)
+    HerdRoundResolvedEvent <Clone>$()
+    IReadOnlyDictionary<String, Int32> Scores { get; set; }
+    IReadOnlyList<AnswerGroup> Groups { get; set; }
+    Int32 GetHashCode()
+    String HerdAnswer { get; set; }
+    String LoneVoiceName { get; set; }
+    String Prompt { get; set; }
+    String ToString()
+    Void Deconstruct(String& Prompt, IReadOnlyList`1& Groups, String& HerdAnswer, IReadOnlyDictionary`2& Scores, String& LoneVoiceName)
+sealed class TableTop.Hosting.Events.HotSeatBeganEvent
+    .ctor(String PlayerName, Int32 PlayerIndex, Int32 TotalPlayers)
+    Boolean Equals(HotSeatBeganEvent other)
+    Boolean Equals(Object obj)
+    HotSeatBeganEvent <Clone>$()
+    Int32 GetHashCode()
+    Int32 PlayerIndex { get; set; }
+    Int32 TotalPlayers { get; set; }
+    String PlayerName { get; set; }
+    String ToString()
+    Void Deconstruct(String& PlayerName, Int32& PlayerIndex, Int32& TotalPlayers)
+sealed class TableTop.Hosting.Events.HotSeatResult
+    .ctor(String PlayerName, Int64 Prize)
+    Boolean Equals(HotSeatResult other)
+    Boolean Equals(Object obj)
+    HotSeatResult <Clone>$()
+    Int32 GetHashCode()
+    Int64 Prize { get; set; }
+    String PlayerName { get; set; }
+    String ToString()
+    Void Deconstruct(String& PlayerName, Int64& Prize)
+sealed class TableTop.Hosting.Events.InspirationCardDrawnEvent
+    .ctor(String PlayerName, String CardTitle, String InspirationText, String InspirationCategory, Int32 Round)
+    Boolean Equals(InspirationCardDrawnEvent other)
+    Boolean Equals(Object obj)
+    InspirationCardDrawnEvent <Clone>$()
+    Int32 GetHashCode()
+    Int32 Round { get; set; }
+    String CardTitle { get; set; }
+    String InspirationCategory { get; set; }
+    String InspirationText { get; set; }
+    String PlayerName { get; set; }
+    String ToString()
+    Void Deconstruct(String& PlayerName, String& CardTitle, String& InspirationText, String& InspirationCategory, Int32& Round)
+sealed class TableTop.Hosting.Events.LadderRungSnapshot
+    .ctor(Int32 QuestionNumber, Int64 PrizeAmount, Boolean IsSafeHaven, Boolean IsCurrent, Boolean IsPassed)
+    Boolean Equals(LadderRungSnapshot other)
+    Boolean Equals(Object obj)
+    Boolean IsCurrent { get; set; }
+    Boolean IsPassed { get; set; }
+    Boolean IsSafeHaven { get; set; }
+    Int32 GetHashCode()
+    Int32 QuestionNumber { get; set; }
+    Int64 PrizeAmount { get; set; }
+    LadderRungSnapshot <Clone>$()
+    String ToString()
+    Void Deconstruct(Int32& QuestionNumber, Int64& PrizeAmount, Boolean& IsSafeHaven, Boolean& IsCurrent, Boolean& IsPassed)
+sealed class TableTop.Hosting.Events.LifelineSnapshot
+    .ctor(String Name, Boolean IsAvailable)
+    Boolean Equals(LifelineSnapshot other)
+    Boolean Equals(Object obj)
+    Boolean IsAvailable { get; set; }
+    Int32 GetHashCode()
+    LifelineSnapshot <Clone>$()
+    String Name { get; set; }
+    String ToString()
+    Void Deconstruct(String& Name, Boolean& IsAvailable)
+sealed class TableTop.Hosting.Events.LifelineUsedEvent
+    .ctor(String LifelineName, String Narrative, IReadOnlyList<AnswerLabel> RemainingOptions, Nullable<AnswerLabel> Suggestion)
+    Boolean Equals(LifelineUsedEvent other)
+    Boolean Equals(Object obj)
+    IReadOnlyList<AnswerLabel> RemainingOptions { get; set; }
+    Int32 GetHashCode()
+    LifelineUsedEvent <Clone>$()
+    Nullable<AnswerLabel> Suggestion { get; set; }
+    String LifelineName { get; set; }
+    String Narrative { get; set; }
+    String ToString()
+    Void Deconstruct(String& LifelineName, String& Narrative, IReadOnlyList`1& RemainingOptions, Nullable`1& Suggestion)
+sealed class TableTop.Hosting.Events.MillionaireGameEndedEvent
+    .ctor(IReadOnlyList<HotSeatResult> Results)
+    Boolean Equals(MillionaireGameEndedEvent other)
+    Boolean Equals(Object obj)
+    IReadOnlyList<HotSeatResult> Results { get; set; }
+    Int32 GetHashCode()
+    MillionaireGameEndedEvent <Clone>$()
+    String ToString()
+    Void Deconstruct(IReadOnlyList`1& Results)
+sealed class TableTop.Hosting.Events.MillionaireWonEvent
+    .ctor(String PlayerName)
+    Boolean Equals(MillionaireWonEvent other)
+    Boolean Equals(Object obj)
+    Int32 GetHashCode()
+    MillionaireWonEvent <Clone>$()
+    String PlayerName { get; set; }
+    String ToString()
+    Void Deconstruct(String& PlayerName)
+sealed class TableTop.Hosting.Events.MonogamyCardHistoryItem
+    .ctor(String Zone, String Title, Boolean WasCompleted, Boolean WasNegotiated)
+    Boolean Equals(MonogamyCardHistoryItem other)
+    Boolean Equals(Object obj)
+    Boolean WasCompleted { get; set; }
+    Boolean WasNegotiated { get; set; }
+    Int32 GetHashCode()
+    MonogamyCardHistoryItem <Clone>$()
+    String Title { get; set; }
+    String ToString()
+    String Zone { get; set; }
+    Void Deconstruct(String& Zone, String& Title, Boolean& WasCompleted, Boolean& WasNegotiated)
+sealed class TableTop.Hosting.Events.MonogamyCardReadyEvent
+    .ctor(String PlayerName, String PartnerName, String CardTitle, String CardText, String Zone, String Target, Int32 TokenValue, Nullable<Int32> DurationMinutes, Int32 Round)
+    Boolean Equals(MonogamyCardReadyEvent other)
+    Boolean Equals(Object obj)
+    Int32 GetHashCode()
+    Int32 Round { get; set; }
+    Int32 TokenValue { get; set; }
+    MonogamyCardReadyEvent <Clone>$()
+    Nullable<Int32> DurationMinutes { get; set; }
+    String CardText { get; set; }
+    String CardTitle { get; set; }
+    String PartnerName { get; set; }
+    String PlayerName { get; set; }
+    String Target { get; set; }
+    String ToString()
+    String Zone { get; set; }
+    Void Deconstruct(String& PlayerName, String& PartnerName, String& CardTitle, String& CardText, String& Zone, String& Target, Int32& TokenValue, Nullable`1& DurationMinutes, Int32& Round)
+sealed class TableTop.Hosting.Events.MonogamyGameEndedEvent
+    .ctor(IReadOnlyList<MonogamyStanding> FinalStandings, String WinnerName, Int32 TotalRounds)
+    Boolean Equals(MonogamyGameEndedEvent other)
+    Boolean Equals(Object obj)
+    IReadOnlyList<MonogamyStanding> FinalStandings { get; set; }
+    Int32 GetHashCode()
+    Int32 TotalRounds { get; set; }
+    MonogamyGameEndedEvent <Clone>$()
+    String ToString()
+    String WinnerName { get; set; }
+    Void Deconstruct(IReadOnlyList`1& FinalStandings, String& WinnerName, Int32& TotalRounds)
+sealed class TableTop.Hosting.Events.MonogamyStanding
+    .ctor(String PlayerName, Int32 Tokens, Int32 CardsCompleted, Int32 CardsSkipped, IReadOnlyDictionary<String, Int32> TokensByZone)
+    Boolean Equals(MonogamyStanding other)
+    Boolean Equals(Object obj)
+    IReadOnlyDictionary<String, Int32> TokensByZone { get; set; }
+    Int32 CardsCompleted { get; set; }
+    Int32 CardsSkipped { get; set; }
+    Int32 GetHashCode()
+    Int32 Tokens { get; set; }
+    MonogamyStanding <Clone>$()
+    String PlayerName { get; set; }
+    String ToString()
+    Void Deconstruct(String& PlayerName, Int32& Tokens, Int32& CardsCompleted, Int32& CardsSkipped, IReadOnlyDictionary`2& TokensByZone)
+sealed class TableTop.Hosting.Events.MonogamyTimedCardEvent
+    .ctor(String PlayerName, String CardTitle, Int32 DurationMinutes, String ActivityType)
+    Boolean Equals(MonogamyTimedCardEvent other)
+    Boolean Equals(Object obj)
+    Int32 DurationMinutes { get; set; }
+    Int32 GetHashCode()
+    MonogamyTimedCardEvent <Clone>$()
+    String ActivityType { get; set; }
+    String CardTitle { get; set; }
+    String PlayerName { get; set; }
+    String ToString()
+    Void Deconstruct(String& PlayerName, String& CardTitle, Int32& DurationMinutes, String& ActivityType)
+sealed class TableTop.Hosting.Events.NextTurnHintEvent
+    .ctor(String PlayerName, String HintText, String SuggestedDifficulty, String SuggestedPaceChange, String Urgency, String Reason)
+    Boolean Equals(NextTurnHintEvent other)
+    Boolean Equals(Object obj)
+    Int32 GetHashCode()
+    NextTurnHintEvent <Clone>$()
+    String HintText { get; set; }
+    String PlayerName { get; set; }
+    String Reason { get; set; }
+    String SuggestedDifficulty { get; set; }
+    String SuggestedPaceChange { get; set; }
+    String ToString()
+    String Urgency { get; set; }
+    Void Deconstruct(String& PlayerName, String& HintText, String& SuggestedDifficulty, String& SuggestedPaceChange, String& Urgency, String& Reason)
+sealed class TableTop.Hosting.Events.PrizeLadderSnapshot
+    .ctor(IReadOnlyList<LadderRungSnapshot> Rungs, Int32 CurrentIndex, Int64 GuaranteedPrize, Boolean IsComplete)
+    Boolean Equals(Object obj)
+    Boolean Equals(PrizeLadderSnapshot other)
+    Boolean IsComplete { get; set; }
+    IReadOnlyList<LadderRungSnapshot> Rungs { get; set; }
+    Int32 CurrentIndex { get; set; }
+    Int32 GetHashCode()
+    Int64 GuaranteedPrize { get; set; }
+    PrizeLadderSnapshot <Clone>$()
+    String ToString()
+    Void Deconstruct(IReadOnlyList`1& Rungs, Int32& CurrentIndex, Int64& GuaranteedPrize, Boolean& IsComplete)
+sealed class TableTop.Hosting.Events.QuestionReadyEvent
+    .ctor(String QuestionText, IReadOnlyDictionary<AnswerLabel, String> Answers, IReadOnlyList<AnswerLabel> AvailableOptions, PrizeLadderSnapshot Ladder, IReadOnlyList<LifelineSnapshot> Lifelines)
+    Boolean Equals(Object obj)
+    Boolean Equals(QuestionReadyEvent other)
+    IReadOnlyDictionary<AnswerLabel, String> Answers { get; set; }
+    IReadOnlyList<AnswerLabel> AvailableOptions { get; set; }
+    IReadOnlyList<LifelineSnapshot> Lifelines { get; set; }
+    Int32 GetHashCode()
+    PrizeLadderSnapshot Ladder { get; set; }
+    QuestionReadyEvent <Clone>$()
+    String QuestionText { get; set; }
+    String ToString()
+    Void Deconstruct(String& QuestionText, IReadOnlyDictionary`2& Answers, IReadOnlyList`1& AvailableOptions, PrizeLadderSnapshot& Ladder, IReadOnlyList`1& Lifelines)
+sealed class TableTop.Hosting.Events.RewardCardDrawnEvent
+    .ctor(String PlayerName, String CardTitle, String CardText, String EffectType, String EffectDescription, Int32 ScoreDelta, Int32 Round, IReadOnlyList<ScoreEntry> CurrentScores)
+    Boolean Equals(Object obj)
+    Boolean Equals(RewardCardDrawnEvent other)
+    IReadOnlyList<ScoreEntry> CurrentScores { get; set; }
+    Int32 GetHashCode()
+    Int32 Round { get; set; }
+    Int32 ScoreDelta { get; set; }
+    RewardCardDrawnEvent <Clone>$()
+    String CardText { get; set; }
+    String CardTitle { get; set; }
+    String EffectDescription { get; set; }
+    String EffectType { get; set; }
+    String PlayerName { get; set; }
+    String ToString()
+    Void Deconstruct(String& PlayerName, String& CardTitle, String& CardText, String& EffectType, String& EffectDescription, Int32& ScoreDelta, Int32& Round, IReadOnlyList`1& CurrentScores)
+sealed class TableTop.Hosting.Events.ScoreEntry
+    .ctor(String Name, Int32 Score)
+    Boolean Equals(Object obj)
+    Boolean Equals(ScoreEntry other)
+    Int32 GetHashCode()
+    Int32 Score { get; set; }
+    ScoreEntry <Clone>$()
+    String Name { get; set; }
+    String ToString()
+    Void Deconstruct(String& Name, Int32& Score)
+sealed class TableTop.Hosting.Events.SessionSavedEvent
+    .ctor(String FilePath, DateTimeOffset SavedAt)
+    Boolean Equals(Object obj)
+    Boolean Equals(SessionSavedEvent other)
+    DateTimeOffset SavedAt { get; set; }
+    Int32 GetHashCode()
+    SessionSavedEvent <Clone>$()
+    String FilePath { get; set; }
+    String ToString()
+    Void Deconstruct(String& FilePath, DateTimeOffset& SavedAt)
+sealed class TableTop.Hosting.Events.SkipAttemptedEvent
+    .ctor(String PlayerName, Boolean IsFree, Int32 Penalty, Int32 SkipCount, Int32 Round, IReadOnlyList<ScoreEntry> CurrentScores)
+    Boolean Equals(Object obj)
+    Boolean Equals(SkipAttemptedEvent other)
+    Boolean IsFree { get; set; }
+    IReadOnlyList<ScoreEntry> CurrentScores { get; set; }
+    Int32 GetHashCode()
+    Int32 Penalty { get; set; }
+    Int32 Round { get; set; }
+    Int32 SkipCount { get; set; }
+    SkipAttemptedEvent <Clone>$()
+    String PlayerName { get; set; }
+    String ToString()
+    Void Deconstruct(String& PlayerName, Boolean& IsFree, Int32& Penalty, Int32& SkipCount, Int32& Round, IReadOnlyList`1& CurrentScores)
+sealed class TableTop.Hosting.Events.TerritoryChallengeReadyEvent
+    .ctor(String PlayerName, String TerritoryName, String CardTitle, String CardText, String Difficulty, String DefenderName)
+    Boolean Equals(Object obj)
+    Boolean Equals(TerritoryChallengeReadyEvent other)
+    Int32 GetHashCode()
+    String CardText { get; set; }
+    String CardTitle { get; set; }
+    String DefenderName { get; set; }
+    String Difficulty { get; set; }
+    String PlayerName { get; set; }
+    String TerritoryName { get; set; }
+    String ToString()
+    TerritoryChallengeReadyEvent <Clone>$()
+    Void Deconstruct(String& PlayerName, String& TerritoryName, String& CardTitle, String& CardText, String& Difficulty, String& DefenderName)
+sealed class TableTop.Hosting.Events.TerritoryClaimedEvent
+    .ctor(String PlayerName, String TerritoryName, IReadOnlyList<String> HeldTerritories)
+    Boolean Equals(Object obj)
+    Boolean Equals(TerritoryClaimedEvent other)
+    IReadOnlyList<String> HeldTerritories { get; set; }
+    Int32 GetHashCode()
+    String PlayerName { get; set; }
+    String TerritoryName { get; set; }
+    String ToString()
+    TerritoryClaimedEvent <Clone>$()
+    Void Deconstruct(String& PlayerName, String& TerritoryName, IReadOnlyList`1& HeldTerritories)
+sealed class TableTop.Hosting.Events.TerritoryStolenEvent
+    .ctor(String AttackerName, String DefenderName, String TerritoryName, IReadOnlyList<String> AttackerHeldTerritories, IReadOnlyList<String> DefenderHeldTerritories)
+    Boolean Equals(Object obj)
+    Boolean Equals(TerritoryStolenEvent other)
+    IReadOnlyList<String> AttackerHeldTerritories { get; set; }
+    IReadOnlyList<String> DefenderHeldTerritories { get; set; }
+    Int32 GetHashCode()
+    String AttackerName { get; set; }
+    String DefenderName { get; set; }
+    String TerritoryName { get; set; }
+    String ToString()
+    TerritoryStolenEvent <Clone>$()
+    Void Deconstruct(String& AttackerName, String& DefenderName, String& TerritoryName, IReadOnlyList`1& AttackerHeldTerritories, IReadOnlyList`1& DefenderHeldTerritories)
+sealed class TableTop.Hosting.Events.TimerExpiredEvent
+    .ctor(String PlayerName, String CardTitle, TimeSpan Elapsed)
+    Boolean Equals(Object obj)
+    Boolean Equals(TimerExpiredEvent other)
+    Int32 GetHashCode()
+    String CardTitle { get; set; }
+    String PlayerName { get; set; }
+    String ToString()
+    TimeSpan Elapsed { get; set; }
+    TimerExpiredEvent <Clone>$()
+    Void Deconstruct(String& PlayerName, String& CardTitle, TimeSpan& Elapsed)
+sealed class TableTop.Hosting.Events.TokensAwardedEvent
+    .ctor(String PlayerName, Int32 TokensEarned, Int32 TotalTokens, String Zone)
+    Boolean Equals(Object obj)
+    Boolean Equals(TokensAwardedEvent other)
+    Int32 GetHashCode()
+    Int32 TokensEarned { get; set; }
+    Int32 TotalTokens { get; set; }
+    String PlayerName { get; set; }
+    String ToString()
+    String Zone { get; set; }
+    TokensAwardedEvent <Clone>$()
+    Void Deconstruct(String& PlayerName, Int32& TokensEarned, Int32& TotalTokens, String& Zone)
+sealed class TableTop.Hosting.Events.TurnResultEvent
+    .ctor(String PlayerName, CardOutcome Outcome, Int32 ScoreDelta, Int32 Round, IReadOnlyList<ScoreEntry> CurrentScores)
+    Boolean Equals(Object obj)
+    Boolean Equals(TurnResultEvent other)
+    CardOutcome Outcome { get; set; }
+    IReadOnlyList<ScoreEntry> CurrentScores { get; set; }
+    Int32 GetHashCode()
+    Int32 Round { get; set; }
+    Int32 ScoreDelta { get; set; }
+    String PlayerName { get; set; }
+    String ToString()
+    TurnResultEvent <Clone>$()
+    Void Deconstruct(String& PlayerName, CardOutcome& Outcome, Int32& ScoreDelta, Int32& Round, IReadOnlyList`1& CurrentScores)
+sealed class TableTop.Hosting.Events.TurnSkippedEvent
+    .ctor(String PlayerName, String Reason, Int32 Round)
+    Boolean Equals(Object obj)
+    Boolean Equals(TurnSkippedEvent other)
+    Int32 GetHashCode()
+    Int32 Round { get; set; }
+    String PlayerName { get; set; }
+    String Reason { get; set; }
+    String ToString()
+    TurnSkippedEvent <Clone>$()
+    Void Deconstruct(String& PlayerName, String& Reason, Int32& Round)
+sealed class TableTop.Hosting.Events.TurnUndoneEvent
+    .ctor(String PlayerName, String CardTitle, CardOutcome ReversedOutcome, Int32 ScoreRestored, IReadOnlyList<ScoreEntry> CurrentScores)
+    Boolean Equals(Object obj)
+    Boolean Equals(TurnUndoneEvent other)
+    CardOutcome ReversedOutcome { get; set; }
+    IReadOnlyList<ScoreEntry> CurrentScores { get; set; }
+    Int32 GetHashCode()
+    Int32 ScoreRestored { get; set; }
+    String CardTitle { get; set; }
+    String PlayerName { get; set; }
+    String ToString()
+    TurnUndoneEvent <Clone>$()
+    Void Deconstruct(String& PlayerName, String& CardTitle, CardOutcome& ReversedOutcome, Int32& ScoreRestored, IReadOnlyList`1& CurrentScores)
+sealed class TableTop.Hosting.Events.WalkedAwayEvent
+    .ctor(Int64 Prize)
+    Boolean Equals(Object obj)
+    Boolean Equals(WalkedAwayEvent other)
+    Int32 GetHashCode()
+    Int64 Prize { get; set; }
+    String ToString()
+    Void Deconstruct(Int64& Prize)
+    WalkedAwayEvent <Clone>$()
+static class TableTop.Hosting.Extensions.ServiceCollectionExtensions
+    IServiceCollection AddTableTopHosting(IServiceCollection services, String sessionFilePath = default, String playerFilePath = default)
+    IServiceCollection UseEngineDiagnostics(IServiceCollection services)
+    IServiceCollection UseGamePersistence(IServiceCollection services)
+    IServiceCollection UseHintEngine(IServiceCollection services)
+    IServiceCollection UseLoggerDiagnostics(IServiceCollection services)
+    IServiceCollection UsePlayerRepository(IServiceCollection services)
+sealed class TableTop.Hosting.Hints.DefaultHintEngine
+    .ctor()
+    NextTurnHint GenerateHint(IPlayer player, HintContext ctx)
+sealed class TableTop.Hosting.Hints.HintContext
+    .ctor(IReadOnlyList<CardOutcome> RecentOutcomes, IReadOnlyList<Difficulty> RecentDifficulties, FlowState CurrentFlow, Int32 SkipCount, Int32 Round, IReadOnlyList<ValueTuple<Guid, Int32>> Standings)
+    Boolean Equals(HintContext other)
+    Boolean Equals(Object obj)
+    FlowState CurrentFlow { get; set; }
+    HintContext <Clone>$()
+    IReadOnlyList<CardOutcome> RecentOutcomes { get; set; }
+    IReadOnlyList<Difficulty> RecentDifficulties { get; set; }
+    IReadOnlyList<ValueTuple<Guid, Int32>> Standings { get; set; }
+    Int32 GetHashCode()
+    Int32 Round { get; set; }
+    Int32 SkipCount { get; set; }
+    String ToString()
+    Void Deconstruct(IReadOnlyList`1& RecentOutcomes, IReadOnlyList`1& RecentDifficulties, FlowState& CurrentFlow, Int32& SkipCount, Int32& Round, IReadOnlyList`1& Standings)
+sealed enum TableTop.Hosting.Hints.HintUrgency
+    Gentle = 0
+    Moderate = 1
+    Strong = 2
+abstract interface TableTop.Hosting.Hints.IHintEngine
+    NextTurnHint GenerateHint(IPlayer player, HintContext context)
+sealed class TableTop.Hosting.Hints.NextTurnHint
+    .ctor(Difficulty SuggestedDifficulty, Nullable<PaceHint> SuggestedPaceChange, String NeutralHint, String HimHint, String HerHint, HintUrgency Urgency, String Reason)
+    Boolean Equals(NextTurnHint other)
+    Boolean Equals(Object obj)
+    Difficulty SuggestedDifficulty { get; set; }
+    HintUrgency Urgency { get; set; }
+    Int32 GetHashCode()
+    NextTurnHint <Clone>$()
+    Nullable<PaceHint> SuggestedPaceChange { get; set; }
+    String ForPlayer(IPlayer player)
+    String HerHint { get; set; }
+    String HimHint { get; set; }
+    String NeutralHint { get; set; }
+    String Reason { get; set; }
+    String ToString()
+    Void Deconstruct(Difficulty& SuggestedDifficulty, Nullable`1& SuggestedPaceChange, String& NeutralHint, String& HimHint, String& HerHint, HintUrgency& Urgency, String& Reason)
+sealed enum TableTop.Hosting.Hints.PaceHint
+    SlowDown = 0
+    SpeedUp = 1
+abstract interface TableTop.Hosting.IArchetypeRegistry
+    Archetype FindById(String id)
+    IGameMode SurpriseMe(AgeRating maxAgeRating = default, Boolean allowAdultContent = default, Nullable<Int32> maxCards = default)
+    IReadOnlyList<Archetype> RootArchetypes { get; }
+    IReadOnlyList<IGameMode> AllModes { get; }
+sealed class TableTop.Hosting.Persistence.FlowStateSnapshot
+    .ctor()
+    Int32 CardsPlayedAtLevel { get; set; }
+    String Difficulty { get; set; }
+    String Pace { get; set; }
+abstract interface TableTop.Hosting.Persistence.IGamePersistence
+    Boolean HasSavedSession { get; }
+    Task DeleteAsync(CancellationToken ct = default)
+    Task SaveAsync(SessionSnapshot snapshot, CancellationToken ct = default)
+    Task<SessionSnapshot> LoadAsync(CancellationToken ct = default)
+abstract interface TableTop.Hosting.Persistence.IPlayerRepository
+    Task ClearAsync(CancellationToken ct = default)
+    Task SaveAsync(IEnumerable<PlayerProfile> profiles, CancellationToken ct = default)
+    Task<IReadOnlyList<PlayerProfile>> LoadAsync(CancellationToken ct = default)
+abstract interface TableTop.Hosting.Persistence.ISessionRepository
+sealed class TableTop.Hosting.Persistence.JsonPlayerRepository
+    .ctor(String filePath = default)
+    Task ClearAsync(CancellationToken ct = default)
+    Task SaveAsync(IEnumerable<PlayerProfile> profiles, CancellationToken ct = default)
+    Task<IReadOnlyList<PlayerProfile>> LoadAsync(CancellationToken ct = default)
+sealed class TableTop.Hosting.Persistence.JsonSessionRepository
+    .ctor(String filePath = default)
+    Boolean HasSavedSession { get; }
+    String FilePath { get; }
+    Task DeleteAsync(CancellationToken ct = default)
+    Task SaveAsync(SessionSnapshot snapshot, CancellationToken ct = default)
+    Task<SessionSnapshot> LoadAsync(CancellationToken ct = default)
+sealed class TableTop.Hosting.Persistence.PlayerProfile
+    .ctor()
+    Boolean IsAdult { get; }
+    Boolean IsCoupleMember { get; set; }
+    Boolean IsMarried { get; set; }
+    Boolean IsParent { get; set; }
+    Guid Id { get; set; }
+    Int32 Age { get; set; }
+    Int32 CurrentSchemaVersion
+    Int32 SchemaVersion { get; set; }
+    Player ToPlayer()
+    String Gender { get; set; }
+    String Name { get; set; }
+sealed class TableTop.Hosting.Persistence.PlayerSessionState
+    .ctor()
+    Dictionary<String, String> Attributes { get; set; }
+    Guid PlayerId { get; set; }
+    Int32 Score { get; set; }
+    List<String> Tags { get; set; }
+    String DisplayName { get; set; }
+    String Status { get; set; }
+sealed class TableTop.Hosting.Persistence.SavedInspiration
+    .ctor()
+    DateTimeOffset SavedAt { get; set; }
+    Guid CardId { get; set; }
+    String InspirationCategory { get; set; }
+    String InspirationText { get; set; }
+    String Title { get; set; }
+sealed class TableTop.Hosting.Persistence.SessionSnapshot
+    .ctor()
+    Boolean RequiresMigration { get; }
+    DateTimeOffset SavedAt { get; set; }
+    Dictionary<String, FlowStateSnapshot> FlowStates { get; set; }
+    Dictionary<String, Int32> SkipCounts { get; set; }
+    Dictionary<String, List<SavedInspiration>> PlayerInspirations { get; set; }
+    Guid SessionId { get; set; }
+    Int32 CurrentSchemaVersion
+    Int32 Round { get; set; }
+    Int32 SchemaVersion { get; set; }
+    List<Guid> ExtraCardPlayerIds { get; set; }
+    List<Guid> FreePassPlayerIds { get; set; }
+    List<Guid> PlayedCardIds { get; set; }
+    List<PlayerSessionState> Players { get; set; }
+    String ModeFilePath { get; set; }
+    String ModeName { get; set; }
+sealed class TableTop.Hosting.ResumableSession
+    .ctor(IGameMode Mode, IReadOnlyList<IPlayer> Players, SessionSnapshot Snapshot)
+    Boolean Equals(Object obj)
+    Boolean Equals(ResumableSession other)
+    DateTimeOffset SavedAt { get; }
+    IGameMode Mode { get; set; }
+    IReadOnlyList<IPlayer> Players { get; set; }
+    Int32 GetHashCode()
+    Int32 Round { get; }
+    ResumableSession <Clone>$()
+    SessionSnapshot Snapshot { get; set; }
+    String PlayerSummary { get; }
+    String ToString()
+    Void Deconstruct(IGameMode& Mode, IReadOnlyList`1& Players, SessionSnapshot& Snapshot)
+static class TableTop.Hosting.SessionResumer
+    ResumableSession TryResolve(SessionSnapshot snapshot, IReadOnlyList<IGameMode> availableModes, IReadOnlyList<IPlayer> currentRoster, String& reason)
+static class TableTop.Hosting.TableSuitability
+    TableSuitabilityResult Check(IGameMode mode, IReadOnlyList<IPlayer> players)
+sealed class TableTop.Hosting.TableSuitabilityResult
+    .ctor(Boolean Suits, String ModeName, TableShape Required, TableShape Actual)
+    Boolean Equals(Object obj)
+    Boolean Equals(TableSuitabilityResult other)
+    Boolean Suits { get; set; }
+    Int32 GetHashCode()
+    String Explanation { get; }
+    String ModeName { get; set; }
+    String ToString()
+    TableShape Actual { get; set; }
+    TableShape Required { get; set; }
+    TableSuitabilityResult <Clone>$()
+    Void Deconstruct(Boolean& Suits, String& ModeName, TableShape& Required, TableShape& Actual)

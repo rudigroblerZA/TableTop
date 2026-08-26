@@ -1,0 +1,149 @@
+<UserControl x:Class="TableTop.WinUI.Views.MonogamyGameView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- The velvet table: same structure as the felt one, warmer register. -->
+    <Grid Background="{StaticResource VelvetBrush}">
+
+            <!-- Load failure. MAUI has shown this since it was written; WinUI
+                 had no path for it at all, so a mode that failed to build its
+                 controller showed an empty screen with no explanation. The
+                 ViewModel gained LoadError when it was shared — this surfaces it. -->
+            <Border Visibility="{Binding HasLoadError, Converter={StaticResource BoolToVis}}"
+                    Background="#33F87171" BorderBrush="#F87171" BorderThickness="1"
+                    CornerRadius="8" Padding="16,12" VerticalAlignment="Top" Margin="0,0,0,12">
+                <TextBlock Text="{Binding LoadError}" TextWrapping="Wrap"
+                           Foreground="#FCA5A5" FontSize="14"/>
+            </Border>
+        <Grid Padding="28,24">
+            <!-- Playing -->
+            <ScrollViewer Visibility="{Binding IsPlaying, Converter={StaticResource BoolToVis}}">
+                <StackPanel Spacing="16" MaxWidth="700">
+
+                    <!-- Whose turn, and the roll -->
+                    <TextBlock Text="{Binding PlayerName}" FontSize="17"
+                               Style="{StaticResource EngravedTitleStyle}"
+                               Foreground="{StaticResource RoseGoldBrightBrush}"/>
+
+                    <Border Background="{StaticResource VelvetPanelBrush}" CornerRadius="12"
+                            Padding="20,16" BorderBrush="#59D9A166" BorderThickness="1">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="{Binding DiceText}" FontSize="26"
+                                       FontFamily="{StaticResource DisplayFont}" FontWeight="Bold"
+                                       Foreground="{StaticResource TextBrush}"/>
+                            <TextBlock Text="{Binding Zone}"
+                                       Style="{StaticResource PipTextStyle}"
+                                       Foreground="{StaticResource RoseGoldBrush}"/>
+
+                            <!-- Token standings. MAUI showed these; WinUI showed
+                                 nothing, so you could not see the score without
+                                 counting the tokens yourself. -->
+                            <TextBlock Text="{Binding Scores}"
+                                       Visibility="{Binding HasScores, Converter={StaticResource BoolToVis}}"
+                                       Style="{StaticResource PipTextStyle}"
+                                       Foreground="{StaticResource TextBrush}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Zone choice after doubles -->
+                    <StackPanel Spacing="10"
+                                Visibility="{Binding AwaitingZone, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="DOUBLES — PICK YOUR ZONE"
+                                   Style="{StaticResource PipTextStyle}"
+                                   Foreground="{StaticResource RoseGoldBrightBrush}"/>
+                        <ItemsControl ItemsSource="{Binding ZoneChoices}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="8"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding SelectCommand}" Content="{Binding Display}"
+                                            Padding="18,11" CornerRadius="9"
+                                            FontFamily="Constantia" FontWeight="Bold" CharacterSpacing="80"
+                                            Background="{StaticResource VelvetPanelBrush}"
+                                            Foreground="{StaticResource TextBrush}"
+                                            BorderBrush="{StaticResource RoseGoldBrush}" BorderThickness="1"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- The card: printed stock on velvet, with the gold rule -->
+                    <Border Background="{StaticResource CardFaceBrush}" CornerRadius="16"
+                            Visibility="{Binding HasCard, Converter={StaticResource BoolToVis}}">
+                        <Grid>
+                            <StackPanel Spacing="12" Margin="26,24">
+                                <TextBlock Text="{Binding CardTitle}"
+                                           Style="{StaticResource CardTitleStyle}"/>
+                                <TextBlock Text="{Binding CardText}"
+                                           Style="{StaticResource CardBodyStyle}"/>
+                                <TextBlock Text="{Binding TokenText}"
+                                           FontFamily="Consolas" FontSize="12" CharacterSpacing="120"
+                                           Foreground="#9C6D4F"/>
+                            </StackPanel>
+                            <Border Margin="9" CornerRadius="10" IsHitTestVisible="False"
+                                    BorderBrush="#8CD9A166" BorderThickness="1"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Actions -->
+                    <StackPanel Orientation="Horizontal" Spacing="10"
+                                Visibility="{Binding HasCard, Converter={StaticResource BoolToVis}}">
+                        <Button Content="Done" Command="{Binding CompleteCommand}" Padding="26,12"
+                                CornerRadius="9" FontFamily="Constantia" FontWeight="Bold" CharacterSpacing="90"
+                                Background="{StaticResource RoseBrassBrush}" Foreground="#2A0E1A">
+                            <Button.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="Space"/>
+                            </Button.KeyboardAccelerators>
+                        </Button>
+                        <Button Content="Negotiate" Command="{Binding NegotiateCommand}" Padding="20,12"
+                                CornerRadius="9" FontFamily="Constantia" CharacterSpacing="90"
+                                Background="{StaticResource VelvetPanelBrush}" Foreground="{StaticResource TextBrush}"
+                                BorderBrush="{StaticResource RoseGoldBrush}" BorderThickness="1">
+                            <Button.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="N"/>
+                            </Button.KeyboardAccelerators>
+                        </Button>
+                        <Button Content="Skip" Command="{Binding SkipCommand}" Padding="20,12"
+                                CornerRadius="9" FontFamily="Constantia" CharacterSpacing="90"
+                                Background="Transparent" Foreground="#B08A6A"
+                                BorderBrush="#59D9A166" BorderThickness="1">
+                            <!-- Escape, matching the main gameplay screen's convention: the
+                                 same key closes a dialog everywhere else in Windows. -->
+                            <Button.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="Escape"/>
+                            </Button.KeyboardAccelerators>
+                        </Button>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding Flash}" TextWrapping="Wrap"
+                               FontFamily="Georgia" FontStyle="Italic"
+                               Foreground="{StaticResource RoseGoldBrightBrush}" Margin="0,6,0,0"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Results plaque -->
+            <Grid Visibility="{Binding IsGameOver, Converter={StaticResource BoolToVis}}">
+                <Border Background="{StaticResource CardFaceBrush}" CornerRadius="16"
+                        MaxWidth="460" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Grid>
+                        <StackPanel Spacing="16" Margin="34">
+                            <TextBlock Text="Tokens" FontSize="25"
+                                       Style="{StaticResource CardTitleStyle}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding Summary}" Style="{StaticResource CardBodyStyle}"
+                                       HorizontalAlignment="Center" TextAlignment="Center"/>
+                            <Button Content="Back to games" Command="{Binding BackCommand}"
+                                    HorizontalAlignment="Center" Padding="26,12" CornerRadius="9"
+                                    FontFamily="Constantia" FontWeight="Bold" CharacterSpacing="90"
+                                    Background="{StaticResource RoseBrassBrush}" Foreground="#2A0E1A"/>
+                        </StackPanel>
+                        <Border Margin="9" CornerRadius="10" IsHitTestVisible="False"
+                                BorderBrush="#8CD9A166" BorderThickness="1"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

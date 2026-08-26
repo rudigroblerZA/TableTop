@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+	<!--
+		TableTop is a fully local party-game app: it stores settings and the
+		remembered roster in Android SharedPreferences and talks to no network
+		or hardware. So it deliberately requests NO permissions — nothing to
+		justify to the user, nothing to audit. Add permissions here only if a
+		feature later genuinely needs one (e.g. POST_NOTIFICATIONS if the
+		Day One "come back tomorrow" nudge ever becomes a real notification).
+	-->
+	<application
+		android:allowBackup="true"
+		android:icon="@mipmap/appicon"
+		android:roundIcon="@mipmap/appicon_round"
+		android:label="TableTop"
+		android:supportsRtl="true"
+		android:theme="@style/Maui.SplashTheme" />
+
+	<!-- Min SDK 24 (Android 7.0) matches SupportedOSPlatformVersion in the csproj
+	     and is the floor .NET 9/10 MAUI supports;
+	     target the current platform the build compiles against. -->
+	<uses-sdk android:minSdkVersion="24" />
+</manifest>

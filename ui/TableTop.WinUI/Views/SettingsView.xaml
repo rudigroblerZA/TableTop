@@ -1,0 +1,110 @@
+<UserControl x:Class="TableTop.WinUI.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer>
+        <StackPanel Padding="36" Spacing="18" MaxWidth="560" HorizontalAlignment="Left">
+            <TextBlock Text="Settings" FontSize="28" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}"/>
+            <TextBlock Text="Changes apply immediately and are remembered next time."
+                       Foreground="{StaticResource TextDimBrush}"/>
+
+            <!-- Appearance. Added when SettingsViewModel was shared: MAUI had
+                 offered theme and font size all along, WinUI had neither, so the
+                 same product had different settings depending on which head you
+                 opened. The ViewModel already carried them. -->
+            <Border Style="{StaticResource PanelStyle}">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="Appearance" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource GoldBrightBrush}"/>
+
+                    <TextBlock Text="Theme" Foreground="{StaticResource TextBrush}"/>
+                    <ComboBox HorizontalAlignment="Stretch" SelectedIndex="{Binding ThemeIndex, Mode=TwoWay}"
+                              ItemsSource="{Binding ThemeOptions}"/>
+
+                    <TextBlock Text="Card text size" Foreground="{StaticResource TextBrush}"/>
+                    <ComboBox HorizontalAlignment="Stretch" SelectedIndex="{Binding FontSizeIndex, Mode=TwoWay}"
+                              ItemsSource="{Binding FontSizeOptions}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Gameplay -->
+            <Border Style="{StaticResource PanelStyle}">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="Gameplay" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource GoldBrightBrush}"/>
+
+                    <ToggleSwitch Header="Shuffle the deck before each game"
+                                  IsOn="{Binding ShuffleCards, Mode=TwoWay}"/>
+
+                    <TextBlock Text="Difficulty range" Foreground="{StaticResource TextBrush}"/>
+                    <Grid ColumnSpacing="14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <!-- ItemsSource, not hardcoded items: the ViewModel already owns this
+                             list, and a second copy in markup is the same drift this
+                             whole exercise exists to remove — in miniature. -->
+                        <ComboBox Grid.Column="0" HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding DifficultyOptions}"
+                                  SelectedIndex="{Binding MinDifficultyIndex, Mode=TwoWay}"/>
+                        <TextBlock Grid.Column="1" Text="to" VerticalAlignment="Center" Foreground="{StaticResource TextDimBrush}"/>
+                        <ComboBox Grid.Column="2" HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding DifficultyOptions}"
+                                  SelectedIndex="{Binding MaxDifficultyIndex, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <TextBlock Text="Cards per player (0 = whole deck)" Foreground="{StaticResource TextBrush}"/>
+                    <NumberBox Value="{Binding CardsPerPlayer, Mode=TwoWay}" Minimum="0" Maximum="50"
+                               SpinButtonPlacementMode="Inline" HorizontalAlignment="Left" MinWidth="140"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Game selection -->
+            <Border Style="{StaticResource PanelStyle}">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="Game selection" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource GoldBrightBrush}"/>
+                    <TextBlock Text="Minimum age rating — hides games below the selected rating." Foreground="{StaticResource TextBrush}"/>
+                    <ComboBox HorizontalAlignment="Left" MinWidth="240"
+                              ItemsSource="{Binding AgeOptions}"
+                              SelectedIndex="{Binding MinAgeRatingIndex, Mode=TwoWay}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Timer. MAUI-only until the ViewModel was shared. -->
+            <Border Style="{StaticResource PanelStyle}">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="Timer" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource GoldBrightBrush}"/>
+
+                    <ToggleSwitch Header="Time each card"
+                                  IsOn="{Binding EnableTimer, Mode=TwoWay}"/>
+
+                    <TextBlock Text="Time per card" Foreground="{StaticResource TextBrush}"/>
+                    <ComboBox HorizontalAlignment="Stretch" SelectedIndex="{Binding TimerIndex, Mode=TwoWay}"
+                              ItemsSource="{Binding TimerOptions}"/>
+
+                    <ToggleSwitch Header="Move to the next player automatically"
+                                  IsOn="{Binding AutoNextPlayer, Mode=TwoWay}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- What to show on a card. MAUI-only until the ViewModel was shared. -->
+            <Border Style="{StaticResource PanelStyle}">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="On each card" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource GoldBrightBrush}"/>
+
+                    <ToggleSwitch Header="Show the card count"
+                                  IsOn="{Binding ShowCardCount, Mode=TwoWay}"/>
+                    <ToggleSwitch Header="Show the difficulty badge"
+                                  IsOn="{Binding ShowDifficultyBadge, Mode=TwoWay}"/>
+                    <ToggleSwitch Header="Show the category badge"
+                                  IsOn="{Binding ShowCategoryBadge, Mode=TwoWay}"/>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <Button Content="Back" Command="{Binding BackCommand}" Padding="24,10"
+                        Background="{StaticResource GoldBrush}" Foreground="#1A1508" FontWeight="SemiBold"/>
+                <Button Content="Reset to defaults" Command="{Binding ResetCommand}" Padding="20,10"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

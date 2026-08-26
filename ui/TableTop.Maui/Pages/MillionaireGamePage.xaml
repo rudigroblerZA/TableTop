@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
+    x:Class="TableTop.Maui.Pages.MillionaireGamePage"
+    Title="Millionaire"
+    Background="{StaticResource StudioBrush}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="14">
+
+            <Label Text="{Binding LoadError}" TextColor="#F87171" IsVisible="{Binding HasLoadError}" FontSize="15" />
+
+            <VerticalStackLayout IsVisible="{Binding IsPlaying}" Spacing="14">
+                <Label Text="{Binding PlayerName}" FontFamily="{StaticResource DisplayFont}" TextColor="{StaticResource QuizGoldBrightColor}" FontSize="18" FontAttributes="Bold" />
+                <Frame BackgroundColor="{StaticResource PlateColor}" BorderColor="{StaticResource QuizGoldColor}"
+                       CornerRadius="10" Padding="16,10" HasShadow="False" HorizontalOptions="Center">
+                    <Label Text="{Binding PrizeText}" FontFamily="{StaticResource DisplayFont}"
+                           TextColor="{StaticResource QuizGoldBrightColor}" FontSize="20" FontAttributes="Bold" />
+                </Frame>
+                <Label Text="{Binding GuaranteedText}" Style="{StaticResource PipLabelStyle}" TextColor="{StaticResource PlateEdgeColor}" HorizontalTextAlignment="Center" />
+
+                <Frame BackgroundColor="{StaticResource PlateColor}" BorderColor="{StaticResource PlateEdgeColor}"
+                       CornerRadius="12" Padding="20" HasShadow="False">
+                    <Label Text="{Binding QuestionText}" FontFamily="{StaticResource BodyFont}"
+                           TextColor="{StaticResource TextPrimary}" FontSize="17" LineHeight="1.5"
+                           HorizontalTextAlignment="Center" />
+                </Frame>
+
+                <CollectionView x:Name="AnswersList" ItemsSource="{Binding Answers}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Button Text="{Binding Display}" Clicked="OnAnswerClicked"
+                                    Style="{StaticResource AnswerPlateStyle}"
+                                    HorizontalOptions="Fill" Margin="0,5" />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Label Text="LIFELINES" Style="{StaticResource PipLabelStyle}" TextColor="{StaticResource PlateEdgeColor}" Margin="0,8,0,0" />
+                <CollectionView x:Name="LifelinesList" ItemsSource="{Binding Lifelines}" ItemsLayout="HorizontalList">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Button Text="{Binding Name}" Clicked="OnLifelineClicked"
+                                    IsEnabled="{Binding IsAvailable}"
+                                    Style="{StaticResource LifelineStyle}" Margin="4" />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Button x:Name="WalkAwayButton" Text="Walk away" Clicked="OnWalkAwayClicked"
+                        Style="{StaticResource QuietButtonStyle}" Margin="0,8,0,0" />
+
+                <Label Text="{Binding Flash}" FontFamily="{StaticResource BodyFont}" FontAttributes="Italic" TextColor="{StaticResource QuizGoldBrightColor}" FontSize="15" Margin="0,8,0,0" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsGameOver}" Spacing="14">
+                <Label Text="Final winnings" Style="{StaticResource HeaderLabelStyle}" TextColor="{StaticResource QuizGoldBrightColor}" />
+                <Label Text="{Binding Summary}" TextColor="#E5E7EB" FontSize="15" LineHeight="1.5" />
+                <Button x:Name="DoneButton" Text="Back to games" Clicked="OnDoneClicked"
+                        Style="{StaticResource QuizButtonStyle}" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

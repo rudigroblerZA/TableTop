@@ -1,0 +1,112 @@
+<Project>
+  <PropertyGroup>
+    <!-- Solution-wide defaults -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <!-- Warnings are tolerant locally; CI passes /p:TreatWarningsAsErrors=true -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>5</WarningLevel>
+    <Deterministic>true</Deterministic>
+    <!-- .NET platform analyzers on for every project in the solution -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+  </PropertyGroup>
+
+  <!--
+    Versioning (backlog E.1).
+
+    Until this existed, no version was set at all, so every assembly carried the
+    SDK default and there was no way to tell one build from another. A bug report
+    saying "the resume duplicate is back" could not be tied to a build, and
+    the change history had no version numbers to hang its entries on.
+
+    Bump VersionPrefix here and nowhere else — every project inherits it.
+
+      MAJOR  a breaking change to the public API of Core, Games or Hosting.
+             api/*.api.txt is the record of what that surface is;
+             PublicApiSurfaceTests fails when it moves, so you will know.
+      MINOR  new modes, new decks, new capability.
+      PATCH  fixes only.
+
+    1.0 as of August 2026. The 0.x latitude is spent: from here a breaking
+    change to the public surface of Core, Games or Hosting requires a MAJOR
+    bump, not a quiet edit.
+
+    api/*.api.txt is the record of that surface and PublicApiSurfaceTests
+    fails when it moves, so the signal is automatic. Reading the diff:
+
+      REMOVED           breaking for anyone referencing it. MAJOR *if* these
+                        assemblies are ever published. They are not: nothing
+                        sets IsPackable, no PackageReference to TableTop exists
+                        anywhere, and the only consumers are this repo's own
+                        heads via ProjectReference. So a removal that breaks
+                        nothing in-tree is MINOR — and the entry below must say
+                        what was removed and why it was safe.
+
+                        This carve-out is deliberate and narrow. It exists
+                        because the alternative was a 2.0.0 for deleting an
+                        unreachable duplicate game mode, which would make the
+                        major number meaningless. The real safety mechanism is
+                        PublicApiSurfaceTests, which fails on ANY removal and
+                        forces this decision to be conscious — it did exactly
+                        that when TimelineMode was deleted in 1.8.0. Publish a
+                        package and this row reverts to a flat MAJOR.
+      ADDED to a class  new capability. MINOR.
+      ADDED to an
+      INTERFACE         breaking for anyone who implements it, even though it
+                        reads as an addition. MAJOR — unless it carries a
+                        default implementation.
+      ADDED to an
+      ENUM              MINOR by .NET convention, but audit every switch on
+                        that enum before believing it.
+
+    That last row is not theoretical. Adding MonogamyZone.Fantasy in 1.5.0 broke
+    two exhaustive switches inside this very repository — JsonCardProvider's zone
+    parser and DeckFileValidator's zone check — and neither failed loudly. The
+    parser silently dropped every card in the new zone (file had 118, game loaded
+    106, no error anywhere), and the validator would have rejected them all as
+    invalid. A consumer switching on one of our enums can break exactly the same
+    way, so "MINOR" here means the version number, not the amount of care.
+
+    That third case is easy to miss: `ICardTurnController` gained `Players`
+    immediately after 1.0 was declared, and the diff called it an addition. A
+    default implementation was considered and rejected — returning an empty
+    roster would have made the flow controls silently no-op, which is worse than
+    a compile error.
+
+    VersionSuffix is empty for a release build. CI can pass
+    /p:VersionSuffix=beta.1 or similar for a pre-release without editing this.
+  -->
+  <PropertyGroup>
+    <VersionPrefix>1.22.0</VersionPrefix>
+    <VersionSuffix></VersionSuffix>
+
+    <!--
+      AssemblyVersion stays on the major only, so it is 1.0.0.0 for the whole
+      1.x line and does NOT follow VersionPrefix. It is the identity the runtime
+      binds against, so moving it on every patch would force a rebuild of
+      anything referencing the engine for no benefit. FileVersion and
+      InformationalVersion carry the precise build.
+    -->
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+
+    <!--
+      FileVersion must be set explicitly. It defaults to AssemblyVersion, and
+      since AssemblyVersion is pinned to the major, leaving it alone meant every
+      1.x build reported 1.0.0.0 as its file version — exactly the "can't tell
+      one build from another" problem this whole block exists to solve, quietly
+      reintroduced by the pinning. Deriving it from VersionPrefix keeps it
+      tracking without a second number to remember.
+    -->
+    <FileVersion>$(VersionPrefix).0</FileVersion>
+
+    <Authors>TableTop</Authors>
+    <Product>TableTop</Product>
+    <Copyright>Copyright © TableTop</Copyright>
+    <RepositoryType>git</RepositoryType>
+
+    <!-- Deterministic already set above; this makes the source link reproducible too. -->
+    <IncludeSourceRevisionInInformationalVersion>true</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+</Project>

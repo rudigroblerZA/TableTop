@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>TableTop.Games</AssemblyName>
+    <RootNamespace>TableTop.Games</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TableTop.Core\TableTop.Core.csproj" />
+  </ItemGroup>
+
+  <!--
+    JSON card decks were removed in two steps: the 95 files in 1.18.0, and the
+    loader that read them (JsonDeckLoader, JsonDataPaths, ModePresentationLoader,
+    DeckBulkExporter) in 1.19.0. Every mode now builds its deck from its in-code
+    bank, directly — no probe, no fallback, no diagnostic.
+
+    Verified before deleting the files, not assumed: of 95 deck files, only 11
+    were ever loaded — the other 84 were orphaned, matching no mode's
+    DeckResourceName. For all 11 live decks, a card-by-card comparison against
+    the C# fallback found zero content unique to either side.
+
+    What 1.18.0 left behind, and 1.19.0 removed: 92 LoadOrFallback call sites
+    referencing files that could no longer exist. Each cost an embedded-resource
+    probe plus a filesystem walk to the root on every deck build, and each fired
+    a "deck file missing" diagnostic — a signal that had become unconditional and
+    could therefore no longer mean anything.
+
+    User-supplied content is a SEPARATE and still-live feature: JsonGameMode
+    reads decks the player drops in at runtime, through JsonCardProvider,
+    CardDeckFile and DeckFileValidator in TableTop.Core. None of that was
+    touched. DeckExporter still emits a deck file.
+
+    KEEPING THE ANDROID LESSON, because it cost real debugging and applies to
+    any file-based content added here later: <Content> does NOT work on
+    Android. An APK is a zip, there is no directory "next to the assembly", and
+    Assembly.Location returns an empty string. Under the debugger, MAUI
+    fast-deployment puts loose files on the device so paths resolve and
+    everything looks fine; in a packaged build it doesn't, and every deck
+    silently fell back to its built-in bank. Use <EmbeddedResource> — it works
+    identically on every platform and survives trimming and AOT.
+  -->
+</Project>

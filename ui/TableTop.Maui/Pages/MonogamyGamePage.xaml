@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
+    x:Class="TableTop.Maui.Pages.MonogamyGamePage"
+    Title="Monogamy"
+    Background="{StaticResource VelvetBrush}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="14">
+
+            <Label Text="{Binding LoadError}" TextColor="#F87171" IsVisible="{Binding HasLoadError}" FontSize="15" />
+
+            <VerticalStackLayout IsVisible="{Binding IsPlaying}" Spacing="14">
+                <Label Text="{Binding PlayerName}" FontFamily="{StaticResource DisplayFont}" TextColor="{StaticResource RoseGoldBrightColor}" FontSize="18" FontAttributes="Bold" />
+                <Label Text="{Binding DiceText}" FontFamily="{StaticResource DisplayFont}" TextColor="{StaticResource TextPrimary}" FontSize="24" FontAttributes="Bold" />
+                <Label Text="{Binding Zone}" Style="{StaticResource PipLabelStyle}" TextColor="{StaticResource RoseGoldColor}" />
+
+                <!-- Zone choice after doubles.
+                     BindableLayout on a plain stack, NOT a CollectionView:
+                     nesting a CollectionView inside a ScrollView is unsupported
+                     in MAUI — the inner view has no bounded height to measure
+                     against and on Android commonly lays out at zero height.
+                     That left the four zone buttons invisible after a doubles
+                     roll, and since the controller sits in _awaitingZoneChoice
+                     until ChooseZone() arrives, the game had no way to continue:
+                     a hard stop on roughly one turn in six.
+                     Four fixed items need no virtualisation anyway. -->
+                <VerticalStackLayout IsVisible="{Binding AwaitingZone}" Spacing="8">
+                    <Label Text="DOUBLES — PICK YOUR ZONE" Style="{StaticResource PipLabelStyle}" TextColor="{StaticResource RoseGoldBrightColor}" />
+                    <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding ZoneChoices}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Button Text="{Binding Display}" Clicked="OnZoneClicked"
+                                        Style="{StaticResource VelvetButtonStyle}" />
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- Active card -->
+                <Frame IsVisible="{Binding HasCard}"
+                       BackgroundColor="{StaticResource CardStockColor}"
+                       BorderColor="#8CD9A166" CornerRadius="16" Padding="20" HasShadow="True">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{Binding CardTitle}" FontFamily="{StaticResource DisplayFont}"
+                               TextColor="{StaticResource CardInkColor}" FontSize="19" FontAttributes="Bold" />
+                        <Label Text="{Binding CardText}" FontFamily="{StaticResource BodyFont}"
+                               TextColor="#3B3A38" FontSize="16" LineHeight="1.55" />
+                        <Label Text="{Binding TokenText}" FontFamily="{StaticResource UtilityFont}"
+                               TextColor="#9C6D4F" FontSize="12" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <HorizontalStackLayout IsVisible="{Binding HasCard}" Spacing="8">
+                    <Button x:Name="CompleteButton" Text="Done" Clicked="OnCompleteClicked"
+                            Style="{StaticResource RoseButtonStyle}" />
+                    <Button x:Name="NegotiateButton" Text="Negotiate" Clicked="OnNegotiateClicked"
+                            Style="{StaticResource VelvetButtonStyle}" />
+                    <Button x:Name="SkipButton" Text="Skip" Clicked="OnSkipClicked"
+                            Style="{StaticResource QuietButtonStyle}" />
+                </HorizontalStackLayout>
+
+                <Label Text="{Binding Flash}" FontFamily="{StaticResource BodyFont}" FontAttributes="Italic" TextColor="{StaticResource RoseGoldBrightColor}" FontSize="14" Margin="0,8,0,0" />
+
+                <!-- Live token totals. The view model has exposed Scores all
+                     along; nothing was bound to it. -->
+                <Label Text="{Binding Scores}" IsVisible="{Binding HasScores}"
+                       FontFamily="{StaticResource UtilityFont}"
+                       TextColor="{StaticResource RoseGoldColor}"
+                       FontSize="13" Margin="0,2,0,0" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsGameOver}" Spacing="14">
+                <Label Text="Tokens" Style="{StaticResource HeaderLabelStyle}" TextColor="{StaticResource RoseGoldBrightColor}" />
+                <Label Text="{Binding Summary}" TextColor="#E5E7EB" FontSize="15" LineHeight="1.5" />
+                <Button x:Name="DoneButton" Text="Back to games" Clicked="OnDoneClicked"
+                        Style="{StaticResource RoseButtonStyle}" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

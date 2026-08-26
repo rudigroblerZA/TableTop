@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TableTop palette — matches the app's deep-ink + gold theme so the
+         Android system chrome (status bar, splash) is on-brand from launch. -->
+    <color name="colorPrimary">#C49E4C</color>
+    <color name="colorPrimaryDark">#12131C</color>
+    <color name="colorAccent">#DEBE78</color>
+</resources>

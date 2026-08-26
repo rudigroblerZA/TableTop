@@ -1,0 +1,13 @@
+<Window x:Class="TableTop.WinUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- The table: a walnut frame around felt baize. Every screen is dealt
+         onto this surface, so the app reads as one continuous tabletop. -->
+    <Border Background="{StaticResource WalnutFrameBrush}" Padding="10">
+        <Grid Background="{StaticResource BaizeBrush}">
+            <ContentControl x:Name="Host"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"/>
+        </Grid>
+    </Border>
+</Window>

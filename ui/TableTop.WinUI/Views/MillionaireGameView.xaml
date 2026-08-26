@@ -1,0 +1,132 @@
+<UserControl x:Class="TableTop.WinUI.Views.MillionaireGameView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- The studio: spotlight pooling on deep midnight blue. -->
+    <Grid Background="{StaticResource StudioBrush}">
+
+            <!-- Load failure. MAUI has shown this since it was written; WinUI
+                 had no path for it at all, so a mode that failed to build its
+                 controller showed an empty screen with no explanation. The
+                 ViewModel gained LoadError when it was shared — this surfaces it. -->
+            <Border Visibility="{Binding HasLoadError, Converter={StaticResource BoolToVis}}"
+                    Background="#33F87171" BorderBrush="#F87171" BorderThickness="1"
+                    CornerRadius="8" Padding="16,12" VerticalAlignment="Top" Margin="0,0,0,12">
+                <TextBlock Text="{Binding LoadError}" TextWrapping="Wrap"
+                           Foreground="#FCA5A5" FontSize="14"/>
+            </Border>
+        <Grid Padding="28,24">
+
+            <!-- Playing -->
+            <ScrollViewer Visibility="{Binding IsPlaying, Converter={StaticResource BoolToVis}}">
+                <StackPanel Spacing="16" MaxWidth="720">
+
+                    <!-- Hot seat + the money ladder position -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding PlayerName}" FontSize="17"
+                                   Style="{StaticResource EngravedTitleStyle}"
+                                   Foreground="{StaticResource QuizGoldBrightBrush}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding GuaranteedText}"
+                                   Style="{StaticResource PipTextStyle}"
+                                   Foreground="{StaticResource PlateEdgeBrush}"
+                                   VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Playing for: the gold rung -->
+                    <Border Background="{StaticResource PlateBrush}" CornerRadius="10"
+                            BorderBrush="{StaticResource QuizGoldBrush}" BorderThickness="1"
+                            Padding="18,12" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding PrizeText}" FontSize="21"
+                                   FontFamily="{StaticResource DisplayFont}" FontWeight="Bold"
+                                   CharacterSpacing="60"
+                                   Foreground="{StaticResource QuizGoldBrightBrush}"/>
+                    </Border>
+
+                    <!-- The question board -->
+                    <Border Background="{StaticResource PlateBrush}" CornerRadius="12"
+                            BorderBrush="{StaticResource PlateEdgeBrush}" BorderThickness="1"
+                            Padding="24,20">
+                        <TextBlock Text="{Binding QuestionText}" FontSize="18" TextWrapping="Wrap"
+                                   FontFamily="{StaticResource BodyFont}" LineHeight="27"
+                                   Foreground="{StaticResource TextBrush}"
+                                   TextAlignment="Center"/>
+                    </Border>
+
+                    <!-- Answer plates: silver-edged, gold on hover-free tap -->
+                    <ItemsControl ItemsSource="{Binding Answers}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding SelectCommand}" Content="{Binding Display}"
+                                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                                        Margin="0,5" Padding="20,14" CornerRadius="10"
+                                        FontFamily="Georgia" FontSize="16"
+                                        Background="{StaticResource PlateBrush}"
+                                        Foreground="{StaticResource TextBrush}"
+                                        BorderBrush="{StaticResource PlateEdgeBrush}" BorderThickness="1"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Lifelines -->
+                    <TextBlock Text="LIFELINES" Style="{StaticResource PipTextStyle}"
+                               Foreground="{StaticResource PlateEdgeBrush}" Margin="0,8,0,0"/>
+                    <ItemsControl ItemsSource="{Binding Lifelines}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="8"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding UseCommand}" Content="{Binding Name}"
+                                        IsEnabled="{Binding IsAvailable}"
+                                        Padding="16,10" CornerRadius="20"
+                                        FontFamily="Consolas" FontSize="12"
+                                        Background="{StaticResource PlateBrush}"
+                                        Foreground="{StaticResource QuizGoldBrightBrush}"
+                                        BorderBrush="{StaticResource QuizGoldBrush}" BorderThickness="1"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Button Content="Walk away" Command="{Binding WalkAwayCommand}"
+                            HorizontalAlignment="Left" Margin="0,10,0,0" Padding="20,11"
+                            CornerRadius="9" FontFamily="Constantia" CharacterSpacing="90"
+                            Background="Transparent" Foreground="{StaticResource PlateEdgeBrush}"
+                            BorderBrush="{StaticResource PlateEdgeBrush}" BorderThickness="1"/>
+
+                    <TextBlock Text="{Binding Flash}" TextWrapping="Wrap" Margin="0,8,0,0"
+                               FontFamily="Georgia" FontStyle="Italic" FontSize="15"
+                               Foreground="{StaticResource QuizGoldBrightBrush}"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Final winnings board -->
+            <Grid Visibility="{Binding IsGameOver, Converter={StaticResource BoolToVis}}">
+                <Border Background="{StaticResource PlateBrush}" CornerRadius="14"
+                        BorderBrush="{StaticResource QuizGoldBrush}" BorderThickness="2"
+                        MaxWidth="460" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Padding="34">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Final winnings" FontSize="24"
+                                   FontFamily="{StaticResource DisplayFont}" FontWeight="Bold"
+                                   CharacterSpacing="60"
+                                   Foreground="{StaticResource QuizGoldBrightBrush}"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding Summary}" FontSize="16" TextWrapping="Wrap"
+                                   FontFamily="{StaticResource BodyFont}" LineHeight="25"
+                                   Foreground="{StaticResource TextBrush}"
+                                   HorizontalAlignment="Center" TextAlignment="Center"/>
+                        <Button Content="Back to games" Command="{Binding BackCommand}"
+                                HorizontalAlignment="Center" Padding="26,12" CornerRadius="9"
+                                FontFamily="Constantia" FontWeight="Bold" CharacterSpacing="90"
+                                Background="{StaticResource QuizBrassBrush}" Foreground="#0A1230"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

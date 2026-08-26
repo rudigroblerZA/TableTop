@@ -1,0 +1,260 @@
+<Application x:Class="TableTop.WinUI.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:infra="using:TableTop.WinUI.Infrastructure">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- ══ BOARD-GAME PALETTE ═══════════════════════════════════════
+                 The table is felt baize in a walnut frame. Gold and card stock
+                 carry over unchanged from the original palette (and from the
+                 WPF/MAUI heads), so the brand stays recognisable.
+                 The historic key names (InkBrush/PanelBrush/…) are KEPT so
+                 every existing view keeps binding correctly — only the colours
+                 behind them have moved to the tabletop.                     -->
+            <Color x:Key="InkColor">#0E2A22</Color>   <!-- deep baize shadow  -->
+            <Color x:Key="PanelColor">#16382E</Color> <!-- raised felt panel  -->
+            <Color x:Key="GoldColor">#C49E4C</Color>
+            <Color x:Key="GoldBrightColor">#E3C67F</Color>
+            <Color x:Key="TextColor">#EDE7D6</Color>  <!-- chalk on green     -->
+            <Color x:Key="TextDimColor">#8A7A55</Color><!-- dim brass         -->
+
+            <Color x:Key="BaizeColor">#174034</Color>
+            <Color x:Key="BaizeLitColor">#245546</Color>
+            <Color x:Key="WalnutColor">#4A2E1D</Color>
+            <Color x:Key="WalnutDarkColor">#2E1B10</Color>
+
+            <SolidColorBrush x:Key="InkBrush"        Color="{StaticResource InkColor}"/>
+            <SolidColorBrush x:Key="PanelBrush"      Color="{StaticResource PanelColor}"/>
+            <SolidColorBrush x:Key="GoldBrush"       Color="{StaticResource GoldColor}"/>
+            <SolidColorBrush x:Key="GoldBrightBrush" Color="{StaticResource GoldBrightColor}"/>
+            <SolidColorBrush x:Key="TextBrush"       Color="{StaticResource TextColor}"/>
+            <SolidColorBrush x:Key="TextDimBrush"    Color="{StaticResource TextDimColor}"/>
+            <SolidColorBrush x:Key="WalnutBrush"     Color="{StaticResource WalnutColor}"/>
+            <SolidColorBrush x:Key="WalnutDarkBrush" Color="{StaticResource WalnutDarkColor}"/>
+
+            <!-- Cream playing-card stock, shared with every other UI -->
+            <SolidColorBrush x:Key="CardStockBrush"  Color="#FAF8F2"/>
+            <SolidColorBrush x:Key="CardInkBrush"    Color="#1F2126"/>
+            <SolidColorBrush x:Key="CardRuleBrush"   Color="#8CC49E4C"/>
+            <SolidColorBrush x:Key="CardDimInkBrush" Color="#7C7466"/>
+
+            <!-- The felt table surface: lit in the middle, dark at the edges,
+                 so it reads as cloth under a lamp rather than flat colour. -->
+            <RadialGradientBrush x:Key="BaizeBrush" Center="0.5,0.28" RadiusX="0.95" RadiusY="0.95">
+                <GradientStop Color="{StaticResource BaizeLitColor}" Offset="0.0"/>
+                <GradientStop Color="{StaticResource BaizeColor}"    Offset="0.55"/>
+                <GradientStop Color="#0E2A22"                        Offset="1.0"/>
+            </RadialGradientBrush>
+
+            <!-- Walnut table edge. Top-down rather than diagonal, with a bright
+                 sliver in the first 2% — that sliver is the specular highlight
+                 along the rail's top arris, and it's what makes the frame read
+                 as a lifted lip rather than a painted band. -->
+            <LinearGradientBrush x:Key="WalnutFrameBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#8A5E3C" Offset="0.00"/>
+                <GradientStop Color="#5C3A24" Offset="0.02"/>
+                <GradientStop Color="#4A2E1D" Offset="0.35"/>
+                <GradientStop Color="#2B1A10" Offset="1.00"/>
+            </LinearGradientBrush>
+
+            <!-- Card stock with a faint warm rake, so it isn't flat white -->
+            <LinearGradientBrush x:Key="CardFaceBrush" StartPoint="0,0" EndPoint="0.4,1">
+                <GradientStop Color="#FFFDF8" Offset="0.0"/>
+                <GradientStop Color="#FAF8F2" Offset="0.55"/>
+                <GradientStop Color="#EFE9DB" Offset="1.0"/>
+            </LinearGradientBrush>
+
+            <!-- Brass button fill -->
+            <LinearGradientBrush x:Key="BrassBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="{StaticResource GoldBrightColor}" Offset="0.0"/>
+                <GradientStop Color="{StaticResource GoldColor}"       Offset="1.0"/>
+            </LinearGradientBrush>
+
+            <!-- ══ TYPE ══════════════════════════════════════════════════════
+                 Windows-installed faces only, so nothing needs bundling:
+                   Constantia — engraved-serif display (box lid / brass plaque)
+                   Georgia    — card and body text, reads like print
+                   Consolas   — counters, pips and small labels (game components)
+                                                                             -->
+            <FontFamily x:Key="DisplayFont">Constantia</FontFamily>
+            <FontFamily x:Key="BodyFont">Georgia</FontFamily>
+            <FontFamily x:Key="UtilityFont">Consolas</FontFamily>
+
+
+            <!-- ══ MONOGAMY: THE VELVET TABLE ═══════════════════════════════
+                 Monogamy is the couples intimacy game, and billiard-green
+                 card-room felt is the wrong register for it. It keeps the same
+                 structural language as the rest of the app — a lit table
+                 surface, printed card stock, gold rules, tokens — but in wine
+                 velvet under candlelight rather than a games night in a pub.
+
+                 The four zone colours are shared verbatim with the MAUI and WPF
+                 heads so a couple sees the same escalation on any device:
+                   Foreplay  soft rose      Sensual  warm amber
+                   Steamy    deep red       Wild     crimson
+                   Fantasy   deep violet — the deck's most explicit tier
+                                                                             -->
+            <Color x:Key="VelvetColor">#2A0E1A</Color>
+            <Color x:Key="VelvetLitColor">#4A1A2E</Color>
+            <Color x:Key="VelvetDeepColor">#16060D</Color>
+            <Color x:Key="RoseGoldColor">#D9A166</Color>
+            <Color x:Key="RoseGoldBrightColor">#F0C89A</Color>
+
+            <Color x:Key="ZoneForeplayColor">#F0A0B4</Color>
+            <Color x:Key="ZoneSensualColor">#E8A85C</Color>
+            <Color x:Key="ZoneSteamyColor">#D9534F</Color>
+            <Color x:Key="ZoneWildColor">#B0306A</Color>
+            <Color x:Key="ZoneFantasyColor">#6B2D8C</Color>
+
+            <SolidColorBrush x:Key="RoseGoldBrush"       Color="{StaticResource RoseGoldColor}"/>
+            <SolidColorBrush x:Key="RoseGoldBrightBrush" Color="{StaticResource RoseGoldBrightColor}"/>
+            <SolidColorBrush x:Key="VelvetPanelBrush"    Color="#3A1424"/>
+
+            <RadialGradientBrush x:Key="VelvetBrush" Center="0.5,0.3" RadiusX="0.95" RadiusY="0.95">
+                <GradientStop Color="{StaticResource VelvetLitColor}"  Offset="0.0"/>
+                <GradientStop Color="{StaticResource VelvetColor}"     Offset="0.55"/>
+                <GradientStop Color="{StaticResource VelvetDeepColor}" Offset="1.0"/>
+            </RadialGradientBrush>
+
+            <LinearGradientBrush x:Key="RoseBrassBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="{StaticResource RoseGoldBrightColor}" Offset="0.0"/>
+                <GradientStop Color="{StaticResource RoseGoldColor}"       Offset="1.0"/>
+            </LinearGradientBrush>
+
+
+            <!-- ══ MILLIONAIRE: THE STUDIO ══════════════════════════════════
+                 The quiz-ladder family (Millionaire, School Millionaire, Family
+                 Quiz, Slang Check, Modern Love Millionaire) isn't played on a
+                 table at all — it's a TV studio. So it keeps the app's
+                 structural language but swaps the felt for deep midnight blue
+                 with a spotlight pool, silver-edged answer plates and a gold
+                 money ladder.
+
+                 Shared verbatim with the MAUI and WPF heads.               -->
+            <Color x:Key="StudioColor">#0A1230</Color>
+            <Color x:Key="StudioLitColor">#16255C</Color>
+            <Color x:Key="StudioDeepColor">#04081A</Color>
+            <Color x:Key="PlateColor">#14224E</Color>
+            <Color x:Key="PlateEdgeColor">#6E82B8</Color>
+            <Color x:Key="QuizGoldColor">#FFC94A</Color>
+            <Color x:Key="QuizGoldBrightColor">#FFE9A3</Color>
+            <Color x:Key="CorrectColor">#35B45A</Color>
+            <Color x:Key="WrongColor">#E0524E</Color>
+
+            <SolidColorBrush x:Key="PlateBrush"          Color="{StaticResource PlateColor}"/>
+            <SolidColorBrush x:Key="PlateEdgeBrush"      Color="{StaticResource PlateEdgeColor}"/>
+            <SolidColorBrush x:Key="QuizGoldBrush"       Color="{StaticResource QuizGoldColor}"/>
+            <SolidColorBrush x:Key="QuizGoldBrightBrush" Color="{StaticResource QuizGoldBrightColor}"/>
+
+            <RadialGradientBrush x:Key="StudioBrush" Center="0.5,0.32" RadiusX="0.95" RadiusY="0.95">
+                <GradientStop Color="{StaticResource StudioLitColor}"  Offset="0.0"/>
+                <GradientStop Color="{StaticResource StudioColor}"     Offset="0.55"/>
+                <GradientStop Color="{StaticResource StudioDeepColor}" Offset="1.0"/>
+            </RadialGradientBrush>
+
+            <LinearGradientBrush x:Key="QuizBrassBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="{StaticResource QuizGoldBrightColor}" Offset="0.0"/>
+                <GradientStop Color="{StaticResource QuizGoldColor}"       Offset="1.0"/>
+            </LinearGradientBrush>
+
+            <infra:BoolToVisibilityConverter x:Key="BoolToVis"/>
+
+            <!-- ══ SHARED STYLES ════════════════════════════════════════════ -->
+
+            <!-- A raised felt panel -->
+            <Style x:Key="PanelStyle" TargetType="Border">
+                <Setter Property="Background" Value="{StaticResource PanelBrush}"/>
+                <Setter Property="CornerRadius" Value="12"/>
+                <Setter Property="BorderBrush" Value="#33C49E4C"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="20"/>
+            </Style>
+
+            <!-- Small mono label: pips, counters, captions -->
+            <Style x:Key="PipTextStyle" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource UtilityFont}"/>
+                <Setter Property="FontSize" Value="11"/>
+                <Setter Property="CharacterSpacing" Value="180"/>
+                <Setter Property="Foreground" Value="{StaticResource TextDimBrush}"/>
+            </Style>
+
+            <!-- Engraved section heading -->
+            <Style x:Key="EngravedTitleStyle" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="CharacterSpacing" Value="70"/>
+                <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            </Style>
+
+            <!-- Title printed on card stock -->
+            <Style x:Key="CardTitleStyle" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="FontSize" Value="24"/>
+                <Setter Property="CharacterSpacing" Value="30"/>
+                <Setter Property="Foreground" Value="{StaticResource CardInkBrush}"/>
+                <Setter Property="TextWrapping" Value="Wrap"/>
+            </Style>
+
+            <!-- Body text printed on card stock -->
+            <Style x:Key="CardBodyStyle" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource BodyFont}"/>
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="LineHeight" Value="26"/>
+                <Setter Property="Foreground" Value="#3B3A38"/>
+                <Setter Property="TextWrapping" Value="Wrap"/>
+            </Style>
+
+            <!-- Brass primary action -->
+            <Style x:Key="BrassButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource BrassBrush}"/>
+                <Setter Property="Foreground" Value="#22160A"/>
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="CharacterSpacing" Value="90"/>
+                <Setter Property="Padding" Value="24,11"/>
+                <Setter Property="CornerRadius" Value="8"/>
+                <Setter Property="BorderBrush" Value="{StaticResource GoldBrightBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
+
+            <!-- Secondary action. Lit from above and darker at the bottom, with a
+                 gold hairline: reads as a control seated into the rail rather
+                 than a rectangle painted onto the felt. -->
+            <Style x:Key="FeltButtonStyle" TargetType="Button">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="{StaticResource BaizeLitColor}" Offset="0.0"/>
+                            <GradientStop Color="#0E2A22"                        Offset="1.0"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Foreground" Value="{StaticResource GoldBrightBrush}"/>
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="CharacterSpacing" Value="90"/>
+                <Setter Property="Padding" Value="20,11"/>
+                <Setter Property="CornerRadius" Value="8"/>
+                <Setter Property="BorderBrush" Value="#73C49E4C"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
+
+            <!-- Quiet tertiary (Quit, Undo) -->
+            <Style x:Key="QuietButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource TextDimBrush}"/>
+                <Setter Property="FontFamily" Value="{StaticResource DisplayFont}"/>
+                <Setter Property="CharacterSpacing" Value="90"/>
+                <Setter Property="Padding" Value="18,10"/>
+                <Setter Property="CornerRadius" Value="8"/>
+                <Setter Property="BorderBrush" Value="#598A7A55"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        DELIBERATELY EMPTY OF THEME DEFINITIONS.
+
+        This file previously redefined Maui.MainTheme and Maui.MainTheme.NoActionBar
+        so the Android system chrome could carry the app's gold/ink brand colours.
+        That override forced the parent to Theme.MaterialComponents.DayNight.NoActionBar
+        (Material 2).
+
+        .NET 9/10 MAUI inflates Material 3 layouts internally. Running those
+        layouts under a Material 2 theme makes view IDs and attributes resolve
+        against the wrong library, which surfaces as inflation failures deep
+        inside MAUI's own fragments — for example
+        NavigationRootManager_ElementBasedFragment failing to find @id/jumpToStart,
+        an ID that belongs to the Material library, not to this app.
+
+        The app declares no layouts and no fragments of its own, so there is
+        nothing here to "fix" in user code: the correct action is to stop
+        overriding the theme and let the MAUI SDK supply Maui.MainTheme,
+        Maui.MainTheme.NoActionBar and Maui.SplashTheme exactly as its own
+        layouts expect.
+
+        If the Android chrome colours are wanted back later, override the
+        colour ATTRIBUTES only, inheriting from MAUI's theme rather than
+        replacing its parent:
+
+            <style name="Maui.MainTheme.NoActionBar" parent="Theme.Material3.DayNight.NoActionBar">
+
+        …and verify on a device first. The in-app UI is fully custom-drawn, so
+        the visible cost of not theming the system chrome is close to zero.
+    -->
+</resources>

@@ -1,0 +1,27 @@
+<Solution>
+  <!--
+    TableTop Engine solution — engine + tests only. No UI dependencies.
+    Builds and tests on any OS with the .NET 10 SDK.
+    Format: SLNX (XML solution) — no GUIDs, no config boilerplate.
+  -->
+
+  <!-- Solution-level files -->
+  <Folder Name="/Solution Items/">
+    <File Path="global.json" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+
+  <!-- Engine -->
+  <Folder Name="/Engine/">
+    <Project Path="src/TableTop.Core/TableTop.Core.csproj" />
+    <Project Path="src/TableTop.Games/TableTop.Games.csproj" />
+    <Project Path="src/TableTop.Hosting/TableTop.Hosting.csproj" />
+    <Project Path="src/TableTop.Presentation/TableTop.Presentation.csproj" />
+  </Folder>
+
+  <!-- Tests -->
+  <Folder Name="/Tests/">
+    <Project Path="tests/TableTop.Tests/TableTop.Tests.csproj" />
+  </Folder>
+</Solution>

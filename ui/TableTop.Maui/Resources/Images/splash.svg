@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 456 456" width="456" height="456">
+  <!--
+    TableTop splash screen.
+
+    Same identity as appicon.svg — baize, walnut, brass — replacing a
+    placeholder that showed a #6366F1 letter T on #1E1E2E, neither of which
+    appears anywhere in the running app. A splash that doesn't match the first
+    real screen reads as a loading bug.
+
+    IMPORTANT: MauiSplashScreen in TableTop.Maui.csproj carries a Color=
+    attribute used to letterbox this image on screens whose aspect ratio
+    differs from square. That colour MUST match the fill here (#174034) or
+    tall phones show baize framed in a contrasting band. It was #1E1E2E,
+    matching the old art; the csproj is updated alongside this file.
+
+    Deliberately still: MAUI renders the splash as a static image, so anything
+    that looks like it should animate would read as frozen. The suggestion of
+    motion lives in the fanned cards, not in a spinner.
+
+    Back cards use explicit warm tints rather than translucent white: over dark
+    felt, opacity desaturates them into grey shadows instead of cards. Same
+    correction as appicon.svg, found by rendering both.
+
+    Kept clear of the outer ~15%: MAUI scales the splash to fit and platforms
+    crop it inconsistently.
+  -->
+
+  <defs>
+    <radialGradient id="felt" cx="50%" cy="34%" r="82%">
+      <stop offset="0%"   stop-color="#245546"/>
+      <stop offset="62%"  stop-color="#174034"/>
+      <stop offset="100%" stop-color="#0E2A22"/>
+    </radialGradient>
+    <linearGradient id="stock" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%"   stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F2EDE0"/>
+    </linearGradient>
+    <linearGradient id="brass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#E3C67F"/>
+      <stop offset="55%"  stop-color="#C49E4C"/>
+      <stop offset="100%" stop-color="#9A7A38"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Full-bleed felt. Matches MauiSplashScreen Color so letterboxing is invisible. -->
+  <rect width="456" height="456" fill="url(#felt)"/>
+
+  <!-- Fanned hand, larger and more open than the icon's — there's room here,
+       and the splash can afford a beat more detail than a launcher tile. -->
+  <g transform="translate(228 196)">
+    <g transform="rotate(-22) translate(0 -6)">
+      <rect x="-42" y="-60" width="84" height="120" rx="10"
+            fill="#C9C4B4" opacity="0.85"/>
+    </g>
+    <g transform="rotate(-8) translate(0 -2)">
+      <rect x="-42" y="-62" width="84" height="124" rx="10"
+            fill="#E4DFD0" opacity="0.95"/>
+    </g>
+    <g transform="rotate(14) translate(3 2)">
+      <rect x="-44" y="-64" width="88" height="128" rx="11" fill="url(#stock)"/>
+      <circle cx="0" cy="0" r="17" fill="url(#brass)"/>
+      <circle cx="0" cy="0" r="17" fill="none" stroke="#8A6A2E"
+              stroke-opacity="0.5" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- Wordmark in the app's display serif. font-family lists the three the app
+       actually resolves per platform (Constantia / Georgia / serif), so the
+       splash matches the headings the player sees a second later. -->
+  <text x="228" y="352" text-anchor="middle"
+        font-family="Constantia, Georgia, serif" font-size="52" font-weight="bold"
+        fill="#E3C67F" letter-spacing="2">TableTop</text>
+
+  <!-- Brass rule, echoing the divider used on the game screens. -->
+  <rect x="164" y="374" width="128" height="2" rx="1"
+        fill="#C49E4C" fill-opacity="0.55"/>
+</svg>

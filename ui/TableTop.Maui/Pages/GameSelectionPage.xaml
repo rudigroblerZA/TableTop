@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
+    x:Class="TableTop.Maui.Pages.GameSelectionPage"
+    x:Name="SelectionPage"
+    Title="TableTop"
+    Background="{StaticResource BaizeBrush}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="⚙" Order="Primary" Priority="0" Clicked="OnSettingsClicked" />
+    </ContentPage.ToolbarItems>
+
+    <!--
+        LAYOUT: this is a Grid, not a VerticalStackLayout, and that matters on
+        Android. A VerticalStackLayout hands its children INFINITE height, so a
+        CollectionView inside one either measures to zero (the list renders
+        blank) or grows past the screen with nothing able to scroll — which left
+        the game list and the Start button unreachable on a phone.
+
+        With explicit rows, each picker gets a bounded height and scrolls
+        internally, and the Start button is pinned to the bottom where a thumb
+        can always reach it.
+    -->
+    <Grid Padding="16,12" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="120" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="72" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0"
+               Text="TableTop"
+               Style="{StaticResource HeaderLabelStyle}"
+               TextColor="{StaticResource GoldBrightColor}"
+               HorizontalTextAlignment="Center"
+               Margin="0,0,0,2" />
+
+        <Label Grid.Row="1"
+               Text="CHOOSE GAME TYPE"
+               Style="{StaticResource PipLabelStyle}"
+               HorizontalTextAlignment="Center"
+               Margin="0,0,0,4" />
+
+        <!-- Archetypes -->
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Archetypes}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedArchetype, Mode=TwoWay}"
+                        SelectionChanged="OnArchetypeSelectionChanged">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="14"
+                           CornerRadius="12"
+                           BorderColor="#73C49E4C"
+                           HasShadow="False"
+                           BackgroundColor="#16382E"
+                           Margin="2"
+                           WidthRequest="104">
+                        <!-- Tap handled explicitly: on Android the Frame eats the
+                             touch before the CollectionView sees it. -->
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnArchetypeTapped" />
+                        </Frame.GestureRecognizers>
+                        <VerticalStackLayout Spacing="4" VerticalOptions="Center">
+                            <Label Text="{Binding Emoji}"
+                                   FontSize="30"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="{Binding Name}"
+                                   FontFamily="{StaticResource DisplayFont}"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Label Grid.Row="3"
+               Text="SELECT VARIANT"
+               Style="{StaticResource PipLabelStyle}"
+               HorizontalTextAlignment="Center" />
+
+        <!-- Sub-archetypes -->
+        <CollectionView Grid.Row="4"
+                        ItemsSource="{Binding SubArchetypes}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedSubArchetype, Mode=TwoWay}"
+                        SelectionChanged="OnSubArchetypeSelectionChanged">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="14,10"
+                           CornerRadius="12"
+                           BorderColor="#73C49E4C"
+                           HasShadow="False"
+                           BackgroundColor="#16382E"
+                           Margin="2">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnSubArchetypeTapped" />
+                        </Frame.GestureRecognizers>
+                        <Label Text="{Binding Name}"
+                               FontFamily="{StaticResource DisplayFont}"
+                               FontSize="13"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource TextPrimary}"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center" />
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Label Grid.Row="5"
+               Text="CHOOSE GAME"
+               Style="{StaticResource PipLabelStyle}"
+               HorizontalTextAlignment="Center" />
+
+        <!-- Game modes: takes the remaining height and scrolls internally -->
+        <CollectionView Grid.Row="6"
+                        ItemsSource="{Binding GameModes}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                        SelectionChanged="OnGameModeSelectionChanged">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Style="{StaticResource CardStyle}" Margin="0,4">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnGameModeTapped" />
+                        </Frame.GestureRecognizers>
+                        <!-- Leading stripe in the deck's own accent, so a themed
+                             mode is recognisable in the list before you open it.
+                             Fixed width so titles stay left-aligned whether or
+                             not a deck declares a palette. -->
+                        <Grid ColumnDefinitions="4,*" ColumnSpacing="12">
+                            <BoxView Grid.Column="0"
+                                     Color="{Binding AccentColor}"
+                                     IsVisible="{Binding HasAccent}"
+                                     CornerRadius="2"
+                                     VerticalOptions="Fill" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                <Label Text="{Binding Title}"
+                                       FontFamily="{StaticResource DisplayFont}"
+                                       FontSize="17"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}" />
+                                <Label Text="{Binding Description}"
+                                       FontFamily="{StaticResource BodyFont}"
+                                       FontSize="13"
+                                       TextColor="#A9BDB4"
+                                       LineHeight="1.4" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <VerticalStackLayout Grid.Row="7" Spacing="8" Margin="0,10,0,0">
+            <!-- Offered only when there is a session to continue, and it names
+                 the table and the round so "continue" is unambiguous. Above
+                 Start because a group whose phone died mid-game came back for
+                 this, not for a new one. -->
+            <Button Text="{Binding ResumeText}"
+                    IsVisible="{Binding CanResume}"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Clicked="OnResumeClicked" />
+
+            <Button x:Name="StartButton"
+                    Text="Start Game"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Clicked="OnStartClicked" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

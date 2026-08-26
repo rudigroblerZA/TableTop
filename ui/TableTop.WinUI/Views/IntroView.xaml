@@ -1,0 +1,38 @@
+<UserControl x:Class="TableTop.WinUI.Views.IntroView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- The box lid: a brass plaque centred on the felt -->
+    <Border VerticalAlignment="Center" HorizontalAlignment="Center"
+            MaxWidth="440" CornerRadius="14" Padding="0"
+            Background="#4D000000" BorderBrush="#59C49E4C" BorderThickness="1">
+        <Grid>
+            <StackPanel Spacing="12" Margin="44,38">
+                <TextBlock Text="🃏" FontSize="52" HorizontalAlignment="Center"/>
+                <TextBlock Text="TableTop" FontSize="38"
+                           Style="{StaticResource EngravedTitleStyle}"
+                           Foreground="{StaticResource GoldBrightBrush}"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="CARD GAMES FOR EVERY TABLE"
+                           Style="{StaticResource PipTextStyle}"
+                           HorizontalAlignment="Center"/>
+                <!-- Offered only when there is a session to continue, and it
+                     names the table and the round so it is obvious what
+                     "continue" means. Sits above Play because a group that left
+                     a game running came back for this, not a new one. -->
+                <Button Content="{Binding ResumeText}" Command="{Binding ResumeCommand}"
+                        Visibility="{Binding CanResume, Converter={StaticResource BoolToVis}}"
+                        HorizontalAlignment="Stretch" Margin="0,22,0,0"
+                        Style="{StaticResource BrassButtonStyle}"/>
+
+                <Button Content="Play" Command="{Binding PlayCommand}"
+                        HorizontalAlignment="Stretch" Margin="0,22,0,0"
+                        Style="{StaticResource BrassButtonStyle}"/>
+                <Button Content="Settings" Command="{Binding SettingsCommand}"
+                        HorizontalAlignment="Stretch"
+                        Style="{StaticResource FeltButtonStyle}"/>
+            </StackPanel>
+            <Border Margin="8" CornerRadius="9" IsHitTestVisible="False"
+                    BorderBrush="#40C49E4C" BorderThickness="1"/>
+        </Grid>
+    </Border>
+</UserControl>

@@ -1,0 +1,1114 @@
+sealed enum TableTop.Core.Abstractions.Cards.AnswerLabel
+    A = 0
+    B = 1
+    C = 2
+    D = 3
+sealed enum TableTop.Core.Abstractions.Cards.BreakActivity
+    Bath = 0
+    Custom = 9
+    Drink = 4
+    Eat = 3
+    Exercise = 6
+    GroupPause = 8
+    Massage = 2
+    Rest = 5
+    Rotate = 7
+    Shower = 1
+abstract class TableTop.Core.Abstractions.Cards.BreakEffect
+    Boolean Equals(BreakEffect other)
+    Boolean Equals(Object obj)
+    BreakEffect <Clone>$()
+    Int32 GetHashCode()
+    String ToString()
+sealed enum TableTop.Core.Abstractions.Cards.BreakScope
+    AllPlayers = 0
+    CurrentPlayer = 1
+sealed enum TableTop.Core.Abstractions.Cards.CardTarget
+    ForBoth = 2
+    ForDrawer = 0
+    ForPartner = 1
+    PlayerChoice = 3
+sealed enum TableTop.Core.Abstractions.Cards.Difficulty
+    Easy = 1
+    Extreme = 4
+    Hard = 3
+    Medium = 2
+sealed class TableTop.Core.Abstractions.Cards.DrinkPenaltyEffect
+    .ctor(String DrinkDescription = default)
+    Boolean Equals(DrinkPenaltyEffect other)
+    Boolean Equals(Object obj)
+    Boolean Equals(RewardEffect other)
+    DrinkPenaltyEffect <Clone>$()
+    Int32 GetHashCode()
+    String DrinkDescription { get; set; }
+    String ToString()
+    Void Deconstruct(String& DrinkDescription)
+sealed class TableTop.Core.Abstractions.Cards.ExtraCardEffect
+    .ctor()
+    Boolean Equals(ExtraCardEffect other)
+    Boolean Equals(Object obj)
+    Boolean Equals(RewardEffect other)
+    ExtraCardEffect <Clone>$()
+    Int32 GetHashCode()
+    String ToString()
+sealed class TableTop.Core.Abstractions.Cards.FreePassEffect
+    .ctor()
+    Boolean Equals(FreePassEffect other)
+    Boolean Equals(Object obj)
+    Boolean Equals(RewardEffect other)
+    FreePassEffect <Clone>$()
+    Int32 GetHashCode()
+    String ToString()
+sealed class TableTop.Core.Abstractions.Cards.GroupBreakEffect
+    .ctor(String Activity)
+    Boolean Equals(BreakEffect other)
+    Boolean Equals(GroupBreakEffect other)
+    Boolean Equals(Object obj)
+    GroupBreakEffect <Clone>$()
+    Int32 GetHashCode()
+    String Activity { get; set; }
+    String ToString()
+    Void Deconstruct(String& Activity)
+abstract interface TableTop.Core.Abstractions.Cards.IBreakCard
+    BreakEffect Effect { get; }
+    BreakScope Scope { get; }
+    Nullable<BreakActivity> Activity { get; }
+    Nullable<Int32> DurationMinutes { get; }
+abstract interface TableTop.Core.Abstractions.Cards.ICard
+    Difficulty Difficulty { get; }
+    Guid Id { get; }
+    IReadOnlyList<String> Tags { get; }
+    IRestriction Restriction { get; }
+    String Category { get; }
+    String Description { get; }
+    String Title { get; }
+abstract interface TableTop.Core.Abstractions.Cards.ICardProvider
+    Task<IReadOnlyList<ICard>> GetCardsAsync(CancellationToken cancellationToken = default)
+abstract interface TableTop.Core.Abstractions.Cards.ICardTextResolver
+    String Resolve(IPlayer player)
+abstract interface TableTop.Core.Abstractions.Cards.IInspirationCard
+    String InspirationCategory { get; }
+    String InspirationText { get; }
+abstract interface TableTop.Core.Abstractions.Cards.IMonogamyCard
+    CardTarget Target { get; }
+    Int32 TokenValue { get; }
+    MonogamyZone Zone { get; }
+    Nullable<Int32> DurationMinutes { get; }
+abstract interface TableTop.Core.Abstractions.Cards.IMultipleChoiceCard
+    AnswerLabel CorrectAnswer { get; }
+    Boolean IsCorrect(AnswerLabel label)
+    IReadOnlyDictionary<AnswerLabel, String> Answers { get; }
+abstract interface TableTop.Core.Abstractions.Cards.IPromptCard
+    String ResolvePrompt(IPlayer player)
+abstract interface TableTop.Core.Abstractions.Cards.IRewardCard
+    RewardEffect Effect { get; }
+abstract interface TableTop.Core.Abstractions.Cards.IThisOrThatCard
+    Boolean IsFullyIllustrated { get; }
+    ThisOrThatOption OptionA { get; }
+    ThisOrThatOption OptionB { get; }
+    ThisOrThatOption OptionFor(ThisOrThatChoice choice)
+sealed enum TableTop.Core.Abstractions.Cards.MonogamyZone
+    Fantasy = 5
+    Foreplay = 1
+    Sensual = 2
+    Steamy = 3
+    Wild = 4
+sealed class TableTop.Core.Abstractions.Cards.NarrativeRewardEffect
+    .ctor(String Description)
+    Boolean Equals(NarrativeRewardEffect other)
+    Boolean Equals(Object obj)
+    Boolean Equals(RewardEffect other)
+    Int32 GetHashCode()
+    NarrativeRewardEffect <Clone>$()
+    String Description { get; set; }
+    String ToString()
+    Void Deconstruct(String& Description)
+abstract class TableTop.Core.Abstractions.Cards.RewardEffect
+    Boolean Equals(Object obj)
+    Boolean Equals(RewardEffect other)
+    Int32 GetHashCode()
+    RewardEffect <Clone>$()
+    String ToString()
+sealed class TableTop.Core.Abstractions.Cards.RotatePlayersEffect
+    .ctor()
+    Boolean Equals(BreakEffect other)
+    Boolean Equals(Object obj)
+    Boolean Equals(RotatePlayersEffect other)
+    Int32 GetHashCode()
+    RotatePlayersEffect <Clone>$()
+    String ToString()
+sealed class TableTop.Core.Abstractions.Cards.ScoreBonusEffect
+    .ctor(Int32 Points)
+    Boolean Equals(Object obj)
+    Boolean Equals(RewardEffect other)
+    Boolean Equals(ScoreBonusEffect other)
+    Int32 GetHashCode()
+    Int32 Points { get; set; }
+    ScoreBonusEffect <Clone>$()
+    String ToString()
+    Void Deconstruct(Int32& Points)
+sealed class TableTop.Core.Abstractions.Cards.ScoreMultiplierEffect
+    .ctor(Double Multiplier)
+    Boolean Equals(Object obj)
+    Boolean Equals(RewardEffect other)
+    Boolean Equals(ScoreMultiplierEffect other)
+    Double Multiplier { get; set; }
+    Int32 GetHashCode()
+    ScoreMultiplierEffect <Clone>$()
+    String ToString()
+    Void Deconstruct(Double& Multiplier)
+sealed class TableTop.Core.Abstractions.Cards.SkipTurnEffect
+    .ctor()
+    Boolean Equals(BreakEffect other)
+    Boolean Equals(Object obj)
+    Boolean Equals(SkipTurnEffect other)
+    Int32 GetHashCode()
+    SkipTurnEffect <Clone>$()
+    String ToString()
+sealed class TableTop.Core.Abstractions.Cards.StealPointsEffect
+    .ctor(Int32 Points)
+    Boolean Equals(Object obj)
+    Boolean Equals(RewardEffect other)
+    Boolean Equals(StealPointsEffect other)
+    Int32 GetHashCode()
+    Int32 Points { get; set; }
+    StealPointsEffect <Clone>$()
+    String ToString()
+    Void Deconstruct(Int32& Points)
+sealed class TableTop.Core.Abstractions.Cards.SwapCardEffect
+    .ctor()
+    Boolean Equals(Object obj)
+    Boolean Equals(RewardEffect other)
+    Boolean Equals(SwapCardEffect other)
+    Int32 GetHashCode()
+    String ToString()
+    SwapCardEffect <Clone>$()
+sealed enum TableTop.Core.Abstractions.Cards.ThisOrThatChoice
+    A = 0
+    B = 1
+sealed struct TableTop.Core.Abstractions.Cards.ThisOrThatOption
+    .ctor(String Label, String ImageKey = default, String Detail = default)
+    Boolean Equals(Object obj)
+    Boolean Equals(ThisOrThatOption other)
+    Boolean HasDetail { get; }
+    Boolean HasImage { get; }
+    Int32 GetHashCode()
+    String Detail { get; set; }
+    String ImageKey { get; set; }
+    String Label { get; set; }
+    String ToString()
+    Void Deconstruct(String& Label, String& ImageKey, String& Detail)
+sealed class TableTop.Core.Abstractions.Cards.TimedMassageEffect
+    .ctor(Int32 DurationMinutes, String Target = default)
+    Boolean Equals(Object obj)
+    Boolean Equals(RewardEffect other)
+    Boolean Equals(TimedMassageEffect other)
+    Int32 DurationMinutes { get; set; }
+    Int32 GetHashCode()
+    String Target { get; set; }
+    String ToString()
+    TimedMassageEffect <Clone>$()
+    Void Deconstruct(Int32& DurationMinutes, String& Target)
+abstract interface TableTop.Core.Abstractions.Decks.IDeck
+    Boolean IsEmpty { get; }
+    Guid Id { get; }
+    ICard Draw()
+    ICard DrawById(Guid cardId)
+    ICard Peek(Func<ICard, Boolean> predicate = default)
+    IReadOnlyList<ICard> Cards { get; }
+    IReadOnlyList<ICard> Filter(Func<ICard, Boolean> predicate)
+    Int32 Count { get; }
+    String Name { get; }
+    Void Reset()
+    Void Return(ICard card)
+    Void Shuffle(IShuffleStrategy strategy)
+abstract interface TableTop.Core.Abstractions.Decks.IDeckBuilder
+    IDeckBuilder WithFilter(Func<ICard, Boolean> filter)
+    IDeckBuilder WithName(String name)
+    IDeckBuilder WithProvider(ICardProvider provider)
+    Task<IDeck> BuildAsync(CancellationToken cancellationToken = default)
+abstract interface TableTop.Core.Abstractions.Decks.IShuffleStrategy
+    IReadOnlyList<ICard> Shuffle(IReadOnlyList<ICard> cards)
+static class TableTop.Core.Abstractions.Game.ControllerFamilies
+    ControllerFamily For(IGameMode mode)
+    IReadOnlyList<ControllerFamily> All { get; }
+    IReadOnlyList<IGameMode> UnsupportedIn(IEnumerable<IGameMode> modes, IEnumerable<ControllerFamily> supportedFamilies)
+    Nullable<ControllerFamily> TryFor(IGameMode mode)
+sealed enum TableTop.Core.Abstractions.Game.ControllerFamily
+    AreaControl = 4
+    CardTurn = 0
+    DailyCampaign = 3
+    Monogamy = 2
+    Quiz = 1
+    SimultaneousAnswer = 5
+sealed class TableTop.Core.Abstractions.Game.GameEndedEventArgs
+    .ctor()
+    IReadOnlyList<IPlayer> FinalStandings { get; set; }
+    Int32 TotalRounds { get; set; }
+sealed class TableTop.Core.Abstractions.Game.GameMetadata
+    .ctor()
+    Boolean HasCardBeenPlayedBy(Guid playerId, Guid cardId)
+    Boolean TryGetExtension(String key, T& value)
+    Int32 ActivePlayersAtRoundStart { get; set; }
+    Void MarkCardPlayed(Guid playerId, Guid cardId)
+    Void RemoveCardPlayed(Guid playerId, Guid cardId)
+    Void SeedFromSnapshot(IEnumerable<Guid> playerIds, IEnumerable<Guid> playedCardIds)
+    Void SetExtension(String key, Object value)
+sealed enum TableTop.Core.Abstractions.Game.GameState
+    Active = 1
+    Ended = 3
+    Paused = 2
+    Pending = 0
+sealed class TableTop.Core.Abstractions.Game.GameplayOptions
+    .ctor()
+    Boolean Equals(GameplayOptions other)
+    Boolean Equals(Object obj)
+    Boolean IsUnrestricted { get; }
+    Boolean ShuffleDeck { get; set; }
+    Difficulty MaxDifficulty { get; set; }
+    Difficulty MinDifficulty { get; set; }
+    GameplayOptions <Clone>$()
+    GameplayOptions Default { get; }
+    Int32 GetHashCode()
+    Nullable<Int32> CardsPerPlayer { get; set; }
+    String ToString()
+abstract interface TableTop.Core.Abstractions.Game.IClaimedDeckProvider
+    IReadOnlyList<ICard> GetClaimedDeck()
+    Int32 WinningTerritoryCount { get; }
+abstract interface TableTop.Core.Abstractions.Game.IDailyDeckProvider
+    IReadOnlyList<ICard> GetDailyDeck()
+abstract interface TableTop.Core.Abstractions.Game.IDiceProgressionMode
+    IReadOnlyList<String> CategoriesInOrder { get; }
+    String CategoryForTotal(Int32 diceTotal)
+abstract interface TableTop.Core.Abstractions.Game.IFlowAwareMode
+abstract interface TableTop.Core.Abstractions.Game.IGame
+    GameMetadata Metadata { get; }
+    GameState State { get; }
+    Guid Id { get; }
+    ICard AdvanceTurn()
+    ICard CurrentCard { get; }
+    IPlayer CurrentPlayer { get; }
+    IPlayerManager PlayerManager { get; }
+    IReadOnlyList<ICard> PlayedCards { get; }
+    Int32 Round { get; }
+    Void End()
+    Void Pause()
+    Void RecordOutcome(CardOutcome outcome)
+    Void Resume()
+    Void RewindTurn(IPlayer player, ICard card)
+    Void Start()
+    event EventHandler<GameEndedEventArgs> GameEnded
+    event EventHandler<TurnCompletedEventArgs> TurnCompleted
+abstract interface TableTop.Core.Abstractions.Game.IGameConfiguration
+    IDeck Deck { get; }
+    IProgressionStrategy ProgressionStrategy { get; }
+    IReadOnlyList<IPlayer> Players { get; }
+    IReadOnlyList<IRule> Rules { get; }
+    IReadOnlyList<String> DeferredCategories { get; }
+    IScoringStrategy ScoringStrategy { get; }
+    Int32 SpecialCardBonusScore { get; }
+    Nullable<Int32> MaxRounds { get; }
+    SpecialCardScoringPolicy SpecialCardScoringPolicy { get; }
+abstract interface TableTop.Core.Abstractions.Game.IGameFactory
+    IGame Create(IGameConfiguration configuration)
+abstract interface TableTop.Core.Abstractions.Game.IGameMode
+    String Description { get; }
+    String Name { get; }
+abstract interface TableTop.Core.Abstractions.Game.IGameModeDefinition
+    IEnumerable<IRule> GetRules()
+    IReadOnlyList<ICard> GetCards(IReadOnlyList<IPlayer> players)
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; }
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    IScoringStrategy GetScoring()
+    Int32 MinimumPlayers { get; }
+abstract interface TableTop.Core.Abstractions.Game.IHerdDeckProvider
+    IReadOnlyList<ICard> GetHerdDeck()
+abstract interface TableTop.Core.Abstractions.Game.IModeManifestProvider
+    ModeManifest GetManifest()
+abstract interface TableTop.Core.Abstractions.Game.IMonogamyDeckProvider
+    IReadOnlyList<MonogamyCard> GetDeck()
+    Nullable<Int32> WinningTokenCount { get; }
+abstract interface TableTop.Core.Abstractions.Game.IPrizeLadder
+    Boolean IsComplete { get; }
+    IReadOnlyList<PrizeLadderRung> Rungs { get; }
+    Int32 CurrentRungIndex { get; }
+    Int64 GuaranteedPrize { get; }
+    PrizeLadderRung CurrentRung { get; }
+    Void Advance()
+abstract interface TableTop.Core.Abstractions.Game.IQuestionBankProvider
+    IReadOnlyList<MultipleChoiceCard> GetQuestionBank()
+abstract interface TableTop.Core.Abstractions.Game.ITableShapeMode
+    TableShape SuitableFor { get; }
+abstract interface TableTop.Core.Abstractions.Game.ITeamMode
+    Int32 MinimumPlayersForTeams { get; }
+    Int32 PreferredTeamCount { get; }
+sealed class TableTop.Core.Abstractions.Game.ModeManifest
+    .ctor()
+    Boolean Equals(ModeManifest other)
+    Boolean Equals(Object obj)
+    Boolean HasAdultContent { get; set; }
+    Boolean HasCouplesContent { get; set; }
+    IReadOnlyDictionary<Difficulty, Int32> CardsByDifficulty { get; set; }
+    IReadOnlyDictionary<String, Int32> CardsByCategory { get; set; }
+    IReadOnlyList<String> AllTags { get; set; }
+    IReadOnlyList<String> Categories { get; set; }
+    Int32 GetHashCode()
+    Int32 TotalCards { get; set; }
+    ModeManifest <Clone>$()
+    Nullable<Difficulty> DominantDifficulty { get; }
+    String DifficultyDisplay { get; }
+    String PlayTimeDisplay { get; }
+    String ToString()
+    TimeSpan EstimatedMaxPlayTime { get; set; }
+    TimeSpan EstimatedMinPlayTime { get; set; }
+static class TableTop.Core.Abstractions.Game.ModeManifestExtensions
+    IReadOnlyDictionary<IGameMode, ModeManifest> GetManifests(IEnumerable<IGameMode> modes)
+    ModeManifest GetManifest(IGameMode mode)
+    Void ClearCache()
+sealed class TableTop.Core.Abstractions.Game.PrizeLadderRung
+    .ctor(Int32 QuestionNumber, Int64 PrizeAmount, Boolean IsSafeHaven)
+    Boolean Equals(Object obj)
+    Boolean Equals(PrizeLadderRung other)
+    Boolean IsSafeHaven { get; set; }
+    Int32 GetHashCode()
+    Int32 QuestionNumber { get; set; }
+    Int64 PrizeAmount { get; set; }
+    PrizeLadderRung <Clone>$()
+    String ToString()
+    Void Deconstruct(Int32& QuestionNumber, Int64& PrizeAmount, Boolean& IsSafeHaven)
+sealed enum TableTop.Core.Abstractions.Game.SpecialCardScoringPolicy
+    FixedBonus = 1
+    ModeDefined = 2
+    NoScore = 0
+sealed class TableTop.Core.Abstractions.Game.TableComposition
+    .ctor(Int32 PlayerCount, TableShape Shape)
+    Boolean Equals(Object obj)
+    Boolean Equals(TableComposition other)
+    Int32 GetHashCode()
+    Int32 PlayerCount { get; set; }
+    String ToString()
+    TableComposition <Clone>$()
+    TableComposition From(IReadOnlyList<IPlayer> players)
+    TableComposition Unknown { get; }
+    TableShape Shape { get; set; }
+    Void Deconstruct(Int32& PlayerCount, TableShape& Shape)
+sealed enum TableTop.Core.Abstractions.Game.TableShape
+    Couple = 1
+    Family = 2
+    Group = 8
+    None = 0
+    Team = 4
+static class TableTop.Core.Abstractions.Game.TableShapes
+    Boolean Suits(TableShape declared, TableShape wanted)
+    TableShape Any
+sealed class TableTop.Core.Abstractions.Game.TurnCompletedEventArgs
+    .ctor()
+    CardOutcome Outcome { get; set; }
+    ICard Card { get; set; }
+    IPlayer Player { get; set; }
+    Int32 Round { get; set; }
+    Int32 ScoreDelta { get; set; }
+abstract interface TableTop.Core.Abstractions.IEngineDiagnostics
+    Void CardSelected(ICard card, IPlayer player, Int32 round)
+    Void GameEnded(String modeName, Int32 totalRounds, Int32 totalTurns)
+    Void GameStarted(String modeName, Int32 playerCount)
+    Void NoCardAvailable(IPlayer player, Int32 candidatesExhausted, Int32 round)
+    Void RuleAllowed(IRule rule, ICard card, IPlayer player, Int32 scoreDelta)
+    Void RuleDenied(IRule rule, ICard card, IPlayer player, String reason)
+    Void TurnRecorded(IPlayer player, ICard card, CardOutcome outcome, Int32 scoreDelta, Int32 round)
+    Void TurnUndone(IPlayer player, ICard card, CardOutcome reversed, Int32 scoreRestored)
+abstract interface TableTop.Core.Abstractions.IRandomSource
+    Double NextDouble()
+    Int32 Next()
+    Int32 Next(Int32 maxValue)
+    Int32 Next(Int32 minValue, Int32 maxValue)
+    Void NextBytes(Span<Byte> buffer)
+abstract interface TableTop.Core.Abstractions.Lifelines.ILifeline
+    Boolean IsAvailable { get; }
+    LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> allPlayers)
+    String Description { get; }
+    String Name { get; }
+sealed class TableTop.Core.Abstractions.Lifelines.LifelineResult
+    .ctor(String Narrative, IReadOnlyList<AnswerLabel> RemainingOptions, Nullable<AnswerLabel> Suggestion = default)
+    Boolean Equals(LifelineResult other)
+    Boolean Equals(Object obj)
+    IReadOnlyList<AnswerLabel> RemainingOptions { get; set; }
+    Int32 GetHashCode()
+    LifelineResult <Clone>$()
+    Nullable<AnswerLabel> Suggestion { get; set; }
+    String Narrative { get; set; }
+    String ToString()
+    Void Deconstruct(String& Narrative, IReadOnlyList`1& RemainingOptions, Nullable`1& Suggestion)
+sealed class TableTop.Core.Abstractions.NullEngineDiagnostics
+    NullEngineDiagnostics Instance
+abstract interface TableTop.Core.Abstractions.Players.IPlayer
+    Guid Id { get; }
+    IReadOnlyDictionary<String, String> Attributes { get; }
+    IReadOnlyList<String> Tags { get; }
+    Int32 Score { get; }
+    PlayerStatus Status { get; }
+    String DisplayName { get; }
+abstract interface TableTop.Core.Abstractions.Players.IPlayerManager
+    IPlayer GetNextPlayer()
+    IReadOnlyList<IPlayer> ActivePlayers { get; }
+    IReadOnlyList<IPlayer> Players { get; }
+    Void AddPlayer(IPlayer player)
+    Void ApplyScore(Guid playerId, Int32 delta)
+    Void RemovePlayer(Guid playerId)
+    Void RewindTo(Guid playerId)
+    Void SetStatus(Guid playerId, PlayerStatus status)
+abstract interface TableTop.Core.Abstractions.Players.ITeam
+    Boolean Contains(Guid playerId)
+    Guid Id { get; }
+    IReadOnlyList<IPlayer> Members { get; }
+    Int32 Score { get; }
+    String Name { get; }
+sealed enum TableTop.Core.Abstractions.Players.PlayerStatus
+    Active = 0
+    Eliminated = 2
+    Skipped = 1
+    Spectating = 3
+sealed class TableTop.Core.Abstractions.Presentation.ModePresentation
+    .ctor()
+    Boolean Equals(ModePresentation other)
+    Boolean Equals(Object obj)
+    Boolean IsEmpty { get; }
+    IReadOnlyDictionary<String, String> CategoryColours { get; set; }
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; set; }
+    IReadOnlyList<String> CategoriesPinnedToStart { get; set; }
+    Int32 GetHashCode()
+    ModePresentation <Clone>$()
+    ModePresentation None { get; }
+    Nullable<Int32> MinimumPlayers { get; set; }
+    String CompleteLabel { get; set; }
+    String Description { get; set; }
+    String SkipLabel { get; set; }
+    String Title { get; set; }
+    String ToString()
+    ThemePalette Theme { get; set; }
+sealed class TableTop.Core.Abstractions.Presentation.ThemePalette
+    .ctor()
+    Boolean Equals(Object obj)
+    Boolean Equals(ThemePalette other)
+    Boolean IsEmpty { get; }
+    IReadOnlyList<String> BackgroundGradient { get; set; }
+    Int32 GetHashCode()
+    String Accent { get; set; }
+    String AccentSoft { get; set; }
+    String Background { get; set; }
+    String BodyFont { get; set; }
+    String CardBodyInk { get; set; }
+    String CardInk { get; set; }
+    String CardInkSubtle { get; set; }
+    String CardStock { get; set; }
+    String CardStockFlipped { get; set; }
+    String DisplayFont { get; set; }
+    String Name { get; set; }
+    String PanelBackground { get; set; }
+    String PanelBorder { get; set; }
+    String PrimaryButton { get; set; }
+    String PrimaryButtonText { get; set; }
+    String Progress { get; set; }
+    String SecondaryButton { get; set; }
+    String SecondaryButtonText { get; set; }
+    String ToString()
+    String UtilityFont { get; set; }
+    ThemePalette <Clone>$()
+sealed enum TableTop.Core.Abstractions.Progression.FlowPace
+    Fast = 2
+    Normal = 1
+    Slow = 0
+    Sprint = 3
+sealed class TableTop.Core.Abstractions.Progression.FlowState
+    .ctor(Difficulty initialDifficulty = default, FlowPace initialPace = default)
+    Boolean LevelDown()
+    Boolean LevelUp()
+    Boolean RecordCardPlayed()
+    Boolean SlowDown()
+    Boolean SpeedUp()
+    Difficulty CurrentDifficulty { get; }
+    FlowPace CurrentPace { get; }
+    Int32 CardsBeforeEscalation { get; }
+    Int32 CardsPlayedAtCurrentLevel { get; set; }
+    Void ResetLevelCounter()
+    Void SetDifficulty(Difficulty difficulty)
+    Void SetPace(FlowPace pace)
+abstract interface TableTop.Core.Abstractions.Progression.IFlowAwareProgressionStrategy
+    FlowState GetFlowState(Guid playerId)
+    Void SetFlowState(Guid playerId, FlowState state)
+abstract interface TableTop.Core.Abstractions.Progression.IProgressionContext
+    GameMetadata Metadata { get; }
+    IReadOnlyList<ICard> PlayedCards { get; }
+    IReadOnlyList<IPlayer> Players { get; }
+    Int32 Round { get; }
+abstract interface TableTop.Core.Abstractions.Progression.IProgressionStrategy
+    Nullable<Guid> SelectCandidate(IPlayer player, IDeck deck, IProgressionContext context)
+    String Name { get; }
+abstract interface TableTop.Core.Abstractions.Restrictions.IRestriction
+    Boolean IsSatisfiedBy(IPlayer player, IReadOnlyList<IPlayer> context)
+    String Description { get; }
+abstract interface TableTop.Core.Abstractions.Rules.IRule
+    RuleResult Evaluate(ICard card, IPlayer player, IRuleContext context)
+    String Description { get; }
+    String Name { get; }
+abstract interface TableTop.Core.Abstractions.Rules.IRuleContext
+    GameMetadata Metadata { get; }
+    IDeck Deck { get; }
+    IReadOnlyList<IPlayer> Players { get; }
+    Int32 Round { get; }
+abstract interface TableTop.Core.Abstractions.Rules.IRuleEvaluator
+    RuleResult Evaluate(ICard card, IPlayer player, IRuleContext context)
+sealed class TableTop.Core.Abstractions.Rules.RuleResult
+    .ctor(Boolean IsAllowed, String Reason = default, Int32 ScoreDelta = default)
+    Boolean Equals(Object obj)
+    Boolean Equals(RuleResult other)
+    Boolean IsAllowed { get; set; }
+    Int32 GetHashCode()
+    Int32 ScoreDelta { get; set; }
+    RuleResult <Clone>$()
+    RuleResult Allow(Int32 scoreDelta = default)
+    RuleResult Deny(String reason)
+    String Reason { get; set; }
+    String ToString()
+    Void Deconstruct(Boolean& IsAllowed, String& Reason, Int32& ScoreDelta)
+sealed enum TableTop.Core.Abstractions.Scoring.CardOutcome
+    Completed = 0
+    Failed = 2
+    Skipped = 1
+abstract interface TableTop.Core.Abstractions.Scoring.IScoringStrategy
+    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome)
+    String Name { get; }
+sealed class TableTop.Core.Abstractions.Scoring.TimedCardOutcome
+    .ctor(CardOutcome Outcome, TimeSpan Elapsed)
+    Boolean Equals(Object obj)
+    Boolean Equals(TimedCardOutcome other)
+    Boolean HasTiming { get; }
+    CardOutcome Outcome { get; set; }
+    Int32 GetHashCode()
+    String ToString()
+    TimeSpan Elapsed { get; set; }
+    TimedCardOutcome <Clone>$()
+    TimedCardOutcome From(CardOutcome outcome, TimeSpan elapsed)
+    TimedCardOutcome Untimed(CardOutcome outcome)
+    Void Deconstruct(CardOutcome& Outcome, TimeSpan& Elapsed)
+sealed class TableTop.Core.Abstractions.SeededRandomSource
+    .ctor(Int32 seed)
+    Double NextDouble()
+    Int32 Next()
+    Int32 Next(Int32 maxValue)
+    Int32 Next(Int32 minValue, Int32 maxValue)
+    Int32 Seed { get; }
+    Void NextBytes(Span<Byte> buffer)
+sealed class TableTop.Core.Abstractions.SharedRandomSource
+    Double NextDouble()
+    Int32 Next()
+    Int32 Next(Int32 maxValue)
+    Int32 Next(Int32 minValue, Int32 maxValue)
+    SharedRandomSource Instance
+    Void NextBytes(Span<Byte> buffer)
+sealed class TableTop.Core.Domain.Cards.AttributeDirectedTextResolver
+    .ctor(String attributeKey, String defaultText, IDictionary<String, String> variants)
+    String Resolve(IPlayer player)
+abstract class TableTop.Core.Domain.Cards.BaseCard
+    Difficulty Difficulty { get; }
+    Guid Id { get; }
+    IReadOnlyList<String> Tags { get; }
+    IRestriction Restriction { get; }
+    String Category { get; }
+    String Description { get; }
+    String Title { get; }
+sealed class TableTop.Core.Domain.Cards.BreakCard
+    .ctor(Guid id, String title, String description, BreakScope scope, BreakEffect effect = default, Nullable<BreakActivity> activity = default, Nullable<Int32> durationMinutes = default, IEnumerable<String> tags = default, IRestriction restriction = default)
+    BreakCard CreateBath(String title, String description, Int32 durationMinutes = default, IEnumerable<String> tags = default)
+    BreakCard CreateDrink(String title, String description, Nullable<Int32> durationMinutes = default, IEnumerable<String> tags = default)
+    BreakCard CreateEat(String title, String description, Int32 durationMinutes = default, IEnumerable<String> tags = default)
+    BreakCard CreateExercise(String title, String description, Int32 durationMinutes = default, IEnumerable<String> tags = default)
+    BreakCard CreateGroupBreak(String title, String description, Nullable<BreakActivity> activity = default, Nullable<Int32> durationMinutes = default, String activityText = default, IEnumerable<String> tags = default)
+    BreakCard CreateMassage(String title, String description, Int32 durationMinutes = default, IEnumerable<String> tags = default)
+    BreakCard CreateRest(String title, String description, Int32 durationMinutes = default, IEnumerable<String> tags = default)
+    BreakCard CreateRotate(String title, String description, IEnumerable<String> tags = default)
+    BreakCard CreateShower(String title, String description, Int32 durationMinutes = default, IEnumerable<String> tags = default)
+    BreakCard CreateSkipTurn(String title, String description, IEnumerable<String> tags = default)
+    BreakEffect Effect { get; }
+    BreakScope Scope { get; }
+    Nullable<BreakActivity> Activity { get; }
+    Nullable<Int32> DurationMinutes { get; }
+sealed class TableTop.Core.Domain.Cards.CardDeckBuilder
+    CardDeckBuilder Card(String title, String description, Difficulty difficulty, IEnumerable<String> tags = default, IRestriction restriction = default)
+    CardDeckBuilder Category(String name)
+    CardDeckBuilder For(String deckName)
+    IReadOnlyList<ICard> Build()
+sealed class TableTop.Core.Domain.Cards.GenderDirectedTextResolver
+    .ctor(String defaultText, IDictionary<String, String> variantsByGender)
+    String Resolve(IPlayer player)
+sealed class TableTop.Core.Domain.Cards.InspirationCard
+    .ctor(Guid id, String title, String description, String inspirationText, String inspirationCategory = default, Difficulty difficulty = default, IEnumerable<String> tags = default, IRestriction restriction = default)
+    InspirationCard Create(String title, String description, String inspirationText, String category = default, Difficulty difficulty = default, IEnumerable<String> tags = default)
+    String InspirationCategory { get; }
+    String InspirationText { get; }
+sealed class TableTop.Core.Domain.Cards.MonogamyCard
+    .ctor(Guid id, String title, String baseDescription, ICardTextResolver resolver, MonogamyZone zone, CardTarget target, Int32 tokenValue = default, Nullable<Int32> durationMinutes = default, IEnumerable<String> tags = default, IRestriction restriction = default)
+    CardTarget Target { get; }
+    Int32 TokenValue { get; }
+    MonogamyCard Create(Guid id, String title, String forHimText, String forHerText, String neutralText, MonogamyZone zone, CardTarget target, Int32 tokenValue = default, Nullable<Int32> durationMinutes = default, IEnumerable<String> tags = default, IRestriction restriction = default)
+    MonogamyCard Create(String title, String forHimText, String forHerText, String neutralText, MonogamyZone zone, CardTarget target, Int32 tokenValue = default, Nullable<Int32> durationMinutes = default, IEnumerable<String> tags = default, IRestriction restriction = default)
+    MonogamyCard CreateNeutral(Guid id, String title, String text, MonogamyZone zone, CardTarget target, Int32 tokenValue = default, Nullable<Int32> durationMinutes = default, IEnumerable<String> tags = default, IRestriction restriction = default)
+    MonogamyCard CreateNeutral(String title, String text, MonogamyZone zone, CardTarget target, Int32 tokenValue = default, Nullable<Int32> durationMinutes = default, IEnumerable<String> tags = default, IRestriction restriction = default)
+    MonogamyZone Zone { get; }
+    Nullable<Int32> DurationMinutes { get; }
+    String ResolvePrompt(IPlayer player)
+sealed class TableTop.Core.Domain.Cards.MultipleChoiceCard
+    .ctor(Guid id, String question, String description, Dictionary<AnswerLabel, String> answers, AnswerLabel correctAnswer, Difficulty difficulty, String category = default, IEnumerable<String> tags = default, IRestriction restriction = default)
+    AnswerLabel CorrectAnswer { get; }
+    Boolean IsCorrect(AnswerLabel label)
+    IReadOnlyDictionary<AnswerLabel, String> Answers { get; }
+    MultipleChoiceCard Create(String question, String answerA, String answerB, String answerC, String answerD, AnswerLabel correctAnswer, Difficulty difficulty, String category = default, IEnumerable<String> tags = default)
+sealed class TableTop.Core.Domain.Cards.PromptCard
+    .ctor(Guid id, String title, String baseDescription, ICardTextResolver resolver, Difficulty difficulty, String category, IEnumerable<String> tags = default, IRestriction restriction = default)
+    PromptCard CreateAttributeDirected(String title, String attributeKey, String defaultText, IDictionary<String, String> variants, Difficulty difficulty, String category, IEnumerable<String> tags = default, IRestriction restriction = default, Nullable<Guid> id = default)
+    PromptCard CreateGenderDirected(String title, String maleText, String femaleText, String otherText, Difficulty difficulty, String category, IEnumerable<String> tags = default, IRestriction restriction = default, Nullable<Guid> id = default)
+    String ResolvePrompt(IPlayer player)
+sealed class TableTop.Core.Domain.Cards.RewardCard
+    .ctor(Guid id, String title, String description, RewardEffect effect, Difficulty difficulty = default, IEnumerable<String> tags = default, IRestriction restriction = default)
+    RewardCard CreateExtraCard(String title, String description, IEnumerable<String> tags = default)
+    RewardCard CreateFreePass(String title, String description, IEnumerable<String> tags = default)
+    RewardCard CreateNarrative(String title, String description, Difficulty difficulty = default, IEnumerable<String> tags = default)
+    RewardCard CreateScoreBonus(String title, String description, Int32 points, Difficulty difficulty = default, IEnumerable<String> tags = default)
+    RewardCard CreateStealPoints(String title, String description, Int32 points, Difficulty difficulty = default, IEnumerable<String> tags = default)
+    RewardEffect Effect { get; }
+sealed class TableTop.Core.Domain.Cards.StandardCard
+    .ctor(Guid id, String title, String description, Difficulty difficulty, String category, IEnumerable<String> tags = default, IRestriction restriction = default)
+    StandardCard Create(String title, String description, Difficulty difficulty, String category, IEnumerable<String> tags = default, IRestriction restriction = default)
+sealed class TableTop.Core.Domain.Cards.ThisOrThatCard
+    .ctor(Guid id, String title, String description, Difficulty difficulty, String category, ThisOrThatOption optionA, ThisOrThatOption optionB, IEnumerable<String> tags = default, IRestriction restriction = default)
+    ThisOrThatCard Create(String deckName, String title, String description, Difficulty difficulty, String category, ThisOrThatOption optionA, ThisOrThatOption optionB)
+    ThisOrThatOption OptionA { get; }
+    ThisOrThatOption OptionB { get; }
+sealed class TableTop.Core.Domain.Decks.Deck
+    .ctor(Guid id, String name, IEnumerable<ICard> cards)
+    Boolean IsEmpty { get; }
+    Guid Id { get; }
+    ICard Draw()
+    ICard DrawById(Guid cardId)
+    ICard Peek(Func<ICard, Boolean> predicate = default)
+    IReadOnlyList<ICard> Cards { get; }
+    IReadOnlyList<ICard> Filter(Func<ICard, Boolean> predicate)
+    Int32 Count { get; }
+    String Name { get; }
+    Void Reset()
+    Void Return(ICard card)
+    Void Shuffle(IShuffleStrategy strategy)
+sealed class TableTop.Core.Domain.Decks.DeckBuilder
+    .ctor()
+    IDeckBuilder WithFilter(Func<ICard, Boolean> filter)
+    IDeckBuilder WithName(String name)
+    IDeckBuilder WithProvider(ICardProvider provider)
+    Task<IDeck> BuildAsync(CancellationToken cancellationToken = default)
+sealed class TableTop.Core.Domain.Decks.FisherYatesShuffleStrategy
+    .ctor()
+    .ctor(IRandomSource rng)
+    .ctor(Random random)
+    IReadOnlyList<ICard> Shuffle(IReadOnlyList<ICard> cards)
+sealed class TableTop.Core.Domain.Decks.InMemoryCardProvider
+    .ctor(IEnumerable<ICard> cards)
+    Task<IReadOnlyList<ICard>> GetCardsAsync(CancellationToken cancellationToken = default)
+static class TableTop.Core.Domain.Decks.RestrictionParser
+    IRestriction Parse(String expression)
+static class TableTop.Core.Domain.Game.ModeManifestBuilder
+    ModeManifest Build(IReadOnlyList<ICard> cards)
+sealed class TableTop.Core.Domain.Game.PlayerStats
+    .ctor()
+    Boolean Equals(Object obj)
+    Boolean Equals(PlayerStats other)
+    Double CompletionRate { get; }
+    IPlayer Player { get; set; }
+    Int32 CompletedTurns { get; set; }
+    Int32 FinalScore { get; set; }
+    Int32 GetHashCode()
+    Int32 SkippedTurns { get; set; }
+    Int32 TotalScoreDelta { get; set; }
+    Int32 TotalTurns { get; set; }
+    Nullable<Difficulty> HardestCleared { get; set; }
+    Nullable<Double> AverageAnswerSeconds { get; set; }
+    PlayerStats <Clone>$()
+    String ToString()
+sealed class TableTop.Core.Domain.Game.PrizeLadder
+    .ctor()
+    .ctor(IEnumerable<PrizeLadderRung> rungs)
+    Boolean IsComplete { get; }
+    IReadOnlyList<PrizeLadderRung> Rungs { get; }
+    Int32 CurrentRungIndex { get; }
+    Int64 GuaranteedPrize { get; }
+    PrizeLadderRung CurrentRung { get; }
+    Void Advance()
+sealed class TableTop.Core.Domain.Game.SessionReport
+    IPlayer HighScorer { get; set; }
+    IReadOnlyList<PlayerStats> PlayerStats { get; set; }
+    IReadOnlyList<TurnRecord> Turns { get; set; }
+    Int32 CompletedTurns { get; }
+    Int32 SkippedTurns { get; }
+    Int32 TotalRounds { get; set; }
+    Int32 TotalTurns { get; }
+    Nullable<ValueTuple<IPlayer, Int32>> MostSkips { get; set; }
+    SessionReport Build(IReadOnlyList<TurnRecord> turns, IReadOnlyList<IPlayer> players, Int32 totalRounds, TimeSpan duration)
+    StreakRecord LongestStreak { get; set; }
+    TimeSpan Duration { get; set; }
+    TurnRecord FastestAnswer { get; set; }
+    TurnRecord HardestCardCleared { get; set; }
+sealed class TableTop.Core.Domain.Game.StreakRecord
+    .ctor(IPlayer Player, Int32 Length)
+    Boolean Equals(Object obj)
+    Boolean Equals(StreakRecord other)
+    IPlayer Player { get; set; }
+    Int32 GetHashCode()
+    Int32 Length { get; set; }
+    StreakRecord <Clone>$()
+    String ToString()
+    Void Deconstruct(IPlayer& Player, Int32& Length)
+sealed class TableTop.Core.Domain.Game.TurnRecord
+    .ctor()
+    Boolean Equals(Object obj)
+    Boolean Equals(TurnRecord other)
+    CardOutcome Outcome { get; set; }
+    DateTimeOffset RecordedAt { get; set; }
+    ICard Card { get; set; }
+    IPlayer Player { get; set; }
+    Int32 GetHashCode()
+    Int32 Round { get; set; }
+    Int32 ScoreAfter { get; set; }
+    Int32 ScoreDelta { get; set; }
+    Int32 TurnNumber { get; set; }
+    Nullable<TimeSpan> Elapsed { get; set; }
+    String ToString()
+    TurnRecord <Clone>$()
+sealed class TableTop.Core.Domain.Lifelines.AskTheAudienceLifeline
+    .ctor()
+    .ctor(Random random)
+    Boolean IsAvailable { get; set; }
+    LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> audience)
+    String Description { get; }
+    String Name { get; }
+sealed class TableTop.Core.Domain.Lifelines.FiftyFiftyLifeline
+    .ctor()
+    .ctor(Random random)
+    Boolean IsAvailable { get; set; }
+    LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> audience)
+    String Description { get; }
+    String Name { get; }
+sealed class TableTop.Core.Domain.Lifelines.PhoneAFriendLifeline
+    .ctor()
+    .ctor(Random random)
+    Boolean IsAvailable { get; set; }
+    LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> audience)
+    String Description { get; }
+    String Name { get; }
+sealed class TableTop.Core.Domain.Players.Player
+    .ctor(Guid id, String displayName, IDictionary<String, String> attributes = default, IEnumerable<String> tags = default)
+    Guid Id { get; }
+    IReadOnlyDictionary<String, String> Attributes { get; }
+    IReadOnlyList<String> Tags { get; }
+    Int32 Score { get; set; }
+    Player Create(String displayName, IDictionary<String, String> attributes = default, IEnumerable<String> tags = default)
+    PlayerStatus Status { get; set; }
+    String DisplayName { get; }
+sealed class TableTop.Core.Domain.Players.RoundRobinPlayerManager
+    .ctor()
+    IPlayer GetNextPlayer()
+    IReadOnlyList<IPlayer> ActivePlayers { get; }
+    IReadOnlyList<IPlayer> Players { get; }
+    Int32 GetScore(Guid playerId)
+    PlayerStatus GetStatus(Guid playerId)
+    Void AddPlayer(IPlayer player)
+    Void ApplyScore(Guid playerId, Int32 delta)
+    Void RemovePlayer(Guid playerId)
+    Void RewindTo(Guid playerId)
+    Void SetStatus(Guid playerId, PlayerStatus status)
+sealed class TableTop.Core.Domain.Players.Team
+    .ctor(String name, IEnumerable<IPlayer> members)
+    Boolean Contains(Guid playerId)
+    Guid Id { get; }
+    IReadOnlyList<IPlayer> Members { get; }
+    IReadOnlyList<Team> FromGroups(IReadOnlyList<ValueTuple<String, IReadOnlyList<IPlayer>>> groups)
+    IReadOnlyList<Team> SplitEvenly(IReadOnlyList<IPlayer> players, Int32 teamCount, Func<Int32, String> nameFactory = default)
+    Int32 Score { get; set; }
+    String Name { get; }
+sealed class TableTop.Core.Domain.Players.TeamAlternatingPlayerManager
+    .ctor()
+    IPlayer GetNextPlayer()
+    IReadOnlyList<IPlayer> ActivePlayers { get; }
+    IReadOnlyList<IPlayer> Players { get; }
+    IReadOnlyList<String> TeamOrder { get; }
+    Int32 GetScore(Guid playerId)
+    PlayerStatus GetStatus(Guid playerId)
+    Void AddPlayer(IPlayer player)
+    Void ApplyScore(Guid playerId, Int32 delta)
+    Void RemovePlayer(Guid playerId)
+    Void RewindTo(Guid playerId)
+    Void SetStatus(Guid playerId, PlayerStatus status)
+sealed class TableTop.Core.Domain.Players.TeamPlayerManager
+    .ctor(IReadOnlyList<Team> teams, TeamScoreMode mode = default)
+    IPlayer GetNextPlayer()
+    IReadOnlyList<IPlayer> ActivePlayers { get; }
+    IReadOnlyList<IPlayer> Players { get; }
+    IReadOnlyList<ITeam> GetStandings()
+    IReadOnlyList<ITeam> Teams { get; }
+    ITeam GetTeam(Guid playerId)
+    TeamScoreMode ScoreMode { get; }
+    Void AddPlayer(IPlayer player)
+    Void ApplyScore(Guid playerId, Int32 delta)
+    Void RemovePlayer(Guid playerId)
+    Void RewindTo(Guid playerId)
+    Void SetStatus(Guid playerId, PlayerStatus status)
+sealed enum TableTop.Core.Domain.Players.TeamScoreMode
+    Both = 1
+    Individual = 2
+    TeamOnly = 0
+sealed struct TableTop.Core.Domain.Players.TeamStanding
+    .ctor(String Name, Int32 Score, Int32 MemberCount)
+    Boolean Equals(Object obj)
+    Boolean Equals(TeamStanding other)
+    Int32 GetHashCode()
+    Int32 MemberCount { get; set; }
+    Int32 Score { get; set; }
+    String Name { get; set; }
+    String ToString()
+    Void Deconstruct(String& Name, Int32& Score, Int32& MemberCount)
+static class TableTop.Core.Domain.Players.Teams
+    Boolean HasTeam(IPlayer player)
+    IReadOnlyList<IPlayer> MembersOf(IEnumerable<IPlayer> players, String teamName)
+    IReadOnlyList<String> DefaultTeamNames { get; }
+    IReadOnlyList<String> TeamNames(IEnumerable<IPlayer> players)
+    IReadOnlyList<TeamStanding> Standings(IEnumerable<IPlayer> players)
+    IReadOnlyList<ValueTuple<IPlayer, String>> Deal(IReadOnlyList<IPlayer> players, Int32 teamCount = default, IReadOnlyList<String> teamNames = default)
+    Int32 ScoreOf(IEnumerable<IPlayer> players, String teamName)
+    String AttributeKey
+    String TeamOf(IPlayer player)
+sealed class TableTop.Core.Domain.Progression.CategoryProgressionStrategy
+    .ctor(IEnumerable<String> categories)
+    Nullable<Guid> SelectCandidate(IPlayer player, IDeck deck, IProgressionContext context)
+    String Name { get; }
+sealed class TableTop.Core.Domain.Progression.DiceCategoryProgressionStrategy
+    .ctor(IReadOnlyList<String> categoriesInOrder, Func<Int32, String> totalToCategory, Random rng = default)
+    DiceRoll LastRoll { get; set; }
+    Nullable<Guid> SelectCandidate(IPlayer player, IDeck deck, IProgressionContext context)
+    String ChosenCategoryForDoubles { get; set; }
+    String Name { get; }
+sealed class TableTop.Core.Domain.Progression.DiceRoll
+    .ctor(Int32 Die1, Int32 Die2)
+    Boolean Equals(DiceRoll other)
+    Boolean Equals(Object obj)
+    Boolean IsDouble { get; }
+    DiceRoll <Clone>$()
+    DiceRoll Roll(Random rng = default)
+    Int32 Die1 { get; set; }
+    Int32 Die2 { get; set; }
+    Int32 GetHashCode()
+    Int32 Total { get; }
+    String ToString()
+    Void Deconstruct(Int32& Die1, Int32& Die2)
+sealed class TableTop.Core.Domain.Progression.DifficultyProgressionStrategy
+    .ctor()
+    Nullable<Guid> SelectCandidate(IPlayer player, IDeck deck, IProgressionContext context)
+    String Name { get; }
+sealed class TableTop.Core.Domain.Progression.FlowAwareProgressionStrategy
+    .ctor(Difficulty initialDifficulty = default, FlowPace initialPace = default)
+    FlowState GetFlowState(Guid playerId)
+    Nullable<Guid> SelectCandidate(IPlayer player, IDeck deck, IProgressionContext context)
+    String Name { get; }
+    Void SetFlowState(Guid playerId, FlowState state)
+sealed class TableTop.Core.Domain.Progression.LinearProgressionStrategy
+    .ctor()
+    Nullable<Guid> SelectCandidate(IPlayer player, IDeck deck, IProgressionContext context)
+    String Name { get; }
+static class TableTop.Core.Domain.Progression.MonogamyDiceMapping
+    MonogamyZone ToZone(DiceRoll roll)
+sealed class TableTop.Core.Domain.Progression.ProgressionContext
+    .ctor(Int32 round, IEnumerable<ICard> playedCards, IEnumerable<IPlayer> players, GameMetadata metadata = default)
+    GameMetadata Metadata { get; }
+    IReadOnlyList<ICard> PlayedCards { get; }
+    IReadOnlyList<IPlayer> Players { get; }
+    Int32 Round { get; }
+sealed class TableTop.Core.Domain.Progression.RandomProgressionStrategy
+    .ctor()
+    .ctor(Random random)
+    Nullable<Guid> SelectCandidate(IPlayer player, IDeck deck, IProgressionContext context)
+    String Name { get; }
+sealed class TableTop.Core.Domain.Progression.ScoreBasedProgressionStrategy
+    .ctor()
+    Nullable<Guid> SelectCandidate(IPlayer player, IDeck deck, IProgressionContext context)
+    String Name { get; }
+sealed class TableTop.Core.Domain.Restrictions.AdultOnlyRestriction
+    .ctor()
+    Boolean IsSatisfiedBy(IPlayer player, IReadOnlyList<IPlayer> context)
+    String Description { get; }
+sealed class TableTop.Core.Domain.Restrictions.AndRestriction
+    .ctor(IRestriction left, IRestriction right)
+    Boolean IsSatisfiedBy(IPlayer player, IReadOnlyList<IPlayer> context)
+    String Description { get; }
+sealed class TableTop.Core.Domain.Restrictions.AttributeRestriction
+    .ctor(String key, String value)
+    Boolean IsSatisfiedBy(IPlayer player, IReadOnlyList<IPlayer> context)
+    String Description { get; }
+sealed class TableTop.Core.Domain.Restrictions.CoupleOnlyRestriction
+    .ctor()
+    Boolean IsSatisfiedBy(IPlayer player, IReadOnlyList<IPlayer> context)
+    String Description { get; }
+sealed class TableTop.Core.Domain.Restrictions.FemaleOnlyRestriction
+    .ctor()
+    Boolean IsSatisfiedBy(IPlayer player, IReadOnlyList<IPlayer> context)
+    String Description { get; }
+sealed class TableTop.Core.Domain.Restrictions.MaleOnlyRestriction
+    .ctor()
+    Boolean IsSatisfiedBy(IPlayer player, IReadOnlyList<IPlayer> context)
+    String Description { get; }
+sealed class TableTop.Core.Domain.Restrictions.MarriedOnlyRestriction
+    .ctor()
+    Boolean IsSatisfiedBy(IPlayer player, IReadOnlyList<IPlayer> context)
+    String Description { get; }
+sealed class TableTop.Core.Domain.Restrictions.MinimumAgeRestriction
+    .ctor(Int32 minimumAge)
+    Boolean IsSatisfiedBy(IPlayer player, IReadOnlyList<IPlayer> context)
+    String Description { get; }
+sealed class TableTop.Core.Domain.Restrictions.NotRestriction
+    .ctor(IRestriction inner)
+    Boolean IsSatisfiedBy(IPlayer player, IReadOnlyList<IPlayer> context)
+    String Description { get; }
+sealed class TableTop.Core.Domain.Restrictions.OrRestriction
+    .ctor(IRestriction left, IRestriction right)
+    Boolean IsSatisfiedBy(IPlayer player, IReadOnlyList<IPlayer> context)
+    String Description { get; }
+sealed class TableTop.Core.Domain.Restrictions.ParentOnlyRestriction
+    .ctor()
+    Boolean IsSatisfiedBy(IPlayer player, IReadOnlyList<IPlayer> context)
+    String Description { get; }
+static class TableTop.Core.Domain.Restrictions.RestrictionExtensions
+    IRestriction And(IRestriction left, IRestriction right)
+    IRestriction Not(IRestriction restriction)
+    IRestriction Or(IRestriction left, IRestriction right)
+sealed class TableTop.Core.Domain.Restrictions.TagRestriction
+    .ctor(String requiredTag)
+    Boolean IsSatisfiedBy(IPlayer player, IReadOnlyList<IPlayer> context)
+    String Description { get; }
+sealed class TableTop.Core.Domain.Rules.DifficultyScoreRule
+    .ctor()
+    RuleResult Evaluate(ICard card, IPlayer player, IRuleContext context)
+    String Description { get; }
+    String Name { get; }
+sealed class TableTop.Core.Domain.Rules.NoDuplicateCardRule
+    .ctor()
+    RuleResult Evaluate(ICard card, IPlayer player, IRuleContext context)
+    String Description { get; }
+    String Name { get; }
+sealed class TableTop.Core.Domain.Rules.RestrictionRule
+    .ctor()
+    RuleResult Evaluate(ICard card, IPlayer player, IRuleContext context)
+    String Description { get; }
+    String Name { get; }
+sealed class TableTop.Core.Domain.Rules.RuleContext
+    .ctor(Int32 round, IEnumerable<IPlayer> players, IDeck deck, GameMetadata metadata = default)
+    GameMetadata Metadata { get; }
+    IDeck Deck { get; }
+    IReadOnlyList<IPlayer> Players { get; }
+    Int32 Round { get; }
+sealed class TableTop.Core.Domain.Rules.RuleEvaluator
+    .ctor(IEnumerable<IRule> rules)
+    .ctor(IEnumerable<IRule> rules, IEngineDiagnostics diagnostics)
+    RuleResult Evaluate(ICard card, IPlayer player, IRuleContext context)
+sealed class TableTop.Core.Domain.Rules.SkipPlayerRule
+    .ctor()
+    RuleResult Evaluate(ICard card, IPlayer player, IRuleContext context)
+    String Description { get; }
+    String Name { get; }
+sealed class TableTop.Core.Domain.Scoring.DifficultyBasedScoringStrategy
+    .ctor()
+    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome)
+    String Name { get; }
+sealed class TableTop.Core.Domain.Scoring.FixedScoringStrategy
+    .ctor(Int32 pointsPerCompletion = default)
+    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome)
+    String Name { get; }
+sealed class TableTop.Core.Domain.Scoring.StreakScoringStrategy
+    .ctor(IScoringStrategy baseStrategy, Int32 streakMultiplier = default)
+    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome)
+    String Name { get; }
+sealed class TableTop.Core.Domain.Scoring.TimeBasedScoringStrategy
+    .ctor(Nullable<TimeSpan> fastThreshold = default, Nullable<TimeSpan> mediumThreshold = default, Nullable<TimeSpan> slowThreshold = default, Int32 fastPoints = default, Int32 mediumPoints = default, Int32 slowPoints = default)
+    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome)
+    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome, Nullable<TimeSpan> elapsed = default)
+    String Name { get; }
+sealed class TableTop.Core.Engine.Game
+    .ctor(IGameConfiguration config, IPlayerManager playerManager, IRuleEvaluator ruleEvaluator)
+    GameMetadata Metadata { get; }
+    GameState State { get; set; }
+    Guid Id { get; }
+    ICard AdvanceTurn()
+    ICard CurrentCard { get; }
+    IPlayer CurrentPlayer { get; }
+    IPlayerManager PlayerManager { get; }
+    IReadOnlyList<ICard> PlayedCards { get; }
+    Int32 Round { get; set; }
+    Void End()
+    Void Pause()
+    Void RecordOutcome(CardOutcome outcome)
+    Void Resume()
+    Void RewindTurn(IPlayer player, ICard card)
+    Void Start()
+    event EventHandler<GameEndedEventArgs> GameEnded
+    event EventHandler<TurnCompletedEventArgs> TurnCompleted
+sealed class TableTop.Core.Engine.GameBuilder
+    .ctor()
+    GameBuilder AddPlayer(IPlayer player)
+    GameBuilder AddRule(IRule rule)
+    GameBuilder WithDeck(IDeck deck)
+    GameBuilder WithDeferredCategories(IEnumerable<String> categories)
+    GameBuilder WithDiagnostics(IEngineDiagnostics diagnostics)
+    GameBuilder WithFactory(IGameFactory factory)
+    GameBuilder WithMaxRounds(Nullable<Int32> maxRounds)
+    GameBuilder WithPlayers(IEnumerable<IPlayer> players)
+    GameBuilder WithProgression(IProgressionStrategy strategy)
+    GameBuilder WithRules(IEnumerable<IRule> rules)
+    GameBuilder WithScoring(IScoringStrategy strategy)
+    GameBuilder WithSpecialCardPolicy(SpecialCardScoringPolicy policy, Int32 bonus = default)
+    GameBuilder WithTeamPlay(Boolean teamPlay = default)
+    IGame Build()
+sealed class TableTop.Core.Engine.GameConfiguration
+    .ctor(IDeck deck, IEnumerable<IPlayer> players, IProgressionStrategy progressionStrategy, IScoringStrategy scoringStrategy, IEnumerable<IRule> rules = default, Nullable<Int32> maxRounds = default, SpecialCardScoringPolicy specialCardScoringPolicy = default, Int32 specialCardBonusScore = default, IEnumerable<String> deferredCategories = default)
+    IDeck Deck { get; }
+    IProgressionStrategy ProgressionStrategy { get; }
+    IReadOnlyList<IPlayer> Players { get; }
+    IReadOnlyList<IRule> Rules { get; }
+    IReadOnlyList<String> DeferredCategories { get; }
+    IScoringStrategy ScoringStrategy { get; }
+    Int32 SpecialCardBonusScore { get; }
+    Nullable<Int32> MaxRounds { get; }
+    SpecialCardScoringPolicy SpecialCardScoringPolicy { get; }
+sealed class TableTop.Core.Engine.GameFactory
+    .ctor(IEngineDiagnostics diagnostics = default, Boolean teamPlay = default)
+    IGame Create(IGameConfiguration configuration)
+static class TableTop.Core.Extensions.ServiceCollectionExtensions
+    IServiceCollection AddCardProvider(IServiceCollection services)
+    IServiceCollection AddRule(IServiceCollection services)
+    IServiceCollection AddTableTop(IServiceCollection services)
+    IServiceCollection UseSeededRandom(IServiceCollection services, Int32 seed)
+static class TableTop.Core.TableTopDefaults
+static class TableTop.Core.TableTopDefaults+Hints
+    Int32 HeavySkipThreshold
+    Int32 WindowSize
+static class TableTop.Core.TableTopDefaults+History
+    Int32 MaxDepth
+static class TableTop.Core.TableTopDefaults+Manifest
+    Int32 SecondsPerCardMax
+    Int32 SecondsPerCardMin
+static class TableTop.Core.TableTopDefaults+Scoring
+    Int32 PointsPerCompletion
+    Int32 SkipPenalty
+    Int32 StreakMultiplier
+static class TableTop.Core.TableTopDefaults+Session
+    Int32 MaxRounds
+static class TableTop.Core.TableTopDefaults+TimeScoring
+    Int32 FastPoints
+    Int32 FastSeconds
+    Int32 MediumPoints
+    Int32 MediumSeconds
+    Int32 SlowPoints
+    Int32 SlowSeconds

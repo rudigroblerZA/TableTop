@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
+    x:Class="TableTop.Maui.Pages.DayOneGamePage"
+    Title="Day One"
+    BackgroundColor="#0F1419">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="14">
+
+            <Label Text="{Binding LoadError}" TextColor="#F87171" IsVisible="{Binding HasLoadError}" FontSize="15" />
+
+            <Label Text="{Binding DayLabel}" TextColor="#FBBF24" FontSize="14" FontAttributes="Bold" />
+
+            <!-- Today's card -->
+            <VerticalStackLayout IsVisible="{Binding HasCard}" Spacing="14">
+                <Frame BackgroundColor="#1A2530" BorderColor="#334155" CornerRadius="12" Padding="18">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{Binding CardTitle}" TextColor="#93C5FD" FontSize="17" FontAttributes="Bold" />
+                        <Label Text="{Binding CardText}" TextColor="White" FontSize="16" LineHeight="1.5" />
+                    </VerticalStackLayout>
+                </Frame>
+                <Button x:Name="CompleteButton" Text="Mark today complete" Clicked="OnCompleteClicked"
+                        Style="{StaticResource PrimaryButtonStyle}" />
+            </VerticalStackLayout>
+
+            <!-- Caught up / complete -->
+            <VerticalStackLayout IsVisible="{Binding IsDone}" Spacing="14">
+                <Frame BackgroundColor="#1A2530" BorderColor="#334155" CornerRadius="12" Padding="18">
+                    <Label Text="{Binding StatusText}" TextColor="White" FontSize="16" LineHeight="1.5" />
+                </Frame>
+                <Button x:Name="DoneButton" Text="Back to games" Clicked="OnDoneClicked"
+                        Style="{StaticResource PrimaryButtonStyle}" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
