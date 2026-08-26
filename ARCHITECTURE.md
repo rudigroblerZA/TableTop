@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.22.0**, August 2026. This replaces the accumulated
+Current as of **1.22.1**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -261,6 +261,13 @@ initially numbered wrong:
   deck), and `CartographersMode` / `CartographersCardBank` to Games. Two new
   types in each assembly, no removals and no interface changes, so MINOR on
   both counts of the rule: new capability and a new mode.
+- **1.22.1** closed backlog item 12 — WinUI now declares `SupportedFamilies`
+  (it never had before), `HeadFamilyCoverageTests` covers it, the tautological
+  `NoHeadSilentlyDropsAFamilyItClaimsToSupport` is deleted in favour of
+  `scripts/check-head-family-coverage.py` reading the real declarations, and
+  `UnsupportedModeViewModel` no longer suggests Console for modes Console also
+  cannot play. No new capability and nothing in Core, Games or Hosting's public
+  API moved — every change here is a fix, so PATCH under the rule's third case.
 
 ## What genuinely doesn't exist here
 

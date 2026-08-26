@@ -59,6 +59,15 @@ jobs:
       - name: Check XAML bindings resolve (all heads)
         run: python3 scripts/check-xaml-bindings.py
 
+      # Backlog item 12. HeadFamilyCoverageTests cannot reference the MAUI or
+      # WinUI projects (both need SDKs this job doesn't have), so it keeps a
+      # hand-typed copy of each head's declared ControllerFamily support. This
+      # is what stops that copy going stale: "updating the head alone changes
+      # nothing" was the exact gap item 12 found, since the test read only its
+      # own copy.
+      - name: Check head family-coverage declarations match their test copy
+        run: python3 scripts/check-head-family-coverage.py
+
       # Backlog K.4. Five directories literally named "{Base,Modes,Data}" and
       # similar were committed — brace expansion run under sh, which doesn't
       # expand braces. All empty, and one had an unbalanced brace, meaning that

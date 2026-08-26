@@ -22,6 +22,28 @@ namespace TableTop.WinUI.ViewModels;
 /// </summary>
 public static class GameViewModelFactory
 {
+    /// <summary>
+    /// The controller families this app has a screen for — the switch arms in
+    /// <see cref="CreateAsync"/> that aren't <see cref="Fallback"/>.
+    ///
+    /// <para>
+    /// Declared as data, matching the pattern MAUI's <c>PlayerSetupPage</c> and
+    /// Console's <c>ConsoleGameLauncher</c> already use, so the gap is
+    /// inspectable rather than something only readable in the switch below.
+    /// Backlog item 12: this is the flagship head, and until this property
+    /// existed it was the one head with no declaration and no test coverage at
+    /// all — the exact "implicit in the routing switch" state the mechanism
+    /// was built to replace.
+    /// </para>
+    /// </summary>
+    public static IReadOnlyList<ControllerFamily> SupportedFamilies { get; } =
+    [
+        ControllerFamily.CardTurn,
+        ControllerFamily.Quiz,
+        ControllerFamily.Monogamy,
+        ControllerFamily.DailyCampaign,
+    ];
+
     /// <summary>Creates the ViewModel that will drive <paramref name="mode"/>.</summary>
     /// <summary>
     /// Builds the ViewModel for a mode. Pass <paramref name="resumeFrom"/> to
@@ -86,9 +108,19 @@ public sealed class UnsupportedModeViewModel : ViewModelBase
 {
     /// <summary>The mode that was attempted.</summary>
     public string ModeName { get; }
-    /// <summary>Explanation shown to the player.</summary>
+    /// <summary>
+    /// Explanation shown to the player.
+    ///
+    /// <para>
+    /// Used to say "try it in Console" unconditionally. The only two modes
+    /// that ever reach this screen are Claimed! (AreaControl) and Herd
+    /// (SimultaneousAnswer), and Console declares
+    /// <c>[CardTurn, Quiz]</c> — so every player who saw that suggestion was
+    /// being sent to a head that also cannot play the mode. Backlog item 12.
+    /// </para>
+    /// </summary>
     public string Message =>
-        $"'{ModeName}' isn't playable on this screen yet — try it in Console, or check back soon.";
+        $"'{ModeName}' isn't playable on this screen yet — check back soon.";
     /// <summary>Returns to game selection.</summary>
     public ICommand GoBackCommand { get; }
 
