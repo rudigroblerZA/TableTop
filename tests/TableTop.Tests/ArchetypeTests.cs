@@ -1,5 +1,6 @@
 using TableTop.Core.Abstractions.Game;
 using TableTop.Games;
+using TableTop.Games.Couples;
 using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Controllers;
