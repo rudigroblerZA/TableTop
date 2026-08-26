@@ -56,6 +56,8 @@
   <Folder Name="/UI/">
     <Project Path="ui/TableTop.Console/TableTop.Console.csproj" />
     <Project Path="ui/TableTop.Maui/TableTop.Maui.csproj" />
-    <Project Path="ui/TableTop.WinUI/TableTop.WinUI.csproj" />
+    <Project Path="ui/TableTop.WinUI/TableTop.WinUI.csproj">
+      <Platform Solution="Debug|*" Project="x64" />
+    </Project>
   </Folder>
 </Solution>
