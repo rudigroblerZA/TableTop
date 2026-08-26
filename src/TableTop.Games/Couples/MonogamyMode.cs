@@ -2,7 +2,7 @@ using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Domain.Cards;
 
-namespace TableTop.Games;
+namespace TableTop.Games.Couples;
 
 /// <summary>
 /// Monogamy — a couples intimacy card game.

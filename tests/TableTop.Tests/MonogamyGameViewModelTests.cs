@@ -1,4 +1,4 @@
-using TableTop.Games;
+using TableTop.Games.Couples;
 using TableTop.Hosting.Controllers;
 using TableTop.Presentation.ViewModels;
 
