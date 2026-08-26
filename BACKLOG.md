@@ -443,14 +443,13 @@ out of the head sources would close it, and fits the existing pattern exactly.
   change is a string-literal removal, reviewed by reading the diff rather than
   by a passing assertion.
 
-**Found while fixing the WinUI message, and deliberately left alone: Console
-has the identical bug.** `ConsoleGameLauncher`'s own fallback path says *"Try
-this mode in the Windows or mobile app instead"* for any mode outside its two
-supported families — true for Day One (MAUI plays it), false for Claimed! and
-Herd (nobody does, yet). Same shape, same fix, different file. Left out of this
-change because it wasn't what this item named and pulling it in would have
-widened the diff past what a reviewer signed up for; flagged separately so it
-doesn't quietly vanish.
+**Found while fixing the WinUI message, flagged separately, now also closed.**
+`ConsoleGameLauncher`'s own fallback path said *"Try this mode in the Windows
+or mobile app instead"* for any mode outside its two supported families — true
+for Day One (MAUI plays it), false for Claimed! and Herd (nobody does, yet).
+Same shape as the WinUI message, same fix: dropped the second line rather than
+deriving it from MAUI's declared families, since that would need a project
+reference Console has no other reason to carry.
 
 ### 13. The doc counts disagree — **mode count CLOSED in 1.21.0; card and test counts still open**
 
