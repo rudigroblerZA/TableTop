@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.22.1**, August 2026. This replaces the accumulated
+Current as of **1.23.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -268,6 +268,12 @@ initially numbered wrong:
   `UnsupportedModeViewModel` no longer suggests Console for modes Console also
   cannot play. No new capability and nothing in Core, Games or Hosting's public
   API moved — every change here is a fix, so PATCH under the rule's third case.
+- **1.23.0** added `FamilyAtlasMode` / `FamilyAtlasCardBank` to Games, under
+  `fun.family` — the family-facing sibling of `CartographersMode`'s
+  build-one-shared-page mechanic, minus the `Couple` shape restriction, since
+  no card here assumes a headcount or a relationship. Two new types in Games,
+  no removals, no interface changes, so MINOR: a new mode, same as 1.22.0's
+  precedent for `CartographersMode`.
 
 ## What genuinely doesn't exist here
 

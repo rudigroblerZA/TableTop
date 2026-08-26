@@ -190,6 +190,7 @@ public sealed class ArchetypeRegistry : IArchetypeRegistry
                     new("fun.family.steal",    "Speed Steal",        "Answer fast. Others challenge. Better answer = steal your point.",        "⚡", new List<IGameMode> { new SpeedStealMode()       }.AsReadOnly(), null, AgeRating.AllAges),
                     new("fun.family.blitz",    "Speed Blitz",        "Rapid-fire timed challenges — name things, answer trivia, solve riddles, against the clock.", "⏱️", new List<IGameMode> { new SpeedBlitzMode()       }.AsReadOnly(), null, AgeRating.AllAges),
                     new("fun.family.touch",    "Touch & Tell",       "Blindfolded. Feel the object. Guess what it is in 30 seconds.",        "👐", new List<IGameMode> { new TouchAndTellMode()     }.AsReadOnly(), null, AgeRating.AllAges),
+                    new("fun.family.atlas",    "The Family Atlas",  "Draw one map of your family's world together — mountains you've crossed, the home you keep coming back to, and the places you haven't been yet. Bring paper. Keep the map.", "🗺️", new List<IGameMode> { new FamilyAtlasMode()      }.AsReadOnly(), null, AgeRating.AllAges),
                 }.AsReadOnly()),
 
             // ── Party ─────────────────────────────────────────────────────────
