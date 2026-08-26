@@ -260,20 +260,30 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
     // ── Construction ─────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Drives a gameplay session. Pass <paramref name="resumeFrom"/> to continue
-    /// a saved session instead of starting fresh; obtain one from
+    /// Builds a gameplay session. Pass <paramref name="resumeFrom"/> to
+    /// continue a saved session instead of starting fresh; obtain one from
     /// <c>ControllerFactory.LoadSavedSessionAsync</c>.
+    ///
+    /// <para>
+    /// Was a constructor that blocked the UI thread with
+    /// <c>CardTurnGameViewModel.CreateAsync(...).GetAwaiter().GetResult()</c>
+    /// — backlog item 20. A MAUI page constructor cannot itself be async and
+    /// <c>Navigation.PushAsync</c> never awaits construction, so the async
+    /// build has moved to this factory; <see cref="GameplayPage"/> now has a
+    /// two-phase construct-then-<see cref="Pages.IAsyncInitializablePage.InitializeAsync"/>
+    /// shape instead of doing this work in its own constructor.
+    /// </para>
     /// </summary>
-    public GameplayViewModel(
+    public static async Task<GameplayViewModel> CreateAsync(
         INavigator navigator, IGameMode gameMode, List<IPlayer> players,
         TableTop.Hosting.Persistence.SessionSnapshot? resumeFrom = null)
     {
         // Skin and category colours come from the mode, read before the
         // controller is built so a controller failure still lands on a
         // correctly-themed error state rather than a half-styled screen.
-        Theme = Theming.ModeTheme.For(gameMode);
+        var theme = Theming.ModeTheme.For(gameMode);
         var definition = gameMode as TableTop.Games.Base.BaseGameModeDefinition;
-        _categoryColours = definition?.CategoryColours ?? new Dictionary<string, string>();
+        var categoryColours = definition?.CategoryColours ?? new Dictionary<string, string>();
 
         // Backlog item 5: IControllerFactory/IAppSettings resolved from the
         // app's container (MauiProgram.cs's AddTableTopHosting()) rather than
@@ -283,16 +293,25 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
         // DI-constructed. A custom IControllerFactory registered in the
         // container had no effect on a real session before this.
         var services = IPlatformApplication.Current!.Services;
-        _settings = services.GetRequiredService<IAppSettings>();
+        var settings = services.GetRequiredService<IAppSettings>();
         var controllerFactory = services.GetRequiredService<IControllerFactory>();
 
-        // Blocking is deadlock-free here, same as every prior MAUI merge
-        // (MillionaireGamePage, DayOneGamePage) — CreateAsync itself catches
-        // a controller-build failure into LoadError, so this constructor
-        // needs no try/catch of its own the way the old implementation did.
-        _inner = CardTurnGameViewModel.CreateAsync(
-                navigator, gameMode, players.AsReadOnly(), _settings, resumeFrom, controllerFactory)
-            .GetAwaiter().GetResult();
+        // CreateAsync itself catches a controller-build failure into
+        // LoadError, so this factory needs no try/catch of its own.
+        var inner = await CardTurnGameViewModel.CreateAsync(
+            navigator, gameMode, players.AsReadOnly(), settings, resumeFrom, controllerFactory);
+
+        return new GameplayViewModel(theme, categoryColours, settings, inner);
+    }
+
+    private GameplayViewModel(
+        Theming.ModeTheme theme, IReadOnlyDictionary<string, string> categoryColours,
+        IAppSettings settings, CardTurnGameViewModel inner)
+    {
+        Theme = theme;
+        _categoryColours = categoryColours;
+        _settings = settings;
+        _inner = inner;
 
         // Forwards every property-changed notification 1:1 — this is what
         // makes every pass-through property above stay live without each one

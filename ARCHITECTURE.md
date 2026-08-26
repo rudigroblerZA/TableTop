@@ -400,6 +400,24 @@ three heads, the 861-test suite, and all static gates — including two new
 `CardTurnGameViewModelTests` pinning the save-failure report and one
 confirming the success path is unchanged.
 
+**Backlog item 20, closed.** Four UI-thread call sites blocked on async
+controller construction via `.GetAwaiter().GetResult()`: MAUI's
+`GameplayViewModel` constructor and the `DayOneGamePage`/`MillionaireGamePage`
+constructors, and WinUI's `IntroViewModel.Resume()`. WinUI converted
+`ResumeCommand` from `RelayCommand` to `AsyncRelayCommand` — the same idiom
+`PlayerSetupViewModel.StartCommand` already used — so the factory is
+genuinely awaited instead of blocked on. MAUI's three pages gained a
+two-phase shape: a cheap constructor plus a `Task InitializeAsync()`
+(declared on a new `IAsyncInitializablePage` interface in
+`ui/TableTop.Maui/Pages`) that does the actual `CreateAsync` await and sets
+`BindingContext`; `PlayerSetupPage`'s routing switch and
+`GameSelectionPage`'s resume handler now `await page.InitializeAsync();`
+between constructing a page and pushing it. `GameplayViewModel` itself
+gained the same construct/`CreateAsync` split one level down, since its own
+constructor was the thing blocking `GameplayPage`. Monogamy/Claimed/Herd's
+pages were untouched — they build through synchronous factories with no
+async work to block on, a different shape rather than a template to copy.
+
 ## What genuinely doesn't exist here
 
 - **A visual deck editor, or any content authoring at all outside the repo.**

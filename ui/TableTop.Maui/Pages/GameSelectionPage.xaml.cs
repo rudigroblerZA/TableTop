@@ -119,8 +119,9 @@ public partial class GameSelectionPage : ContentPage
 
             // Straight to gameplay — the picker and player setup would only ask
             // again for what the snapshot already records.
-            await Navigation.PushAsync(
-                new GameplayPage(r.Mode, r.Players.ToList(), r.Snapshot));
+            var page = new GameplayPage(r.Mode, r.Players.ToList(), r.Snapshot);
+            await page.InitializeAsync();  // backlog item 20 — async build, awaited before showing
+            await Navigation.PushAsync(page);
         }
         catch (Exception ex)
         {
