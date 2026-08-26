@@ -42,6 +42,8 @@ public static class GameViewModelFactory
         ControllerFamily.Quiz,
         ControllerFamily.Monogamy,
         ControllerFamily.DailyCampaign,
+        ControllerFamily.AreaControl,
+        ControllerFamily.SimultaneousAnswer,
     ];
 
     /// <summary>Creates the ViewModel that will drive <paramref name="mode"/>.</summary>
@@ -68,14 +70,10 @@ public static class GameViewModelFactory
             mode, players, maxRounds: 10, gameplayOptions: gameplayOptions, resumeFrom: resumeFrom);
 
         // Route the built controller to the ViewModel that drives its family.
-        //
-        // This comment used to claim every controller type had a real WinUI
-        // screen, so the fallback was unreachable. That stopped being true
-        // when ClaimedController and HerdController were added — both land on
-        // Fallback today. WinUI at least degrades to a readable
-        // "unsupported mode" screen rather than throwing, which is more than
-        // MAUI or Console managed; see ControllerFamily and
-        // HeadFamilyCoverageTests for the gap stated as data.
+        // Every family the catalogue can produce has a screen here now
+        // (backlog item 4) — Fallback stays as a safety net for a future
+        // family that ships a controller before its screen, not because any
+        // mode currently reaches it.
         return controller switch
         {
             ICardTurnController ctc   => new CardTurnGameViewModel(
@@ -83,6 +81,8 @@ public static class GameViewModelFactory
             IMillionaireController mc => new MillionaireGameViewModel(navigator, mc),
             IMonogamyController mo    => new MonogamyGameViewModel(navigator, mo),
             IDayOneController dc      => new DayOneGameViewModel(navigator, dc),
+            IClaimedController cc     => new ClaimedGameViewModel(navigator, cc),
+            IHerdController hc        => new HerdGameViewModel(navigator, hc),
             _ => Fallback(navigator, mode, controller),
         };
     }
@@ -112,11 +112,13 @@ public sealed class UnsupportedModeViewModel : ViewModelBase
     /// Explanation shown to the player.
     ///
     /// <para>
-    /// Used to say "try it in Console" unconditionally. The only two modes
-    /// that ever reach this screen are Claimed! (AreaControl) and Herd
-    /// (SimultaneousAnswer), and Console declares
-    /// <c>[CardTurn, Quiz]</c> — so every player who saw that suggestion was
-    /// being sent to a head that also cannot play the mode. Backlog item 12.
+    /// Used to say "try it in Console" unconditionally, back when Claimed!
+    /// (AreaControl) and Herd (SimultaneousAnswer) were the only two modes
+    /// that ever reached this screen and Console couldn't play them either
+    /// — backlog item 12. Both families have real screens on every head now
+    /// (item 4), so no mode in the catalogue reaches this fallback today; it
+    /// stays as a safety net for a future family that ships a controller
+    /// before its screen.
     /// </para>
     /// </summary>
     public string Message =>

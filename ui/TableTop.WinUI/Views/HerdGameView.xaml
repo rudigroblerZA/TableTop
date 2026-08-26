@@ -1,0 +1,115 @@
+<UserControl x:Class="TableTop.WinUI.Views.HerdGameView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Same plain board-game felt register as ClaimedGameView — Herd is
+         also "Fun" archetype, not couples- or quiz-specific. -->
+    <Grid Background="{StaticResource BaizeBrush}">
+
+        <Border Visibility="{Binding HasLoadError, Converter={StaticResource BoolToVis}}"
+                Background="#33F87171" BorderBrush="#F87171" BorderThickness="1"
+                CornerRadius="8" Padding="16,12" VerticalAlignment="Top" Margin="0,0,0,12">
+            <TextBlock Text="{Binding LoadError}" TextWrapping="Wrap"
+                       Foreground="#FCA5A5" FontSize="14"/>
+        </Border>
+
+        <Grid Padding="28,24">
+            <ScrollViewer Visibility="{Binding IsPlaying, Converter={StaticResource BoolToVis}}">
+                <StackPanel Spacing="16" MaxWidth="700">
+
+                    <TextBlock Style="{StaticResource PipTextStyle}">
+                        <Run Text="ROUND"/> <Run Text="{Binding RoundNumber}"/> <Run Text="/"/> <Run Text="{Binding TotalRounds}"/>
+                        <Run Text=" · "/> <Run Text="{Binding Category}"/>
+                    </TextBlock>
+
+                    <!-- The prompt everyone answers at once -->
+                    <Border Background="{StaticResource CardFaceBrush}" CornerRadius="16" Padding="26,24">
+                        <TextBlock Text="{Binding Prompt}" Style="{StaticResource CardTitleStyle}"/>
+                    </Border>
+
+                    <!-- One answer field per player — a shared device passed around the table -->
+                    <Border Style="{StaticResource PanelStyle}">
+                        <ItemsControl ItemsSource="{Binding PlayerAnswers}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding PlayerName}"
+                                                   VerticalAlignment="Center"
+                                                   FontFamily="{StaticResource DisplayFont}" FontWeight="Bold"
+                                                   Foreground="{StaticResource TextBrush}"/>
+                                        <TextBox Grid.Column="1" Text="{Binding Answer, Mode=TwoWay}"
+                                                 PlaceholderText="Type an answer…"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+
+                    <Button Content="Reveal" Command="{Binding RevealCommand}" Padding="26,12"
+                            Style="{StaticResource BrassButtonStyle}" HorizontalAlignment="Left">
+                        <Button.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="Enter"/>
+                        </Button.KeyboardAccelerators>
+                    </Button>
+
+                    <!-- Last round's result. A pure display toggle — the controller
+                         has already moved on to the round shown above by the time
+                         this can appear; see HerdGameViewModel's doc comment. -->
+                    <Border Style="{StaticResource PanelStyle}"
+                            Visibility="{Binding ShowingLastRound, Converter={StaticResource BoolToVis}}">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="LAST ROUND" Style="{StaticResource PipTextStyle}"/>
+                            <TextBlock Text="{Binding LastRoundSummary}" TextWrapping="Wrap"
+                                       FontFamily="{StaticResource BodyFont}" FontSize="15"
+                                       Foreground="{StaticResource TextBrush}"/>
+                            <TextBlock Visibility="{Binding HasLastHerdAnswer, Converter={StaticResource BoolToVis}}"
+                                       FontFamily="{StaticResource BodyFont}" FontStyle="Italic"
+                                       Foreground="{StaticResource GoldBrightBrush}">
+                                <Run Text="The herd said:"/> <Run Text="{Binding LastHerdAnswer}"/>
+                            </TextBlock>
+                            <TextBlock Visibility="{Binding HasLastLoneVoice, Converter={StaticResource BoolToVis}}"
+                                       FontFamily="{StaticResource BodyFont}" FontStyle="Italic"
+                                       Foreground="{StaticResource GoldBrightBrush}">
+                                <Run Text="Lone voice:"/> <Run Text="{Binding LastLoneVoice}"/>
+                            </TextBlock>
+                            <Button Content="Dismiss" Command="{Binding DismissLastRoundCommand}"
+                                    Style="{StaticResource QuietButtonStyle}" HorizontalAlignment="Left"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="{Binding Scores}"
+                               Visibility="{Binding HasScores, Converter={StaticResource BoolToVis}}"
+                               Style="{StaticResource PipTextStyle}"
+                               Foreground="{StaticResource TextBrush}"/>
+
+                    <Button Content="Quit" Command="{Binding BackCommand}"
+                            Style="{StaticResource QuietButtonStyle}" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Results plaque -->
+            <Grid Visibility="{Binding IsGameOver, Converter={StaticResource BoolToVis}}">
+                <Border Background="{StaticResource CardFaceBrush}" CornerRadius="16"
+                        MaxWidth="460" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Grid>
+                        <StackPanel Spacing="16" Margin="34">
+                            <TextBlock Text="Final Scores" FontSize="25"
+                                       Style="{StaticResource CardTitleStyle}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding Summary}" Style="{StaticResource CardBodyStyle}"
+                                       HorizontalAlignment="Center" TextAlignment="Center"/>
+                            <Button Content="Back to games" Command="{Binding BackCommand}"
+                                    HorizontalAlignment="Center" Padding="26,12"
+                                    Style="{StaticResource BrassButtonStyle}"/>
+                        </StackPanel>
+                        <Border Margin="9" CornerRadius="10" IsHitTestVisible="False"
+                                BorderBrush="#8CC49E4C" BorderThickness="1"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

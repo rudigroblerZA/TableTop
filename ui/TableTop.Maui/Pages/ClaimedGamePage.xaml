@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
+    x:Class="TableTop.Maui.Pages.ClaimedGamePage"
+    Title="Claimed!"
+    Background="{StaticResource BaizeBrush}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="14">
+
+            <Label Text="{Binding LoadError}" TextColor="#F87171" IsVisible="{Binding HasLoadError}" FontSize="15" />
+
+            <VerticalStackLayout IsVisible="{Binding IsPlaying}" Spacing="14">
+                <Label Text="{Binding CurrentPlayerName}" FontFamily="{StaticResource DisplayFont}" TextColor="{StaticResource GoldBrightColor}" FontSize="18" FontAttributes="Bold" />
+
+                <!-- The board: every territory, its holder, and whether it can
+                     be challenged right now. BindableLayout on a plain stack,
+                     not CollectionView — a CollectionView nested inside this
+                     ScrollView has no bounded height to measure against and
+                     renders at zero height on Android (same trap documented on
+                     MonogamyGamePage's zone picker). Five fixed territories
+                     need no virtualisation anyway. -->
+                <Frame Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Territories}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                        <Label Text="{Binding Name}" FontFamily="{StaticResource DisplayFont}" FontAttributes="Bold" FontSize="15" TextColor="{StaticResource TextPrimary}" />
+                                        <Label Text="{Binding HolderDisplay}" Style="{StaticResource PipLabelStyle}" />
+                                    </VerticalStackLayout>
+                                    <Button Grid.Column="1" Text="Challenge" Clicked="OnChallengeClicked"
+                                            IsEnabled="{Binding IsChallengeable}" Style="{StaticResource FeltButtonStyle}"
+                                            HeightRequest="40" Padding="14,0" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- The drawn card, waiting for the table to judge it -->
+                <Frame IsVisible="{Binding HasPendingChallenge}"
+                       BackgroundColor="{StaticResource CardStockColor}"
+                       BorderColor="#8CC49E4C" CornerRadius="16" Padding="20" HasShadow="True">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{Binding PendingCardTitle}" FontFamily="{StaticResource DisplayFont}"
+                               TextColor="{StaticResource CardInkColor}" FontSize="19" FontAttributes="Bold" />
+                        <Label Text="{Binding PendingCardText}" FontFamily="{StaticResource BodyFont}"
+                               TextColor="#3B3A38" FontSize="16" LineHeight="1.55" />
+                        <Label Text="{Binding PendingDifficulty}" FontFamily="{StaticResource UtilityFont}"
+                               TextColor="#7C7466" FontSize="12" />
+                        <Label Text="Raid — a success steals this territory" IsVisible="{Binding IsRaid}"
+                               FontFamily="{StaticResource BodyFont}" FontAttributes="Italic" TextColor="#9C6D4F" FontSize="13" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <HorizontalStackLayout IsVisible="{Binding HasPendingChallenge}" Spacing="8">
+                    <Button x:Name="SucceedButton" Text="Succeeded" Clicked="OnSucceedClicked"
+                            Style="{StaticResource PrimaryButtonStyle}" />
+                    <Button x:Name="FailButton" Text="Failed" Clicked="OnFailClicked"
+                            Style="{StaticResource FeltButtonStyle}" />
+                </HorizontalStackLayout>
+
+                <Label Text="{Binding Flash}" FontFamily="{StaticResource BodyFont}" FontAttributes="Italic" TextColor="{StaticResource GoldBrightColor}" FontSize="14" Margin="0,8,0,0" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsGameOver}" Spacing="14">
+                <Label Text="Territory" Style="{StaticResource HeaderLabelStyle}" TextColor="{StaticResource GoldBrightColor}" />
+                <Label Text="{Binding Summary}" TextColor="#E5E7EB" FontSize="15" LineHeight="1.5" />
+                <Button x:Name="DoneButton" Text="Back to games" Clicked="OnDoneClicked"
+                        Style="{StaticResource PrimaryButtonStyle}" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

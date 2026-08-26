@@ -37,6 +37,10 @@ internal sealed class ConsoleGameLauncher
     [
         ControllerFamily.CardTurn,
         ControllerFamily.Quiz,
+        ControllerFamily.Monogamy,
+        ControllerFamily.DailyCampaign,
+        ControllerFamily.AreaControl,
+        ControllerFamily.SimultaneousAnswer,
     ];
 
     private readonly IPlayerRepository  _repository;
@@ -106,12 +110,16 @@ internal sealed class ConsoleGameLauncher
     private void RunMode(IGameMode mode, IReadOnlyList<IPlayer> players)
     {
         // Monogamy needs a token target before building the controller, so handle it first.
-        if (mode is MonogamyMode)
+        // Capability dispatch, not a concrete-type check — matches how
+        // ControllerFactory and ControllerFamilies pick this family, and
+        // generalises to any future IMonogamyDeckProvider mode rather than
+        // staying pinned to the one that exists today.
+        if (mode is IMonogamyDeckProvider monogamyProvider)
         {
             var target     = ConsoleUi.PromptInt("Tokens to win?", 3, 30);
             var controller = new MonogamyController(
                 players,
-                TableTop.Games.Data.MonogamyCardBank.All,
+                monogamyProvider.GetDeck(),
                 winningTokenCount: target);
             new ConsoleMonogamyRenderer(controller).RunBlocking();
             return;
@@ -142,16 +150,26 @@ internal sealed class ConsoleGameLauncher
                 new ConsoleCardTurnRenderer(turn, mode.Name).RunBlocking();
                 break;
 
-            // Console renders only the two families above. Everything else —
-            // Monogamy, Day One, Claimed!, Herd — has no console renderer, and
-            // this arm exists because previously they fell off the end of the
-            // switch and the launcher simply returned, leaving the player at a
-            // menu with no indication anything had happened. Four modes behaved
-            // that way, two of them for several versions.
-            //
-            // Saying so plainly is the honest fix; writing four console
-            // renderers is a much larger piece of work and should be a
-            // deliberate choice rather than something smuggled in here.
+            case IDayOneController day:
+                new ConsoleDayOneRenderer(day).RunBlocking();
+                break;
+
+            case IClaimedController claimed:
+                new ConsoleClaimedRenderer(claimed).RunBlocking();
+                break;
+
+            case IHerdController herd:
+                new ConsoleHerdRenderer(herd).RunBlocking();
+                break;
+
+            // Every family the catalogue can produce has a renderer now
+            // (backlog item 4) — this arm stays as a safety net for a future
+            // family that ships a controller before Console's renderer for
+            // it, not because any mode currently reaches it. It previously
+            // fell off the end of the switch entirely and the launcher simply
+            // returned, leaving the player at a menu with no indication
+            // anything had happened — four modes behaved that way, two of
+            // them for several versions, before this arm existed.
             default:
                 SC.WriteLine();
                 SC.ForegroundColor = CC.Yellow;
