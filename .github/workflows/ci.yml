@@ -82,6 +82,38 @@ jobs:
           fi
           echo "no brace-expansion artefacts"
 
+  # ── Security scanning ────────────────────────────────────────────────────
+  # Filesystem scan for known-vulnerable NuGet packages and committed secrets.
+  # Independent of the build and the SDK, same reasoning as the xaml job
+  # above: it should still report even when the build itself is red.
+  trivy:
+    name: Trivy Vulnerability Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH
+          # Report-only for now — this job has no baseline yet. Same staged
+          # rollout as TreatWarningsAsErrors on the UI heads below: turn this
+          # into a real gate (exit-code: 1) once the current findings are
+          # triaged, not on day one against an unknown starting point.
+          exit-code: "0"
+
+      - name: Upload results to the Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+
   build-and-test:
     name: Build & Test
     runs-on: ubuntu-latest
@@ -272,3 +304,83 @@ jobs:
              --no-restore -c Release
              /p:TreatWarningsAsErrors=true
              /p:GenerateDocumentationFile=true
+
+  # ── SonarCloud ────────────────────────────────────────────────────────────
+  # Static analysis: code smells, duplication, maintainability rating, and PR
+  # decoration. Runs its own build wrapped in `sonarscanner begin`/`end`
+  # rather than reusing build-and-test's output, so it doesn't depend on that
+  # job's artifact timing — the trade-off is a second compile, which is cheap
+  # next to the analysis itself.
+  #
+  # Needs two things this repo cannot self-provision, so this job will fail
+  # until whoever owns the SonarCloud org does both:
+  #   1. Create the project at sonarcloud.io (or import the repo via the
+  #      SonarCloud GitHub App), then replace SONAR_PROJECT_KEY and
+  #      SONAR_ORG below with the values it assigns.
+  #   2. Add a SONAR_TOKEN repository secret (Settings -> Secrets and
+  #      variables -> Actions), generated from SonarCloud's
+  #      My Account -> Security page.
+  #
+  # Coverage import (sonar.cs.opencover.reportsPaths or equivalent) isn't
+  # wired up yet — build-and-test's coverage step emits Cobertura via
+  # coverlet's `XPlat Code Coverage` collector, and confirming the right
+  # SonarCloud-side property for that format needs a real SonarCloud project
+  # to test against, which doesn't exist until step 1 above happens. Static
+  # analysis works without it; that's a follow-up, not a blocker.
+  #
+  # Skipped on PRs from forks: GitHub withholds repository secrets from
+  # fork-originated pull_request runs, so SONAR_TOKEN would be empty there
+  # and analysis would fail outright rather than degrade gracefully.
+  #
+  # continue-on-error: this job WILL fail until SONAR_PROJECT_KEY/SONAR_ORG
+  # above are real and SONAR_TOKEN is set — that's an external-service setup
+  # step, not something in this repo. Non-blocking until then, so "CI is red"
+  # keeps meaning "something in this repo is broken", not "nobody's created
+  # the SonarCloud project yet". Remove once both are configured.
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    continue-on-error: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # SonarCloud wants full history for blame data and PR decoration
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Restore local tools
+        run: dotnet tool restore
+
+      - name: Restore packages
+        run: dotnet restore TableTop.Engine.slnx
+
+      - name: Begin SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          dotnet sonarscanner begin
+          /k:"SONAR_PROJECT_KEY"
+          /o:"SONAR_ORG"
+          /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          /d:sonar.host.url="https://sonarcloud.io"
+
+      - name: Build
+        run: dotnet build TableTop.Engine.slnx --no-restore -c Release
+
+      - name: End SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
