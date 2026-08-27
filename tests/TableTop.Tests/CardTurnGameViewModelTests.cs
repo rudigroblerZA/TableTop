@@ -292,7 +292,7 @@ public sealed class CardTurnGameViewModelTests
     // a successful save already used.
 
     [Fact]
-    public void SaveSession_WhenPersistenceThrowsIOException_ReportsFailureInsteadOfCrashing()
+    public async Task SaveSession_WhenPersistenceThrowsIOException_ReportsFailureInsteadOfCrashing()
     {
         var cards = TableTop.Tests.Helpers.TestFactory.MakeCards(5);
         var controller = TableTop.Tests.Helpers.TestFactory.BuildController(
@@ -303,12 +303,12 @@ public sealed class CardTurnGameViewModelTests
 
         var act = () => vm.SaveSession();
 
-        act.Should().NotThrow();
+        await act.Should().NotThrowAsync();
         vm.FlashText.Should().Contain("Couldn't save");
     }
 
     [Fact]
-    public void SaveSession_WhenPersistenceThrowsUnauthorizedAccessException_ReportsFailureInsteadOfCrashing()
+    public async Task SaveSession_WhenPersistenceThrowsUnauthorizedAccessException_ReportsFailureInsteadOfCrashing()
     {
         var cards = TableTop.Tests.Helpers.TestFactory.MakeCards(5);
         var controller = TableTop.Tests.Helpers.TestFactory.BuildController(
@@ -319,12 +319,12 @@ public sealed class CardTurnGameViewModelTests
 
         var act = () => vm.SaveSession();
 
-        act.Should().NotThrow();
+        await act.Should().NotThrowAsync();
         vm.FlashText.Should().Contain("Couldn't save");
     }
 
     [Fact]
-    public void SaveSession_OnSuccess_StillReportsSessionSaved()
+    public async Task SaveSession_OnSuccess_StillReportsSessionSaved()
     {
         var cards = TableTop.Tests.Helpers.TestFactory.MakeCards(5);
         var controller = TableTop.Tests.Helpers.TestFactory.BuildController(
@@ -333,7 +333,7 @@ public sealed class CardTurnGameViewModelTests
             new FakeNavigator(), new WouldYouRatherMode(), controller,
             timerEnabled: false, timerSeconds: 0, showCardCount: true);
 
-        vm.SaveSession();
+        await vm.SaveSession();
 
         vm.FlashText.Should().Be("Session saved");
     }
