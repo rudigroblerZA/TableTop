@@ -18,12 +18,11 @@ referred to without being renumbered (item 7 explains what happens otherwise).
 This is the ordering to work in. It comes from a UI-architecture review that cut
 across the existing numbering rather than adding to it.
 
-| | Item | Why it matters |
-|---|---|---|
-| **P2** | **21** — stale UI comments | Nineteen surviving WPF references; several describe the WinUI file they sit in as WPF. One user-facing settings label may be wrong too. |
+This table is now empty — **item 21, its last P2 entry, is closed** (see
+below). Nothing outstanding is currently between a player and a working game.
 
-**Items 4, 5, 12, 18, 19 and 20 are all closed** and have dropped out of this
-table entirely. Item 12 closed the coverage *mechanism* — the declarations
+**Items 4, 5, 12, 18, 19, 20 and 21 are all closed** and have dropped out of
+this table entirely. Item 12 closed the coverage *mechanism* — the declarations
 and the gate that keeps them honest. Item 4 closed the actual gap that
 mechanism was reporting: real screens on every head for every family in the
 catalogue. Item 5 gave both heads a real composition root, so a
@@ -35,10 +34,13 @@ reads now go through the injected `IAppSettings` — and fixed the one
 persistence path that most needed it: a saved session failing silently. Item
 20 gave the three blocking MAUI pages a two-phase construct-then-initialise
 shape and converted WinUI's `ResumeCommand` to the async-command idiom the
-rest of the codebase already used. See each item's own section below.
+rest of the codebase already used. Item 21 removed the surviving comments that
+described the WinUI files they sit in as WPF, and fixed the one that was
+outright wrong about MAUI's save behaviour. See each item's own section below.
 
-Items 2, 3, 8, 13, 15 and 16 sit below this — real, but none of them is
-between a player and a working game.
+Items 2, 3, 8 and 15 sit below this — real, but none of them is between a
+player and a working game, and each needs either a human decision or hardware
+this project doesn't have in CI. Item 13 is now also closed in full.
 
 **1.21.0 removed a guard without replacing it, and that is worth a decision
 rather than a shrug.** `AgeVocabularyTests` checked that
@@ -588,7 +590,7 @@ Same shape as the WinUI message, same fix: dropped the second line rather than
 deriving it from MAUI's declared families, since that would need a project
 reference Console has no other reason to carry.
 
-### 13. The doc counts disagree — **mode and card counts CLOSED; test count still open**
+### 13. The doc counts disagree — **CLOSED**
 
 The finding: README said 91 modes, ARCHITECTURE said 91 in one place and 97 in
 another, this backlog said 97, and the tree had 97 registered.
@@ -629,9 +631,34 @@ closed for modes and neither document's card figure had ever been checked
 by anything. README's **99 modes, 3,657 cards** is what the guard confirms
 the tree actually holds; `ARCHITECTURE.md` is corrected to match.
 
-**Still open — the test count.** README says 776; ARCHITECTURE says roughly 900.
-Neither is checked and the real figure moved again with 1.21.0's removals. Lower
-value than the card count: nobody makes a decision on it.
+**Now closed for the test count too.** `Readme_test_count_matches_the_assembly`
+counts test cases the way `dotnet test` actually reports them — reflecting over
+the test assembly for `[Fact]` methods (1 each) and `[Theory]` methods'
+`[InlineData]` rows (one per row), rather than trusting a number typed into
+prose. `TheoryAttribute` derives from `FactAttribute`, so a Theory method is
+checked first or it would double-count as a Fact too. README's stale **776**
+is corrected to **863** — the real number, confirmed by the guard itself
+failing on CI's actual `dotnet test` run.
+
+Worth recording exactly how, since it's the point of writing the guard as
+reflection rather than trusting a hand count. Authored with no local `dotnet`
+in this sandbox, so the README figure going into the PR was a static grep-based
+estimate of attribute usage in source — 871, arrived at by counting `[Fact]`/
+`[Theory]`/`[InlineData]` occurrences and excluding the false positives that
+came from this very guard's own doc comment, which mentions those same
+attribute names in prose and had inflated a first, naive pass of the count.
+CI's real run disagreed anyway — the assertion failure named the actual figure
+directly (863, a difference of 8 from the estimate) — and README was corrected
+to match in a follow-up push. The eight-count gap between careful static
+counting and the real reflected total is itself the argument for why this
+guard reflects over the assembly instead of grep-counting attributes: even a
+careful static count missed something a real `Type.GetMethods` pass didn't.
+
+Only covers `[InlineData]`: this assembly has no `[MemberData]` or `[ClassData]`
+today (checked when the guard was written). If one is added later without
+updating the guard, it will silently undercount rather than fail loudly — the
+same kind of scope note the mode and card guards above already carry for their
+own blind spots.
 
 ### 14. Process-wide statics vs. parallel test classes — **half closed in 1.19.0**
 
@@ -1092,7 +1119,7 @@ this is confirmed by reading the diff (no `.GetAwaiter().GetResult()`
 remains in any of the four call sites, and every caller now awaits
 correctly) rather than by measuring a frame that no longer drops.
 
-### 21. Comments describe a head that no longer exists
+### 21. Comments describe a head that no longer exists — **CLOSED**
 
 **P2, and the cheapest item here.** Nineteen references to WPF survive its
 removal, and they are not all harmless historical notes:
@@ -1119,6 +1146,31 @@ if the comment is wrong the label may be too, and the label is user-facing.
 **Rule for this pass:** delete a comment that misdescribes the file it is in;
 keep one that contrasts against WPF to explain a decision. The distinction is
 whether WPF is the subject or the foil.
+
+**Closed.** `FilteredArchetypeRegistry.cs` no longer calls itself "the WPF
+counterpart"; `WinUIAppSettings.cs` no longer describes its own behaviour as
+WPF's. The four engine-side files (`IGameController`, `IHintEngine`,
+`CardText`, `BaseGameModeDefinition`) had WPF replaced with Console/WinUI/MAUI
+in their example-host lists. `CardText.cs`'s claim that "WPF's HtmlTextBlock"
+renders the card banks' HTML markup natively was also wrong on its own terms —
+traced the actual behaviour and found `CardTurnGameViewModel` strips that
+markup unconditionally before either graphical head ever sees it, so no head
+renders it; rewritten to say so instead of naming a substitute control that
+doesn't exist.
+
+The separately-flagged wrong claim is fixed too: `WinUIAppSettings.cs` said
+MAUI "auto-saves at game start" — checked against `PlayerSetupViewModel`
+(shared by both heads since the composition-root work), which documents
+`SaveRosterAsDefault` as explicit-only, starting a game does not do this in
+either head. The comment was simply false; corrected to match, and
+`SettingsPage.xaml`'s "All settings are saved automatically" label was checked
+against the same behaviour and left alone since it describes settings, not the
+roster.
+
+Kept, per this item's own rule, as genuine contrast rather than
+self-misdescription: `ViewLocator.cs`, `BoolToVisibilityConverter.cs`,
+`RelayCommand.cs`, and the remaining engine-side mentions that list WPF/MAUI/
+Console as example UI hosts rather than describing the file's own identity.
 
 ### 22. `MillionaireGameViewModelTests` is flaky — it drives a shuffled real deck — **CLOSED**
 
