@@ -79,12 +79,4 @@ public sealed class TimeBasedScoringStrategy : IScoringStrategy
         if (elapsed <= _slowThreshold) return _slowPoints;
         return 0;
     }
-
-    /// <inheritdoc />
-    /// <remarks>
-    /// This overload is called by the engine's standard path (without timing).
-    /// It treats the outcome as untimed — equivalent to a very slow answer.
-    /// </remarks>
-    public int CalculateScore(ICard card, IPlayer player, CardOutcome outcome) =>
-        CalculateScore(card, player, outcome, elapsed: null);
 }

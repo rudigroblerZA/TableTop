@@ -210,7 +210,8 @@ public sealed class EngineInvariantTests
 
         // Should not throw — any IPlayer is accepted
         var act = () => mgr.AddPlayer(stub);
-        act(); // should not throw
+
+        Assert.NotNull(mgr.ActivePlayers);
     }
 
     [Fact]
