@@ -20,7 +20,7 @@ public partial class HerdGamePage : ContentPage
     private void OnRevealClicked(object sender, EventArgs e) => _vm.Reveal();
     private void OnDismissLastRoundClicked(object sender, EventArgs e) => _vm.DismissLastRound();
 
-    private async void OnDoneClicked(object sender, EventArgs e) => await Navigation.PopToRootAsync();
+    private async void OnDoneClicked(object sender, EventArgs e) => await this.SafePopToRootAsync();
 
     /// <inheritdoc />
     protected override void OnDisappearing()

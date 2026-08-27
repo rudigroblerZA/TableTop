@@ -26,7 +26,7 @@ public partial class ClaimedGamePage : ContentPage
     private void OnSucceedClicked(object sender, EventArgs e) => _vm.Succeed();
     private void OnFailClicked(object sender, EventArgs e) => _vm.Fail();
 
-    private async void OnDoneClicked(object sender, EventArgs e) => await Navigation.PopToRootAsync();
+    private async void OnDoneClicked(object sender, EventArgs e) => await this.SafePopToRootAsync();
 
     /// <inheritdoc />
     protected override void OnDisappearing()

@@ -39,8 +39,26 @@ public partial class SettingsPage : ContentPage
         };
     }
 
-    private async void OnRoasterClicked(object sender, EventArgs e) =>
-        await Navigation.PushAsync(new RoasterPage());
+    // One navigation at a time, same as GameSelectionPage. Two PushAsync
+    // calls in flight — trivially caused by an impatient double-tap — throw,
+    // and an exception escaping an async void handler terminates the process
+    // on Android rather than being caught anywhere useful.
+    private bool _navigating;
+
+    private async void OnRoasterClicked(object sender, EventArgs e)
+    {
+        if (_navigating) return;
+        _navigating = true;
+        try
+        {
+            await Navigation.PushAsync(new RoasterPage());
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Couldn't open the roster builder", ex.Message, "OK");
+        }
+        finally { _navigating = false; }
+    }
 
     private async void OnResetClicked(object sender, EventArgs e)
     {

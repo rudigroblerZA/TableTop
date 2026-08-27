@@ -27,7 +27,7 @@ public partial class MonogamyGamePage : ContentPage
     private void OnNegotiateClicked(object sender, EventArgs e) => _vm.Negotiate();
     private void OnSkipClicked(object sender, EventArgs e) => _vm.Skip();
 
-    private async void OnDoneClicked(object sender, EventArgs e) => await Navigation.PopToRootAsync();
+    private async void OnDoneClicked(object sender, EventArgs e) => await this.SafePopToRootAsync();
 
     /// <inheritdoc />
     protected override void OnDisappearing()

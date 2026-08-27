@@ -26,8 +26,12 @@ across the existing numbering rather than adding to it.
 | **P2** | **24** — `RoasterViewModel` is the only shared ViewModel with no tests | Nine of the ten in `TableTop.Presentation` have a test file. This one has none, and it is the newest and least exercised. |
 | **P2** | **25** — saved rosters are a closed loop | You can build and persist a roster, and then never play with it. Nothing outside the Roaster screen reads a `SavedRoster`. |
 | **P2** | **26** — the "Team" roster template promises sides it never assigns | Teams are a real first-class concept (`ITeamMode`, `AssignTeams`). The template's description says "split into sides" and does nothing of the kind. |
-| **P3** | **27** — unguarded `async void` handlers on six MAUI pages | The codebase documents that an escaping exception here kills the process on Android, and guards four handlers. Six others, including one added in 1.28.0, are bare. |
 | **P3** | **28** — Console has no Roaster | Third head, no roster builder and no `IRosterStore`. Smallest of the parity gaps but the one now written down. |
+
+**Item 27 is closed** and has dropped out of this table. It turned out to be
+eight unguarded handlers rather than the six this item counted by reading —
+the two extras found by the gate the item proposed, written before the fix
+for exactly that reason. `check-maui-async-void.py` now enforces it in CI.
 
 Items 23–28 came from a review of the tree at 1.28.0 — the first review run
 on a machine with a full toolchain *and* a green suite, so unlike earlier
@@ -1502,7 +1506,7 @@ to what the template actually does — a bigger group with a higher floor. The
 first is better and is entangled with item 25: a roster that carries team
 assignments is only worth building if something downstream can consume it.
 
-### 27. Six MAUI `async void` handlers are unguarded
+### 27. Six MAUI `async void` handlers are unguarded — **CLOSED (it was eight)**
 
 **P3.** This codebase already knows the hazard and writes it down in four
 places. Three say it verbatim — *"An exception escaping an async void handler
@@ -1540,6 +1544,48 @@ A `check-*.py` gate would fit the existing pattern exactly: flag any `async
 void` event handler in a MAUI page whose body is not wrapped in a try/catch.
 That is a purely syntactic check, which is what the other six gates are.
 
+**Closed — and the count in this item's own title was wrong.** Writing the
+proposed gate first, before fixing anything, is what exposed that: it found
+**eight** unguarded handlers, not six. The two the manual read had missed:
+
+- **`GameSelectionPage.OnAppearing`** — the only handler in the app that runs
+  with no user action at all, on every appearance of the landing page. Low
+  real risk, because `SavedSessionLookup.RefreshAsync` catches everything
+  internally, so nothing can currently reach the handler — but that is a
+  property of today's implementation rather than a guarantee, the same
+  distinction item 20 drew about its deadlock. Guarded, and deliberately
+  silent: a resume offer that can't be built is not worth an alert on a
+  screen the player just opened.
+- **`PlayerSetupPage.OnSaveRosterClicked`** — genuinely exposed.
+  `SaveRosterAsDefault` writes through `IAppSettings`, which on MAUI is
+  `Preferences`-backed and catches nothing (item 19 left that alone on
+  purpose — `Preferences` is not file I/O), and the `DisplayAlert` that
+  follows can throw in its own right.
+
+**The five identical `OnDoneClicked` one-liners were fixed by extraction, not
+by five try/catch blocks.** `SafeNavigation.SafePopToRootAsync` (a `Page`
+extension in `ui/TableTop.Maui/Pages`) owns the guard once and each page
+delegates in a single line. Copy-pasting the same ten lines five times would
+have restated the rule five times — precisely the "a guard that duplicates
+the thing it's checking is the shape that rots" failure this file's own
+Guards section closes on. `SettingsPage.OnRoasterClicked` got the fuller
+treatment instead, because it is a `PushAsync` reachable by double-tap: a
+`_navigating` re-entrancy flag *and* a try/catch, matching
+`GameSelectionPage` exactly.
+
+**`scripts/check-maui-async-void.py` is what makes this stay closed**, and it
+is wired into CI's `xaml` job alongside the other six. Verified it catches
+drift, not merely that it passes: reverting one `OnDoneClicked` to the bare
+`await Navigation.PopToRootAsync()` made it fail naming that exact file and
+line; restoring it made it pass again. All 16 `async void` handlers across 12
+MAUI pages now report guarded.
+
+The lesson generalises past this item, and is the reason the gate was written
+before the fix rather than after: **a rule enforced by review gets applied at
+the rate people remember it — here, 4 of 12 — and a careful manual audit of
+the remainder still missed a quarter of what was left.** The gate found in one
+run what two passes of reading did not.
+
 ### 28. Console has no Roaster
 
 **P3, the smallest gap here, recorded so it stops being invisible.** The
@@ -1574,10 +1620,11 @@ to what it catches, fix the false positive — don't delete the check.
 | `check-xaml-bindings.py` | bindings resolving to nothing — silently empty UI | a dropped `StartCommand` binding |
 | `check-mvvm-method-parity.py` | MAUI page calling a method a shared VM only exposes as `ICommand` | four call sites broke in one build |
 | `check-head-family-coverage.py` | a head's declared `SupportedFamilies` drifting from `HeadFamilyCoverageTests`' copy of it | WinUI shipped with no declaration at all, and the coverage test that should have caught that read only its own copy |
+| `check-maui-async-void.py` | an `async void` MAUI handler that awaits without a try/catch — on Android an escaping exception kills the process | the rule was documented above four handlers and applied by hand; eight others never got it, two of which a careful manual count still missed |
 | `PublicApiSurfaceTests` | unnoticed breaking change to public surface | written proactively |
 | `ModeManifestExtensions` dispatch | a mode's manifest reporting zero cards | `Claimed!` excluded from capped `SurpriseMe` for a version |
 
-All six `check-*.py` gates pass, verified by actually running them on Windows
+All seven `check-*.py` gates pass, verified by actually running them on Windows
 with Python 3.12 (matching CI's pin). `check-ui-compiles.py` passes too, on a
 machine that has both Python and the .NET SDK — the first time that has been
 confirmed rather than assumed.
