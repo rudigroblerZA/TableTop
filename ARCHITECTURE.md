@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.27.0**, August 2026. This replaces the accumulated
+Current as of **1.28.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -417,6 +417,32 @@ gained the same construct/`CreateAsync` split one level down, since its own
 constructor was the thing blocking `GameplayPage`. Monogamy/Claimed/Herd's
 pages were untouched — they build through synchronous factories with no
 async work to block on, a different shape rather than a template to copy.
+
+- **1.28.0** closed backlog items 2, 13, 15, 16, 18, 19, 20 and 21 — see each
+  item's own section in `BACKLOG.md` for the full account; items 18–20 are
+  also narrated above. The headline of the batch is item 2:
+  `tests/TableTop.UiTests` had apparently never actually run to a real result
+  anywhere (its CI job has the WinUI-build and UI-test steps commented out),
+  and turned out to be three real bugs deep — a test host that couldn't
+  start, a reflection lookup broken by a newer BCL overload, and a null
+  default crashing two ViewModel constructors — plus a structural gap where
+  the test scanned an assembly (`TableTop.WinUI`) with nothing mutable in it,
+  when every settable ViewModel lives in `TableTop.Presentation` instead.
+  Alongside the fixes: **Roaster**, a new three-column roster builder
+  (templates → configure → save) reachable from MAUI's Settings screen and
+  WinUI's Intro screen. `RoasterViewModel`/`RoasterTemplate`/`SavedRoster`/
+  `IRosterStore` live in `TableTop.Presentation` — the same call this project
+  makes for every screen with no platform-specific values to carry — with
+  each head supplying its own `IRosterStore` (MAUI's existing
+  Preferences-backed store, and a new `WinUIRosterStore` mirroring
+  `WinUIAppSettings`'s local-JSON-file pattern). WinUI's entry point sits on
+  Intro rather than Settings: `SettingsViewModel` is shared and holds only
+  `INavigator` (`GoBack()` only, by design, so MAUI can still construct it),
+  and opening an arbitrary new screen needs the concrete
+  `Navigator.Navigate(ViewModelBase)`, which only WinUI-local ViewModels like
+  `IntroViewModel` hold. MINOR: new capability (Roaster), plus fixes and a
+  test-infrastructure repair — nothing removed from the public surface of
+  Core, Games or Hosting.
 
 ## What genuinely doesn't exist here
 
