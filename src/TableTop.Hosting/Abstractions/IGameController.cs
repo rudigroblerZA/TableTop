@@ -3,7 +3,7 @@ namespace TableTop.Hosting.Abstractions;
 /// <summary>
 /// Base contract for all game controllers.
 /// A controller owns the game loop state machine and raises typed events.
-/// It has no knowledge of any UI — Console and WPF both subscribe to the same events.
+/// It has no knowledge of any UI — Console and WinUI both subscribe to the same events.
 ///
 /// <para>
 /// <strong>Lifecycle:</strong> call <see cref="IDisposable.Dispose"/> when the game ends

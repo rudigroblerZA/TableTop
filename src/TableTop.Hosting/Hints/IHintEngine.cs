@@ -10,7 +10,7 @@ namespace TableTop.Hosting.Hints;
 /// a subtle suggestion for where to go next.
 ///
 /// Completely UI-agnostic: produces <see cref="NextTurnHint"/> data records that
-/// any renderer (Console, WPF, MAUI, test assertions) can consume without modification.
+/// any renderer (Console, WinUI, MAUI, test assertions) can consume without modification.
 /// </summary>
 public interface IHintEngine
 {
