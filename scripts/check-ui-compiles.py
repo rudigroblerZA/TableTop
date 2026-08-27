@@ -80,6 +80,15 @@ def main() -> int:
         print("No UI heads found — nothing to check.")
         return 0
 
+    # A check that cannot run must SAY so, not raise. Every other gate here
+    # degrades or reports cleanly when its prerequisite is missing; this one
+    # needs the SDK and, unguarded, dies with a bare Python traceback that
+    # gets mistaken for "the environment is broken" rather than "the code
+    # is broken" — see backlog item 16.
+    if shutil.which("dotnet") is None:
+        print("  SKIPPED: no .NET SDK on PATH — nothing was verified.")
+        return 2
+
     work = Path(tempfile.mkdtemp(prefix="uicheck-"))
     try:
         (work / "u.csproj").write_text(f"""<Project Sdk="Microsoft.NET.Sdk">

@@ -682,21 +682,29 @@ raw should exclude doc comments too, or whether the next extraction happens
 now, before someone hits this while doing something unrelated and reads the
 failure as noise.
 
-### 16. `check-ui-compiles.py` dies with a traceback when `dotnet` is absent
+### 16. `check-ui-compiles.py` dies with a traceback when `dotnet` is absent — **CLOSED**
 
-It calls `subprocess.run(["dotnet", …])` unguarded and raises
+It called `subprocess.run(["dotnet", …])` unguarded and raised
 `FileNotFoundError` with a full Python traceback. Every other gate degrades or
 reports cleanly. Its sibling scripts are pure-Python and run in the XAML CI job
-precisely because they need no SDK; this one needs one and doesn't say so.
+precisely because they need no SDK; this one needs one and didn't say so.
 
-Small fix, real value: a `shutil.which("dotnet")` check with an explicit
-"skipped, no SDK" message and a chosen exit code. 1.19.0 raised the stakes
-slightly: the compile error in item 9 is exactly what this check exists to
-catch, and it stayed hidden partly because the check dies noisily enough to be
-mistaken for the environment rather than the code. This is a check whose entire
-purpose is to report a nuanced result honestly — see its known limitation about
-unresolvable framework types masking first-party errors — and it currently
-cannot distinguish "no toolchain" from "your code is broken."
+1.19.0 raised the stakes slightly: the compile error in item 9 is exactly what
+this check exists to catch, and it stayed hidden partly because the check died
+noisily enough to be mistaken for the environment rather than the code. This is
+a check whose entire purpose is to report a nuanced result honestly — see its
+known limitation about unresolvable framework types masking first-party
+errors — and it could not distinguish "no toolchain" from "your code is
+broken."
+
+**Closed.** A `shutil.which("dotnet") is None` guard at the top of `main()`
+now prints `SKIPPED: no .NET SDK on PATH — nothing was verified.` and returns
+2 — the same exit code the restore-failure and ambiguous-output branches
+already used for "could not verify anything," rather than a bare traceback.
+Confirmed the old code actually crashed this way (`subprocess.run(["dotnet",
+…])` raising `FileNotFoundError` when `dotnet` isn't on `PATH`) before fixing
+it, on a machine with no SDK installed at all — exactly the environment this
+item describes, not a hypothetical.
 
 ### 17. A player who isn't tagged gets a quietly stripped deck, not an explanation — **CLOSED**
 
