@@ -14,7 +14,7 @@
         same reasoning). Explicit rows give each column's list a bounded * row
         that scrolls internally instead.
     -->
-    <Grid Padding="12" ColumnSpacing="10" ColumnDefinitions="1*,1.4*,1*">
+    <Grid Padding="12" ColumnSpacing="10" ColumnDefinitions="1*,1.5*,1*">
 
         <!-- ══ COLUMN 1 — TEMPLATES ═══════════════════════════════════════ -->
         <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="8">
@@ -41,6 +41,9 @@
                                 <Label Text="{Binding Description}"
                                        FontSize="11"
                                        TextColor="{StaticResource TextSecondary}" />
+                                <Label Text="{Binding RequirementText}"
+                                       FontSize="10"
+                                       TextColor="{StaticResource PrimaryColor}" />
                             </VerticalStackLayout>
                         </Frame>
                     </DataTemplate>
@@ -49,7 +52,7 @@
         </Grid>
 
         <!-- ══ COLUMN 2 — CONFIGURE ═══════════════════════════════════════ -->
-        <Grid Grid.Column="1" RowDefinitions="Auto,Auto,Auto,Auto,*,Auto" RowSpacing="8">
+        <Grid Grid.Column="1" RowDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto" RowSpacing="8">
             <Label Grid.Row="0"
                    Text="Configure"
                    Style="{StaticResource SubheaderLabelStyle}" />
@@ -66,17 +69,35 @@
                    Text="{Binding RoasterName}"
                    TextColor="White" />
 
-            <HorizontalStackLayout Grid.Row="3" IsVisible="{Binding IsConfiguring}" Spacing="8">
-                <Entry Placeholder="Player name"
+            <!-- Name / gender / age — same fields and the same SavedPlayer shape
+                 PlayerSetupViewModel already builds a roster from at setup, so a
+                 saved roster is a real, reusable player list rather than a
+                 disconnected list of strings. -->
+            <Grid Grid.Row="3" IsVisible="{Binding IsConfiguring}"
+                  ColumnDefinitions="2*,1.2*,0.8*,Auto" ColumnSpacing="6">
+                <Entry Grid.Column="0"
+                       Placeholder="Name"
                        Text="{Binding NewPlayerName}"
                        TextColor="White"
-                       WidthRequest="180"
                        Completed="OnAddPlayerClicked" />
-                <Button Text="Add"
+                <Picker Grid.Column="1"
+                        Title="Gender"
+                        ItemsSource="{Binding GenderOptions}"
+                        SelectedItem="{Binding SelectedGender}"
+                        TextColor="White" />
+                <Entry Grid.Column="2"
+                       Placeholder="Age"
+                       Keyboard="Numeric"
+                       Text="{Binding NewPlayerAge}"
+                       TextColor="White"
+                       Completed="OnAddPlayerClicked" />
+                <Button Grid.Column="3"
+                        Text="Add"
                         Clicked="OnAddPlayerClicked"
+                        IsEnabled="{Binding CanAddPlayer}"
                         BackgroundColor="{StaticResource PrimaryColor}"
                         TextColor="#22160A" />
-            </HorizontalStackLayout>
+            </Grid>
 
             <CollectionView Grid.Row="4" ItemsSource="{Binding ConfiguredPlayers}">
                 <CollectionView.EmptyView>
@@ -87,10 +108,17 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <HorizontalStackLayout Spacing="8" Padding="4,6">
-                            <Label Text="{Binding .}"
-                                   TextColor="{StaticResource TextPrimary}"
+                            <Label TextColor="{StaticResource TextPrimary}"
                                    VerticalOptions="Center"
-                                   HorizontalOptions="FillAndExpand" />
+                                   HorizontalOptions="FillAndExpand">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="{Binding Name}" FontAttributes="Bold" />
+                                        <Span Text="{Binding Gender, StringFormat=' · {0}', TargetNullValue=''}" TextColor="{StaticResource TextSecondary}" />
+                                        <Span Text="{Binding Age, StringFormat=' · {0}', TargetNullValue=''}" TextColor="{StaticResource TextSecondary}" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
                             <Button Text="✕"
                                     Clicked="OnRemovePlayerClicked"
                                     BackgroundColor="Transparent"
@@ -101,10 +129,17 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <Button Grid.Row="5"
+            <Label Grid.Row="5"
+                   IsVisible="{Binding IsConfiguring}"
+                   Text="{Binding SaveBlockedReason}"
+                   FontSize="11"
+                   TextColor="{StaticResource TextSecondary}" />
+
+            <Button Grid.Row="6"
                     IsVisible="{Binding IsConfiguring}"
                     Text="Save Roster"
                     Clicked="OnSaveRosterClicked"
+                    IsEnabled="{Binding CanSaveRoster}"
                     BackgroundColor="{StaticResource PrimaryColor}"
                     TextColor="#22160A"
                     FontAttributes="Bold" />
@@ -125,15 +160,24 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame Style="{StaticResource CardStyle}" Padding="12" Margin="0,4">
-                            <VerticalStackLayout Spacing="2">
-                                <Label Text="{Binding Name}"
-                                       FontFamily="{StaticResource DisplayFont}"
-                                       FontSize="15" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextPrimary}" />
-                                <Label Text="{Binding Subtitle}"
-                                       FontSize="11"
-                                       TextColor="{StaticResource TextSecondary}" />
-                            </VerticalStackLayout>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                    <Label Text="{Binding Name}"
+                                           FontFamily="{StaticResource DisplayFont}"
+                                           FontSize="15" FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <Label Text="{Binding Subtitle}"
+                                           FontSize="11"
+                                           TextColor="{StaticResource TextSecondary}" />
+                                </VerticalStackLayout>
+                                <Button Grid.Column="1"
+                                        Text="✕"
+                                        Clicked="OnDeleteRosterClicked"
+                                        BackgroundColor="Transparent"
+                                        TextColor="{StaticResource TextSecondary}"
+                                        VerticalOptions="Start"
+                                        Padding="4,0" />
+                            </Grid>
                         </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
