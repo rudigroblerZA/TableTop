@@ -1,5 +1,4 @@
 using System.Text.Json;
-using TableTop.Maui.ViewModels;
 using TableTop.Presentation.Infrastructure;
 
 namespace TableTop.Maui.Services;
@@ -15,7 +14,7 @@ namespace TableTop.Maui.Services;
 /// of "the current saved-rosters list" avoids two independent reads/writes
 /// racing each other within a session.
 /// </summary>
-public sealed class RosterStore
+public sealed class RosterStore : IRosterStore
 {
     private const string Key = "tt_saved_rosters";
 

@@ -1,9 +1,8 @@
 using System.Collections.ObjectModel;
-using TableTop.Maui.Services;
+using System.Windows.Input;
 using TableTop.Presentation.Infrastructure;
-using TableTop.Presentation.ViewModels;
 
-namespace TableTop.Maui.ViewModels;
+namespace TableTop.Presentation.ViewModels;
 
 /// <summary>
 /// A starting shape a roster can be built from — real rules, not just a name
@@ -42,37 +41,34 @@ public sealed class RoasterTemplate
     };
 }
 
-/// <summary>A named group of players, saved for reuse.</summary>
-public sealed class SavedRoster
-{
-    /// <summary>The name the player gave this roster, or the template's name if they didn't.</summary>
-    public required string Name { get; init; }
-
-    /// <summary>The template this roster was built from.</summary>
-    public required string TemplateName { get; init; }
-
-    /// <summary>The players configured into this roster, in entry order.</summary>
-    public required IReadOnlyList<SavedPlayer> Players { get; init; }
-
-    /// <summary>"Team · 3 players", for the saved-rosters list. Not persisted — computed from <see cref="Players"/>.</summary>
-    [System.Text.Json.Serialization.JsonIgnore]
-    public string Subtitle => $"{TemplateName} · {Players.Count} player{(Players.Count == 1 ? "" : "s")}";
-}
-
 /// <summary>
 /// Drives the Roaster screen's three columns: pick a template, configure its
 /// players, save it alongside whatever rosters are already saved.
 ///
-/// Saved rosters persist across app restarts via <see cref="RosterStore"/> —
-/// the same MAUI Preferences mechanism <c>AppSettings</c> uses, under its own
-/// key so it doesn't disturb the settings schema.
+/// <para>
+/// Shared rather than duplicated per head — the same call this project has
+/// made for every screen with no platform-specific values to carry
+/// (<c>SettingsViewModel</c>, <c>PlayerSetupViewModel</c>, …). Nothing here
+/// needs a platform <c>Color</c> or font; it needs an <see cref="IRosterStore"/>,
+/// which each head supplies its own implementation of.
+/// </para>
+///
+/// <para>
+/// Exposes both an <see cref="ICommand"/> surface (<see cref="AddPlayerCommand"/>,
+/// <see cref="SaveRosterCommand"/>) for WinUI's XAML command bindings and
+/// plain methods (<see cref="AddPlayer"/>, <see cref="SaveRoster"/>) for
+/// MAUI's code-behind to call directly — the same duality every other shared
+/// ViewModel in this project already carries.
+/// </para>
 /// </summary>
-public sealed class RoasterViewModel : BindableObject
+public sealed class RoasterViewModel : ViewModelBase
 {
     // Gender options match PlayerSetupViewModel's convention exactly — "" is
     // "unspecified", the same three named genders, so a roster's players are
     // real SavedPlayer records indistinguishable from ones entered at setup.
     private static readonly string[] GenderChoices = ["", "male", "female", "other"];
+
+    private readonly IRosterStore _store;
 
     /// <summary>The fixed set of starting shapes offered in the first column.</summary>
     public ObservableCollection<RoasterTemplate> Templates { get; } =
@@ -114,12 +110,7 @@ public sealed class RoasterViewModel : BindableObject
     public string RoasterName
     {
         get => _roasterName;
-        set
-        {
-            if (_roasterName == value) return;
-            _roasterName = value;
-            OnPropertyChanged();
-        }
+        set => SetField(ref _roasterName, value);
     }
 
     /// <summary>Players added to the roster being configured, in entry order.</summary>
@@ -133,7 +124,12 @@ public sealed class RoasterViewModel : BindableObject
     public string NewPlayerName
     {
         get => _newPlayerName;
-        set { if (_newPlayerName == value) return; _newPlayerName = value; OnPropertyChanged(); OnPropertyChanged(nameof(CanAddPlayer)); }
+        set
+        {
+            if (!SetField(ref _newPlayerName, value)) return;
+            OnPropertyChanged(nameof(CanAddPlayer));
+            RaiseAddCommandState();
+        }
     }
 
     private string _newPlayerAge = "";
@@ -141,7 +137,7 @@ public sealed class RoasterViewModel : BindableObject
     public string NewPlayerAge
     {
         get => _newPlayerAge;
-        set { if (_newPlayerAge == value) return; _newPlayerAge = value; OnPropertyChanged(); }
+        set => SetField(ref _newPlayerAge, value);
     }
 
     private string _selectedGender = "";
@@ -149,7 +145,7 @@ public sealed class RoasterViewModel : BindableObject
     public string SelectedGender
     {
         get => _selectedGender;
-        set { if (_selectedGender == value) return; _selectedGender = value; OnPropertyChanged(); }
+        set => SetField(ref _selectedGender, value);
     }
 
     /// <summary>True while the roster being configured has fewer than its template's ceiling, and a name is entered.</summary>
@@ -183,13 +179,33 @@ public sealed class RoasterViewModel : BindableObject
     /// <summary>True when the configured roster satisfies its template's player-count rule.</summary>
     public bool CanSaveRoster => IsConfiguring && SaveBlockedReason.Length == 0;
 
-    /// <summary>Rosters saved so far, newest last. Loaded from <see cref="RosterStore"/> on construction.</summary>
+    /// <summary>Rosters saved so far, newest last. Loaded from <see cref="IRosterStore"/> on construction.</summary>
     public ObservableCollection<SavedRoster> SavedRosters { get; }
 
-    public RoasterViewModel()
+    /// <summary>Adds the pending entry (see <see cref="AddPlayer"/>) to the roster being configured. For WinUI's XAML command binding.</summary>
+    public ICommand AddPlayerCommand { get; }
+
+    /// <summary>Saves the roster being configured (see <see cref="SaveRoster"/>). For WinUI's XAML command binding.</summary>
+    public ICommand SaveRosterCommand { get; }
+
+    /// <summary>
+    /// Returns to the previous screen. Same shape as <c>SettingsViewModel</c>'s
+    /// own <c>BackCommand</c> — WinUI has no system back button, so every
+    /// screen supplies its own; MAUI's <c>NavigationPage</c> already gives it
+    /// one for free and simply never binds this.
+    /// </summary>
+    public ICommand BackCommand { get; }
+
+    /// <summary>Builds the Roaster screen, loading whatever rosters <paramref name="store"/> already has saved.</summary>
+    public RoasterViewModel(INavigator navigator, IRosterStore store)
     {
-        SavedRosters = new ObservableCollection<SavedRoster>(RosterStore.Instance.Load());
+        _store = store;
+        SavedRosters = new ObservableCollection<SavedRoster>(_store.Load());
         ConfiguredPlayers.CollectionChanged += (_, _) => RaiseConfigState();
+
+        AddPlayerCommand = new RelayCommand(AddPlayer, () => CanAddPlayer);
+        SaveRosterCommand = new RelayCommand(SaveRoster, () => CanSaveRoster);
+        BackCommand = new RelayCommand(navigator.GoBack);
     }
 
     private void RaiseConfigState()
@@ -197,7 +213,12 @@ public sealed class RoasterViewModel : BindableObject
         OnPropertyChanged(nameof(CanAddPlayer));
         OnPropertyChanged(nameof(SaveBlockedReason));
         OnPropertyChanged(nameof(CanSaveRoster));
+        RaiseAddCommandState();
+        RaiseSaveCommandState();
     }
+
+    private void RaiseAddCommandState() => (AddPlayerCommand as RelayCommand)?.RaiseCanExecuteChanged();
+    private void RaiseSaveCommandState() => (SaveRosterCommand as RelayCommand)?.RaiseCanExecuteChanged();
 
     /// <summary>
     /// Adds a player built from <see cref="NewPlayerName"/>/<see cref="NewPlayerAge"/>/
@@ -223,7 +244,7 @@ public sealed class RoasterViewModel : BindableObject
 
     /// <summary>
     /// Saves the roster being configured into <see cref="SavedRosters"/>,
-    /// persists the full list via <see cref="RosterStore"/>, and clears the
+    /// persists the full list via <see cref="IRosterStore"/>, and clears the
     /// middle column back to "pick a template". Does nothing if
     /// <see cref="CanSaveRoster"/> is false — the player-count rule isn't
     /// negotiable from here, only from removing or adding players.
@@ -239,7 +260,7 @@ public sealed class RoasterViewModel : BindableObject
             TemplateName = SelectedTemplate!.Name,
             Players = ConfiguredPlayers.ToList(),
         });
-        RosterStore.Instance.Save(SavedRosters);
+        _store.Save(SavedRosters);
 
         SelectedTemplate = null;
     }
@@ -248,6 +269,6 @@ public sealed class RoasterViewModel : BindableObject
     public void DeleteRoster(SavedRoster roster)
     {
         SavedRosters.Remove(roster);
-        RosterStore.Instance.Save(SavedRosters);
+        _store.Save(SavedRosters);
     }
 }
