@@ -530,7 +530,7 @@ sealed enum TableTop.Core.Abstractions.Scoring.CardOutcome
     Failed = 2
     Skipped = 1
 abstract interface TableTop.Core.Abstractions.Scoring.IScoringStrategy
-    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome)
+    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome, Nullable<TimeSpan> elapsed = default)
     String Name { get; }
 sealed class TableTop.Core.Abstractions.Scoring.TimedCardOutcome
     .ctor(CardOutcome Outcome, TimeSpan Elapsed)
@@ -739,21 +739,21 @@ sealed class TableTop.Core.Domain.Lifelines.AskTheAudienceLifeline
     .ctor()
     .ctor(Random random)
     Boolean IsAvailable { get; set; }
-    LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> audience)
+    LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> allPlayers)
     String Description { get; }
     String Name { get; }
 sealed class TableTop.Core.Domain.Lifelines.FiftyFiftyLifeline
     .ctor()
     .ctor(Random random)
     Boolean IsAvailable { get; set; }
-    LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> audience)
+    LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> allPlayers)
     String Description { get; }
     String Name { get; }
 sealed class TableTop.Core.Domain.Lifelines.PhoneAFriendLifeline
     .ctor()
     .ctor(Random random)
     Boolean IsAvailable { get; set; }
-    LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> audience)
+    LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> allPlayers)
     String Description { get; }
     String Name { get; }
 sealed class TableTop.Core.Domain.Players.Player
@@ -975,19 +975,18 @@ sealed class TableTop.Core.Domain.Rules.SkipPlayerRule
     String Name { get; }
 sealed class TableTop.Core.Domain.Scoring.DifficultyBasedScoringStrategy
     .ctor()
-    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome)
+    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome, Nullable<TimeSpan> elapsed = default)
     String Name { get; }
 sealed class TableTop.Core.Domain.Scoring.FixedScoringStrategy
     .ctor(Int32 pointsPerCompletion = default)
-    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome)
+    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome, Nullable<TimeSpan> elapsed = default)
     String Name { get; }
 sealed class TableTop.Core.Domain.Scoring.StreakScoringStrategy
     .ctor(IScoringStrategy baseStrategy, Int32 streakMultiplier = default)
-    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome)
+    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome, Nullable<TimeSpan> elapsed = default)
     String Name { get; }
 sealed class TableTop.Core.Domain.Scoring.TimeBasedScoringStrategy
     .ctor(Nullable<TimeSpan> fastThreshold = default, Nullable<TimeSpan> mediumThreshold = default, Nullable<TimeSpan> slowThreshold = default, Int32 fastPoints = default, Int32 mediumPoints = default, Int32 slowPoints = default)
-    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome)
     Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome, Nullable<TimeSpan> elapsed = default)
     String Name { get; }
 sealed class TableTop.Core.Engine.Game
