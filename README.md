@@ -14,12 +14,12 @@ A fully UI-agnostic card game engine for couples and party games.
 TableTop/
 ├── src/
 │   ├── TableTop.Core/         ← Abstractions, domain, deck/rule/scoring engine
-│   ├── TableTop.Games/        ← Game mode definitions (99 modes, 3,657 cards)
+│   ├── TableTop.Games/        ← Game mode definitions (100 modes, 3,687 cards)
 │   │                             cards live in the in-code banks; see ARCHITECTURE.md
 │   ├── TableTop.Hosting/      ← Controllers, events, hints, persistence
 │   └── TableTop.Presentation/ ← ViewModels shared by WinUI + MAUI (plain net10.0)
 ├── tests/
-│   ├── TableTop.Tests/        ← 863 tests — engine only, no UI required, any OS
+│   ├── TableTop.Tests/        ← 881 tests — engine only, no UI required, any OS
 │   └── TableTop.UiTests/      ← ViewModel tests     (Windows — references WinUI)
 ├── ui/
 │   ├── TableTop.Console/      ← Terminal UI         (any OS, no extra installs)
