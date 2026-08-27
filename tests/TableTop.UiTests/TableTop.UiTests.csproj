@@ -20,6 +20,21 @@
     <IsTestProject>true</IsTestProject>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+
+    <!--
+      Without this, the test host can't start at all: it throws
+      System.IO.FileNotFoundException on Microsoft.TestPlatform.CoreUtilities
+      before a single test runs. That assembly ships in
+      Microsoft.TestPlatform.ObjectModel's lib/net8.0 folder — a plain
+      compile+runtime asset, nothing RID-specific — but with
+      RuntimeIdentifiers set (needed for UseWinUI) the SDK stops copying
+      framework-dependent package assets to the build output on the
+      assumption a publish step will resolve them via the RID graph, and
+      `dotnet test` never publishes. TableTop.Tests (no RuntimeIdentifiers,
+      no UseWinUI) never hits this; this project is the only one that needs
+      the override.
+    -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>

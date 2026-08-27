@@ -49,11 +49,30 @@ public sealed class ViewModelBindingTests
     // TableTop.UiTests needs the WinUI SDK and is skipped everywhere the suite
     // usually runs; see backlog item 2.
     //
-    // The anchor must live in the WinUI assembly, not in Presentation: every
-    // lookup below reflects over UiAssembly to pair FooView with FooViewModel,
-    // and pointing it at Presentation would silently scan the wrong assembly and
-    // find nothing to check.
+    // The anchor must live in the WinUI assembly, not in Presentation: the
+    // view-pairing lookups below (ResolveViewModel, EnumerateViews) reflect
+    // over UiAssembly specifically to pair FooView with FooViewModel against
+    // WinUI's own Views folder, and pointing it at Presentation would silently
+    // scan the wrong assembly and find nothing to check.
     private static readonly Assembly UiAssembly = typeof(TableTop.WinUI.Infrastructure.Navigator).Assembly;
+
+    // ViewModelTypes() needs a second assembly, and getting a real build
+    // environment for the first time (backlog item 2) is what surfaced why:
+    // every ViewModel actually declared in TableTop.WinUI — the picker chain
+    // (IntroViewModel, ArchetypePickerViewModel, SubArchetypePickerViewModel,
+    // GameSelectionViewModel) and UnsupportedModeViewModel — is fully
+    // immutable, get-only properties and commands assigned once in the
+    // constructor. Every settable, PropertyChanged-raising ViewModel
+    // (SettingsViewModel, CardTurnGameViewModel, MillionaireGameViewModel,
+    // PlayerSetupViewModel, …) lives in TableTop.Presentation instead. Scanning
+    // UiAssembly alone meant Every_settable_property_raises_PropertyChanged
+    // could never exercise a single property — not because nothing was
+    // broken, but because the one assembly it looked at has nothing mutable
+    // to break. TableTop.WinUI already references Presentation (it's how
+    // WinUI consumes these ViewModels at all), so this assembly is already
+    // loaded in the test host; scanning it too costs nothing extra.
+    private static readonly Assembly PresentationAssembly =
+        typeof(TableTop.Presentation.ViewModels.SettingsViewModel).Assembly;
 
     /// <summary>
     /// Views whose ViewModel doesn't follow the <c>FooView</c> → <c>FooViewModel</c>
@@ -149,7 +168,9 @@ public sealed class ViewModelBindingTests
 
     private static IEnumerable<Type> ViewModelTypes() =>
         UiAssembly.GetTypes()
+                   .Concat(PresentationAssembly.GetTypes())
                    .Where(t => t is { IsAbstract: false, IsPublic: true } && t.Name.EndsWith("ViewModel", StringComparison.Ordinal))
+                   .Distinct()
                    .OrderBy(t => t.Name, StringComparer.Ordinal);
 
     private static Type? ResolveViewModel(string viewName)
@@ -224,9 +245,23 @@ public sealed class ViewModelBindingTests
         if (t == typeof(string)) return string.Empty;
         if (t.IsInterface) return StubProxy.For(t);
         if (t.IsValueType) return Activator.CreateInstance(t);
+        // Archetype has no parameterless constructor, so a null default is
+        // the fallback below — and a null Archetype isn't a benign "can't
+        // build this" skip the way it is for most types: ArchetypePickerViewModel,
+        // SubArchetypePickerViewModel and GameSelectionViewModel all
+        // dereference their Archetype parameter in the constructor body
+        // (parent.SubArchetypes, node.Modes), so a null default threw a
+        // NullReferenceException that TryConstruct then swallowed as "this
+        // constructor doesn't work" — silently dropping three of the five
+        // WinUI ViewModels that exist from both tests' coverage, including
+        // the only ones with real settable properties to exercise.
+        if (t == typeof(TableTop.Hosting.Archetype)) return EmptyArchetype;
         if (t.GetConstructor(Type.EmptyTypes) is { } ctor) return ctor.Invoke(null);
         return null;
     }
+
+    private static readonly TableTop.Hosting.Archetype EmptyArchetype =
+        new(id: "stub", name: "Stub", description: "", emoji: "❓", modes: []);
 
     private static bool TryMakeDistinctValue(PropertyInfo p, object? vm, out object? value)
     {
@@ -275,13 +310,21 @@ public sealed class ViewModelBindingTests
 /// </summary>
 public class StubProxy : DispatchProxy
 {
-    public static object? For(Type interfaceType)
-    {
-        var method = typeof(DispatchProxy)
-            .GetMethod(nameof(Create), BindingFlags.Public | BindingFlags.Static)!
-            .MakeGenericMethod(interfaceType, typeof(StubProxy));
-        return method.Invoke(null, null);
-    }
+    /// <summary>
+    /// Was a reflection lookup — <c>typeof(DispatchProxy).GetMethod(nameof(Create), …)</c>
+    /// — that made <c>MakeGenericMethod</c> callable on a type unknown at
+    /// compile time. It threw <c>AmbiguousMatchException</c> the moment this
+    /// ran on a .NET whose BCL added the non-generic
+    /// <c>DispatchProxy.Create(Type, Type)</c> overload alongside the
+    /// original <c>Create&lt;T, TProxy&gt;()</c> — exactly the overload this
+    /// needs, since it hits the same "type only known at runtime" problem
+    /// the reflection dance existed to work around. <see cref="TryConstruct"/>
+    /// swallowed the exception as "this dependency can't be satisfied", so
+    /// every ViewModel with an interface-typed constructor parameter
+    /// silently dropped out of both tests' coverage.
+    /// </summary>
+    public static object? For(Type interfaceType) =>
+        DispatchProxy.Create(interfaceType, typeof(StubProxy));
 
     protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
     {
