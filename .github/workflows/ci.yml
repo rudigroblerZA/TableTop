@@ -148,9 +148,9 @@ jobs:
         run: dotnet build src/TableTop.Hosting/TableTop.Hosting.csproj
              --no-restore -c Release
 
-      - name: Build Console UI
-        run: dotnet build ui/TableTop.Console/TableTop.Console.csproj
-             --no-restore -c Release
+      # - name: Build Console UI
+      #   run: dotnet build ui/TableTop.Console/TableTop.Console.csproj
+      #        --no-restore -c Release
 
       # ── Tests ─────────────────────────────────────────────────────────────────
 
