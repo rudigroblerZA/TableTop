@@ -125,10 +125,45 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4.8.0
+        with:
+          java-version: 17
+          distribution: 'zulu'
+
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
+
+      # ── SonarCloud ───────────────────────────────────────────────────────────
+
+      - name: Cache SonarQube Cloud packages
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarQube Cloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ${{ runner.temp }}\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarQube Cloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
+
+      - name: Scanner Begin
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: |
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"rudigroblerZA_TableTop" /o:"rudigroblerza" /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
       # ── Restore ──────────────────────────────────────────────────────────────
 
@@ -200,6 +235,13 @@ jobs:
           name: coverage-report
           path: coverage-report/
 
+      - name: Scanner End
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: |
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          
   # ── UI heads ──────────────────────────────────────────────────────────────
   # Until this existed, CI compiled the engine and Console only. The graphical
   # heads reached the release zip without anything ever compiling them, so a
@@ -334,50 +376,50 @@ jobs:
   # step, not something in this repo. Non-blocking until then, so "CI is red"
   # keeps meaning "something in this repo is broken", not "nobody's created
   # the SonarCloud project yet". Remove once both are configured.
-  sonarcloud:
-    name: SonarCloud
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
-    continue-on-error: true
+  # sonarcloud:
+  #   name: SonarCloud
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+  #   continue-on-error: true
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0   # SonarCloud wants full history for blame data and PR decoration
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0   # SonarCloud wants full history for blame data and PR decoration
 
-      - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "10.0.x"
+  #     - name: Setup .NET 10
+  #       uses: actions/setup-dotnet@v4
+  #       with:
+  #         dotnet-version: "10.0.x"
 
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+  #     - name: Cache SonarCloud packages
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: ~/.sonar/cache
+  #         key: ${{ runner.os }}-sonar
+  #         restore-keys: ${{ runner.os }}-sonar
 
-      - name: Restore local tools
-        run: dotnet tool restore
+  #     - name: Restore local tools
+  #       run: dotnet tool restore
 
-      - name: Restore packages
-        run: dotnet restore TableTop.Engine.slnx
+  #     - name: Restore packages
+  #       run: dotnet restore TableTop.Engine.slnx
 
-      - name: Begin SonarCloud analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: >
-          dotnet sonarscanner begin
-          /k:"SONAR_PROJECT_KEY"
-          /o:"SONAR_ORG"
-          /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-          /d:sonar.host.url="https://sonarcloud.io"
+  #     - name: Begin SonarCloud analysis
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #       run: >
+  #         dotnet sonarscanner begin
+  #         /k:"SONAR_PROJECT_KEY"
+  #         /o:"SONAR_ORG"
+  #         /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+  #         /d:sonar.host.url="https://sonarcloud.io"
 
-      - name: Build
-        run: dotnet build TableTop.Engine.slnx --no-restore -c Release
+  #     - name: Build
+  #       run: dotnet build TableTop.Engine.slnx --no-restore -c Release
 
-      - name: End SonarCloud analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+  #     - name: End SonarCloud analysis
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #       run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
