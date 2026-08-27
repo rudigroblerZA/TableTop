@@ -16,7 +16,9 @@
     <DataCollectors>
       <DataCollector friendlyName="XPlat code coverage">
         <Configuration>
-          <Format>cobertura</Format>
+          <!-- Cobertura feeds the local/CI human-readable summary (reportgenerator);
+               OpenCover feeds SonarCloud, whose C# analyzer doesn't parse Cobertura. -->
+          <Format>cobertura,opencover</Format>
           <Exclude>[*.Tests]*,[full]*,[g]*</Exclude>
           <ExcludeByFile>**/tests/_g/**/*.cs,**/tests/_full/**/*.cs</ExcludeByFile>
           <ExcludeByAttribute>GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
