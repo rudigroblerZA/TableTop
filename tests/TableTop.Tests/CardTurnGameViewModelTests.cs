@@ -283,6 +283,72 @@ public sealed class CardTurnGameViewModelTests
         act.Should().NotThrow();
     }
 
+    // ── SaveSession failure reporting (backlog item 19) ─────────────────────────
+    //
+    // SaveSession used to be fire-and-forget (`_ = _controller!.SaveAsync();`):
+    // a write failure became an unobserved task exception and the player who
+    // explicitly asked to save got no feedback at all. These pin the fix —
+    // the failure is caught and reported through FlashText, the same channel
+    // a successful save already used.
+
+    [Fact]
+    public void SaveSession_WhenPersistenceThrowsIOException_ReportsFailureInsteadOfCrashing()
+    {
+        var cards = TableTop.Tests.Helpers.TestFactory.MakeCards(5);
+        var controller = TableTop.Tests.Helpers.TestFactory.BuildController(
+            cards, sessionRepository: new ThrowingPersistence(new IOException("disk full")));
+        var vm = new CardTurnGameViewModel(
+            new FakeNavigator(), new WouldYouRatherMode(), controller,
+            timerEnabled: false, timerSeconds: 0, showCardCount: true);
+
+        var act = () => vm.SaveSession();
+
+        act.Should().NotThrow();
+        vm.FlashText.Should().Contain("Couldn't save");
+    }
+
+    [Fact]
+    public void SaveSession_WhenPersistenceThrowsUnauthorizedAccessException_ReportsFailureInsteadOfCrashing()
+    {
+        var cards = TableTop.Tests.Helpers.TestFactory.MakeCards(5);
+        var controller = TableTop.Tests.Helpers.TestFactory.BuildController(
+            cards, sessionRepository: new ThrowingPersistence(new UnauthorizedAccessException("denied")));
+        var vm = new CardTurnGameViewModel(
+            new FakeNavigator(), new WouldYouRatherMode(), controller,
+            timerEnabled: false, timerSeconds: 0, showCardCount: true);
+
+        var act = () => vm.SaveSession();
+
+        act.Should().NotThrow();
+        vm.FlashText.Should().Contain("Couldn't save");
+    }
+
+    [Fact]
+    public void SaveSession_OnSuccess_StillReportsSessionSaved()
+    {
+        var cards = TableTop.Tests.Helpers.TestFactory.MakeCards(5);
+        var controller = TableTop.Tests.Helpers.TestFactory.BuildController(
+            cards, sessionRepository: new InMemoryPersistence());
+        var vm = new CardTurnGameViewModel(
+            new FakeNavigator(), new WouldYouRatherMode(), controller,
+            timerEnabled: false, timerSeconds: 0, showCardCount: true);
+
+        vm.SaveSession();
+
+        vm.FlashText.Should().Be("Session saved");
+    }
+
+    /// <summary>An <see cref="IGamePersistence"/> whose <see cref="SaveAsync"/> always fails.</summary>
+    private sealed class ThrowingPersistence(Exception toThrow) : TableTop.Hosting.Persistence.IGamePersistence
+    {
+        public bool HasSavedSession => false;
+        public Task SaveAsync(TableTop.Hosting.Persistence.SessionSnapshot s, CancellationToken ct = default) =>
+            Task.FromException(toThrow);
+        public Task<TableTop.Hosting.Persistence.SessionSnapshot?> LoadAsync(CancellationToken ct = default) =>
+            Task.FromResult<TableTop.Hosting.Persistence.SessionSnapshot?>(null);
+        public Task DeleteAsync(CancellationToken ct = default) => Task.CompletedTask;
+    }
+
     private sealed class NotCardTurnMode : TableTop.Core.Abstractions.Game.IGameMode
     {
         public string Name => "Not Card Turn";

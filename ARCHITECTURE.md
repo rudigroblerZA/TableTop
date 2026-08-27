@@ -57,13 +57,15 @@ is now entirely compiled in and the engine reads no content files of any kind.**
 `RestrictionParser` — the last of which survives because `OutLoudMode` parses
 restriction strings directly, independent of any file format.
 
-One deliberate loose end: `BaseGameModeDefinition.Presentation` now always
-returns `ModePresentation.None`, so every `Resolved*` member (`DisplayName`,
-`ResolvedCompleteLabel`, `ResolvedCategoryColours`, `Theme`, …) is a
-pass-through to the compiled-in value. They were kept rather than deleted
-because both heads, the shared ViewModels and the public API snapshot bind to
-them. Collapsing them is a head-facing change and belongs in its own commit —
-see `BACKLOG.md`.
+That loose end is closed as of the backlog item 18 fix: `BaseGameModeDefinition`
+no longer has a `Presentation` property or any `Resolved*`/`DisplayName`/
+`DisplayDescription`/`Theme` member. `ModePresentation` and `ThemePalette` are
+deleted from `TableTop.Core` entirely. The three consumers that bound the
+pass-throughs (`CardTurnGameViewModel`, MAUI's `GameplayViewModel`,
+`ModeDisplayResolver`/`ModeListItem`) now read the compiled-in
+`Name`/`Description`/`CompleteLabel`/`SkipLabel`/`CategoryColours` members
+directly, and MAUI's `ModeTheme.For` no longer has a palette-overlay branch to
+dispatch on.
 
 Archetypes are registered in `ArchetypeRegistry` as a tree; a mode's presence
 there is what makes it reachable from a picker at all.
@@ -374,6 +376,47 @@ initially numbered wrong:
   deliberately never references; verified by reading the diff and by both
   heads building clean, the same honest gap item 17 recorded for its own
   WinUI/MAUI wiring.
+
+**Backlog item 19, closed.** Persistence failures were handled three
+different ways with nothing consistent about any of them: WinUI's settings
+save swallowed `IOException` only (a permissions failure threw
+`UnauthorizedAccessException` straight through, contradicting its own
+"best-effort" comment), MAUI bypassed `IAppSettings` for nine reads across
+`App.xaml.cs`, `GameplayViewModel` and `GameSelectionViewModel` so a
+container-registered settings implementation had no effect there, a saved
+*session* — the one persistence path the player explicitly asks for — was
+fire-and-forget (`_ = _controller!.SaveAsync();`) with a write failure
+becoming a silently unobserved task exception, and Console's player-profile
+save had no catch at all, so the same failure crashed the whole app instead.
+Fixed: WinUI's catch now covers both real causes; the nine MAUI reads resolve
+`IAppSettings` from the container instead of `AppSettings.Instance`;
+`CardTurnGameViewModel.SaveSession` awaits the save and reports a failure
+through `FlashText`, the same channel a successful save already used;
+Console's two player-profile save sites catch and report instead of
+crashing (a first-run seed failure is swallowed, matching item 19's own
+"for settings, arguably not \[reported\]" allowance for internal
+bookkeeping the player didn't ask for). Verified by a full build of all
+three heads, the 861-test suite, and all static gates — including two new
+`CardTurnGameViewModelTests` pinning the save-failure report and one
+confirming the success path is unchanged.
+
+**Backlog item 20, closed.** Four UI-thread call sites blocked on async
+controller construction via `.GetAwaiter().GetResult()`: MAUI's
+`GameplayViewModel` constructor and the `DayOneGamePage`/`MillionaireGamePage`
+constructors, and WinUI's `IntroViewModel.Resume()`. WinUI converted
+`ResumeCommand` from `RelayCommand` to `AsyncRelayCommand` — the same idiom
+`PlayerSetupViewModel.StartCommand` already used — so the factory is
+genuinely awaited instead of blocked on. MAUI's three pages gained a
+two-phase shape: a cheap constructor plus a `Task InitializeAsync()`
+(declared on a new `IAsyncInitializablePage` interface in
+`ui/TableTop.Maui/Pages`) that does the actual `CreateAsync` await and sets
+`BindingContext`; `PlayerSetupPage`'s routing switch and
+`GameSelectionPage`'s resume handler now `await page.InitializeAsync();`
+between constructing a page and pushing it. `GameplayViewModel` itself
+gained the same construct/`CreateAsync` split one level down, since its own
+constructor was the thing blocking `GameplayPage`. Monogamy/Claimed/Herd's
+pages were untouched — they build through synchronous factories with no
+async work to block on, a different shape rather than a template to copy.
 
 ## What genuinely doesn't exist here
 

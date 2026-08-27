@@ -1,7 +1,6 @@
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Hosting.Abstractions;
-using TableTop.Maui.Services;
 using TableTop.Presentation.Infrastructure;
 using TableTop.Presentation.ViewModels;
 
@@ -32,7 +31,7 @@ namespace TableTop.Maui.ViewModels;
 /// The shared class's <c>ShowCardCount</c> is fixed once, at construction —
 /// correct for WinUI, which has never re-read settings mid-session. MAUI's
 /// page must, because a player can background the app, change a setting, and
-/// come back to the same screen. <see cref="AppSettings.Instance"/>.Changed
+/// come back to the same screen. The container-resolved <see cref="IAppSettings"/>
 /// stays subscribed here, re-raising only the four properties actually
 /// affected (see <see cref="OnSettingChanged"/>) — the shared instance never
 /// needs to know this exists.
@@ -54,6 +53,7 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
 {
     private readonly CardTurnGameViewModel _inner;
     private readonly IReadOnlyDictionary<string, string> _categoryColours;
+    private readonly IAppSettings _settings;
 
     /// <summary>The visual skin for this mode. Defaults to baize for anything with no dedicated palette.</summary>
     public Theming.ModeTheme Theme { get; }
@@ -91,13 +91,13 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
     // ── Settings passthrough — live, unlike the shared class's ctor-only copy ──
 
     /// <summary>Whether to show the deck-count line.</summary>
-    public bool ShowCardCount => AppSettings.Instance.ShowCardCount;
+    public bool ShowCardCount => _settings.ShowCardCount;
     /// <summary>Whether the card strip shows the difficulty badge.</summary>
-    public bool ShowDifficultyBadge => AppSettings.Instance.ShowDifficultyBadge;
+    public bool ShowDifficultyBadge => _settings.ShowDifficultyBadge;
     /// <summary>Whether the card strip shows the category badge.</summary>
-    public bool ShowCategoryBadge => AppSettings.Instance.ShowCategoryBadge;
+    public bool ShowCategoryBadge => _settings.ShowCategoryBadge;
     /// <summary>Card body font size, settings-driven.</summary>
-    public double CardFontSize => AppSettings.Instance.CardFontSize;
+    public double CardFontSize => _settings.CardFontSize;
 
     // ── Card face / strip colour — platform Color, computed from shared state ──
 
@@ -260,20 +260,30 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
     // ── Construction ─────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Drives a gameplay session. Pass <paramref name="resumeFrom"/> to continue
-    /// a saved session instead of starting fresh; obtain one from
+    /// Builds a gameplay session. Pass <paramref name="resumeFrom"/> to
+    /// continue a saved session instead of starting fresh; obtain one from
     /// <c>ControllerFactory.LoadSavedSessionAsync</c>.
+    ///
+    /// <para>
+    /// Was a constructor that blocked the UI thread with
+    /// <c>CardTurnGameViewModel.CreateAsync(...).GetAwaiter().GetResult()</c>
+    /// — backlog item 20. A MAUI page constructor cannot itself be async and
+    /// <c>Navigation.PushAsync</c> never awaits construction, so the async
+    /// build has moved to this factory; <see cref="GameplayPage"/> now has a
+    /// two-phase construct-then-<see cref="Pages.IAsyncInitializablePage.InitializeAsync"/>
+    /// shape instead of doing this work in its own constructor.
+    /// </para>
     /// </summary>
-    public GameplayViewModel(
+    public static async Task<GameplayViewModel> CreateAsync(
         INavigator navigator, IGameMode gameMode, List<IPlayer> players,
         TableTop.Hosting.Persistence.SessionSnapshot? resumeFrom = null)
     {
         // Skin and category colours come from the mode, read before the
         // controller is built so a controller failure still lands on a
         // correctly-themed error state rather than a half-styled screen.
-        Theme = Theming.ModeTheme.For(gameMode);
+        var theme = Theming.ModeTheme.For(gameMode);
         var definition = gameMode as TableTop.Games.Base.BaseGameModeDefinition;
-        _categoryColours = definition?.ResolvedCategoryColours ?? new Dictionary<string, string>();
+        var categoryColours = definition?.CategoryColours ?? new Dictionary<string, string>();
 
         // Backlog item 5: IControllerFactory/IAppSettings resolved from the
         // app's container (MauiProgram.cs's AddTableTopHosting()) rather than
@@ -286,30 +296,39 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
         var settings = services.GetRequiredService<IAppSettings>();
         var controllerFactory = services.GetRequiredService<IControllerFactory>();
 
-        // Blocking is deadlock-free here, same as every prior MAUI merge
-        // (MillionaireGamePage, DayOneGamePage) — CreateAsync itself catches
-        // a controller-build failure into LoadError, so this constructor
-        // needs no try/catch of its own the way the old implementation did.
-        _inner = CardTurnGameViewModel.CreateAsync(
-                navigator, gameMode, players.AsReadOnly(), settings, resumeFrom, controllerFactory)
-            .GetAwaiter().GetResult();
+        // CreateAsync itself catches a controller-build failure into
+        // LoadError, so this factory needs no try/catch of its own.
+        var inner = await CardTurnGameViewModel.CreateAsync(
+            navigator, gameMode, players.AsReadOnly(), settings, resumeFrom, controllerFactory);
+
+        return new GameplayViewModel(theme, categoryColours, settings, inner);
+    }
+
+    private GameplayViewModel(
+        Theming.ModeTheme theme, IReadOnlyDictionary<string, string> categoryColours,
+        IAppSettings settings, CardTurnGameViewModel inner)
+    {
+        Theme = theme;
+        _categoryColours = categoryColours;
+        _settings = settings;
+        _inner = inner;
 
         // Forwards every property-changed notification 1:1 — this is what
         // makes every pass-through property above stay live without each one
         // needing its own explicit re-raise.
         _inner.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
 
-        AppSettings.Instance.Changed += OnSettingChanged;
+        _settings.Changed += OnSettingChanged;
     }
 
     private void OnSettingChanged(object? sender, string key)
     {
         switch (key)
         {
-            case nameof(AppSettings.ShowCardCount): OnPropertyChanged(nameof(ShowCardCount)); break;
-            case nameof(AppSettings.ShowDifficultyBadge): OnPropertyChanged(nameof(ShowDifficultyBadge)); RaiseStrip(); break;
-            case nameof(AppSettings.ShowCategoryBadge): OnPropertyChanged(nameof(ShowCategoryBadge)); RaiseStrip(); break;
-            case nameof(AppSettings.CardFontSize): OnPropertyChanged(nameof(CardFontSize)); break;
+            case nameof(IAppSettings.ShowCardCount): OnPropertyChanged(nameof(ShowCardCount)); break;
+            case nameof(IAppSettings.ShowDifficultyBadge): OnPropertyChanged(nameof(ShowDifficultyBadge)); RaiseStrip(); break;
+            case nameof(IAppSettings.ShowCategoryBadge): OnPropertyChanged(nameof(ShowCategoryBadge)); RaiseStrip(); break;
+            case nameof(IAppSettings.CardFontSize): OnPropertyChanged(nameof(CardFontSize)); break;
             case "*": OnPropertyChanged(null); break;
         }
     }
@@ -325,7 +344,7 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
     /// <inheritdoc />
     public void Dispose()
     {
-        AppSettings.Instance.Changed -= OnSettingChanged;
+        _settings.Changed -= OnSettingChanged;
         _inner.Dispose();
     }
 }

@@ -145,6 +145,13 @@ public partial class PlayerSetupPage : ContentPage
                 return;
             }
 
+            // Backlog item 20: GameplayPage/MillionaireGamePage/DayOneGamePage
+            // build their controller asynchronously now rather than blocking
+            // the UI thread in their constructors — this is where that async
+            // step actually runs, awaited before the page is ever shown.
+            if (next is IAsyncInitializablePage initializable)
+                await initializable.InitializeAsync();
+
             await Navigation.PushAsync(next);
         }
         catch (Exception ex)

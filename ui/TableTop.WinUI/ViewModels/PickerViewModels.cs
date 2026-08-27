@@ -37,7 +37,7 @@ public sealed class IntroViewModel : ViewModelBase
     {
         _navigator = navigator;
         PlayCommand = new RelayCommand(Launch);
-        ResumeCommand = new RelayCommand(Resume, () => CanResume);
+        ResumeCommand = new AsyncRelayCommand(ResumeAsync, () => CanResume);
         _ = LookForSavedSessionAsync();
         SettingsCommand = new RelayCommand(() => _navigator.Navigate(new SettingsViewModel(_navigator, WinUIAppSettings.Instance)));
     }
@@ -56,14 +56,22 @@ public sealed class IntroViewModel : ViewModelBase
         OnPropertyChanged(nameof(ResumeText));
     }
 
-    private void Resume()
+    /// <summary>
+    /// Was <c>.GetAwaiter().GetResult()</c> on the UI thread — backlog item
+    /// 20. <see cref="ResumeCommand"/> being an <see cref="AsyncRelayCommand"/>
+    /// (rather than the plain <see cref="RelayCommand"/> it used to be) is
+    /// what makes awaiting here safe: the command disables itself for the
+    /// duration instead of the dispatcher blocking on it, the same shape
+    /// <see cref="PlayerSetupViewModel.StartCommand"/> already used for its
+    /// own async build.
+    /// </summary>
+    private async Task ResumeAsync()
     {
         var resumable = _savedSession.Resumable;
         if (resumable is null) return;
 
-        _navigator.Navigate(GameViewModelFactory.CreateAsync(
-            _navigator, resumable.Mode, resumable.Players, resumable.Snapshot)
-            .GetAwaiter().GetResult());
+        _navigator.Navigate(await GameViewModelFactory.CreateAsync(
+            _navigator, resumable.Mode, resumable.Players, resumable.Snapshot));
     }
 
     private void Launch()

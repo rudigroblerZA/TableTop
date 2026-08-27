@@ -34,14 +34,13 @@ namespace TableTop.Presentation.ViewModels;
 /// <b>What deliberately did not move.</b> MAUI's <c>Theme</c>,
 /// <c>DisplayFont</c>/<c>BodyFont</c>/<c>UtilityFont</c>, and the
 /// WCAG-contrast-checked <c>StripColor</c>/<c>StripTextColor</c> all return
-/// platform <c>Color</c> types this project cannot reference — the identical
-/// reason <see cref="ModeListItem"/> exposes an accent as a hex string rather
-/// than a parsed colour. What moved instead is the data those colours are
-/// computed from: <see cref="CardCategory"/> and the category-colour map
-/// implicit in each mode's <c>ResolvedCategoryColours</c>, which MAUI's own
-/// wrapper can still read directly since it isn't gone, only not duplicated
-/// here. WinUI's screen currently renders no per-category strip at all, so
-/// nothing there needed a counterpart.
+/// platform <c>Color</c> types this project cannot reference. What moved
+/// instead is the data those colours are computed from:
+/// <see cref="CardCategory"/> and the category-colour map implicit in each
+/// mode's <c>CategoryColours</c>, which MAUI's own wrapper can still read
+/// directly since it isn't gone, only not duplicated here. WinUI's screen
+/// currently renders no per-category strip at all, so nothing there needed a
+/// counterpart.
 /// </para>
 ///
 /// <para>
@@ -253,9 +252,9 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         ShowCardCount = showCardCount;
 
         var def = mode as TableTop.Games.Base.BaseGameModeDefinition;
-        CompleteLabel = def?.ResolvedCompleteLabel ?? "Completed";
-        SkipLabel = def?.ResolvedSkipLabel ?? "Skip";
-        ModeTitle = def?.DisplayName ?? mode.Name;
+        CompleteLabel = def?.CompleteLabel ?? "Completed";
+        SkipLabel = def?.SkipLabel ?? "Skip";
+        ModeTitle = def?.Name ?? mode.Name;
 
         _styleNames = mode is IGameModeDefinition gmd
             ? ChoiceCards.ExtractStyleNames(gmd.GetCards([]).Select(c => c.Description))
@@ -472,8 +471,28 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         else _navigator.GoBack();
     }
 
-    /// <summary>Saves the session so it can be resumed.</summary>
-    public void SaveSession() { if (CanSave) _ = _controller!.SaveAsync(); }
+    /// <summary>
+    /// Saves the session so it can be resumed.
+    ///
+    /// Was fire-and-forget (<c>_ = _controller!.SaveAsync();</c>): a write
+    /// failure became an unobserved task exception, and the player who just
+    /// asked to save got no feedback at all — worse than silent, since even
+    /// <see cref="FlashText"/> never changed to say anything went wrong. Saved
+    /// sessions are the one persistence path in this app the player explicitly
+    /// asks for, so unlike settings, a failure here is always worth reporting.
+    /// </summary>
+    public async void SaveSession()
+    {
+        if (!CanSave) return;
+        try
+        {
+            await _controller!.SaveAsync();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            FlashText = "Couldn't save — check disk space and permissions";
+        }
+    }
 
     /// <summary>Reverses the last turn and re-presents its card.</summary>
     public void UndoLastTurn() => _controller?.UndoLastTurn();

@@ -4,19 +4,37 @@ using TableTop.Maui.ViewModels;
 
 namespace TableTop.Maui.Pages;
 
-public partial class GameplayPage : ContentPage
+public partial class GameplayPage : ContentPage, IAsyncInitializablePage
 {
-    private readonly GameplayViewModel _vm;
+    private readonly IGameMode _gameMode;
+    private readonly List<IPlayer> _players;
+    private readonly TableTop.Hosting.Persistence.SessionSnapshot? _resumeFrom;
+    private GameplayViewModel _vm = null!;
 
     /// <summary>
     /// Opens a game. Pass <paramref name="resumeFrom"/> to continue a saved
     /// session rather than start fresh.
+    ///
+    /// Cheap on purpose — backlog item 20. The actual controller build used
+    /// to happen here, blocking the UI thread via
+    /// <c>GameplayViewModel(...).GetAwaiter().GetResult()</c> internally. It
+    /// now happens in <see cref="InitializeAsync"/>, which every caller must
+    /// await before pushing this page.
     /// </summary>
     public GameplayPage(IGameMode gameMode, List<IPlayer> players,
                         TableTop.Hosting.Persistence.SessionSnapshot? resumeFrom = null)
     {
         InitializeComponent();
-        _vm = new GameplayViewModel(new Services.MauiNavigator(this), gameMode, players, resumeFrom);
+        _gameMode = gameMode;
+        _players = players;
+        _resumeFrom = resumeFrom;
+    }
+
+    /// <inheritdoc />
+    public async Task InitializeAsync()
+    {
+        _vm = await GameplayViewModel.CreateAsync(
+            new Services.MauiNavigator(this), _gameMode, _players, _resumeFrom);
         BindingContext = _vm;
 
         // The engine announces the end (deck out, rounds done, or Quit) —
