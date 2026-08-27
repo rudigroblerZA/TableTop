@@ -64,18 +64,18 @@ public sealed class LastOrdersMode : BaseGameModeDefinition, ITableShapeMode
     public override IReadOnlyList<string> CategoriesPinnedToStart => ["House Rules"];
 
     /// <inheritdoc cref="CategoriesPinnedToStart" />
-    public override IReadOnlyList<string> CategoriesPinnedToEnd => ["Last Round"];
+    public override IReadOnlyList<string> CategoriesPinnedToEnd => [LastOrdersCardBank.LastRoundCategory];
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
             ["House Rules"] = "#26A69A",
-            ["Warm Up"] = "#66BB6A",
-            ["Party Tricks"] = "#42A5F5",
+            [LastOrdersCardBank.WarmUpCategory] = "#66BB6A",
+            [LastOrdersCardBank.PartyTricksCategory] = "#42A5F5",
             ["Confessions"] = "#AB47BC",
             ["Forfeits"] = "#FFA726",
-            ["Last Round"] = "#7E57C2",
+            [LastOrdersCardBank.LastRoundCategory] = "#7E57C2",
         };
 
     /// <summary>Flat scoring — the soft option must never score less.</summary>
@@ -96,6 +96,10 @@ public sealed class LastOrdersMode : BaseGameModeDefinition, ITableShapeMode
 /// <summary>Built-in card bank for Last Orders.</summary>
 public static class LastOrdersCardBank
 {
+    internal const string WarmUpCategory = "Warm Up";
+    internal const string PartyTricksCategory = "Party Tricks";
+    internal const string LastRoundCategory = "Last Round";
+
     /// <summary>All cards, in intended play order.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -123,35 +127,35 @@ public static class LastOrdersCardBank
               "• Anyone can call last orders on the whole game at any point."),
 
             // ── WARM UP — social, no drinking at all ─────────────────────────
-            S("Warm Up", "Round of Introductions",
+            S(WarmUpCategory, "Round of Introductions",
               "Introduce the person on your left as though they are a minor celebrity and you are their long-suffering agent."),
-            S("Warm Up", "The Group Photo",
+            S(WarmUpCategory, "The Group Photo",
               "Direct everyone into a group photo in the style of a very serious album cover. You have thirty seconds."),
-            S("Warm Up", "Terrible Toast",
+            S(WarmUpCategory, "Terrible Toast",
               "Propose a toast to something gloriously unimportant. Everyone raises whatever they're drinking."),
-            S("Warm Up", "Accent Roulette",
+            S(WarmUpCategory, "Accent Roulette",
               "Order your next drink — real or imaginary — in an accent of the table's choosing."),
-            S("Warm Up", "Two Truths",
+            S(WarmUpCategory, "Two Truths",
               "Two truths and a lie about your worst night out. The table guesses."),
-            S("Warm Up", "The Nickname",
+            S(WarmUpCategory, "The Nickname",
               "Give everyone at the table a nickname based on the first thing you noticed about them tonight. They're keeping it for the rest of the game."),
-            S("Warm Up", "Two Minutes' Notice",
+            S(WarmUpCategory, "Two Minutes' Notice",
               "You've been asked to give a two-minute speech at this table's wedding. You don't know whose. Begin."),
 
             // ── PARTY TRICKS — performative, still no drinking ───────────────
-            S("Party Tricks", "The Impression",
+            S(PartyTricksCategory, "The Impression",
               "Do your best impression of someone at this table. They get to rate it out of ten."),
-            S("Party Tricks", "Sixty-Second Rant",
+            S(PartyTricksCategory, "Sixty-Second Rant",
               "Rant passionately for sixty seconds about something trivial that genuinely annoys you."),
-            S("Party Tricks", "The Dance Move",
+            S(PartyTricksCategory, "The Dance Move",
               "Invent a dance move, name it, and teach it to the person on your right."),
-            S("Party Tricks", "Sing It Badly",
+            S(PartyTricksCategory, "Sing It Badly",
               "Sing the chorus of any song, deliberately in the wrong style. Opera, sea shanty, lullaby — table picks."),
-            S("Party Tricks", "The Statue",
+            S(PartyTricksCategory, "The Statue",
               "Hold a dramatic pose until someone else draws a card. Commit to it."),
-            S("Party Tricks", "Accent Relay",
+            S(PartyTricksCategory, "Accent Relay",
               "Say the same sentence in three different accents. The table picks which one you're keeping for the next round."),
-            S("Party Tricks", "Genuinely Useless Talent",
+            S(PartyTricksCategory, "Genuinely Useless Talent",
               "Demonstrate the most useless skill you possess. It must be genuinely useless and genuinely yours."),
 
             // ── CONFESSIONS — truth-style, no drinking ───────────────────────
@@ -240,12 +244,12 @@ public static class LastOrdersCardBank
     private static ICard L(string title, string body) =>
         StandardCard.Create(title,
             "<b>🌙 LAST ROUND</b>\n\n" + body,
-            Difficulty.Easy, "Last Round");
+            Difficulty.Easy, LastRoundCategory);
 
     private static string Emoji(string category) => category switch
     {
-        "Warm Up" => "🌤️",
-        "Party Tricks" => "🎭",
+        WarmUpCategory => "🌤️",
+        PartyTricksCategory => "🎭",
         "Confessions" => "🎤",
         _ => "•",
     };
