@@ -41,11 +41,11 @@ public sealed class ConstraintMasterMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Grammar"] = "#42A5F5",
-            ["Letter"] = "#66BB6A",
-            ["Sound"] = "#EC407A",
-            ["Structure"] = "#AB47BC",
-            ["Impossible"] = "#EF5350",
+            [ConstraintMasterCardBank.GrammarCategory] = "#42A5F5",
+            [ConstraintMasterCardBank.LetterCategory] = "#66BB6A",
+            [ConstraintMasterCardBank.SoundCategory] = "#EC407A",
+            [ConstraintMasterCardBank.StructureCategory] = "#AB47BC",
+            [ConstraintMasterCardBank.ImpossibleCategory] = "#EF5350",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -78,6 +78,12 @@ public sealed class ConstraintMasterMode : BaseGameModeDefinition
 /// </summary>
 public static class ConstraintMasterCardBank
 {
+    internal const string GrammarCategory = "Grammar";
+    internal const string LetterCategory = "Letter";
+    internal const string SoundCategory = "Sound";
+    internal const string StructureCategory = "Structure";
+    internal const string ImpossibleCategory = "Impossible";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -85,34 +91,34 @@ public static class ConstraintMasterCardBank
     {
         var b = CardDeckBuilder.For("Constraint Master");
 
-        b.Category("Grammar")
-            .Card("Grammar", Prompt("Every sentence must be exactly 3 words.", "Describe your week."), Difficulty.Medium)
-            .Card("Grammar", Prompt("No word can repeat (use each word only once).", "Tell a story about a grocery trip."), Difficulty.Hard)
-            .Card("Grammar", Prompt("Write only using nouns and verbs (no adjectives, adverbs, or 'the').", "Describe your morning."), Difficulty.Medium)
-            .Card("Grammar", Prompt("Every sentence must be a question.", "Explain what happened at the party."), Difficulty.Medium);
+        b.Category(GrammarCategory)
+            .Card(GrammarCategory, Prompt("Every sentence must be exactly 3 words.", "Describe your week."), Difficulty.Medium)
+            .Card(GrammarCategory, Prompt("No word can repeat (use each word only once).", "Tell a story about a grocery trip."), Difficulty.Hard)
+            .Card(GrammarCategory, Prompt("Write only using nouns and verbs (no adjectives, adverbs, or 'the').", "Describe your morning."), Difficulty.Medium)
+            .Card(GrammarCategory, Prompt("Every sentence must be a question.", "Explain what happened at the party."), Difficulty.Medium);
 
-        b.Category("Letter")
-            .Card("Letter", Prompt("Every word must start with the letter 'S'.", "Tell a story."), Difficulty.Hard)
-            .Card("Letter", Prompt("Write a sentence where each word starts with consecutive letters (A, B, C, D, etc).", "Make it funny."), Difficulty.Hard)
-            .Card("Letter", Prompt("No word can contain the letter 'E'.", "Describe your favourite food."), Difficulty.Hard)
-            .Card("Letter", Prompt("Every word must be a palindrome or have a repeated letter pattern.", "Say anything at all."), Difficulty.Hard);
+        b.Category(LetterCategory)
+            .Card(LetterCategory, Prompt("Every word must start with the letter 'S'.", "Tell a story."), Difficulty.Hard)
+            .Card(LetterCategory, Prompt("Write a sentence where each word starts with consecutive letters (A, B, C, D, etc).", "Make it funny."), Difficulty.Hard)
+            .Card(LetterCategory, Prompt("No word can contain the letter 'E'.", "Describe your favourite food."), Difficulty.Hard)
+            .Card(LetterCategory, Prompt("Every word must be a palindrome or have a repeated letter pattern.", "Say anything at all."), Difficulty.Hard);
 
-        b.Category("Sound")
-            .Card("Sound", Prompt("Every word must rhyme with the previous word.", "Describe a typical day."), Difficulty.Hard)
-            .Card("Sound", Prompt("Use only words that start with 'Sh' and 'Ch' sounds.", "Tell a story."), Difficulty.Hard)
-            .Card("Sound", Prompt("Alternate between short words and long words (1 syllable, 4+ syllables, 1, 4+).", "Explain something."), Difficulty.Medium);
+        b.Category(SoundCategory)
+            .Card(SoundCategory, Prompt("Every word must rhyme with the previous word.", "Describe a typical day."), Difficulty.Hard)
+            .Card(SoundCategory, Prompt("Use only words that start with 'Sh' and 'Ch' sounds.", "Tell a story."), Difficulty.Hard)
+            .Card(SoundCategory, Prompt("Alternate between short words and long words (1 syllable, 4+ syllables, 1, 4+).", "Explain something."), Difficulty.Medium);
 
-        b.Category("Structure")
-            .Card("Structure", Prompt("Write backwards — last sentence first, first sentence last.", "Tell a short story."), Difficulty.Hard)
-            .Card("Structure", Prompt("Your entire response must be one single sentence.", "Describe a full day."), Difficulty.Medium)
-            .Card("Structure", Prompt("Write your response as a list of exactly 5 items.", "Explain how to survive anything."), Difficulty.Easy)
-            .Card("Structure", Prompt("First word of each sentence uses the next letter of the alphabet.", "Tell a story."), Difficulty.Hard);
+        b.Category(StructureCategory)
+            .Card(StructureCategory, Prompt("Write backwards — last sentence first, first sentence last.", "Tell a short story."), Difficulty.Hard)
+            .Card(StructureCategory, Prompt("Your entire response must be one single sentence.", "Describe a full day."), Difficulty.Medium)
+            .Card(StructureCategory, Prompt("Write your response as a list of exactly 5 items.", "Explain how to survive anything."), Difficulty.Easy)
+            .Card(StructureCategory, Prompt("First word of each sentence uses the next letter of the alphabet.", "Tell a story."), Difficulty.Hard);
 
-        b.Category("Impossible")
-            .Card("Impossible", Prompt("Use only vowels (A, E, I, O, U) — no consonants at all.", "Say anything coherent."), Difficulty.Hard)
-            .Card("Impossible", Prompt("Every word must be longer than 5 letters AND shorter than 3 letters.", "Describe a moment."), Difficulty.Hard)
-            .Card("Impossible", Prompt("Write about love using only angry words.", "Make it work somehow."), Difficulty.Hard)
-            .Card("Impossible", Prompt("Describe someone without using any descriptive words.", "Make it understandable anyway."), Difficulty.Hard);
+        b.Category(ImpossibleCategory)
+            .Card(ImpossibleCategory, Prompt("Use only vowels (A, E, I, O, U) — no consonants at all.", "Say anything coherent."), Difficulty.Hard)
+            .Card(ImpossibleCategory, Prompt("Every word must be longer than 5 letters AND shorter than 3 letters.", "Describe a moment."), Difficulty.Hard)
+            .Card(ImpossibleCategory, Prompt("Write about love using only angry words.", "Make it work somehow."), Difficulty.Hard)
+            .Card(ImpossibleCategory, Prompt("Describe someone without using any descriptive words.", "Make it understandable anyway."), Difficulty.Hard);
 
         return b.Build();
     }

@@ -43,11 +43,11 @@ public sealed class TasteTheColorsMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Time"] = "#42A5F5",
-            ["Emotion"] = "#EC407A",
-            ["Concept"] = "#AB47BC",
-            ["Abstract"] = "#FFA726",
-            ["Sensory"] = "#66BB6A",
+            [TasteTheColorsCardBank.TimeCategory] = "#42A5F5",
+            [TasteTheColorsCardBank.EmotionCategory] = "#EC407A",
+            [TasteTheColorsCardBank.ConceptCategory] = "#AB47BC",
+            [TasteTheColorsCardBank.AbstractCategory] = "#FFA726",
+            [TasteTheColorsCardBank.SensoryCategory] = "#66BB6A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -65,51 +65,57 @@ public sealed class TasteTheColorsMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Taste The Colors. Cards are also available as JSON in <c>Data/Json/</c>.</summary>
 public static class TasteTheColorsCardBank
 {
+    internal const string TimeCategory = "Time";
+    internal const string EmotionCategory = "Emotion";
+    internal const string ConceptCategory = "Concept";
+    internal const string AbstractCategory = "Abstract";
+    internal const string SensoryCategory = "Sensory";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── TIME ──────────────────────────────────────────────────────────────
-        T("Time", "What does Monday taste like?", Difficulty.Easy),
-        T("Time", "What colour is Thursday?", Difficulty.Easy),
-        T("Time", "What does midnight sound like?", Difficulty.Medium),
-        T("Time", "If you could touch tomorrow, what texture would it be?", Difficulty.Hard),
-        T("Time", "What does the last day of summer smell like?", Difficulty.Medium),
-        T("Time", "What does waiting taste like?", Difficulty.Medium),
+        T(TimeCategory, "What does Monday taste like?", Difficulty.Easy),
+        T(TimeCategory, "What colour is Thursday?", Difficulty.Easy),
+        T(TimeCategory, "What does midnight sound like?", Difficulty.Medium),
+        T(TimeCategory, "If you could touch tomorrow, what texture would it be?", Difficulty.Hard),
+        T(TimeCategory, "What does the last day of summer smell like?", Difficulty.Medium),
+        T(TimeCategory, "What does waiting taste like?", Difficulty.Medium),
 
         // ── EMOTION ───────────────────────────────────────────────────────────
-        T("Emotion", "What colour is jealousy?", Difficulty.Easy),
-        T("Emotion", "What does happiness taste like?", Difficulty.Easy),
-        T("Emotion", "What does anxiety sound like?", Difficulty.Medium),
-        T("Emotion", "If you could taste loneliness, what would it be?", Difficulty.Hard),
-        T("Emotion", "What does love smell like?", Difficulty.Medium),
-        T("Emotion", "What texture is nostalgia?", Difficulty.Hard),
-        T("Emotion", "What does embarrassment taste like?", Difficulty.Medium),
+        T(EmotionCategory, "What colour is jealousy?", Difficulty.Easy),
+        T(EmotionCategory, "What does happiness taste like?", Difficulty.Easy),
+        T(EmotionCategory, "What does anxiety sound like?", Difficulty.Medium),
+        T(EmotionCategory, "If you could taste loneliness, what would it be?", Difficulty.Hard),
+        T(EmotionCategory, "What does love smell like?", Difficulty.Medium),
+        T(EmotionCategory, "What texture is nostalgia?", Difficulty.Hard),
+        T(EmotionCategory, "What does embarrassment taste like?", Difficulty.Medium),
 
         // ── CONCEPT ───────────────────────────────────────────────────────────
-        T("Concept", "What does success sound like?", Difficulty.Medium),
-        T("Concept", "What colour is freedom?", Difficulty.Medium),
-        T("Concept", "If you could taste knowledge, what would it be?", Difficulty.Hard),
-        T("Concept", "What does chaos smell like?", Difficulty.Medium),
-        T("Concept", "What texture is an idea?", Difficulty.Hard),
-        T("Concept", "What does gravity taste like?", Difficulty.Hard),
+        T(ConceptCategory, "What does success sound like?", Difficulty.Medium),
+        T(ConceptCategory, "What colour is freedom?", Difficulty.Medium),
+        T(ConceptCategory, "If you could taste knowledge, what would it be?", Difficulty.Hard),
+        T(ConceptCategory, "What does chaos smell like?", Difficulty.Medium),
+        T(ConceptCategory, "What texture is an idea?", Difficulty.Hard),
+        T(ConceptCategory, "What does gravity taste like?", Difficulty.Hard),
 
         // ── ABSTRACT ──────────────────────────────────────────────────────────
-        T("Abstract", "What colour is the number 7?", Difficulty.Hard),
-        T("Abstract", "If you could touch a conversation, what would it feel like?", Difficulty.Hard),
-        T("Abstract", "What does the letter 'Q' taste like?", Difficulty.Hard),
-        T("Abstract", "What colour is a paradox?", Difficulty.Hard),
-        T("Abstract", "If silence had a sound, what would it be?", Difficulty.Hard),
-        T("Abstract", "What does the colour of an echo taste like?", Difficulty.Hard),
+        T(AbstractCategory, "What colour is the number 7?", Difficulty.Hard),
+        T(AbstractCategory, "If you could touch a conversation, what would it feel like?", Difficulty.Hard),
+        T(AbstractCategory, "What does the letter 'Q' taste like?", Difficulty.Hard),
+        T(AbstractCategory, "What colour is a paradox?", Difficulty.Hard),
+        T(AbstractCategory, "If silence had a sound, what would it be?", Difficulty.Hard),
+        T(AbstractCategory, "What does the colour of an echo taste like?", Difficulty.Hard),
 
         // ── SENSORY ───────────────────────────────────────────────────────────
-        T("Sensory", "What does sunlight taste like?", Difficulty.Easy),
-        T("Sensory", "What colour is rain?", Difficulty.Easy),
-        T("Sensory", "If you could smell music, what would it smell like?", Difficulty.Medium),
-        T("Sensory", "What does the ocean sound like if you could taste it?", Difficulty.Hard),
-        T("Sensory", "What texture is the colour blue?", Difficulty.Medium),
-        T("Sensory", "If you could see sound, what would it look like?", Difficulty.Hard),
+        T(SensoryCategory, "What does sunlight taste like?", Difficulty.Easy),
+        T(SensoryCategory, "What colour is rain?", Difficulty.Easy),
+        T(SensoryCategory, "If you could smell music, what would it smell like?", Difficulty.Medium),
+        T(SensoryCategory, "What does the ocean sound like if you could taste it?", Difficulty.Hard),
+        T(SensoryCategory, "What texture is the colour blue?", Difficulty.Medium),
+        T(SensoryCategory, "If you could see sound, what would it look like?", Difficulty.Hard),
     ];
 
     private static ICard T(string category, string question, Difficulty d) =>

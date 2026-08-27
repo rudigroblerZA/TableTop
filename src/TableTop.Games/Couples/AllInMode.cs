@@ -57,10 +57,10 @@ public sealed class AllInMode : BaseGameModeDefinition, ITableShapeMode
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Ante"] = "#66BB6A",
-            ["Raise"] = "#EC407A",
-            ["Bluff"] = "#42A5F5",
-            ["Jackpot"] = "#B71C4A",
+            [AllInCardBank.AnteCategory] = "#66BB6A",
+            [AllInCardBank.RaiseCategory] = "#EC407A",
+            [AllInCardBank.BluffCategory] = "#42A5F5",
+            [AllInCardBank.JackpotCategory] = "#B71C4A",
         };
 
     /// <summary>One chip per won hand — the scoreboard IS the chip stack,
@@ -79,6 +79,11 @@ public sealed class AllInMode : BaseGameModeDefinition, ITableShapeMode
 /// <summary>Built-in card bank for All In.</summary>
 public static class AllInCardBank
 {
+    internal const string AnteCategory = "Ante";
+    internal const string RaiseCategory = "Raise";
+    internal const string BluffCategory = "Bluff";
+    internal const string JackpotCategory = "Jackpot";
+
     /// <summary>All all-in cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -186,26 +191,26 @@ public static class AllInCardBank
     ];
 
     private static ICard N(string text, Difficulty d) =>
-        StandardCard.Create("Ante",
+        StandardCard.Create(AnteCategory,
             "<b>♠ ANTE — play it, score it:</b>\n\n" + text,
-            d, "Ante");
+            d, AnteCategory);
 
     private static ICard S(string baseMove, string raise, Difficulty d) =>
-        StandardCard.Create("Raise",
+        StandardCard.Create(RaiseCategory,
             "<b>♥ THE HAND:</b>\n\n" + baseMove + "\n\n" + raise + "\n\n" +
             "<i>Play the base, then your partner may call the raise: deliver it and this hand pays double (you also win the next Ante automatically). Fold a called raise and the chip is theirs — paid with a kiss on the hand.</i>",
-            d, "Raise");
+            d, RaiseCategory);
 
     private static ICard B(string statement, Difficulty d) =>
-        StandardCard.Create("Bluff",
+        StandardCard.Create(BluffCategory,
             "<b>♣ POKER FACE. Deliver this line, then they call TRUE or BLUFF:</b>\n\n" +
             statement + "\n\n" +
             "<i>Right call: their chip. Wrong call: yours. All debts settle in kisses, immediately — house rules.</i>",
-            d, "Bluff");
+            d, BluffCategory);
 
     private static ICard J(string text, Difficulty d) =>
-        StandardCard.Create("Jackpot",
+        StandardCard.Create(JackpotCategory,
             "<b>♦ JACKPOT HAND — expensive, unforgettable:</b>\n\n" + text + "\n\n" +
             "<i>Play it and the chip is yours; fold it and one chip slides across the table. The house never shames a fold.</i>",
-            d, "Jackpot");
+            d, JackpotCategory);
 }

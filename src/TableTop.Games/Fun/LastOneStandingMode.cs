@@ -54,20 +54,20 @@ public sealed class LastOneStandingMode : BaseGameModeDefinition, ITableShapeMod
     public override string SkipLabel => "Out";
 
     /// <summary>Opens on the rules, because elimination needs its terms agreed first.</summary>
-    public override IReadOnlyList<string> CategoriesPinnedToStart => ["Rules"];
+    public override IReadOnlyList<string> CategoriesPinnedToStart => [LastOneStandingCardBank.RulesCategory];
 
     /// <summary>The two-player endgame comes last.</summary>
-    public override IReadOnlyList<string> CategoriesPinnedToEnd => ["Final"];
+    public override IReadOnlyList<string> CategoriesPinnedToEnd => [LastOneStandingCardBank.FinalCategory];
 
     /// <inheritdoc />
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Rules"] = "#5AC8B0",
-            ["Round"] = "#42A5F5",
-            ["Pressure"] = "#FFA726",
-            ["Revival"] = "#66BB6A",
-            ["Final"] = "#B71C4A",
+            [LastOneStandingCardBank.RulesCategory] = "#5AC8B0",
+            [LastOneStandingCardBank.RoundCategory] = "#42A5F5",
+            [LastOneStandingCardBank.PressureCategory] = "#FFA726",
+            [LastOneStandingCardBank.RevivalCategory] = "#66BB6A",
+            [LastOneStandingCardBank.FinalCategory] = "#B71C4A",
         };
 
     /// <summary>
@@ -95,6 +95,12 @@ public sealed class LastOneStandingMode : BaseGameModeDefinition, ITableShapeMod
 /// <summary>Built-in card bank for Last One Standing.</summary>
 public static class LastOneStandingCardBank
 {
+    internal const string RulesCategory = "Rules";
+    internal const string RoundCategory = "Round";
+    internal const string PressureCategory = "Pressure";
+    internal const string RevivalCategory = "Revival";
+    internal const string FinalCategory = "Final";
+
     /// <summary>All cards, in authored order.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -104,85 +110,85 @@ public static class LastOneStandingCardBank
 
     private static string Emoji(string category) => category switch
     {
-        "Rules" => "📋",
-        "Round" => "🎯",
-        "Pressure" => "🔥",
-        "Revival" => "🌱",
-        "Final" => "🏆",
+        RulesCategory => "📋",
+        RoundCategory => "🎯",
+        PressureCategory => "🔥",
+        RevivalCategory => "🌱",
+        FinalCategory => "🏆",
         _ => "🎲",
     };
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── RULES ─────────────────────────────────────────────────────────────
-        C("Rules", "How You Go Out",
+        C(RulesCategory, "How You Go Out",
           "Every card names what counts as failing. Fail it and you're out — but read the next two cards " +
           "before anyone does, because being out is not the same as being finished.", Difficulty.Easy),
-        C("Rules", "The Out Players Judge",
+        C(RulesCategory, "The Out Players Judge",
           "Anyone eliminated becomes a judge, and the judges have the final word on every borderline call for " +
           "the rest of the game. This is a real job and it is more fun than it sounds.", Difficulty.Easy),
-        C("Rules", "Nobody Goes Out Alone",
+        C(RulesCategory, "Nobody Goes Out Alone",
           "Two standing rules. If a card would eliminate everyone at once, nobody goes out — somebody has to " +
           "survive. And if a card asks something a player physically can't do, the judges substitute a fair " +
           "equivalent rather than eliminating them for it.", Difficulty.Easy),
 
         // ── ROUND — the standard eliminators ──────────────────────────────────
-        C("Round", "Name One, Quickly",
+        C(RoundCategory, "Name One, Quickly",
           "A category is named. Round the table, one item each, no repeats, three seconds each. First to " +
           "hesitate or repeat is out.", Difficulty.Easy),
-        C("Round", "Don't Say It",
+        C(RoundCategory, "Don't Say It",
           "The judges pick a common word. Everyone converses normally for two minutes. Say the word and you're " +
           "out. The judges may ask you leading questions and absolutely will.", Difficulty.Medium),
-        C("Round", "Keep A Straight Face",
+        C(RoundCategory, "Keep A Straight Face",
           "Everyone must hold a completely straight face for sixty seconds. The judges may do anything except " +
           "touch you or leave their seats. First to break is out.", Difficulty.Medium),
-        C("Round", "Finish The Sentence",
+        C(RoundCategory, "Finish The Sentence",
           "A judge starts a sentence. Round the table, each player must finish it differently and plausibly. " +
           "Repeat an idea or stall and you're out.", Difficulty.Medium),
-        C("Round", "One Hand Only",
+        C(RoundCategory, "One Hand Only",
           "Until the next Round card, everyone plays with one hand behind their back. Use the wrong hand for " +
           "anything at all and you're out. The judges are watching for exactly this.", Difficulty.Hard),
-        C("Round", "The Rhyme",
+        C(RoundCategory, "The Rhyme",
           "A judge names a word. Round the table, each player rhymes it. No repeats, no non-words, no " +
           "hesitating. Last to survive the loop stays; the one who breaks is out.", Difficulty.Hard),
 
         // ── PRESSURE — harder, and they eliminate faster ───────────────────────
-        C("Pressure", "Twenty Seconds Each",
+        C(PressureCategory, "Twenty Seconds Each",
           "A category, and twenty seconds per player to name five things in it. Fall short and you're out. The " +
           "judges count out loud, unhelpfully.", Difficulty.Hard),
-        C("Pressure", "Two Things At Once",
+        C(PressureCategory, "Two Things At Once",
           "Each player must recite the alphabet backwards from J while clapping a steady beat. Lose the beat or " +
           "the alphabet and you're out.", Difficulty.Hard),
-        C("Pressure", "Answer In Questions",
+        C(PressureCategory, "Answer In Questions",
           "The judges interrogate each player in turn for thirty seconds. Every answer must itself be a " +
           "question. Give a straight answer and you're out.", Difficulty.Extreme),
-        C("Pressure", "Nobody Blinks",
+        C(PressureCategory, "Nobody Blinks",
           "Pair up — judges assign the pairs. Hold eye contact. First of each pair to blink, laugh or look away " +
           "is out. Odd number left over survives automatically.", Difficulty.Medium),
-        C("Pressure", "The Impossible Category",
+        C(PressureCategory, "The Impossible Category",
           "The judges name a category so narrow they doubt anyone can fill it. Everyone must produce one valid " +
           "item. Anyone who can't is out — but if nobody can, the judges lose the card and everyone survives.",
           Difficulty.Extreme),
 
         // ── REVIVAL — the eliminated get back in ──────────────────────────────
-        C("Revival", "One Way Back",
+        C(RevivalCategory, "One Way Back",
           "All eliminated players compete on a single challenge of the judges' choosing — and the judges here " +
           "are the players still standing. Whoever wins it rejoins the game.", Difficulty.Medium),
-        C("Revival", "Bought Back",
+        C(RevivalCategory, "Bought Back",
           "Any player still standing may bring one eliminated player back in. It costs them nothing and helps " +
           "them not at all, which is exactly why it's interesting.", Difficulty.Easy),
-        C("Revival", "Everybody Back",
+        C(RevivalCategory, "Everybody Back",
           "Everyone eliminated rejoins immediately. Yes, everyone. The game is probably about to get much " +
           "louder and this card knows what it's doing.", Difficulty.Easy),
 
         // ── FINAL — for the last two ───────────────────────────────────────────
-        C("Final", "Head To Head",
+        C(FinalCategory, "Head To Head",
           "Down to two. A category, alternating answers, no repeats, no hesitation. First to falter loses. The " +
           "judges — everyone else — call it, and their call is final.", Difficulty.Extreme),
-        C("Final", "Three Rounds, Best Of",
+        C(FinalCategory, "Three Rounds, Best Of",
           "Down to two. Best of three: one round of naming, one of acting, one of holding a straight face. The " +
           "judges pick who goes first in each.", Difficulty.Extreme),
-        C("Final", "The Last Question",
+        C(FinalCategory, "The Last Question",
           "Down to two. The judges agree one question that both finalists answer. The better answer wins the " +
           "game, decided by open vote among everyone who is out. That's the deck.", Difficulty.Extreme),
     ];

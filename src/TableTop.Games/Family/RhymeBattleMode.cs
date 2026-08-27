@@ -42,11 +42,11 @@ public sealed class RhymeBattleMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Easy"] = "#66BB6A",
-            ["Medium"] = "#FFCA28",
-            ["Hard"] = "#EF5350",
-            ["Impossible"] = "#AB47BC",
-            ["Chaos"] = "#EC407A",
+            [RhymeBattleCardBank.EasyCategory] = "#66BB6A",
+            [RhymeBattleCardBank.MediumCategory] = "#FFCA28",
+            [RhymeBattleCardBank.HardCategory] = "#EF5350",
+            [RhymeBattleCardBank.ImpossibleCategory] = "#AB47BC",
+            [RhymeBattleCardBank.ChaosCategory] = "#EC407A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -64,46 +64,52 @@ public sealed class RhymeBattleMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Rhyme Battle. Cards are also available as JSON in <c>Data/Json/</c>.</summary>
 public static class RhymeBattleCardBank
 {
+    internal const string EasyCategory = "Easy";
+    internal const string MediumCategory = "Medium";
+    internal const string HardCategory = "Hard";
+    internal const string ImpossibleCategory = "Impossible";
+    internal const string ChaosCategory = "Chaos";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── EASY ──────────────────────────────────────────────────────────────
-        R("Easy", "CAT", "(mat, hat, sat, bat, fat, rat, splat, combat...)", Difficulty.Easy),
-        R("Easy", "LIGHT", "(night, sight, bright, fight, might, flight...)", Difficulty.Easy),
-        R("Easy", "TREE", "(free, bee, sea, key, spree, decree...)", Difficulty.Easy),
-        R("Easy", "SONG", "(long, strong, wrong, along, belong...)", Difficulty.Easy),
-        R("Easy", "BLUE", "(true, shoe, flew, new, drew, crew...)", Difficulty.Easy),
-        R("Easy", "RING", "(sing, wing, thing, spring, sting, bring...)", Difficulty.Easy),
+        R(EasyCategory, "CAT", "(mat, hat, sat, bat, fat, rat, splat, combat...)", Difficulty.Easy),
+        R(EasyCategory, "LIGHT", "(night, sight, bright, fight, might, flight...)", Difficulty.Easy),
+        R(EasyCategory, "TREE", "(free, bee, sea, key, spree, decree...)", Difficulty.Easy),
+        R(EasyCategory, "SONG", "(long, strong, wrong, along, belong...)", Difficulty.Easy),
+        R(EasyCategory, "BLUE", "(true, shoe, flew, new, drew, crew...)", Difficulty.Easy),
+        R(EasyCategory, "RING", "(sing, wing, thing, spring, sting, bring...)", Difficulty.Easy),
 
         // ── MEDIUM ────────────────────────────────────────────────────────────
-        R("Medium", "SILVER", "(quiver, shiver, deliver, river...)", Difficulty.Medium),
-        R("Medium", "ORANGE", "(no good rhymes exist; people suggest 'door-hinge'...)", Difficulty.Hard),
-        R("Medium", "HEART", "(part, start, smart, art, chart, dart...)", Difficulty.Medium),
-        R("Medium", "DANCE", "(chance, glance, prance, trance, romance...)", Difficulty.Medium),
-        R("Medium", "DRAGON", "(wagon, flagon... that's about it)", Difficulty.Medium),
-        R("Medium", "CIRCLE", "(purple rhymes loosely; mostly just pain)", Difficulty.Hard),
+        R(MediumCategory, "SILVER", "(quiver, shiver, deliver, river...)", Difficulty.Medium),
+        R(MediumCategory, "ORANGE", "(no good rhymes exist; people suggest 'door-hinge'...)", Difficulty.Hard),
+        R(MediumCategory, "HEART", "(part, start, smart, art, chart, dart...)", Difficulty.Medium),
+        R(MediumCategory, "DANCE", "(chance, glance, prance, trance, romance...)", Difficulty.Medium),
+        R(MediumCategory, "DRAGON", "(wagon, flagon... that's about it)", Difficulty.Medium),
+        R(MediumCategory, "CIRCLE", "(purple rhymes loosely; mostly just pain)", Difficulty.Hard),
 
         // ── HARD ──────────────────────────────────────────────────────────────
-        R("Hard", "MONTH", "(nope)", Difficulty.Hard),
-        R("Hard", "PURPLE", "(circle sort of? nurple? this is brutal)", Difficulty.Hard),
-        R("Hard", "PINT", "(hint, tint, mint, stint, squint...)", Difficulty.Hard),
-        R("Hard", "ORANGE", "(still nothing)", Difficulty.Hard),
-        R("Hard", "STRENGTH", "(length, if you cheat)", Difficulty.Hard),
+        R(HardCategory, "MONTH", "(nope)", Difficulty.Hard),
+        R(HardCategory, "PURPLE", "(circle sort of? nurple? this is brutal)", Difficulty.Hard),
+        R(HardCategory, "PINT", "(hint, tint, mint, stint, squint...)", Difficulty.Hard),
+        R(HardCategory, "ORANGE", "(still nothing)", Difficulty.Hard),
+        R(HardCategory, "STRENGTH", "(length, if you cheat)", Difficulty.Hard),
 
         // ── IMPOSSIBLE ────────────────────────────────────────────────────────
-        R("Impossible", "SYZYGY", "(good luck)", Difficulty.Hard),
-        R("Impossible", "SIXTH", "(...seriously?)", Difficulty.Hard),
-        R("Impossible", "RHYTHM", "(absolutely not)", Difficulty.Hard),
-        R("Impossible", "WORCESTERSHIRE", "(this is psychological warfare)", Difficulty.Hard),
+        R(ImpossibleCategory, "SYZYGY", "(good luck)", Difficulty.Hard),
+        R(ImpossibleCategory, "SIXTH", "(...seriously?)", Difficulty.Hard),
+        R(ImpossibleCategory, "RHYTHM", "(absolutely not)", Difficulty.Hard),
+        R(ImpossibleCategory, "WORCESTERSHIRE", "(this is psychological warfare)", Difficulty.Hard),
 
         // ── CHAOS ────────────────────────────────────────────────────────────
-        R("Chaos", "DOOR", "(four, floor, more, core, score, whore, store...)", Difficulty.Medium),
-        R("Chaos", "HAND", "(band, stand, land, grand, brand, strand...)", Difficulty.Easy),
-        R("Chaos", "POWER", "(flower, tower, hour, shower, sour...)", Difficulty.Medium),
-        R("Chaos", "MONEY", "(honey, sunny, funny, runny...)", Difficulty.Easy),
-        R("Chaos", "LOVE", "(dove, above, shove, glove, thereof...)", Difficulty.Medium),
+        R(ChaosCategory, "DOOR", "(four, floor, more, core, score, whore, store...)", Difficulty.Medium),
+        R(ChaosCategory, "HAND", "(band, stand, land, grand, brand, strand...)", Difficulty.Easy),
+        R(ChaosCategory, "POWER", "(flower, tower, hour, shower, sour...)", Difficulty.Medium),
+        R(ChaosCategory, "MONEY", "(honey, sunny, funny, runny...)", Difficulty.Easy),
+        R(ChaosCategory, "LOVE", "(dove, above, shove, glove, thereof...)", Difficulty.Medium),
     ];
 
     private static ICard R(string category, string word, string helpfulHint, Difficulty d) =>

@@ -41,11 +41,11 @@ public sealed class SurviveThisMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Inconvenient"] = "#FFCA28",
-            ["Ridiculous"] = "#EC407A",
-            ["Impossible"] = "#EF5350",
-            ["Weird"] = "#AB47BC",
-            ["Social"] = "#42A5F5",
+            [SurviveThisCardBank.InconvenientCategory] = "#FFCA28",
+            [SurviveThisCardBank.RidiculousCategory] = "#EC407A",
+            [SurviveThisCardBank.ImpossibleCategory] = "#EF5350",
+            [SurviveThisCardBank.WeirdCategory] = "#AB47BC",
+            [SurviveThisCardBank.SocialCategory] = "#42A5F5",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -63,99 +63,105 @@ public sealed class SurviveThisMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Survive This. Cards are also available as JSON in <c>Data/Json/</c>.</summary>
 public static class SurviveThisCardBank
 {
+    internal const string InconvenientCategory = "Inconvenient";
+    internal const string RidiculousCategory = "Ridiculous";
+    internal const string ImpossibleCategory = "Impossible";
+    internal const string WeirdCategory = "Weird";
+    internal const string SocialCategory = "Social";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── INCONVENIENT ──────────────────────────────────────────────────────
-        S("Inconvenient",
+        S(InconvenientCategory,
             "Stuck on an elevator with a mime. It's broken. Could take hours.",
             Difficulty.Easy),
-        S("Inconvenient",
+        S(InconvenientCategory,
             "Your phone dies right before you were about to open your boarding pass.",
             Difficulty.Easy),
-        S("Inconvenient",
+        S(InconvenientCategory,
             "You're alone at a dinner party where you know nobody and can't find the bathroom.",
             Difficulty.Easy),
-        S("Inconvenient",
+        S(InconvenientCategory,
             "Coffee shop has the wrong order but your name sounds exactly like someone else's.",
             Difficulty.Easy),
-        S("Inconvenient",
+        S(InconvenientCategory,
             "You're stuck next to someone on a plane who won't stop talking.",
             Difficulty.Easy),
 
         // ── RIDICULOUS ────────────────────────────────────────────────────────
-        S("Ridiculous",
+        S(RidiculousCategory,
             "You can only communicate through interpretive dance for the next 24 hours.",
             Difficulty.Medium),
-        S("Ridiculous",
+        S(RidiculousCategory,
             "You've been cursed to tell the absolute truth no matter what.",
             Difficulty.Medium),
-        S("Ridiculous",
+        S(RidiculousCategory,
             "Suddenly you can only speak in rhyme. Forever.",
             Difficulty.Medium),
-        S("Ridiculous",
+        S(RidiculousCategory,
             "Everything you say comes out in dramatic Shakespearean English.",
             Difficulty.Medium),
-        S("Ridiculous",
+        S(RidiculousCategory,
             "You're now three inches tall. Society doesn't change. Discuss.",
             Difficulty.Hard),
-        S("Ridiculous",
+        S(RidiculousCategory,
             "Everyone around you speaks in movie quotes only. You can't break character.",
             Difficulty.Medium),
 
         // ── IMPOSSIBLE ────────────────────────────────────────────────────────
-        S("Impossible",
+        S(ImpossibleCategory,
             "You are now made entirely of pasta. Spaghetti, to be specific.",
             Difficulty.Hard),
-        S("Impossible",
+        S(ImpossibleCategory,
             "Gravity is backwards. The sky is now below you.",
             Difficulty.Hard),
-        S("Impossible",
+        S(ImpossibleCategory,
             "You are now the size of a building. Buildings haven't been resized. Survive.",
             Difficulty.Hard),
-        S("Impossible",
+        S(ImpossibleCategory,
             "Time now moves backwards but your memories go forward. Discuss.",
             Difficulty.Hard),
-        S("Impossible",
+        S(ImpossibleCategory,
             "Everything is made of jello. Including you. Including the ground.",
             Difficulty.Hard),
 
         // ── WEIRD ────────────────────────────────────────────────────────────
-        S("Weird",
+        S(WeirdCategory,
             "You've switched bodies with your pet. You're now your pet. Your pet is you.",
             Difficulty.Medium),
-        S("Weird",
+        S(WeirdCategory,
             "You discover that pigeons are sentient and they're angry.",
             Difficulty.Easy),
-        S("Weird",
+        S(WeirdCategory,
             "All plants have declared war on humanity. They're very slow but very angry.",
             Difficulty.Medium),
-        S("Weird",
+        S(WeirdCategory,
             "Your shadow has achieved sentience and wants independence.",
             Difficulty.Medium),
-        S("Weird",
+        S(WeirdCategory,
             "All cats have secretly been running society this whole time. They reveal themselves.",
             Difficulty.Easy),
-        S("Weird",
+        S(WeirdCategory,
             "Inanimate objects are now mildly sentient. They're judging you.",
             Difficulty.Medium),
 
         // ── SOCIAL ────────────────────────────────────────────────────────────
-        S("Social",
+        S(SocialCategory,
             "You've just realized you've been mispronouncing someone's name for three years.",
             Difficulty.Easy),
-        S("Social",
+        S(SocialCategory,
             "You sent a text meant for your friend to your boss. It was unflattering.",
             Difficulty.Easy),
-        S("Social",
+        S(SocialCategory,
             "You've waved back at someone who was waving at the person behind you. Very awkwardly.",
             Difficulty.Easy),
-        S("Social",
+        S(SocialCategory,
             "You're at a party and someone keeps trying to hug you but you're not a hugger.",
             Difficulty.Easy),
-        S("Social",
+        S(SocialCategory,
             "Your mom finds your secret social media account and starts commenting on everything.",
             Difficulty.Medium),
     ];

@@ -37,11 +37,11 @@ public sealed class OneStarReviewsMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Nature"] = "#66BB6A",
-            ["Simple Joys"] = "#FFA726",
-            ["Institutions"] = "#42A5F5",
-            ["Concepts"] = "#AB47BC",
-            ["Crossover"] = "#EF5350",
+            [OneStarReviewsCardBank.NatureCategory] = "#66BB6A",
+            [OneStarReviewsCardBank.SimpleJoysCategory] = "#FFA726",
+            [OneStarReviewsCardBank.InstitutionsCategory] = "#42A5F5",
+            [OneStarReviewsCardBank.ConceptsCategory] = "#AB47BC",
+            [OneStarReviewsCardBank.CrossoverCategory] = "#EF5350",
         };
 
     /// <summary>One point to the group's voted-most-devastating review.</summary>
@@ -59,58 +59,64 @@ public sealed class OneStarReviewsMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for One-Star Reviews.</summary>
 public static class OneStarReviewsCardBank
 {
+    internal const string NatureCategory = "Nature";
+    internal const string SimpleJoysCategory = "Simple Joys";
+    internal const string InstitutionsCategory = "Institutions";
+    internal const string ConceptsCategory = "Concepts";
+    internal const string CrossoverCategory = "Crossover";
+
     /// <summary>All one-star cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── NATURE ───────────────────────────────────────────────────────────
-        R("Nature", "Sunsets", Difficulty.Easy),
-        R("Nature", "The ocean", Difficulty.Easy),
-        R("Nature", "Rainbows", Difficulty.Easy),
-        R("Nature", "The moon", Difficulty.Medium),
-        R("Nature", "Autumn leaves", Difficulty.Medium),
-        R("Nature", "Snow (the first snow of the year, specifically)", Difficulty.Medium),
-        R("Nature", "Birdsong at dawn", Difficulty.Hard),
-        R("Nature", "Mountains", Difficulty.Medium),
+        R(NatureCategory, "Sunsets", Difficulty.Easy),
+        R(NatureCategory, "The ocean", Difficulty.Easy),
+        R(NatureCategory, "Rainbows", Difficulty.Easy),
+        R(NatureCategory, "The moon", Difficulty.Medium),
+        R(NatureCategory, "Autumn leaves", Difficulty.Medium),
+        R(NatureCategory, "Snow (the first snow of the year, specifically)", Difficulty.Medium),
+        R(NatureCategory, "Birdsong at dawn", Difficulty.Hard),
+        R(NatureCategory, "Mountains", Difficulty.Medium),
 
         // ── SIMPLE JOYS ──────────────────────────────────────────────────────
-        R("Simple Joys", "Puppies", Difficulty.Hard),
-        R("Simple Joys", "Fresh bread smell", Difficulty.Medium),
-        R("Simple Joys", "Naps", Difficulty.Medium),
-        R("Simple Joys", "Bubble wrap", Difficulty.Easy),
-        R("Simple Joys", "The other side of the pillow", Difficulty.Hard),
-        R("Simple Joys", "Finding money in an old coat", Difficulty.Hard),
-        R("Simple Joys", "Popcorn at the cinema", Difficulty.Easy),
-        R("Simple Joys", "Hot chocolate on a cold day", Difficulty.Medium),
+        R(SimpleJoysCategory, "Puppies", Difficulty.Hard),
+        R(SimpleJoysCategory, "Fresh bread smell", Difficulty.Medium),
+        R(SimpleJoysCategory, "Naps", Difficulty.Medium),
+        R(SimpleJoysCategory, "Bubble wrap", Difficulty.Easy),
+        R(SimpleJoysCategory, "The other side of the pillow", Difficulty.Hard),
+        R(SimpleJoysCategory, "Finding money in an old coat", Difficulty.Hard),
+        R(SimpleJoysCategory, "Popcorn at the cinema", Difficulty.Easy),
+        R(SimpleJoysCategory, "Hot chocolate on a cold day", Difficulty.Medium),
 
         // ── INSTITUTIONS ─────────────────────────────────────────────────────
-        R("Institutions", "Birthday parties", Difficulty.Easy),
-        R("Institutions", "Libraries", Difficulty.Hard),
-        R("Institutions", "Weekends", Difficulty.Medium),
-        R("Institutions", "Breakfast in bed", Difficulty.Medium),
-        R("Institutions", "High-fives", Difficulty.Medium),
-        R("Institutions", "Fireworks", Difficulty.Easy),
-        R("Institutions", "Road trips", Difficulty.Easy),
-        R("Institutions", "Grandma's cooking (a hypothetical, beloved grandma)", Difficulty.Extreme),
+        R(InstitutionsCategory, "Birthday parties", Difficulty.Easy),
+        R(InstitutionsCategory, "Libraries", Difficulty.Hard),
+        R(InstitutionsCategory, "Weekends", Difficulty.Medium),
+        R(InstitutionsCategory, "Breakfast in bed", Difficulty.Medium),
+        R(InstitutionsCategory, "High-fives", Difficulty.Medium),
+        R(InstitutionsCategory, "Fireworks", Difficulty.Easy),
+        R(InstitutionsCategory, "Road trips", Difficulty.Easy),
+        R(InstitutionsCategory, "Grandma's cooking (a hypothetical, beloved grandma)", Difficulty.Extreme),
 
         // ── CONCEPTS ─────────────────────────────────────────────────────────
-        R("Concepts", "Hope", Difficulty.Extreme),
-        R("Concepts", "Friendship", Difficulty.Extreme),
-        R("Concepts", "A good night's sleep", Difficulty.Medium),
-        R("Concepts", "Nostalgia", Difficulty.Hard),
-        R("Concepts", "Free time", Difficulty.Hard),
-        R("Concepts", "Being tall enough to reach the top shelf", Difficulty.Medium),
+        R(ConceptsCategory, "Hope", Difficulty.Extreme),
+        R(ConceptsCategory, "Friendship", Difficulty.Extreme),
+        R(ConceptsCategory, "A good night's sleep", Difficulty.Medium),
+        R(ConceptsCategory, "Nostalgia", Difficulty.Hard),
+        R(ConceptsCategory, "Free time", Difficulty.Hard),
+        R(ConceptsCategory, "Being tall enough to reach the top shelf", Difficulty.Medium),
 
         // ── CROSSOVER — review one thing AS something else ───────────────────
-        X("Crossover", "Review GRAVITY as a frequent flyer.", Difficulty.Hard),
-        X("Crossover", "Review the SUN as a vampire. Professional tone.", Difficulty.Medium),
-        X("Crossover", "Review WINTER as a mosquito.", Difficulty.Medium),
-        X("Crossover", "Review MONDAYS as someone who genuinely loves their job (find the ONE flaw).", Difficulty.Extreme),
-        X("Crossover", "Review RAIN as a cat.", Difficulty.Easy),
-        X("Crossover", "Review the INVENTION OF THE WHEEL as a horse.", Difficulty.Hard),
-        X("Crossover", "Review MUSIC as your neighbour. Their walls are thin.", Difficulty.Medium),
-        X("Crossover", "Review SLEEP as a newborn's parent. One star. Weep between sentences.", Difficulty.Hard),
+        X(CrossoverCategory, "Review GRAVITY as a frequent flyer.", Difficulty.Hard),
+        X(CrossoverCategory, "Review the SUN as a vampire. Professional tone.", Difficulty.Medium),
+        X(CrossoverCategory, "Review WINTER as a mosquito.", Difficulty.Medium),
+        X(CrossoverCategory, "Review MONDAYS as someone who genuinely loves their job (find the ONE flaw).", Difficulty.Extreme),
+        X(CrossoverCategory, "Review RAIN as a cat.", Difficulty.Easy),
+        X(CrossoverCategory, "Review the INVENTION OF THE WHEEL as a horse.", Difficulty.Hard),
+        X(CrossoverCategory, "Review MUSIC as your neighbour. Their walls are thin.", Difficulty.Medium),
+        X(CrossoverCategory, "Review SLEEP as a newborn's parent. One star. Weep between sentences.", Difficulty.Hard),
     ];
 
     private static ICard R(string category, string subject, Difficulty d) =>

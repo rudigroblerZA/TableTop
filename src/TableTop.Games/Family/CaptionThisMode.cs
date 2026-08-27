@@ -41,9 +41,9 @@ public sealed class CaptionThisMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Scene"] = "#42A5F5",
-            ["Headline"] = "#FFCA28",
-            ["Overheard"] = "#EC407A",
+            [CaptionThisCardBank.SceneCategory] = "#42A5F5",
+            [CaptionThisCardBank.HeadlineCategory] = "#FFCA28",
+            [CaptionThisCardBank.OverheardCategory] = "#EC407A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -61,6 +61,10 @@ public sealed class CaptionThisMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Caption This. Cards are also available as JSON in <c>Data/Json/</c>.</summary>
 public static class CaptionThisCardBank
 {
+    internal const string SceneCategory = "Scene";
+    internal const string HeadlineCategory = "Headline";
+    internal const string OverheardCategory = "Overheard";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -125,22 +129,22 @@ public static class CaptionThisCardBank
 
     private static ICard Scene(string text, Difficulty d) =>
         StandardCard.Create(
-            "Scene",
+            SceneCategory,
             "<b>Caption this scene:</b>\n\n" + text +
             "\n\nEveryone has fifteen seconds. Best caption wins the round.",
-            d, "Scene");
+            d, SceneCategory);
 
     private static ICard Headline(string text, Difficulty d) =>
         StandardCard.Create(
-            "Headline",
+            HeadlineCategory,
             "<b>Write the tabloid headline:</b>\n\n" + text +
             "\n\nActually — that <i>is</i> the event. Now everyone writes a better, funnier headline for it.",
-            d, "Headline");
+            d, HeadlineCategory);
 
     private static ICard Overheard(string text, Difficulty d) =>
         StandardCard.Create(
-            "Overheard",
+            OverheardCategory,
             "<b>Finish the moment — say out loud</b> " + text +
             "\n\nGo round the circle. Funniest line takes the point.",
-            d, "Overheard");
+            d, OverheardCategory);
 }

@@ -34,11 +34,11 @@ public sealed class ThroughTheAgesMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Ancient World"] = "#FFCA28",
-            ["Inventions"] = "#42A5F5",
-            ["Famous Figures"] = "#AB47BC",
-            ["Arts & Culture"] = "#EC407A",
-            ["Milestones"] = "#26A69A",
+            [ThroughTheAgesCardBank.AncientWorldCategory] = "#FFCA28",
+            [ThroughTheAgesCardBank.InventionsCategory] = "#42A5F5",
+            [ThroughTheAgesCardBank.FamousFiguresCategory] = "#AB47BC",
+            [ThroughTheAgesCardBank.ArtsCultureCategory] = "#EC407A",
+            [ThroughTheAgesCardBank.MilestonesCategory] = "#26A69A",
         };
 
     /// <summary>Harder questions score more.</summary>
@@ -56,47 +56,53 @@ public sealed class ThroughTheAgesMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Through the Ages.</summary>
 public static class ThroughTheAgesCardBank
 {
+    internal const string AncientWorldCategory = "Ancient World";
+    internal const string InventionsCategory = "Inventions";
+    internal const string FamousFiguresCategory = "Famous Figures";
+    internal const string ArtsCultureCategory = "Arts & Culture";
+    internal const string MilestonesCategory = "Milestones";
+
     /// <summary>All cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── ANCIENT WORLD ────────────────────────────────────────────────────
-        Q("Ancient World", "The pyramids of Giza were built by the ancient…?", "Greeks", "Romans", "Egyptians", "Persians", AnswerLabel.C, Difficulty.Easy),
-        Q("Ancient World", "Which ancient civilisation held the first Olympic Games?", "Rome", "Greece", "Egypt", "China", AnswerLabel.B, Difficulty.Medium),
-        Q("Ancient World", "Roman numerals: what number is X?", "5", "10", "50", "100", AnswerLabel.B, Difficulty.Easy),
-        Q("Ancient World", "The Great Wall was built to protect which country?", "Japan", "India", "China", "Mongolia", AnswerLabel.C, Difficulty.Easy),
-        Q("Ancient World", "Which writing used pictures and symbols in ancient Egypt?", "Cuneiform", "Hieroglyphs", "Runes", "Braille", AnswerLabel.B, Difficulty.Hard),
-        Q("Ancient World", "Which people built roads, aqueducts, and the Colosseum?", "Greeks", "Romans", "Vikings", "Egyptians", AnswerLabel.B, Difficulty.Medium),
+        Q(AncientWorldCategory, "The pyramids of Giza were built by the ancient…?", "Greeks", "Romans", "Egyptians", "Persians", AnswerLabel.C, Difficulty.Easy),
+        Q(AncientWorldCategory, "Which ancient civilisation held the first Olympic Games?", "Rome", "Greece", "Egypt", "China", AnswerLabel.B, Difficulty.Medium),
+        Q(AncientWorldCategory, "Roman numerals: what number is X?", "5", "10", "50", "100", AnswerLabel.B, Difficulty.Easy),
+        Q(AncientWorldCategory, "The Great Wall was built to protect which country?", "Japan", "India", "China", "Mongolia", AnswerLabel.C, Difficulty.Easy),
+        Q(AncientWorldCategory, "Which writing used pictures and symbols in ancient Egypt?", "Cuneiform", "Hieroglyphs", "Runes", "Braille", AnswerLabel.B, Difficulty.Hard),
+        Q(AncientWorldCategory, "Which people built roads, aqueducts, and the Colosseum?", "Greeks", "Romans", "Vikings", "Egyptians", AnswerLabel.B, Difficulty.Medium),
 
         // ── INVENTIONS & DISCOVERIES ─────────────────────────────────────────
-        Q("Inventions", "What did the printing press make easier to produce?", "Cars", "Books", "Clothes", "Ships", AnswerLabel.B, Difficulty.Easy),
-        Q("Inventions", "Which invention let people talk over long distances by wire?", "Radio", "Telephone", "Television", "Telegraph", AnswerLabel.B, Difficulty.Medium),
-        Q("Inventions", "The lightbulb is most associated with which inventor?", "Tesla", "Bell", "Edison", "Newton", AnswerLabel.C, Difficulty.Medium),
-        Q("Inventions", "What machine, improved by James Watt, powered the Industrial Revolution?", "Steam engine", "Jet engine", "Windmill", "Water wheel", AnswerLabel.A, Difficulty.Hard),
-        Q("Inventions", "The World Wide Web was invented in which decade?", "1970s", "1980s", "1990s", "2000s", AnswerLabel.B, Difficulty.Extreme),
-        Q("Inventions", "Which of these is used to tell direction?", "Barometer", "Compass", "Thermometer", "Telescope", AnswerLabel.B, Difficulty.Easy),
+        Q(InventionsCategory, "What did the printing press make easier to produce?", "Cars", "Books", "Clothes", "Ships", AnswerLabel.B, Difficulty.Easy),
+        Q(InventionsCategory, "Which invention let people talk over long distances by wire?", "Radio", "Telephone", "Television", "Telegraph", AnswerLabel.B, Difficulty.Medium),
+        Q(InventionsCategory, "The lightbulb is most associated with which inventor?", "Tesla", "Bell", "Edison", "Newton", AnswerLabel.C, Difficulty.Medium),
+        Q(InventionsCategory, "What machine, improved by James Watt, powered the Industrial Revolution?", "Steam engine", "Jet engine", "Windmill", "Water wheel", AnswerLabel.A, Difficulty.Hard),
+        Q(InventionsCategory, "The World Wide Web was invented in which decade?", "1970s", "1980s", "1990s", "2000s", AnswerLabel.B, Difficulty.Extreme),
+        Q(InventionsCategory, "Which of these is used to tell direction?", "Barometer", "Compass", "Thermometer", "Telescope", AnswerLabel.B, Difficulty.Easy),
 
         // ── FAMOUS FIGURES ───────────────────────────────────────────────────
-        Q("Famous Figures", "Who is said to have discovered gravity watching an apple fall?", "Einstein", "Newton", "Galileo", "Darwin", AnswerLabel.B, Difficulty.Medium),
-        Q("Famous Figures", "Which scientist developed the theory of evolution by natural selection?", "Newton", "Darwin", "Curie", "Mendel", AnswerLabel.B, Difficulty.Hard),
-        Q("Famous Figures", "Marie Curie won Nobel Prizes for her work on what?", "Gravity", "Radioactivity", "Electricity", "Genetics", AnswerLabel.B, Difficulty.Hard),
-        Q("Famous Figures", "Who painted the Mona Lisa?", "Michelangelo", "Raphael", "Leonardo da Vinci", "Donatello", AnswerLabel.C, Difficulty.Medium),
-        Q("Famous Figures", "Which explorer's voyages reached the Americas in 1492?", "Magellan", "Columbus", "Cook", "Vasco da Gama", AnswerLabel.B, Difficulty.Medium),
+        Q(FamousFiguresCategory, "Who is said to have discovered gravity watching an apple fall?", "Einstein", "Newton", "Galileo", "Darwin", AnswerLabel.B, Difficulty.Medium),
+        Q(FamousFiguresCategory, "Which scientist developed the theory of evolution by natural selection?", "Newton", "Darwin", "Curie", "Mendel", AnswerLabel.B, Difficulty.Hard),
+        Q(FamousFiguresCategory, "Marie Curie won Nobel Prizes for her work on what?", "Gravity", "Radioactivity", "Electricity", "Genetics", AnswerLabel.B, Difficulty.Hard),
+        Q(FamousFiguresCategory, "Who painted the Mona Lisa?", "Michelangelo", "Raphael", "Leonardo da Vinci", "Donatello", AnswerLabel.C, Difficulty.Medium),
+        Q(FamousFiguresCategory, "Which explorer's voyages reached the Americas in 1492?", "Magellan", "Columbus", "Cook", "Vasco da Gama", AnswerLabel.B, Difficulty.Medium),
 
         // ── ARTS & CULTURE ───────────────────────────────────────────────────
-        Q("Arts & Culture", "Who wrote the plays 'Romeo and Juliet' and 'Hamlet'?", "Dickens", "Shakespeare", "Tolkien", "Austen", AnswerLabel.B, Difficulty.Easy),
-        Q("Arts & Culture", "How many strings does a standard guitar have?", "4", "5", "6", "8", AnswerLabel.C, Difficulty.Easy),
-        Q("Arts & Culture", "Which art form is ballet?", "Painting", "Dance", "Sculpture", "Poetry", AnswerLabel.B, Difficulty.Easy),
-        Q("Arts & Culture", "A 'haiku' is a short form of what?", "Song", "Poem", "Painting", "Dance", AnswerLabel.B, Difficulty.Hard),
-        Q("Arts & Culture", "The orchestra section with violins and cellos is the…?", "Brass", "Woodwind", "Strings", "Percussion", AnswerLabel.C, Difficulty.Medium),
+        Q(ArtsCultureCategory, "Who wrote the plays 'Romeo and Juliet' and 'Hamlet'?", "Dickens", "Shakespeare", "Tolkien", "Austen", AnswerLabel.B, Difficulty.Easy),
+        Q(ArtsCultureCategory, "How many strings does a standard guitar have?", "4", "5", "6", "8", AnswerLabel.C, Difficulty.Easy),
+        Q(ArtsCultureCategory, "Which art form is ballet?", "Painting", "Dance", "Sculpture", "Poetry", AnswerLabel.B, Difficulty.Easy),
+        Q(ArtsCultureCategory, "A 'haiku' is a short form of what?", "Song", "Poem", "Painting", "Dance", AnswerLabel.B, Difficulty.Hard),
+        Q(ArtsCultureCategory, "The orchestra section with violins and cellos is the…?", "Brass", "Woodwind", "Strings", "Percussion", AnswerLabel.C, Difficulty.Medium),
 
         // ── MILESTONES — broadly settled 'firsts' and events ─────────────────
-        Q("Milestones", "In 1969, humans first walked on the…?", "Mars", "Moon", "Sun", "Venus", AnswerLabel.B, Difficulty.Easy),
-        Q("Milestones", "Which ship famously sank in 1912?", "Titanic", "Mayflower", "Endeavour", "Victory", AnswerLabel.A, Difficulty.Medium),
-        Q("Milestones", "The Wright brothers are famous for the first powered…?", "Car", "Aeroplane", "Boat", "Rocket", AnswerLabel.B, Difficulty.Medium),
-        Q("Milestones", "Which ancient wonder is the only one still largely standing today?", "Hanging Gardens", "Great Pyramid of Giza", "Colossus of Rhodes", "Lighthouse of Alexandria", AnswerLabel.B, Difficulty.Hard),
-        Q("Milestones", "About how long is a century?", "10 years", "50 years", "100 years", "1000 years", AnswerLabel.C, Difficulty.Easy),
+        Q(MilestonesCategory, "In 1969, humans first walked on the…?", "Mars", "Moon", "Sun", "Venus", AnswerLabel.B, Difficulty.Easy),
+        Q(MilestonesCategory, "Which ship famously sank in 1912?", "Titanic", "Mayflower", "Endeavour", "Victory", AnswerLabel.A, Difficulty.Medium),
+        Q(MilestonesCategory, "The Wright brothers are famous for the first powered…?", "Car", "Aeroplane", "Boat", "Rocket", AnswerLabel.B, Difficulty.Medium),
+        Q(MilestonesCategory, "Which ancient wonder is the only one still largely standing today?", "Hanging Gardens", "Great Pyramid of Giza", "Colossus of Rhodes", "Lighthouse of Alexandria", AnswerLabel.B, Difficulty.Hard),
+        Q(MilestonesCategory, "About how long is a century?", "10 years", "50 years", "100 years", "1000 years", AnswerLabel.C, Difficulty.Easy),
     ];
 
     private static ICard Q(string cat, string question, string a, string b, string c, string d, AnswerLabel correct, Difficulty diff) =>

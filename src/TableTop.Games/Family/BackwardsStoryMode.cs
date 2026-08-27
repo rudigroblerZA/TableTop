@@ -41,11 +41,11 @@ public sealed class BackwardsStoryMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Dramatic"] = "#EC407A",
-            ["Silly"] = "#FFCA28",
-            ["Mysterious"] = "#AB47BC",
-            ["Heartfelt"] = "#66BB6A",
-            ["Chaotic"] = "#EF5350",
+            [BackwardsStoryCardBank.DramaticCategory] = "#EC407A",
+            [BackwardsStoryCardBank.SillyCategory] = "#FFCA28",
+            [BackwardsStoryCardBank.MysteriousCategory] = "#AB47BC",
+            [BackwardsStoryCardBank.HeartfeltCategory] = "#66BB6A",
+            [BackwardsStoryCardBank.ChaoticCategory] = "#EF5350",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -63,96 +63,102 @@ public sealed class BackwardsStoryMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Backwards Story. Cards are also available as JSON in <c>Data/Json/</c>.</summary>
 public static class BackwardsStoryCardBank
 {
+    internal const string DramaticCategory = "Dramatic";
+    internal const string SillyCategory = "Silly";
+    internal const string MysteriousCategory = "Mysterious";
+    internal const string HeartfeltCategory = "Heartfelt";
+    internal const string ChaoticCategory = "Chaotic";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── DRAMATIC ──────────────────────────────────────────────────────────
-        B("Dramatic",
+        B(DramaticCategory,
             "...so that's why we never speak to the zookeeper anymore.",
             Difficulty.Medium),
-        B("Dramatic",
+        B(DramaticCategory,
             "...and that's how I ended up married to a mime.",
             Difficulty.Hard),
-        B("Dramatic",
+        B(DramaticCategory,
             "...which explains why the city banned squirrels from the library.",
             Difficulty.Hard),
-        B("Dramatic",
+        B(DramaticCategory,
             "...so now every Tuesday is dedicated to apologizing to the neighbours.",
             Difficulty.Medium),
-        B("Dramatic",
+        B(DramaticCategory,
             "...and that's why I can never show my face at the supermarket again.",
             Difficulty.Medium),
-        B("Dramatic",
+        B(DramaticCategory,
             "...so the city council had to make it illegal just for us.",
             Difficulty.Hard),
 
         // ── SILLY ────────────────────────────────────────────────────────────
-        B("Silly",
+        B(SillyCategory,
             "...which is why we now have seventeen ducks living in our garage.",
             Difficulty.Easy),
-        B("Silly",
+        B(SillyCategory,
             "...and that's the story of how I became allergic to spaghetti.",
             Difficulty.Medium),
-        B("Silly",
+        B(SillyCategory,
             "...so now the only thing my dog will eat is lobster bisque.",
             Difficulty.Easy),
-        B("Silly",
+        B(SillyCategory,
             "...which explains why we legally changed our family name to 'Potato'.",
             Difficulty.Easy),
-        B("Silly",
+        B(SillyCategory,
             "...and that's why I can only communicate through interpretive dance now.",
             Difficulty.Hard),
-        B("Silly",
+        B(SillyCategory,
             "...so we're moving to the moon next month.",
             Difficulty.Medium),
 
         // ── MYSTERIOUS ──────────────────────────────────────────────────────
-        B("Mysterious",
+        B(MysteriousCategory,
             "...and I still don't know who left the mysterious note under my pillow.",
             Difficulty.Hard),
-        B("Mysterious",
+        B(MysteriousCategory,
             "...which is how I discovered the secret door in the library.",
             Difficulty.Medium),
-        B("Mysterious",
+        B(MysteriousCategory,
             "...and nobody has ever been able to explain what happened that night.",
             Difficulty.Hard),
-        B("Mysterious",
+        B(MysteriousCategory,
             "...so I buried the evidence in the garden and haven't spoken of it since.",
             Difficulty.Medium),
-        B("Mysterious",
+        B(MysteriousCategory,
             "...which led me to discover that my best friend isn't even human.",
             Difficulty.Hard),
 
         // ── HEARTFELT ────────────────────────────────────────────────────────
-        B("Heartfelt",
+        B(HeartfeltCategory,
             "...and that's when I realized what family really means.",
             Difficulty.Medium),
-        B("Heartfelt",
+        B(HeartfeltCategory,
             "...so I finally told them the truth, and everything changed for the better.",
             Difficulty.Medium),
-        B("Heartfelt",
+        B(HeartfeltCategory,
             "...and I've never been happier in my entire life.",
             Difficulty.Easy),
-        B("Heartfelt",
+        B(HeartfeltCategory,
             "...which is why I'm grateful for every single day with them.",
             Difficulty.Medium),
-        B("Heartfelt",
+        B(HeartfeltCategory,
             "...and we both learned that forgiveness is the greatest gift.",
             Difficulty.Medium),
 
         // ── CHAOTIC ──────────────────────────────────────────────────────────
-        B("Chaotic",
+        B(ChaoticCategory,
             "...and that's how we ended up on national news three times in one week.",
             Difficulty.Hard),
-        B("Chaotic",
+        B(ChaoticCategory,
             "...so the fire department now has our house memorized.",
             Difficulty.Medium),
-        B("Chaotic",
+        B(ChaoticCategory,
             "...which is why we've been banned from four different venues.",
             Difficulty.Medium),
-        B("Chaotic",
+        B(ChaoticCategory,
             "...and somehow we all survived with only minor injuries.",
             Difficulty.Medium),
     ];

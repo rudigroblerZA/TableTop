@@ -57,12 +57,12 @@ public sealed class AfterglowMode : BaseGameModeDefinition, ITableShapeMode
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Consent"] = "#26A69A",
+            [AfterglowCardBank.ConsentCategory] = "#26A69A",
             [AfterglowCardBank.WarmUpCategory] = "#FFCA28",
-            ["Turn Up"] = "#FFA726",
-            ["Heat"] = "#EF5350",
-            ["Undone"] = "#AD1457",
-            ["Aftercare"] = "#7E57C2",
+            [AfterglowCardBank.TurnUpCategory] = "#FFA726",
+            [AfterglowCardBank.HeatCategory] = "#EF5350",
+            [AfterglowCardBank.UndoneCategory] = "#AD1457",
+            [AfterglowCardBank.AftercareCategory] = "#7E57C2",
         };
 
     /// <summary>Deeper movements are worth more — but this isn't really about the score.</summary>
@@ -72,10 +72,10 @@ public sealed class AfterglowMode : BaseGameModeDefinition, ITableShapeMode
     /// a stylistic preference: a safeword has to be agreed before the cards it
     /// governs, and how a session lands matters as much as anything in it.
     /// </summary>
-    public override IReadOnlyList<string> CategoriesPinnedToStart => ["Consent"];
+    public override IReadOnlyList<string> CategoriesPinnedToStart => [AfterglowCardBank.ConsentCategory];
 
     /// <inheritdoc cref="CategoriesPinnedToStart" />
-    public override IReadOnlyList<string> CategoriesPinnedToEnd => ["Aftercare"];
+    public override IReadOnlyList<string> CategoriesPinnedToEnd => [AfterglowCardBank.AftercareCategory];
 
     /// <inheritdoc />
     protected override IScoringStrategy BuildScoring() =>
@@ -96,6 +96,12 @@ public sealed class AfterglowMode : BaseGameModeDefinition, ITableShapeMode
 /// </summary>
 public static class AfterglowCardBank
 {
+    internal const string ConsentCategory = "Consent";
+    internal const string TurnUpCategory = "Turn Up";
+    internal const string HeatCategory = "Heat";
+    internal const string UndoneCategory = "Undone";
+    internal const string AftercareCategory = "Aftercare";
+
     internal const string WarmUpCategory = "Warm Up";
 
     /// <summary>All cards, in intended play order.</summary>
@@ -141,63 +147,63 @@ public static class AfterglowCardBank
           Difficulty.Medium),
 
         // ── TURN UP — skin, heat rising ──────────────────────────────────────
-        M("Turn Up", "Trace",
+        M(TurnUpCategory, "Trace",
           "With fingertips or mouth, trace a slow path from your partner's neck downward — pausing anywhere their breath changes. Follow the reactions, not a script.",
           Difficulty.Medium),
-        M("Turn Up", "Tell Me What You Like",
+        M(TurnUpCategory, "Tell Me What You Like",
           "Partner in front: describe out loud exactly how you like to be touched right now. Partner behind or beside: do precisely that, and adjust as they talk.",
           Difficulty.Medium),
-        M("Turn Up", "Skin",
+        M(TurnUpCategory, "Skin",
           "Undress each other the rest of the way — or as far as you both want — trading one piece at a time, kissing whatever you reveal.",
           Difficulty.Hard),
-        M("Turn Up", "Hold The Line",
+        M(TurnUpCategory, "Hold The Line",
           "Kiss and touch anywhere you like above the waist for two full minutes — and agree not to go lower until the timer's up. Making each other wait is the game.",
           Difficulty.Hard),
-        M("Turn Up", "Show Me",
+        M(TurnUpCategory, "Show Me",
           "Take your partner's hand and show them exactly how you like to be touched, guiding the pace and pressure. Let them take over when they've got it.",
           Difficulty.Hard),
-        M("Turn Up", "Somewhere Unobvious",
+        M(TurnUpCategory, "Somewhere Unobvious",
               "Kiss somewhere your partner wouldn't have guessed — the inside of an elbow, the back of a knee, the base of the spine. Stay there longer than seems necessary.",
           Difficulty.Medium),
-        M("Turn Up", "Hands Away",
+        M(TurnUpCategory, "Hands Away",
               "One of you: hands behind your back, no touching allowed. The other: two minutes, do as you like. The one who can't touch says when the two minutes are up.",
           Difficulty.Hard),
 
         // ── HEAT — explicit, still opt-in every step ─────────────────────────
-        M("Heat", "Down",
+        M(HeatCategory, "Down",
           "One partner: kiss a slow path downward and use your mouth on your partner however they like — check in with a \"colour?\" partway, keep going only on green.",
           Difficulty.Hard),
-        M("Heat", "Hands On",
+        M(HeatCategory, "Hands On",
           "Touch each other where you most want to be touched, at the same time — watching each other's faces, matching the rhythm they set.",
           Difficulty.Hard),
-        M("Heat", "Say It",
+        M(HeatCategory, "Say It",
           "Tell your partner, out loud and explicit, exactly what you want next. If you both want it and you're both enthusiastic — do that.",
           Difficulty.Extreme),
-        M("Heat", "Take The Lead",
+        M(HeatCategory, "Take The Lead",
           "One of you takes the lead completely for the next few minutes; the other simply receives and says yes, slow, or colour. Then swap if you both want to.",
           Difficulty.Extreme),
-        M("Heat", "Together Now",
+        M(HeatCategory, "Together Now",
           "If you both want to and you've got whatever you need to be safe, come together however you like best — staying close, staying vocal about what feels good. Green means more; anything else means pause.",
           Difficulty.Extreme),
-        M("Heat", "Say It While It Happens",
+        M(HeatCategory, "Say It While It Happens",
               "One partner: keep your hands or mouth busy. The other: say out loud what you want next, as it occurs to you. Instructions get followed exactly.",
           Difficulty.Hard),
-        M("Heat", "Half Speed",
+        M(HeatCategory, "Half Speed",
               "Whatever is happening, halve the speed of it. Stay at half speed for as long as you can both stand — then check in before you change anything.",
           Difficulty.Extreme),
-        M("Undone", "Your Way",
+        M(UndoneCategory, "Your Way",
           "No card knows the two of you better than you do. Set this one aside and do exactly what you both want — this is your night, not the deck's.",
           Difficulty.Extreme),
-        M("Undone", "Again, Slower",
+        M(UndoneCategory, "Again, Slower",
           "Whatever just happened — do a piece of it again, slower, with your eyes open and on each other.",
           Difficulty.Extreme),
-        M("Undone", "The Unsaid Thing",
+        M(UndoneCategory, "The Unsaid Thing",
               "Tell your partner the thing you've been thinking about all evening and haven't said. Then decide together, out loud, whether tonight is the night for it. Either answer is a good one.",
           Difficulty.Extreme),
-        M("Undone", "Nothing New",
+        M(UndoneCategory, "Nothing New",
               "No new ideas on this card. Do the thing that has always worked for the two of you — the old reliable — and give it your whole attention, as though it were the first time.",
           Difficulty.Extreme),
-        M("Undone", "Stay Here",
+        M(UndoneCategory, "Stay Here",
               "Don't move on to anything else. Whatever this is, stay in it — no escalating, no switching — until one of you says otherwise.",
           Difficulty.Extreme),
 
@@ -222,7 +228,7 @@ public static class AfterglowCardBank
     private static ICard C(string title, string body, Difficulty d) =>
         StandardCard.Create(title,
             "<b>🛟 CONSENT — set this up before you play on</b>\n\n" + body,
-            d, "Consent");
+            d, ConsentCategory);
 
     private static ICard M(string category, string title, string body, Difficulty d) =>
         StandardCard.Create(title,
@@ -234,14 +240,14 @@ public static class AfterglowCardBank
     private static ICard A(string title, string body, Difficulty d) =>
         StandardCard.Create(title,
             "<b>💜 AFTERCARE</b>\n\n" + body,
-            d, "Aftercare");
+            d, AftercareCategory);
 
     private static string Emoji(string category) => category switch
     {
         WarmUpCategory => "🌤️",
-        "Turn Up" => "🔥",
-        "Heat" => "🌶️",
-        "Undone" => "💥",
+        TurnUpCategory => "🔥",
+        HeatCategory => "🌶️",
+        UndoneCategory => "💥",
         _ => "•",
     };
 }

@@ -76,7 +76,7 @@ public sealed class RivalsMode : BaseGameModeDefinition, ITeamMode, ITableShapeM
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["How To Play"] = "#26A69A",
+            [RivalsCardBank.HowToPlayCategory] = "#26A69A",
             ["Wordplay"] = "#42A5F5",
             ["Memory"] = "#AB47BC",
             ["Performance"] = "#FFA726",
@@ -85,7 +85,7 @@ public sealed class RivalsMode : BaseGameModeDefinition, ITeamMode, ITableShapeM
         };
 
     /// <summary>The rules card explains the mechanic and must come before any card relying on it.</summary>
-    public override IReadOnlyList<string> CategoriesPinnedToStart => ["How To Play"];
+    public override IReadOnlyList<string> CategoriesPinnedToStart => [RivalsCardBank.HowToPlayCategory];
 
     /// <inheritdoc />
     protected override IScoringStrategy BuildScoring() => new DifficultyBasedScoringStrategy();
@@ -107,6 +107,8 @@ public sealed class RivalsMode : BaseGameModeDefinition, ITeamMode, ITableShapeM
 /// </summary>
 public static class RivalsCardBank
 {
+    internal const string HowToPlayCategory = "How To Play";
+
     /// <summary>All cards, in intended play order.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -124,7 +126,7 @@ public static class RivalsCardBank
     private static IReadOnlyList<ICard> Build() => CardDeckBuilder
         .For("Rivals")
 
-        .Category("How To Play")
+        .Category(HowToPlayCategory)
             .Card("How Rivals Works",
                 "Two teams, alternating turns — the app handles whose go it is.\n\n" +
                 "Every card has three versions: <b>Easy</b> (1 point), <b>Hard</b> (3) and <b>Brutal</b> (5). " +

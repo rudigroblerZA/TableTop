@@ -72,22 +72,22 @@ public sealed class HerdMode : BaseGameModeDefinition, IHerdDeckProvider, ITable
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["How To Play"] = "#26A69A",
-            ["Obvious"] = "#42A5F5",
-            ["Awkward"] = "#FFA726",
-            ["This Table"] = "#AB47BC",
-            ["Split"] = "#EF5350",
+            [HerdCardBank.HowToPlayCategory] = "#26A69A",
+            [HerdCardBank.ObviousCategory] = "#42A5F5",
+            [HerdCardBank.AwkwardCategory] = "#FFA726",
+            [HerdCardBank.ThisTableCategory] = "#AB47BC",
+            [HerdCardBank.SplitCategory] = "#EF5350",
         };
 
     /// <summary>The rules card explains simultaneous answering, which the mode depends on.</summary>
-    public override IReadOnlyList<string> CategoriesPinnedToStart => ["How To Play"];
+    public override IReadOnlyList<string> CategoriesPinnedToStart => [HerdCardBank.HowToPlayCategory];
 
     /// <inheritdoc />
     protected override IScoringStrategy BuildScoring() => new FixedScoringStrategy(1);
 
     /// <inheritdoc />
     /// <remarks>
-    /// Excludes the "How To Play" card. Every other mode's rules card is a
+    /// Excludes the HerdCardBank.HowToPlayCategory card. Every other mode's rules card is a
     /// normal card the players turn past, but here the deck feeds
     /// <c>HerdController</c> directly as prompts — so leaving it in would make
     /// round 1 ask the table to simultaneously answer a page of instructions.
@@ -96,7 +96,7 @@ public sealed class HerdMode : BaseGameModeDefinition, IHerdDeckProvider, ITable
     /// wherever a mode's deck is browsed.
     /// </remarks>
     public IReadOnlyList<ICard> GetHerdDeck() =>
-        GetCards([]).Where(c => c.Category != "How To Play").ToList();
+        GetCards([]).Where(c => c.Category != HerdCardBank.HowToPlayCategory).ToList();
 
     /// <inheritdoc />
     protected override IReadOnlyList<ICard> BuildCards(IReadOnlyList<IPlayer> players) =>
@@ -119,6 +119,12 @@ public sealed class HerdMode : BaseGameModeDefinition, IHerdDeckProvider, ITable
 /// </summary>
 public static class HerdCardBank
 {
+    internal const string HowToPlayCategory = "How To Play";
+    internal const string ObviousCategory = "Obvious";
+    internal const string AwkwardCategory = "Awkward";
+    internal const string ThisTableCategory = "This Table";
+    internal const string SplitCategory = "Split";
+
     private const string Deck = "Herd";
 
     /// <summary>All cards, in intended play order.</summary>
@@ -133,7 +139,7 @@ public static class HerdCardBank
 
     private static IReadOnlyList<ICard> Build() =>
     [
-        C("How To Play", "How Herd Works",
+        C(HowToPlayCategory, "How Herd Works",
             "Everyone answers <b>at the same time</b>. Write it down, or type it and turn the screen over — " +
             "no saying it out loud first, because the moment one person speaks everyone else drifts toward them.\n\n" +
             "Reveal together.\n\n" +
@@ -144,33 +150,33 @@ public static class HerdCardBank
             "The safe move is worth more, which is exactly why the other one is interesting."),
 
         // ── OBVIOUS — a strong favourite exists; matching should be easy ─────
-        C("Obvious", "Cereal",        "Name a breakfast cereal."),
-        C("Obvious", "Primary Colour","Name a primary colour."),
-        C("Obvious", "Card Game",     "Name a card game."),
-        C("Obvious", "Big Cat",       "Name a big cat."),
-        C("Obvious", "Pizza Topping", "Name a pizza topping."),
-        C("Obvious", "Planet",        "Name a planet."),
-        C("Obvious", "Board Game",    "Name a board game."),
+        C(ObviousCategory, "Cereal",        "Name a breakfast cereal."),
+        C(ObviousCategory, "Primary Colour","Name a primary colour."),
+        C(ObviousCategory, "Card Game",     "Name a card game."),
+        C(ObviousCategory, "Big Cat",       "Name a big cat."),
+        C(ObviousCategory, "Pizza Topping", "Name a pizza topping."),
+        C(ObviousCategory, "Planet",        "Name a planet."),
+        C(ObviousCategory, "Board Game",    "Name a board game."),
 
         // ── AWKWARD — obvious answer exists, but saying it costs something ───
-        C("Awkward", "Bad Habit",      "Name a bad habit most people here probably have.", Difficulty.Medium),
-        C("Awkward", "Overrated",      "Name something widely loved that you find overrated.", Difficulty.Medium),
-        C("Awkward", "Lied About",     "Name something almost everyone has lied about at least once.", Difficulty.Medium),
-        C("Awkward", "Never Finished", "Name something loads of people start and never finish.", Difficulty.Medium),
-        C("Awkward", "Too Old For",    "Name something people claim to be too old for and still do.", Difficulty.Medium),
+        C(AwkwardCategory, "Bad Habit",      "Name a bad habit most people here probably have.", Difficulty.Medium),
+        C(AwkwardCategory, "Overrated",      "Name something widely loved that you find overrated.", Difficulty.Medium),
+        C(AwkwardCategory, "Lied About",     "Name something almost everyone has lied about at least once.", Difficulty.Medium),
+        C(AwkwardCategory, "Never Finished", "Name something loads of people start and never finish.", Difficulty.Medium),
+        C(AwkwardCategory, "Too Old For",    "Name something people claim to be too old for and still do.", Difficulty.Medium),
 
         // ── THIS TABLE — about the people actually in the room ──────────────
-        C("This Table", "Most Likely To Be Late",   "Who here is most likely to be late? Write a name.", Difficulty.Medium),
-        C("This Table", "Best Cook",                "Who here is the best cook? Write a name.", Difficulty.Medium),
-        C("This Table", "Would Survive Longest",    "Who here would survive longest with no phone? Write a name.", Difficulty.Medium),
-        C("This Table", "Tells The Best Stories",   "Who here tells the best stories? Write a name.", Difficulty.Medium),
-        C("This Table", "Hardest To Buy For",       "Who here is hardest to buy a present for? Write a name.", Difficulty.Medium),
+        C(ThisTableCategory, "Most Likely To Be Late",   "Who here is most likely to be late? Write a name.", Difficulty.Medium),
+        C(ThisTableCategory, "Best Cook",                "Who here is the best cook? Write a name.", Difficulty.Medium),
+        C(ThisTableCategory, "Would Survive Longest",    "Who here would survive longest with no phone? Write a name.", Difficulty.Medium),
+        C(ThisTableCategory, "Tells The Best Stories",   "Who here tells the best stories? Write a name.", Difficulty.Medium),
+        C(ThisTableCategory, "Hardest To Buy For",       "Who here is hardest to buy a present for? Write a name.", Difficulty.Medium),
 
         // ── SPLIT — deliberately no favourite; matching here is genuine luck ─
-        C("Split", "A Number",        "Write down a number between 1 and 20.", Difficulty.Hard),
-        C("Split", "Any Animal",      "Name any animal at all.", Difficulty.Hard),
-        C("Split", "A Word",          "Write down any word you like.", Difficulty.Hard),
-        C("Split", "Somewhere To Go", "Name anywhere in the world you'd go tomorrow.", Difficulty.Hard),
-        C("Split", "A Year",          "Write down any year.", Difficulty.Hard),
+        C(SplitCategory, "A Number",        "Write down a number between 1 and 20.", Difficulty.Hard),
+        C(SplitCategory, "Any Animal",      "Name any animal at all.", Difficulty.Hard),
+        C(SplitCategory, "A Word",          "Write down any word you like.", Difficulty.Hard),
+        C(SplitCategory, "Somewhere To Go", "Name anywhere in the world you'd go tomorrow.", Difficulty.Hard),
+        C(SplitCategory, "A Year",          "Write down any year.", Difficulty.Hard),
     ];
 }

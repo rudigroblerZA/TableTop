@@ -48,13 +48,13 @@ public sealed class SixtySecondsMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Everyday Things"] = "#66BB6A",
-            ["Nature"] = "#26A69A",
-            ["Food & Drink"] = "#FFA726",
-            ["Places"] = "#42A5F5",
-            ["Entertainment"] = "#AB47BC",
-            ["Words"] = "#EC407A",
-            ["Wildcard"] = "#EF5350",
+            [SixtySecondsCardBank.EverydayThingsCategory] = "#66BB6A",
+            [SixtySecondsCardBank.NatureCategory] = "#26A69A",
+            [SixtySecondsCardBank.FoodDrinkCategory] = "#FFA726",
+            [SixtySecondsCardBank.PlacesCategory] = "#42A5F5",
+            [SixtySecondsCardBank.EntertainmentCategory] = "#AB47BC",
+            [SixtySecondsCardBank.WordsCategory] = "#EC407A",
+            [SixtySecondsCardBank.WildcardCategory] = "#EF5350",
         };
 
     /// <summary>Harder-to-fill categories score more when hit.</summary>
@@ -72,68 +72,76 @@ public sealed class SixtySecondsMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for 60 Seconds.</summary>
 public static class SixtySecondsCardBank
 {
+    internal const string EverydayThingsCategory = "Everyday Things";
+    internal const string NatureCategory = "Nature";
+    internal const string FoodDrinkCategory = "Food & Drink";
+    internal const string PlacesCategory = "Places";
+    internal const string EntertainmentCategory = "Entertainment";
+    internal const string WordsCategory = "Words";
+    internal const string WildcardCategory = "Wildcard";
+
     /// <summary>All 60-second category cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── EVERYDAY THINGS ──────────────────────────────────────────────────
-        S("Everyday Things", "Things you'd find in a kitchen", 10, Difficulty.Easy),
-        S("Everyday Things", "Things that are round", 10, Difficulty.Easy),
-        S("Everyday Things", "Things you charge with a cable", 8, Difficulty.Medium),
-        S("Everyday Things", "Things you'd pack for a beach day", 8, Difficulty.Medium),
-        S("Everyday Things", "Things that come in pairs", 6, Difficulty.Hard),
-        S("Everyday Things", "Things you'd find specifically in a junk drawer", 5, Difficulty.Extreme),
+        S(EverydayThingsCategory, "Things you'd find in a kitchen", 10, Difficulty.Easy),
+        S(EverydayThingsCategory, "Things that are round", 10, Difficulty.Easy),
+        S(EverydayThingsCategory, "Things you charge with a cable", 8, Difficulty.Medium),
+        S(EverydayThingsCategory, "Things you'd pack for a beach day", 8, Difficulty.Medium),
+        S(EverydayThingsCategory, "Things that come in pairs", 6, Difficulty.Hard),
+        S(EverydayThingsCategory, "Things you'd find specifically in a junk drawer", 5, Difficulty.Extreme),
 
         // ── NATURE ───────────────────────────────────────────────────────────
-        S("Nature", "Animals", 10, Difficulty.Easy),
-        S("Nature", "Birds", 10, Difficulty.Easy),
-        S("Nature", "Animals that live in the ocean", 8, Difficulty.Medium),
-        S("Nature", "Trees", 8, Difficulty.Medium),
-        S("Nature", "Animals with stripes", 6, Difficulty.Hard),
-        S("Nature", "Venomous creatures", 5, Difficulty.Extreme),
-        S("Nature", "Extinct animals", 5, Difficulty.Extreme),
+        S(NatureCategory, "Animals", 10, Difficulty.Easy),
+        S(NatureCategory, "Birds", 10, Difficulty.Easy),
+        S(NatureCategory, "Animals that live in the ocean", 8, Difficulty.Medium),
+        S(NatureCategory, "Trees", 8, Difficulty.Medium),
+        S(NatureCategory, "Animals with stripes", 6, Difficulty.Hard),
+        S(NatureCategory, "Venomous creatures", 5, Difficulty.Extreme),
+        S(NatureCategory, "Extinct animals", 5, Difficulty.Extreme),
 
         // ── FOOD & DRINK ─────────────────────────────────────────────────────
-        S("Food & Drink", "Fruits", 10, Difficulty.Easy),
-        S("Food & Drink", "Pizza toppings", 10, Difficulty.Easy),
-        S("Food & Drink", "Breakfast foods", 8, Difficulty.Medium),
-        S("Food & Drink", "Types of pasta", 8, Difficulty.Medium),
-        S("Food & Drink", "Cheeses", 6, Difficulty.Hard),
-        S("Food & Drink", "Spices", 6, Difficulty.Hard),
-        S("Food & Drink", "Foods that are technically berries", 5, Difficulty.Extreme),
+        S(FoodDrinkCategory, "Fruits", 10, Difficulty.Easy),
+        S(FoodDrinkCategory, "Pizza toppings", 10, Difficulty.Easy),
+        S(FoodDrinkCategory, "Breakfast foods", 8, Difficulty.Medium),
+        S(FoodDrinkCategory, "Types of pasta", 8, Difficulty.Medium),
+        S(FoodDrinkCategory, "Cheeses", 6, Difficulty.Hard),
+        S(FoodDrinkCategory, "Spices", 6, Difficulty.Hard),
+        S(FoodDrinkCategory, "Foods that are technically berries", 5, Difficulty.Extreme),
 
         // ── PLACES ───────────────────────────────────────────────────────────
-        S("Places", "Countries", 10, Difficulty.Easy),
-        S("Places", "US states", 10, Difficulty.Easy),
-        S("Places", "European capitals", 8, Difficulty.Medium),
-        S("Places", "Islands", 8, Difficulty.Medium),
-        S("Places", "Countries that border France", 6, Difficulty.Hard),
-        S("Places", "Landlocked countries", 5, Difficulty.Extreme),
+        S(PlacesCategory, "Countries", 10, Difficulty.Easy),
+        S(PlacesCategory, "US states", 10, Difficulty.Easy),
+        S(PlacesCategory, "European capitals", 8, Difficulty.Medium),
+        S(PlacesCategory, "Islands", 8, Difficulty.Medium),
+        S(PlacesCategory, "Countries that border France", 6, Difficulty.Hard),
+        S(PlacesCategory, "Landlocked countries", 5, Difficulty.Extreme),
 
         // ── ENTERTAINMENT ────────────────────────────────────────────────────
-        S("Entertainment", "Disney movies", 10, Difficulty.Easy),
-        S("Entertainment", "Superheroes", 10, Difficulty.Easy),
-        S("Entertainment", "TV shows with one-word titles", 8, Difficulty.Medium),
-        S("Entertainment", "Board games", 8, Difficulty.Medium),
-        S("Entertainment", "Oscar-winning actors", 6, Difficulty.Hard),
-        S("Entertainment", "Shakespeare plays", 5, Difficulty.Extreme),
+        S(EntertainmentCategory, "Disney movies", 10, Difficulty.Easy),
+        S(EntertainmentCategory, "Superheroes", 10, Difficulty.Easy),
+        S(EntertainmentCategory, "TV shows with one-word titles", 8, Difficulty.Medium),
+        S(EntertainmentCategory, "Board games", 8, Difficulty.Medium),
+        S(EntertainmentCategory, "Oscar-winning actors", 6, Difficulty.Hard),
+        S(EntertainmentCategory, "Shakespeare plays", 5, Difficulty.Extreme),
 
         // ── WORDS ────────────────────────────────────────────────────────────
-        S("Words", "Words that start with 'S'", 10, Difficulty.Easy),
-        S("Words", "Colours", 10, Difficulty.Easy),
-        S("Words", "Words that rhyme with 'day'", 8, Difficulty.Medium),
-        S("Words", "Compound words containing 'sun'", 6, Difficulty.Hard),
-        S("Words", "Words ending in '-ology'", 5, Difficulty.Extreme),
-        S("Words", "Palindromes", 5, Difficulty.Extreme),
+        S(WordsCategory, "Words that start with 'S'", 10, Difficulty.Easy),
+        S(WordsCategory, "Colours", 10, Difficulty.Easy),
+        S(WordsCategory, "Words that rhyme with 'day'", 8, Difficulty.Medium),
+        S(WordsCategory, "Compound words containing 'sun'", 6, Difficulty.Hard),
+        S(WordsCategory, "Words ending in '-ology'", 5, Difficulty.Extreme),
+        S(WordsCategory, "Palindromes", 5, Difficulty.Extreme),
 
         // ── WILDCARD ─────────────────────────────────────────────────────────
-        S("Wildcard", "Things that are sticky", 10, Difficulty.Easy),
-        S("Wildcard", "Things you'd find at a birthday party", 10, Difficulty.Easy),
-        S("Wildcard", "Excuses for being late", 8, Difficulty.Medium),
-        S("Wildcard", "Things that are surprisingly heavy", 8, Difficulty.Medium),
-        S("Wildcard", "Things you'd never want to find in your shoe", 6, Difficulty.Hard),
-        S("Wildcard", "Things banned on an airplane", 5, Difficulty.Extreme),
+        S(WildcardCategory, "Things that are sticky", 10, Difficulty.Easy),
+        S(WildcardCategory, "Things you'd find at a birthday party", 10, Difficulty.Easy),
+        S(WildcardCategory, "Excuses for being late", 8, Difficulty.Medium),
+        S(WildcardCategory, "Things that are surprisingly heavy", 8, Difficulty.Medium),
+        S(WildcardCategory, "Things you'd never want to find in your shoe", 6, Difficulty.Hard),
+        S(WildcardCategory, "Things banned on an airplane", 5, Difficulty.Extreme),
     ];
 
     /// <summary>

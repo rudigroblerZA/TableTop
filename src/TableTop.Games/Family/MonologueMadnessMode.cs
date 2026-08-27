@@ -42,11 +42,11 @@ public sealed class MonologueMadnessMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Politics"] = "#42A5F5",
-            ["Philosophy"] = "#AB47BC",
-            ["Ridiculous"] = "#EC407A",
-            ["Corporate"] = "#FFA726",
-            ["Confessions"] = "#66BB6A",
+            [MonologueMadnessCardBank.PoliticsCategory] = "#42A5F5",
+            [MonologueMadnessCardBank.PhilosophyCategory] = "#AB47BC",
+            [MonologueMadnessCardBank.RidiculousCategory] = "#EC407A",
+            [MonologueMadnessCardBank.CorporateCategory] = "#FFA726",
+            [MonologueMadnessCardBank.ConfessionsCategory] = "#66BB6A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -64,96 +64,102 @@ public sealed class MonologueMadnessMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Monologue Madness. Cards are also available as JSON in <c>Data/Json/</c>.</summary>
 public static class MonologueMadnessCardBank
 {
+    internal const string PoliticsCategory = "Politics";
+    internal const string PhilosophyCategory = "Philosophy";
+    internal const string RidiculousCategory = "Ridiculous";
+    internal const string CorporateCategory = "Corporate";
+    internal const string ConfessionsCategory = "Confessions";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── POLITICS ──────────────────────────────────────────────────────────
-        M("Politics",
+        M(PoliticsCategory,
             "You are campaigning to be elected Mayor of Pigeons. What's your opening statement?",
             Difficulty.Medium),
-        M("Politics",
+        M(PoliticsCategory,
             "You are a senator defending why socks disappear in the dryer.",
             Difficulty.Medium),
-        M("Politics",
+        M(PoliticsCategory,
             "Give a presidential address about why pizza is a vegetable.",
             Difficulty.Easy),
-        M("Politics",
+        M(PoliticsCategory,
             "You're running for Town Council on a platform of mandatory nap time.",
             Difficulty.Easy),
-        M("Politics",
+        M(PoliticsCategory,
             "Deliver a speech convincing everyone that birds aren't real.",
             Difficulty.Hard),
 
         // ── PHILOSOPHY ───────────────────────────────────────────────────────
-        M("Philosophy",
+        M(PhilosophyCategory,
             "Give a TED Talk on the Secret Life of Household Objects.",
             Difficulty.Medium),
-        M("Philosophy",
+        M(PhilosophyCategory,
             "Explain the meaning of life to a confused potato.",
             Difficulty.Hard),
-        M("Philosophy",
+        M(PhilosophyCategory,
             "Defend the philosophical importance of doing absolutely nothing.",
             Difficulty.Medium),
-        M("Philosophy",
+        M(PhilosophyCategory,
             "Give an opening statement as if you're accepting a Nobel Prize for Sleeping.",
             Difficulty.Easy),
-        M("Philosophy",
+        M(PhilosophyCategory,
             "Present your argument: Procrastination is Actually a Superpower.",
             Difficulty.Easy),
 
         // ── RIDICULOUS ────────────────────────────────────────────────────────
-        M("Ridiculous",
+        M(RidiculousCategory,
             "You are a tour guide showing tourists around your kitchen.",
             Difficulty.Easy),
-        M("Ridiculous",
+        M(RidiculousCategory,
             "Deliver a eulogy for your favorite pair of socks.",
             Difficulty.Medium),
-        M("Ridiculous",
+        M(RidiculousCategory,
             "Give a survival speech as if you're stuck on a deserted island with only cheese.",
             Difficulty.Medium),
-        M("Ridiculous",
+        M(RidiculousCategory,
             "You are a sports commentator narrating someone eating a sandwich.",
             Difficulty.Easy),
-        M("Ridiculous",
+        M(RidiculousCategory,
             "Give a dramatic opening monologue as a Victorian ghost haunting a gas station.",
             Difficulty.Hard),
-        M("Ridiculous",
+        M(RidiculousCategory,
             "Convince us why you should be the next Bachelor/Bachelorette. (You're a houseplant.)",
             Difficulty.Medium),
 
         // ── CORPORATE ────────────────────────────────────────────────────────
-        M("Corporate",
+        M(CorporateCategory,
             "You're presenting the quarterly report. Business is chaos. Stay professional.",
             Difficulty.Medium),
-        M("Corporate",
+        M(CorporateCategory,
             "Give a motivational speech to your team about synergizing paradigm shifts.",
             Difficulty.Hard),
-        M("Corporate",
+        M(CorporateCategory,
             "Present your innovative startup idea: An app for something completely useless.",
             Difficulty.Medium),
-        M("Corporate",
+        M(CorporateCategory,
             "Deliver a safety briefing at an office where everything is slightly wrong.",
             Difficulty.Medium),
-        M("Corporate",
+        M(CorporateCategory,
             "Give a professional apology for something you definitely did.",
             Difficulty.Easy),
 
         // ── CONFESSIONS ───────────────────────────────────────────────────────
-        M("Confessions",
+        M(ConfessionsCategory,
             "Confess to something you definitely didn't do, and defend it passionately.",
             Difficulty.Hard),
-        M("Confessions",
+        M(ConfessionsCategory,
             "You are finally revealing your true feelings about pineapple on pizza.",
             Difficulty.Easy),
-        M("Confessions",
+        M(ConfessionsCategory,
             "Admit to something everyone suspects but nobody's said out loud.",
             Difficulty.Medium),
-        M("Confessions",
+        M(ConfessionsCategory,
             "Give your controversial opinion about something everyone cares about.",
             Difficulty.Hard),
-        M("Confessions",
+        M(ConfessionsCategory,
             "Confess to being secretly in love with something inanimate.",
             Difficulty.Medium),
     ];

@@ -41,11 +41,11 @@ public sealed class CelebrityImpersonatorMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Celebrity"] = "#EC407A",
-            ["Historical"] = "#42A5F5",
-            ["Fictional"] = "#FFCA28",
-            ["Absurd"] = "#AB47BC",
-            ["Cultural"] = "#66BB6A",
+            [CelebrityImpersonatorCardBank.CelebrityCategory] = "#EC407A",
+            [CelebrityImpersonatorCardBank.HistoricalCategory] = "#42A5F5",
+            [CelebrityImpersonatorCardBank.FictionalCategory] = "#FFCA28",
+            [CelebrityImpersonatorCardBank.AbsurdCategory] = "#AB47BC",
+            [CelebrityImpersonatorCardBank.CulturalCategory] = "#66BB6A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -63,46 +63,52 @@ public sealed class CelebrityImpersonatorMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Celebrity Impersonator. Cards are also available as JSON in <c>Data/Json/</c>.</summary>
 public static class CelebrityImpersonatorCardBank
 {
+    internal const string CelebrityCategory = "Celebrity";
+    internal const string HistoricalCategory = "Historical";
+    internal const string FictionalCategory = "Fictional";
+    internal const string AbsurdCategory = "Absurd";
+    internal const string CulturalCategory = "Cultural";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── CELEBRITY ────────────────────────────────────────────────────────
-        I("Celebrity", "Elvis Presley", "Sneer, hip swivel, deep voice, 'Uh huh'", Difficulty.Easy),
-        I("Celebrity", "Marilyn Monroe", "Breathy voice, blonde glamour, sultry whisper", Difficulty.Medium),
-        I("Celebrity", "James Bond", "Suave, posh British accent, martini hand gesture", Difficulty.Medium),
-        I("Celebrity", "Darth Vader", "Heavy breathing, cape swish, deep menacing voice", Difficulty.Easy),
-        I("Celebrity", "Arnold Schwarzenegger", "Austrian accent, 'I'll be back', flexing", Difficulty.Easy),
-        I("Celebrity", "Marilyn Monroe", "High-pitched giggle, breathy voice, hair flip", Difficulty.Medium),
+        I(CelebrityCategory, "Elvis Presley", "Sneer, hip swivel, deep voice, 'Uh huh'", Difficulty.Easy),
+        I(CelebrityCategory, "Marilyn Monroe", "Breathy voice, blonde glamour, sultry whisper", Difficulty.Medium),
+        I(CelebrityCategory, "James Bond", "Suave, posh British accent, martini hand gesture", Difficulty.Medium),
+        I(CelebrityCategory, "Darth Vader", "Heavy breathing, cape swish, deep menacing voice", Difficulty.Easy),
+        I(CelebrityCategory, "Arnold Schwarzenegger", "Austrian accent, 'I'll be back', flexing", Difficulty.Easy),
+        I(CelebrityCategory, "Marilyn Monroe", "High-pitched giggle, breathy voice, hair flip", Difficulty.Medium),
 
         // ── HISTORICAL ───────────────────────────────────────────────────────
-        I("Historical", "Winston Churchill", "Cigar, growl, stern disapproving look, posh British accent", Difficulty.Hard),
-        I("Historical", "Napoleon Bonaparte", "Hand in jacket, stern military gaze, French accent", Difficulty.Medium),
-        I("Historical", "Albert Einstein", "Wild hair touching, tongue out, thoughtful genius", Difficulty.Medium),
-        I("Historical", "Cleopatra", "Regal, dramatic gestures, ancient Egyptian flair", Difficulty.Hard),
-        I("Historical", "Leonardo da Vinci", "Painting gestures, thoughtful beard stroking, mystery", Difficulty.Hard),
+        I(HistoricalCategory, "Winston Churchill", "Cigar, growl, stern disapproving look, posh British accent", Difficulty.Hard),
+        I(HistoricalCategory, "Napoleon Bonaparte", "Hand in jacket, stern military gaze, French accent", Difficulty.Medium),
+        I(HistoricalCategory, "Albert Einstein", "Wild hair touching, tongue out, thoughtful genius", Difficulty.Medium),
+        I(HistoricalCategory, "Cleopatra", "Regal, dramatic gestures, ancient Egyptian flair", Difficulty.Hard),
+        I(HistoricalCategory, "Leonardo da Vinci", "Painting gestures, thoughtful beard stroking, mystery", Difficulty.Hard),
 
         // ── FICTIONAL ────────────────────────────────────────────────────────
-        I("Fictional", "Sherlock Holmes", "Deerstalker, analytical frown, 'Elementary'", Difficulty.Medium),
-        I("Fictional", "Yoda", "Backwards sentence structure, 'Hmmmm', small creature mannerisms", Difficulty.Medium),
-        I("Fictional", "SpongeBob SquarePants", "High-pitched laugh, innocent enthusiasm, nautical references", Difficulty.Easy),
-        I("Fictional", "Shrek", "Ogre accent (vaguely Scottish), gruffness, 'I'm an ogre'", Difficulty.Medium),
-        I("Fictional", "Gollum", "Hissy voice, 'my precious', weird head movements", Difficulty.Medium),
+        I(FictionalCategory, "Sherlock Holmes", "Deerstalker, analytical frown, 'Elementary'", Difficulty.Medium),
+        I(FictionalCategory, "Yoda", "Backwards sentence structure, 'Hmmmm', small creature mannerisms", Difficulty.Medium),
+        I(FictionalCategory, "SpongeBob SquarePants", "High-pitched laugh, innocent enthusiasm, nautical references", Difficulty.Easy),
+        I(FictionalCategory, "Shrek", "Ogre accent (vaguely Scottish), gruffness, 'I'm an ogre'", Difficulty.Medium),
+        I(FictionalCategory, "Gollum", "Hissy voice, 'my precious', weird head movements", Difficulty.Medium),
 
         // ── ABSURD ───────────────────────────────────────────────────────────
-        I("Absurd", "A sentient anxiety disorder with a British accent", "Nervous, apologetic, overthinking everything constantly", Difficulty.Hard),
-        I("Absurd", "A self-aware houseplant with trust issues", "Slow movements, dramatic sighs, 'I've been watered twice this month'", Difficulty.Hard),
-        I("Absurd", "An existential crisis in human form", "Stares into nothing, asks 'what's the point', confused gestures", Difficulty.Hard),
-        I("Absurd", "A motivational poster that became sentient and is now regretful", "Aggressive positivity mixed with despair, jazz hands", Difficulty.Hard),
-        I("Absurd", "A sentient WiFi router from 2005", "Confused beeping, dies randomly, complains about being replaced", Difficulty.Hard),
+        I(AbsurdCategory, "A sentient anxiety disorder with a British accent", "Nervous, apologetic, overthinking everything constantly", Difficulty.Hard),
+        I(AbsurdCategory, "A self-aware houseplant with trust issues", "Slow movements, dramatic sighs, 'I've been watered twice this month'", Difficulty.Hard),
+        I(AbsurdCategory, "An existential crisis in human form", "Stares into nothing, asks 'what's the point', confused gestures", Difficulty.Hard),
+        I(AbsurdCategory, "A motivational poster that became sentient and is now regretful", "Aggressive positivity mixed with despair, jazz hands", Difficulty.Hard),
+        I(AbsurdCategory, "A sentient WiFi router from 2005", "Confused beeping, dies randomly, complains about being replaced", Difficulty.Hard),
 
         // ── CULTURAL ─────────────────────────────────────────────────────────
-        I("Cultural", "A pirate", "Arr matey, pirate accent, hand gestures, ship movements", Difficulty.Easy),
-        I("Cultural", "A strict teacher", "Disappointed look, red pen, stern voice, finger pointing", Difficulty.Easy),
-        I("Cultural", "A mad scientist", "Wild hair, mad laugh, explosive hand gestures", Difficulty.Easy),
-        I("Cultural", "A cheerleader from the 80s", "Pom-poms, high energy, 'Go team!', enthusiastic attitude", Difficulty.Easy),
-        I("Cultural", "A conspiracy theorist", "Wide eyes, 'they're listening', pointing, connecting dots", Difficulty.Medium),
+        I(CulturalCategory, "A pirate", "Arr matey, pirate accent, hand gestures, ship movements", Difficulty.Easy),
+        I(CulturalCategory, "A strict teacher", "Disappointed look, red pen, stern voice, finger pointing", Difficulty.Easy),
+        I(CulturalCategory, "A mad scientist", "Wild hair, mad laugh, explosive hand gestures", Difficulty.Easy),
+        I(CulturalCategory, "A cheerleader from the 80s", "Pom-poms, high energy, 'Go team!', enthusiastic attitude", Difficulty.Easy),
+        I(CulturalCategory, "A conspiracy theorist", "Wide eyes, 'they're listening', pointing, connecting dots", Difficulty.Medium),
     ];
 
     private static ICard I(string category, string character, string hints, Difficulty d) =>

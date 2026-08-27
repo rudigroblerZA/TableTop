@@ -38,9 +38,9 @@ public sealed class LaughOrGroanMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Would You Rather"] = "#FFCA28",
-            ["Scenario"] = "#42A5F5",
-            ["Hot Take"] = "#EC407A",
+            [LaughOrGroanCardBank.WouldYouRatherCategory] = "#FFCA28",
+            [LaughOrGroanCardBank.ScenarioCategory] = "#42A5F5",
+            [LaughOrGroanCardBank.HotTakeCategory] = "#EC407A",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -58,6 +58,10 @@ public sealed class LaughOrGroanMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for LaughOrGroan. Cards are also available as JSON in <c>Data/Json/</c>.</summary>
 public static class LaughOrGroanCardBank
 {
+    internal const string WouldYouRatherCategory = "Would You Rather";
+    internal const string ScenarioCategory = "Scenario";
+    internal const string HotTakeCategory = "Hot Take";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -202,13 +206,13 @@ public static class LaughOrGroanCardBank
     ];
 
     private static ICard WYR(string text, Difficulty d) =>
-        StandardCard.Create("Would You Rather", text, d, "Would You Rather");
+        StandardCard.Create(WouldYouRatherCategory, text, d, WouldYouRatherCategory);
 
     private static ICard SCN(string text, Difficulty d) =>
-        StandardCard.Create("Scenario", text, d, "Scenario");
+        StandardCard.Create(ScenarioCategory, text, d, ScenarioCategory);
 
     private static ICard HT(string text) =>
-        StandardCard.Create("Hot Take",
+        StandardCard.Create(HotTakeCategory,
             text + "\n\n<b>Each person rates it:</b> 👏 Laugh (agree) · 😬 Groan (disagree) · 🤔 Hmm (depends).\n\nMajority must defend their position for thirty seconds.",
-            Difficulty.Easy, "Hot Take");
+            Difficulty.Easy, HotTakeCategory);
 }

@@ -35,11 +35,11 @@ public sealed class WorldExplorerMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Capitals"] = "#26C6DA",
-            ["Countries"] = "#66BB6A",
-            ["Landmarks"] = "#FFA726",
-            ["Natural World"] = "#4CAF50",
-            ["On the Map"] = "#42A5F5",
+            [WorldExplorerCardBank.CapitalsCategory] = "#26C6DA",
+            [WorldExplorerCardBank.CountriesCategory] = "#66BB6A",
+            [WorldExplorerCardBank.LandmarksCategory] = "#FFA726",
+            [WorldExplorerCardBank.NaturalWorldCategory] = "#4CAF50",
+            [WorldExplorerCardBank.OnTheMapCategory] = "#42A5F5",
         };
 
     /// <summary>Harder questions score more.</summary>
@@ -57,49 +57,55 @@ public sealed class WorldExplorerMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for World Explorer.</summary>
 public static class WorldExplorerCardBank
 {
+    internal const string CapitalsCategory = "Capitals";
+    internal const string CountriesCategory = "Countries";
+    internal const string LandmarksCategory = "Landmarks";
+    internal const string NaturalWorldCategory = "Natural World";
+    internal const string OnTheMapCategory = "On the Map";
+
     /// <summary>All cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── CAPITALS ─────────────────────────────────────────────────────────
-        Q("Capitals", "What is the capital of France?", "Lyon", "Paris", "Marseille", "Nice", AnswerLabel.B, Difficulty.Easy),
-        Q("Capitals", "What is the capital of Japan?", "Osaka", "Kyoto", "Tokyo", "Nagoya", AnswerLabel.C, Difficulty.Easy),
-        Q("Capitals", "What is the capital of Australia?", "Sydney", "Melbourne", "Perth", "Canberra", AnswerLabel.D, Difficulty.Medium),
-        Q("Capitals", "What is the capital of Canada?", "Toronto", "Ottawa", "Vancouver", "Montreal", AnswerLabel.B, Difficulty.Medium),
-        Q("Capitals", "What is the capital of Egypt?", "Cairo", "Alexandria", "Giza", "Luxor", AnswerLabel.A, Difficulty.Medium),
-        Q("Capitals", "What is the capital of Brazil?", "Rio de Janeiro", "São Paulo", "Brasília", "Salvador", AnswerLabel.C, Difficulty.Hard),
-        Q("Capitals", "What is the capital of New Zealand?", "Auckland", "Wellington", "Christchurch", "Hamilton", AnswerLabel.B, Difficulty.Hard),
+        Q(CapitalsCategory, "What is the capital of France?", "Lyon", "Paris", "Marseille", "Nice", AnswerLabel.B, Difficulty.Easy),
+        Q(CapitalsCategory, "What is the capital of Japan?", "Osaka", "Kyoto", "Tokyo", "Nagoya", AnswerLabel.C, Difficulty.Easy),
+        Q(CapitalsCategory, "What is the capital of Australia?", "Sydney", "Melbourne", "Perth", "Canberra", AnswerLabel.D, Difficulty.Medium),
+        Q(CapitalsCategory, "What is the capital of Canada?", "Toronto", "Ottawa", "Vancouver", "Montreal", AnswerLabel.B, Difficulty.Medium),
+        Q(CapitalsCategory, "What is the capital of Egypt?", "Cairo", "Alexandria", "Giza", "Luxor", AnswerLabel.A, Difficulty.Medium),
+        Q(CapitalsCategory, "What is the capital of Brazil?", "Rio de Janeiro", "São Paulo", "Brasília", "Salvador", AnswerLabel.C, Difficulty.Hard),
+        Q(CapitalsCategory, "What is the capital of New Zealand?", "Auckland", "Wellington", "Christchurch", "Hamilton", AnswerLabel.B, Difficulty.Hard),
 
         // ── COUNTRIES ────────────────────────────────────────────────────────
-        Q("Countries", "Which of these is a country?", "Rome", "Egypt", "Paris", "London", AnswerLabel.B, Difficulty.Easy),
-        Q("Countries", "Which country is shaped like a boot?", "Spain", "Greece", "Italy", "Portugal", AnswerLabel.C, Difficulty.Easy),
-        Q("Countries", "Which is the largest country by area?", "China", "USA", "Canada", "Russia", AnswerLabel.D, Difficulty.Medium),
-        Q("Countries", "Which country has the most people?", "India", "China", "USA", "Indonesia", AnswerLabel.A, Difficulty.Hard),
-        Q("Countries", "On which continent is Kenya?", "Asia", "South America", "Africa", "Europe", AnswerLabel.C, Difficulty.Easy),
-        Q("Countries", "Which country is both in Europe and Asia?", "Egypt", "Turkey", "Greece", "Iran", AnswerLabel.B, Difficulty.Hard),
+        Q(CountriesCategory, "Which of these is a country?", "Rome", "Egypt", "Paris", "London", AnswerLabel.B, Difficulty.Easy),
+        Q(CountriesCategory, "Which country is shaped like a boot?", "Spain", "Greece", "Italy", "Portugal", AnswerLabel.C, Difficulty.Easy),
+        Q(CountriesCategory, "Which is the largest country by area?", "China", "USA", "Canada", "Russia", AnswerLabel.D, Difficulty.Medium),
+        Q(CountriesCategory, "Which country has the most people?", "India", "China", "USA", "Indonesia", AnswerLabel.A, Difficulty.Hard),
+        Q(CountriesCategory, "On which continent is Kenya?", "Asia", "South America", "Africa", "Europe", AnswerLabel.C, Difficulty.Easy),
+        Q(CountriesCategory, "Which country is both in Europe and Asia?", "Egypt", "Turkey", "Greece", "Iran", AnswerLabel.B, Difficulty.Hard),
 
         // ── LANDMARKS ────────────────────────────────────────────────────────
-        Q("Landmarks", "In which city is the Eiffel Tower?", "London", "Rome", "Paris", "Berlin", AnswerLabel.C, Difficulty.Easy),
-        Q("Landmarks", "The Great Pyramid stands near which city?", "Cairo", "Athens", "Baghdad", "Istanbul", AnswerLabel.A, Difficulty.Medium),
-        Q("Landmarks", "The Statue of Liberty is in which country?", "France", "UK", "USA", "Canada", AnswerLabel.C, Difficulty.Easy),
-        Q("Landmarks", "The Colosseum is found in which country?", "Greece", "Italy", "Spain", "Turkey", AnswerLabel.B, Difficulty.Medium),
-        Q("Landmarks", "Machu Picchu was built by which civilisation?", "Aztec", "Maya", "Inca", "Olmec", AnswerLabel.C, Difficulty.Hard),
+        Q(LandmarksCategory, "In which city is the Eiffel Tower?", "London", "Rome", "Paris", "Berlin", AnswerLabel.C, Difficulty.Easy),
+        Q(LandmarksCategory, "The Great Pyramid stands near which city?", "Cairo", "Athens", "Baghdad", "Istanbul", AnswerLabel.A, Difficulty.Medium),
+        Q(LandmarksCategory, "The Statue of Liberty is in which country?", "France", "UK", "USA", "Canada", AnswerLabel.C, Difficulty.Easy),
+        Q(LandmarksCategory, "The Colosseum is found in which country?", "Greece", "Italy", "Spain", "Turkey", AnswerLabel.B, Difficulty.Medium),
+        Q(LandmarksCategory, "Machu Picchu was built by which civilisation?", "Aztec", "Maya", "Inca", "Olmec", AnswerLabel.C, Difficulty.Hard),
 
         // ── NATURAL WORLD ────────────────────────────────────────────────────
-        Q("Natural World", "What is the longest river in the world?", "Amazon", "Nile", "Yangtze", "Mississippi", AnswerLabel.B, Difficulty.Medium),
-        Q("Natural World", "What is the largest ocean?", "Atlantic", "Indian", "Arctic", "Pacific", AnswerLabel.D, Difficulty.Easy),
-        Q("Natural World", "What is the tallest mountain above sea level?", "K2", "Everest", "Kilimanjaro", "Denali", AnswerLabel.B, Difficulty.Easy),
-        Q("Natural World", "The Sahara Desert is on which continent?", "Asia", "Australia", "Africa", "South America", AnswerLabel.C, Difficulty.Easy),
-        Q("Natural World", "What is the largest desert on Earth (deserts can be cold)?", "Sahara", "Gobi", "Arabian", "Antarctica", AnswerLabel.D, Difficulty.Extreme),
-        Q("Natural World", "Which rainforest is the world's largest?", "Congo", "Amazon", "Daintree", "Borneo", AnswerLabel.B, Difficulty.Medium),
+        Q(NaturalWorldCategory, "What is the longest river in the world?", "Amazon", "Nile", "Yangtze", "Mississippi", AnswerLabel.B, Difficulty.Medium),
+        Q(NaturalWorldCategory, "What is the largest ocean?", "Atlantic", "Indian", "Arctic", "Pacific", AnswerLabel.D, Difficulty.Easy),
+        Q(NaturalWorldCategory, "What is the tallest mountain above sea level?", "K2", "Everest", "Kilimanjaro", "Denali", AnswerLabel.B, Difficulty.Easy),
+        Q(NaturalWorldCategory, "The Sahara Desert is on which continent?", "Asia", "Australia", "Africa", "South America", AnswerLabel.C, Difficulty.Easy),
+        Q(NaturalWorldCategory, "What is the largest desert on Earth (deserts can be cold)?", "Sahara", "Gobi", "Arabian", "Antarctica", AnswerLabel.D, Difficulty.Extreme),
+        Q(NaturalWorldCategory, "Which rainforest is the world's largest?", "Congo", "Amazon", "Daintree", "Borneo", AnswerLabel.B, Difficulty.Medium),
 
         // ── ON THE MAP — flags, oceans, borders ──────────────────────────────
-        Q("On the Map", "How many continents are there?", "5", "6", "7", "8", AnswerLabel.C, Difficulty.Easy),
-        Q("On the Map", "Which line divides Earth into north and south?", "Prime Meridian", "Equator", "Tropic of Cancer", "Axis", AnswerLabel.B, Difficulty.Medium),
-        Q("On the Map", "Which two colours are on the flag of Japan?", "Red and white", "Blue and white", "Red and yellow", "Green and white", AnswerLabel.A, Difficulty.Easy),
-        Q("On the Map", "Which country has a maple leaf on its flag?", "USA", "Canada", "Lebanon", "Norway", AnswerLabel.B, Difficulty.Easy),
-        Q("On the Map", "Which sea lies between Europe and Africa?", "Red Sea", "Black Sea", "Mediterranean", "Caspian", AnswerLabel.C, Difficulty.Medium),
+        Q(OnTheMapCategory, "How many continents are there?", "5", "6", "7", "8", AnswerLabel.C, Difficulty.Easy),
+        Q(OnTheMapCategory, "Which line divides Earth into north and south?", "Prime Meridian", "Equator", "Tropic of Cancer", "Axis", AnswerLabel.B, Difficulty.Medium),
+        Q(OnTheMapCategory, "Which two colours are on the flag of Japan?", "Red and white", "Blue and white", "Red and yellow", "Green and white", AnswerLabel.A, Difficulty.Easy),
+        Q(OnTheMapCategory, "Which country has a maple leaf on its flag?", "USA", "Canada", "Lebanon", "Norway", AnswerLabel.B, Difficulty.Easy),
+        Q(OnTheMapCategory, "Which sea lies between Europe and Africa?", "Red Sea", "Black Sea", "Mediterranean", "Caspian", AnswerLabel.C, Difficulty.Medium),
     ];
 
     private static ICard Q(string cat, string question, string a, string b, string c, string d, AnswerLabel correct, Difficulty diff) =>

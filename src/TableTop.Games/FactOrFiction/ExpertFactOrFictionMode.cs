@@ -33,13 +33,13 @@ public sealed class ExpertFactOrFictionMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["History"] = "#8B4513",
-            ["Science"] = "#1E90FF",
-            ["Pop Culture"] = "#FF69B4",
-            ["Sports"] = "#228B22",
-            ["Geography"] = "#FF8C00",
-            ["Literature"] = "#4B0082",
-            ["Urban Legend"] = "#DC143C",
+            [ExpertFactOrFictionCardBank.HistoryCategory] = "#8B4513",
+            [ExpertFactOrFictionCardBank.ScienceCategory] = "#1E90FF",
+            [ExpertFactOrFictionCardBank.PopCultureCategory] = "#FF69B4",
+            [ExpertFactOrFictionCardBank.SportsCategory] = "#228B22",
+            [ExpertFactOrFictionCardBank.GeographyCategory] = "#FF8C00",
+            [ExpertFactOrFictionCardBank.LiteratureCategory] = "#4B0082",
+            [ExpertFactOrFictionCardBank.UrbanLegendCategory] = "#DC143C",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -57,6 +57,14 @@ public sealed class ExpertFactOrFictionMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for ExpertFactOrFiction. Cards are also available as JSON in <c>Data/Json/</c>.</summary>
 public static class ExpertFactOrFictionCardBank
 {
+    internal const string HistoryCategory = "History";
+    internal const string ScienceCategory = "Science";
+    internal const string PopCultureCategory = "Pop Culture";
+    internal const string SportsCategory = "Sports";
+    internal const string GeographyCategory = "Geography";
+    internal const string LiteratureCategory = "Literature";
+    internal const string UrbanLegendCategory = "Urban Legend";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -65,215 +73,215 @@ public static class ExpertFactOrFictionCardBank
         // ── HISTORY ──────────────────────────────────────────────────────
 
         E("Leonardo da Vinci was left-handed and wrote backwards to keep his work secret.",
-          true, "History", Difficulty.Medium),
+          true, HistoryCategory, Difficulty.Medium),
 
         E("The Great Pyramid of Giza was the tallest building in the world until 1889.",
-          true, "History", Difficulty.Medium),
+          true, HistoryCategory, Difficulty.Medium),
 
         E("Ancient Romans had a specific word for the space between your eyebrows.",
-          true, "History", Difficulty.Medium),
+          true, HistoryCategory, Difficulty.Medium),
 
-        E("Queen Victoria was the first person photographed.", false, "History", Difficulty.Hard),
+        E("Queen Victoria was the first person photographed.", false, HistoryCategory, Difficulty.Hard),
 
         E("The Ottoman Empire lasted over 600 years.",
-          true, "History", Difficulty.Medium),
+          true, HistoryCategory, Difficulty.Medium),
 
         E("Medieval knights actually weighed over 300 pounds due to their armour.",
-          false, "History", Difficulty.Hard),
+          false, HistoryCategory, Difficulty.Hard),
 
         E("Julius Caesar was never actually crowned Emperor of Rome.",
-          true, "History", Difficulty.Hard),
+          true, HistoryCategory, Difficulty.Hard),
 
         E("The Library of Alexandria contained over 700,000 volumes.",
-          true, "History", Difficulty.Hard),
+          true, HistoryCategory, Difficulty.Hard),
 
         // ── SCIENCE ──────────────────────────────────────────────────────
 
         E("A single bolt of lightning is hotter than the surface of the sun.",
-          true, "Science", Difficulty.Medium),
+          true, ScienceCategory, Difficulty.Medium),
 
         E("Gold is the only metal that doesn't rust.",
-          false, "Science", Difficulty.Hard),
+          false, ScienceCategory, Difficulty.Hard),
 
         E("Neutron stars are so dense that a teaspoon of their material would weigh as much as a mountain.",
-          true, "Science", Difficulty.Medium),
+          true, ScienceCategory, Difficulty.Medium),
 
         E("The human brain generates more electricity than a 9-volt battery.",
-          false, "Science", Difficulty.Hard),
+          false, ScienceCategory, Difficulty.Hard),
 
         E("Quantum entanglement allows information to travel faster than light.",
-          false, "Science", Difficulty.Extreme),
+          false, ScienceCategory, Difficulty.Extreme),
 
         E("A type of jellyfish called Turritopsis dohrnii is biologically immortal.",
-          true, "Science", Difficulty.Hard),
+          true, ScienceCategory, Difficulty.Hard),
 
         E("The vacuum of space smells like burnt steak according to astronauts.",
-          true, "Science", Difficulty.Hard),
+          true, ScienceCategory, Difficulty.Hard),
 
         E("DNA was discovered by Watson and Crick without seeing its structure.",
-          false, "Science", Difficulty.Extreme),
+          false, ScienceCategory, Difficulty.Extreme),
 
         // ── POP CULTURE ──────────────────────────────────────────────────
 
         E("The Beatles were not allowed to perform in Singapore because of their hair.",
-          false, "Pop Culture", Difficulty.Medium),
+          false, PopCultureCategory, Difficulty.Medium),
 
         E("Stanley Kubrick was so perfectionist he filmed 'The Shining' for 247 days.",
-          true, "Pop Culture", Difficulty.Medium),
+          true, PopCultureCategory, Difficulty.Medium),
 
         E("The Lord of the Rings trilogy was filmed over 8 years.",
-          false, "Pop Culture", Difficulty.Hard),
+          false, PopCultureCategory, Difficulty.Hard),
 
         E("'Game of Thrones' author George R.R. Martin writes on a 1980s DOS computer.",
-          true, "Pop Culture", Difficulty.Medium),
+          true, PopCultureCategory, Difficulty.Medium),
 
         E("The Wizard of Oz was filmed in just 2 weeks.",
-          false, "Pop Culture", Difficulty.Medium),
+          false, PopCultureCategory, Difficulty.Medium),
 
         E("Michael Jackson actually owned the rights to the South Park theme song.",
-          true, "Pop Culture", Difficulty.Hard),
+          true, PopCultureCategory, Difficulty.Hard),
 
         E("The Jaws theme was originally composed without any string instruments.",
-          false, "Pop Culture", Difficulty.Hard),
+          false, PopCultureCategory, Difficulty.Hard),
 
         E("Marilyn Monroe's shoe size was size 15 (US men's).",
-          false, "Pop Culture", Difficulty.Hard),
+          false, PopCultureCategory, Difficulty.Hard),
 
         // ── SPORTS ───────────────────────────────────────────────────────
 
         E("A regulation basketball has 39,000 pebbles on its surface.",
-          true, "Sports", Difficulty.Hard),
+          true, SportsCategory, Difficulty.Hard),
 
         E("Serena Williams has won more Grand Slam titles than any other female player in history.",
-          true, "Sports", Difficulty.Medium),
+          true, SportsCategory, Difficulty.Medium),
 
         E("Baseball was banned in England for 20 years.",
-          false, "Sports", Difficulty.Hard),
+          false, SportsCategory, Difficulty.Hard),
 
         E("Olympic gold medals are only 1.34% gold.",
-          true, "Sports", Difficulty.Hard),
+          true, SportsCategory, Difficulty.Hard),
 
         E("Muhammad Ali knocked out Sonny Liston so hard he was found unconscious in the dressing room.",
-          false, "Sports", Difficulty.Hard),
+          false, SportsCategory, Difficulty.Hard),
 
         E("A tennis ball travels at speeds up to 120 mph in professional play.",
-          true, "Sports", Difficulty.Medium),
+          true, SportsCategory, Difficulty.Medium),
 
         E("The FIFA World Cup trophy must be held by all players who won it.",
-          false, "Sports", Difficulty.Hard),
+          false, SportsCategory, Difficulty.Hard),
 
         // ── GEOGRAPHY ────────────────────────────────────────────────────
 
         E("Russia spans 11 time zones.",
-          true, "Geography", Difficulty.Medium),
+          true, GeographyCategory, Difficulty.Medium),
 
         E("The Dead Sea is the lowest point on Earth's surface.",
-          true, "Geography", Difficulty.Medium),
+          true, GeographyCategory, Difficulty.Medium),
 
         E("Africa is the second-smallest continent.",
-          false, "Geography", Difficulty.Hard),
+          false, GeographyCategory, Difficulty.Hard),
 
         E("Mount Everest is the tallest mountain from sea level, but not from the centre of the Earth.",
-          true, "Geography", Difficulty.Hard),
+          true, GeographyCategory, Difficulty.Hard),
 
         E("The Sahara Desert grows larger every year.",
-          true, "Geography", Difficulty.Hard),
+          true, GeographyCategory, Difficulty.Hard),
 
         E("Australia is wider than the distance from Earth to the Moon.",
-          false, "Geography", Difficulty.Extreme),
+          false, GeographyCategory, Difficulty.Extreme),
 
         E("Iceland is getting larger due to tectonic activity.",
-          true, "Geography", Difficulty.Hard),
+          true, GeographyCategory, Difficulty.Hard),
 
         E("The Mariana Trench is so deep that Mount Everest could fit inside it underwater.",
-          true, "Geography", Difficulty.Hard),
+          true, GeographyCategory, Difficulty.Hard),
 
         // ── LITERATURE ───────────────────────────────────────────────────
 
         E("Jane Austen wrote 'Pride and Prejudice' when she was 21.",
-          false, "Literature", Difficulty.Hard),
+          false, LiteratureCategory, Difficulty.Hard),
 
         E("Charles Dickens wrote 'A Christmas Carol' in just 6 weeks.",
-          true, "Literature", Difficulty.Hard),
+          true, LiteratureCategory, Difficulty.Hard),
 
         E("Stephen King wrote 'The Shining' in a single hotel room.",
-          true, "Literature", Difficulty.Medium),
+          true, LiteratureCategory, Difficulty.Medium),
 
         E("J.K. Rowling wrote the final Harry Potter book at the top of the Eiffel Tower.",
-          false, "Literature", Difficulty.Hard),
+          false, LiteratureCategory, Difficulty.Hard),
 
         E("Bram Stoker had never actually been to Transylvania when he wrote Dracula.",
-          true, "Literature", Difficulty.Hard),
+          true, LiteratureCategory, Difficulty.Hard),
 
         E("The word 'robot' was invented by Shakespeare.",
-          false, "Literature", Difficulty.Hard),
+          false, LiteratureCategory, Difficulty.Hard),
 
         E("Dr. Seuss wrote 'Green Eggs and Ham' using only 50 different words.",
-          true, "Literature", Difficulty.Medium),
+          true, LiteratureCategory, Difficulty.Medium),
 
         // ── URBAN LEGENDS & WEIRD ────────────────────────────────────────
 
         E("There is a town in France called Fucking (now officially Fugging).",
-          true, "Urban Legend", Difficulty.Medium),
+          true, UrbanLegendCategory, Difficulty.Medium),
 
         E("The phrase '5G causes COVID' originated in a lab in China.",
-          false, "Urban Legend", Difficulty.Medium),
+          false, UrbanLegendCategory, Difficulty.Medium),
 
         E("Area 51 is actually a NASA facility, not a government secret base.",
-          false, "Urban Legend", Difficulty.Hard),
+          false, UrbanLegendCategory, Difficulty.Hard),
 
         E("Sloths only come down from trees once a week to defecate, and can lose 30% of their body weight doing so.",
-          true, "Urban Legend", Difficulty.Hard),
+          true, UrbanLegendCategory, Difficulty.Hard),
 
         E("A group of flamingos is called a 'flamboyance' according to the Oxford Dictionary.",
-          true, "Urban Legend", Difficulty.Hard),
+          true, UrbanLegendCategory, Difficulty.Hard),
 
         E("The phrase 'rule of three' in filmmaking means every joke or action repeated three times is funny.",
-          true, "Urban Legend", Difficulty.Medium),
+          true, UrbanLegendCategory, Difficulty.Medium),
 
         E("Chewing gum stays in your stomach for 7 years if swallowed.",
-          false, "Urban Legend", Difficulty.Easy),
+          false, UrbanLegendCategory, Difficulty.Easy),
 
         E("Humans use 10% of their brain (the remaining 90% is unused).",
-          false, "Urban Legend", Difficulty.Easy),
+          false, UrbanLegendCategory, Difficulty.Easy),
 
         E("If you flush a toilet while the bathroom door is closed, bacteria spreads everywhere.",
-          false, "Urban Legend", Difficulty.Medium),
+          false, UrbanLegendCategory, Difficulty.Medium),
 
         E("Red cars are pulled over more by police.",
-          false, "Urban Legend", Difficulty.Medium),
+          false, UrbanLegendCategory, Difficulty.Medium),
 
         E("You swallow spiders in your sleep.",
-          false, "Urban Legend", Difficulty.Easy),
+          false, UrbanLegendCategory, Difficulty.Easy),
 
         E("Shaving makes your hair grow back thicker.",
-          false, "Urban Legend", Difficulty.Easy),
+          false, UrbanLegendCategory, Difficulty.Easy),
 
         // ── BONUS: WILDLY UNBELIEVABLE TRUTHS ────────────────────────────
 
         E("Bananas are berries but strawberries are technically not berries.",
-          true, "Science", Difficulty.Medium),
+          true, ScienceCategory, Difficulty.Medium),
 
         E("A group of porcupines is called a 'prickle'.",
-          true, "Urban Legend", Difficulty.Easy),
+          true, UrbanLegendCategory, Difficulty.Easy),
 
         E("The inventor of the Pringles tube died and was cremated inside one.",
-          true, "Urban Legend", Difficulty.Hard),
+          true, UrbanLegendCategory, Difficulty.Hard),
 
         E("Cleopatra lived closer in time to the moon landing than to the Great Pyramid's construction.",
-          true, "History", Difficulty.Hard),
+          true, HistoryCategory, Difficulty.Hard),
 
         E("Oxford University is older than the Aztec Empire.",
-          true, "History", Difficulty.Hard),
+          true, HistoryCategory, Difficulty.Hard),
 
         E("Honey is the only food that doesn't expire.",
-          true, "Science", Difficulty.Easy),
+          true, ScienceCategory, Difficulty.Easy),
 
         E("A jiffy is an actual unit of time used by physicists.",
-          true, "Science", Difficulty.Hard),
+          true, ScienceCategory, Difficulty.Hard),
 
         E("A group of crows is called a 'murder' and they can hold grudges.",
-          true, "Urban Legend", Difficulty.Medium),
+          true, UrbanLegendCategory, Difficulty.Medium),
     ];
 
     private static ICard E(string text, bool isFact, string category, Difficulty d) =>

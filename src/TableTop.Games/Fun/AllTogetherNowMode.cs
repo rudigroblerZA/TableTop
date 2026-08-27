@@ -58,21 +58,21 @@ public sealed class AllTogetherNowMode : BaseGameModeDefinition, ITableShapeMode
     public override string SkipLabel => "Beat Us";
 
     /// <summary>Opens on the shared brief so the target gets agreed out loud.</summary>
-    public override IReadOnlyList<string> CategoriesPinnedToStart => ["Brief"];
+    public override IReadOnlyList<string> CategoriesPinnedToStart => [AllTogetherNowCardBank.BriefCategory];
 
     /// <summary>Closes on the debrief, whichever way it went.</summary>
-    public override IReadOnlyList<string> CategoriesPinnedToEnd => ["Debrief"];
+    public override IReadOnlyList<string> CategoriesPinnedToEnd => [AllTogetherNowCardBank.DebriefCategory];
 
     /// <inheritdoc />
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Brief"] = "#5AC8B0",
-            ["Everyone In"] = "#66BB6A",
-            ["Relay"] = "#42A5F5",
-            ["In Silence"] = "#7E57C2",
-            ["Against It"] = "#EF5350",
-            ["Debrief"] = "#A78BD0",
+            [AllTogetherNowCardBank.BriefCategory] = "#5AC8B0",
+            [AllTogetherNowCardBank.EveryoneInCategory] = "#66BB6A",
+            [AllTogetherNowCardBank.RelayCategory] = "#42A5F5",
+            [AllTogetherNowCardBank.InSilenceCategory] = "#7E57C2",
+            [AllTogetherNowCardBank.AgainstItCategory] = "#EF5350",
+            [AllTogetherNowCardBank.DebriefCategory] = "#A78BD0",
         };
 
     /// <summary>Harder cards are worth more, for tables that want a points target.</summary>
@@ -89,6 +89,13 @@ public sealed class AllTogetherNowMode : BaseGameModeDefinition, ITableShapeMode
 /// <summary>Built-in card bank for All Together Now.</summary>
 public static class AllTogetherNowCardBank
 {
+    internal const string BriefCategory = "Brief";
+    internal const string EveryoneInCategory = "Everyone In";
+    internal const string RelayCategory = "Relay";
+    internal const string InSilenceCategory = "In Silence";
+    internal const string AgainstItCategory = "Against It";
+    internal const string DebriefCategory = "Debrief";
+
     /// <summary>All cards, in authored order.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -98,102 +105,102 @@ public static class AllTogetherNowCardBank
 
     private static string Emoji(string category) => category switch
     {
-        "Brief" => "📋",
-        "Everyone In" => "🙌",
-        "Relay" => "🔗",
-        "In Silence" => "🤫",
-        "Against It" => "🔥",
-        "Debrief" => "💜",
+        BriefCategory => "📋",
+        EveryoneInCategory => "🙌",
+        RelayCategory => "🔗",
+        InSilenceCategory => "🤫",
+        AgainstItCategory => "🔥",
+        DebriefCategory => "💜",
         _ => "🎲",
     };
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── BRIEF — agree the terms out loud before anything starts ───────────
-        C("Brief", "Pick Your Number",
+        C(BriefCategory, "Pick Your Number",
           "Agree your target now, out loud, before anyone sees a card. Twelve cleared is a good first game. " +
           "Fifteen is hard. Eighteen and you get to tell people about it.", Difficulty.Easy),
-        C("Brief", "Nobody Sits Out",
+        C(BriefCategory, "Nobody Sits Out",
           "One rule for the whole game: every card needs everyone. If someone can't do the thing a card asks — " +
           "can't stand, can't see it, can't hear it — the table adapts the card. Adapting is not cheating; " +
           "leaving someone out is losing.", Difficulty.Easy),
-        C("Brief", "The Deck Can Win",
+        C(BriefCategory, "The Deck Can Win",
           "Say this part out loud: the deck is allowed to beat you. If it couldn't, clearing it wouldn't mean " +
           "anything. Failed cards get set aside, not re-tried.", Difficulty.Easy),
 
         // ── EVERYONE IN — the whole table does the same thing at once ─────────
-        C("Everyone In", "Same Word",
+        C(EveryoneInCategory, "Same Word",
           "On three, everyone says one word that means 'happy'. If any two of you say the same word, the card " +
           "is cleared. No conferring, no lip-reading.", Difficulty.Easy),
-        C("Everyone In", "Count To Ten",
+        C(EveryoneInCategory, "Count To Ten",
           "As a table, count aloud to ten. One voice per number, no order agreed in advance, and nobody may " +
           "say two numbers in a row. Two people speak at once and you start again.", Difficulty.Medium),
-        C("Everyone In", "One Sentence, One Word Each",
+        C(EveryoneInCategory, "One Sentence, One Word Each",
           "Build a single sentence, one word per person, going round until somebody ends it. It has to make " +
           "grammatical sense when read back. The table decides whether it does.", Difficulty.Medium),
-        C("Everyone In", "Everybody Hum",
+        C(EveryoneInCategory, "Everybody Hum",
           "Everyone hums a different song at the same time for ten seconds. Afterwards, name every song you " +
           "heard. Get them all and it's cleared.", Difficulty.Hard),
-        C("Everyone In", "Unanimous Or Nothing",
+        C(EveryoneInCategory, "Unanimous Or Nothing",
           "Someone names a category. Everyone writes one answer privately. Cleared only if all of you wrote " +
           "something different.", Difficulty.Medium),
 
         // ── RELAY — it passes round and one break costs the card ──────────────
-        C("Relay", "No Repeats",
+        C(RelayCategory, "No Repeats",
           "Someone names a category. Go round naming items in it, no repeats, no pauses longer than three " +
           "seconds. Get all the way round the table twice and it's cleared.", Difficulty.Easy),
-        C("Relay", "Alphabet Round",
+        C(RelayCategory, "Alphabet Round",
           "Round the table in A-to-Z order — first person names something starting with A, next with B, on you " +
           "go. Reach the person who started A again and you've cleared it.", Difficulty.Medium),
-        C("Relay", "Last Letter First",
+        C(RelayCategory, "Last Letter First",
           "Each answer must start with the last letter of the previous one. Same category throughout. Ten in a " +
           "row clears it.", Difficulty.Medium),
-        C("Relay", "Story With A Rule",
+        C(RelayCategory, "Story With A Rule",
           "Tell a story one sentence each. Before you start, the table picks a word nobody may say. Get twice " +
           "round without anyone saying it — and without the story collapsing — and it's cleared.", Difficulty.Hard),
-        C("Relay", "Countdown Under Pressure",
+        C(RelayCategory, "Countdown Under Pressure",
           "Count backwards from fifty as a table, one number each, going round. Anyone who hesitates or " +
           "misspeaks and you start from fifty again. Three attempts, then it's the deck's card.", Difficulty.Hard),
 
         // ── IN SILENCE — no talking, which is much harder than it sounds ──────
-        C("In Silence", "Line Up By Birthday",
+        C(InSilenceCategory, "Line Up By Birthday",
           "Without speaking or writing, arrange yourselves in order of birthday — January at one end, December " +
           "at the other. Check it out loud only when everyone has stopped moving.", Difficulty.Medium),
-        C("In Silence", "Pass The Face",
+        C(InSilenceCategory, "Pass The Face",
           "First person makes an expression. It goes round, each person copying the one before as exactly as " +
           "they can. If the last face still resembles the first, cleared.", Difficulty.Easy),
-        C("In Silence", "Silent Agreement",
+        C(InSilenceCategory, "Silent Agreement",
           "Without a word, the table must all point at the same person on the count of three. Cleared only if " +
           "it's unanimous — and nobody may point at themselves.", Difficulty.Hard),
-        C("In Silence", "Order Without Words",
+        C(InSilenceCategory, "Order Without Words",
           "Someone picks a category with an obvious order — height, alphabetical first names, distance from " +
           "home. Get yourselves into that order in silence.", Difficulty.Medium),
 
         // ── AGAINST IT — the hard ones, worth the most ────────────────────────
-        C("Against It", "Everyone Knows Something",
+        C(AgainstItCategory, "Everyone Knows Something",
           "Every person at the table must state one fact nobody else here knew about them. All of them have to " +
           "land — if the table already knew one, the card isn't cleared.", Difficulty.Hard),
-        C("Against It", "Sixty Seconds, Twenty Things",
+        C(AgainstItCategory, "Sixty Seconds, Twenty Things",
           "One minute. As a table, name twenty things you can see from where you're sitting. Anyone may speak " +
           "at any time; no repeats.", Difficulty.Hard),
-        C("Against It", "Name Everyone's Everything",
+        C(AgainstItCategory, "Name Everyone's Everything",
           "Go round: each person has to name something every single other person at the table likes. Not " +
           "guesses — things they can be corrected on. One wrong and the card stands.", Difficulty.Extreme),
-        C("Against It", "The Long Sentence",
+        C(AgainstItCategory, "The Long Sentence",
           "Build one sentence, one word each, that runs at least thirty words and still makes sense at the end. " +
           "Somebody count. Somebody else adjudicate.", Difficulty.Extreme),
-        C("Against It", "All Of You, One Voice",
+        C(AgainstItCategory, "All Of You, One Voice",
           "Pick a song everyone knows. Sing one line together, in time, in unison, from a standing start with " +
           "no count-in. The table decides whether that was one voice or several.", Difficulty.Extreme),
 
         // ── DEBRIEF — it closes properly whichever way it went ────────────────
-        C("Debrief", "Where It Turned",
+        C(DebriefCategory, "Where It Turned",
           "Whether you cleared it or not: agree on the single card where the game turned. There's usually one, " +
           "and you usually all know which.", Difficulty.Easy),
-        C("Debrief", "Who Carried It",
+        C(DebriefCategory, "Who Carried It",
           "Name the person who did the most to get you through — and say the specific thing they did. Not " +
           "everyone gets named and that's fine; the point is that someone hears it.", Difficulty.Easy),
-        C("Debrief", "One For Next Time",
+        C(DebriefCategory, "One For Next Time",
           "Agree one rule to bring to your next game. Write it down if you're the sort of table that keeps " +
           "things. That's the end of the deck.", Difficulty.Easy),
     ];

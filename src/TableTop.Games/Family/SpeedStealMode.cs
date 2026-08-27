@@ -42,11 +42,11 @@ public sealed class SpeedStealMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Personal"] = "#42A5F5",
-            ["Creative"] = "#FFCA28",
-            ["Preference"] = "#EC407A",
-            ["Story"] = "#66BB6A",
-            ["Opinion"] = "#AB47BC",
+            [SpeedStealCardBank.PersonalCategory] = "#42A5F5",
+            [SpeedStealCardBank.CreativeCategory] = "#FFCA28",
+            [SpeedStealCardBank.PreferenceCategory] = "#EC407A",
+            [SpeedStealCardBank.StoryCategory] = "#66BB6A",
+            [SpeedStealCardBank.OpinionCategory] = "#AB47BC",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -64,97 +64,103 @@ public sealed class SpeedStealMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Speed Steal. Cards are also available as JSON in <c>Data/Json/</c>.</summary>
 public static class SpeedStealCardBank
 {
+    internal const string PersonalCategory = "Personal";
+    internal const string CreativeCategory = "Creative";
+    internal const string PreferenceCategory = "Preference";
+    internal const string StoryCategory = "Story";
+    internal const string OpinionCategory = "Opinion";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── PERSONAL ──────────────────────────────────────────────────────────
-        S("Personal",
+        S(PersonalCategory,
             "What's your best meal ever?",
             "Others challenge with THEIR best meal. Better answer steals your point.",
             Difficulty.Easy),
-        S("Personal",
+        S(PersonalCategory,
             "Describe your perfect day in three words.",
             "Others try to beat your description. Judges decide: who wins?",
             Difficulty.Medium),
-        S("Personal",
+        S(PersonalCategory,
             "What skill do you wish you had?",
             "Others counter with a skill that's more impressive or funny.",
             Difficulty.Easy),
-        S("Personal",
+        S(PersonalCategory,
             "What's something nobody knows about you?",
             "Others challenge: reveal something more shocking or weird.",
             Difficulty.Hard),
 
         // ── CREATIVE ──────────────────────────────────────────────────────────
-        S("Creative",
+        S(CreativeCategory,
             "If you could invent one new thing, what would it be?",
             "Others pitch inventions that sound more useful or hilarious.",
             Difficulty.Medium),
-        S("Creative",
+        S(CreativeCategory,
             "Give your life a movie title.",
             "Others create titles that better describe your actual life.",
             Difficulty.Medium),
-        S("Creative",
+        S(CreativeCategory,
             "What's the worst superpower you could have?",
             "Others come up with even worse superpowers. Funniest wins.",
             Difficulty.Easy),
-        S("Creative",
+        S(CreativeCategory,
             "Describe a colour without naming it.",
             "Others describe it better or more creatively.",
             Difficulty.Medium),
 
         // ── PREFERENCE ────────────────────────────────────────────────────────
-        S("Preference",
+        S(PreferenceCategory,
             "Mountains or beaches — and why?",
             "Others defend the opposite choice harder.",
             Difficulty.Easy),
-        S("Preference",
+        S(PreferenceCategory,
             "What's your guilty pleasure that you're not guilty about?",
             "Others claim a more shameless pleasure.",
             Difficulty.Easy),
-        S("Preference",
+        S(PreferenceCategory,
             "Coffee or tea — and what does it say about you?",
             "Others argue their choice reveals more about them.",
             Difficulty.Medium),
-        S("Preference",
+        S(PreferenceCategory,
             "What would you eat if calories didn't exist?",
             "Others propose something more interesting or ridiculous.",
             Difficulty.Easy),
 
         // ── STORY ────────────────────────────────────────────────────────────
-        S("Story",
+        S(StoryCategory,
             "Tell a story about your most embarrassing moment (3 sentences).",
             "Others challenge with a more embarrassing moment.",
             Difficulty.Hard),
-        S("Story",
+        S(StoryCategory,
             "What's your biggest failure and why it was actually good?",
             "Others describe a failure with a better silver lining.",
             Difficulty.Hard),
-        S("Story",
+        S(StoryCategory,
             "Describe a time someone surprised you.",
             "Others share a better/funnier surprise story.",
             Difficulty.Medium),
-        S("Story",
+        S(StoryCategory,
             "What's the craziest thing you've ever done?",
             "Others counter with something crazier.",
             Difficulty.Hard),
 
         // ── OPINION ───────────────────────────────────────────────────────────
-        S("Opinion",
+        S(OpinionCategory,
             "Is cereal a soup? Defend your answer.",
             "Others argue the opposite position harder.",
             Difficulty.Easy),
-        S("Opinion",
+        S(OpinionCategory,
             "What's overrated that everyone loves?",
             "Others counter with something MORE overrated.",
             Difficulty.Easy),
-        S("Opinion",
+        S(OpinionCategory,
             "What's underrated that nobody appreciates?",
             "Others argue their choice is MORE underrated.",
             Difficulty.Medium),
-        S("Opinion",
+        S(OpinionCategory,
             "What's the most annoying thing about people?",
             "Others nominate something MORE annoying.",
             Difficulty.Easy),
