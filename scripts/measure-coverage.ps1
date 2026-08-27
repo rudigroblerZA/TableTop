@@ -26,10 +26,6 @@ try {
         "-reporttypes:TextSummary;Html"
     if ($LASTEXITCODE -ne 0) { throw "reportgenerator failed." }
 
-    Write-Host "`n──────────────────────────────────────────────" -ForegroundColor Green
-    Get-Content "coverage-report/Summary.txt"
-    Write-Host "──────────────────────────────────────────────" -ForegroundColor Green
-    Write-Host "`nFull HTML report: coverage-report/index.html"
 }
 finally {
     Pop-Location
