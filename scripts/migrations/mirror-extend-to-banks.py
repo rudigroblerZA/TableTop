@@ -19,6 +19,20 @@ import json, pathlib, re, sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 JSON = ROOT / "src/TableTop.Games/Data/Json"
 
+
+def resolve_within(base: pathlib.Path, candidate: pathlib.Path) -> pathlib.Path:
+    """Resolve `candidate` and refuse it if it would land outside `base`.
+
+    Both paths here are built from a fixed, hardcoded deck/file list (see
+    DECKS below), never from external input — but the guard makes that
+    guarantee explicit and load-bearing rather than assumed.
+    """
+    base = base.resolve()
+    resolved = candidate.resolve()
+    if resolved != base and base not in resolved.parents:
+        raise ValueError(f"refusing to touch a path outside {base}: {resolved}")
+    return resolved
+
 DECKS = {
     "relationship-dares": ROOT / "src/TableTop.Games/Couples/RelationshipDaresMode.cs",
     "heat-check":         ROOT / "src/TableTop.Games/Couples/HeatCheckMode.cs",
@@ -103,8 +117,10 @@ def call_for(deck, card, ind):
 
 
 def main():
-    for deck, path in DECKS.items():
-        cards = json.loads((JSON / f"{deck}.deck.json").read_text(encoding="utf-8"))["cards"]
+    for deck, raw_path in DECKS.items():
+        deck_json = resolve_within(JSON, JSON / f"{deck}.deck.json")
+        cards = json.loads(deck_json.read_text(encoding="utf-8"))["cards"]
+        path = resolve_within(ROOT, raw_path)
         text = path.read_text(encoding="utf-8")
 
         # Which cards are new? For decks with unique titles, by title. For the

@@ -15,7 +15,8 @@ public static class ChoiceCards
 {
     private static readonly Regex ChoiceLine = new(
         @"^\s*([A-D])\)\s+(.+?)\s*$",
-        RegexOptions.Multiline | RegexOptions.Compiled);
+        RegexOptions.Multiline | RegexOptions.Compiled,
+        TimeSpan.FromSeconds(1));
 
     /// <summary>
     /// Extracts the choice options from <paramref name="cardText"/>.
@@ -54,7 +55,8 @@ public static class ChoiceCards
 
     private static readonly Regex StyleLine = new(
         @"Mostly\s+([A-D])\s*[—–-]+\s*(The\s+[^.<\n]+)",
-        RegexOptions.Compiled);
+        RegexOptions.Compiled,
+        TimeSpan.FromSeconds(1));
 
     /// <summary>
     /// Scans a deck's card texts for a results key of the form
