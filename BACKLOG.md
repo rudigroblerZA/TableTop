@@ -38,9 +38,10 @@ rest of the codebase already used. Item 21 removed the surviving comments that
 described the WinUI files they sit in as WPF, and fixed the one that was
 outright wrong about MAUI's save behaviour. See each item's own section below.
 
-Items 2, 3, 8 and 15 sit below this — real, but none of them is between a
-player and a working game, and each needs either a human decision or hardware
-this project doesn't have in CI. Item 13 is now also closed in full.
+Items 2, 3 and 8 sit below this — real, but none of them is between a player
+and a working game, and each needs either a human decision or hardware this
+project doesn't have in CI. Items 13 and 15 are now also closed in full —
+item 15 by extraction rather than by raising its guard's ceiling.
 
 **1.21.0 removed a guard without replacing it, and that is worth a decision
 rather than a shrug.** `AgeVocabularyTests` checked that
@@ -690,24 +691,49 @@ changed; it just no longer has company.
 If a "flaky on Windows, green locally" report predates 1.19.0, the two deleted
 statics are now a plausible past cause rather than a present one.
 
-### 15. `CardTurnController` has 15 lines of raw headroom, and documenting it costs budget
+### 15. `CardTurnController` has 15 lines of raw headroom, and documenting it costs budget — **CLOSED**
 
-Measured now: **685 raw / 700**, **360 code / 390**. The raw backstop will bind
-first, at less than half the headroom.
+Measured then: **685 raw / 700**, **360 code / 390**. The raw backstop would
+have bound first, at less than half the headroom.
 
-That inverts the guard's own design. Its docstring says `MaxCodeLines` "is the
-one that matters" and that `IsSubstantive` skips comments so "adding
+That inverted the guard's own design. Its docstring says `MaxCodeLines` "is
+the one that matters" and that `IsSubstantive` skips comments so "adding
 documentation never costs you budget." `IsSubstantive` excludes `//`-prefixed
 lines, which catches `///` too — so doc comments are free against *code*, and
 counted in full against *raw*. In a file this close to the raw ceiling, writing
 the XML docs this codebase rightly insists on is what trips the guard, and it
 trips with a message about readability that won't match what the author did.
 
-Not a reason to raise a ceiling — the guard's advice to extract rather than
-raise is sound and has been vindicated twice. But decide deliberately whether
-raw should exclude doc comments too, or whether the next extraction happens
-now, before someone hits this while doing something unrelated and reads the
-failure as noise.
+Two ways to close this: exclude doc comments from the raw count too (a guard
+semantics change), or extract now (a code change). **Took the second** — it's
+what the guard's own docstring already recommends ("extract, don't raise the
+ceiling"), the same pattern that closed this item's two prior occurrences, and
+it doesn't touch what "raw" means for every other file this guard could ever
+watch.
+
+**The extraction:** `EmitCard`'s three-way `if (card is IBreakCard) … if (card
+is IRewardCard) … if (card is IInspirationCard)` block — each arm identical in
+shape (call a `SpecialCardCoordinator` handler, record `CardOutcome.Completed`,
+return) — collapsed into one `SpecialCardCoordinator.TryHandleSpecialCard`
+call. `SpecialCardCoordinator` already owned all three handlers (`HandleBreakCard`,
+`HandleRewardCard`, `HandleInspirationCard`) and already dispatched on the same
+three types for bonus-card injection (`TryInjectBonus`); `TryHandleSpecialCard`
+is the same dispatch, exposed once instead of duplicated as an inline `if`
+chain in the controller. Behaviour is unchanged — same three types checked in
+the same order, same handlers called, same event raised — only where the
+`is` checks live moved.
+
+**Result: 683 raw / 358 code → 668 raw / 349 code.** Real headroom restored
+(32 raw, 41 code) rather than headroom borrowed from redefining what counts.
+
+Not verified by a local build (no `dotnet` in this sandbox) — verified by
+a brace/paren parity check on both edited files, a grep confirming no other
+call site referenced the three handler methods directly (all internal-class
+access, no test reaches into `SpecialCardCoordinator` itself), and
+`scripts/check-shared-usings.py` passing after adding the `Scoring` using
+that `TryHandleSpecialCard`'s `<see cref="CardOutcome.Completed">` doc
+comment needed. If CI disagrees, same close-the-loop pattern as the rest of
+this backlog.
 
 ### 16. `check-ui-compiles.py` dies with a traceback when `dotnet` is absent — **CLOSED**
 
