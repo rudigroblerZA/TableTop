@@ -58,7 +58,7 @@ public sealed class AfterglowMode : BaseGameModeDefinition, ITableShapeMode
         new Dictionary<string, string>
         {
             ["Consent"] = "#26A69A",
-            ["Warm Up"] = "#FFCA28",
+            [AfterglowCardBank.WarmUpCategory] = "#FFCA28",
             ["Turn Up"] = "#FFA726",
             ["Heat"] = "#EF5350",
             ["Undone"] = "#AD1457",
@@ -96,6 +96,8 @@ public sealed class AfterglowMode : BaseGameModeDefinition, ITableShapeMode
 /// </summary>
 public static class AfterglowCardBank
 {
+    internal const string WarmUpCategory = "Warm Up";
+
     /// <summary>All cards, in intended play order.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -116,25 +118,25 @@ public static class AfterglowCardBank
           Difficulty.Easy),
 
         // ── WARM UP — clothed, close, building ───────────────────────────────
-        M("Warm Up", "Slow Kiss",
+        M(WarmUpCategory, "Slow Kiss",
           "Kiss — unhurried, the kind you'd give if you had nowhere else to be for an hour. Let it be the only thing happening.",
           Difficulty.Easy),
-        M("Warm Up", "Where To Start",
+        M(WarmUpCategory, "Where To Start",
           "Tell your partner one place you'd love to be kissed or touched first tonight — then let them start exactly there.",
           Difficulty.Easy),
-        M("Warm Up", "Hands, Slowly",
+        M(WarmUpCategory, "Hands, Slowly",
           "One of you: run your hands over your partner — still clothed — everywhere you're welcome, slow enough to make them wait. Ask \"here?\" as you go.",
           Difficulty.Easy),
-        M("Warm Up", "The Whisper",
+        M(WarmUpCategory, "The Whisper",
           "Whisper one honest thing you want tonight into your partner's ear. Watch what it does to them.",
           Difficulty.Medium),
-        M("Warm Up", "Undress One Layer",
+        M(WarmUpCategory, "Undress One Layer",
           "Take one item of clothing off your partner — their choice which — and take your time. Stop there.",
           Difficulty.Medium),
-        M("Warm Up", "Ask First",
+        M(WarmUpCategory, "Ask First",
               "Ask your partner one question — what would you like more of tonight? Listen to the whole answer before you touch them at all. Then begin there.",
           Difficulty.Easy),
-        M("Warm Up", "One Thing",
+        M(WarmUpCategory, "One Thing",
               "Remove one item of your partner's clothing, slowly, and only that one. Then go back to kissing as though nothing had happened.",
           Difficulty.Medium),
 
@@ -236,7 +238,7 @@ public static class AfterglowCardBank
 
     private static string Emoji(string category) => category switch
     {
-        "Warm Up" => "🌤️",
+        WarmUpCategory => "🌤️",
         "Turn Up" => "🔥",
         "Heat" => "🌶️",
         "Undone" => "💥",

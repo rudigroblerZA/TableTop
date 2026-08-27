@@ -127,8 +127,8 @@ public static class HerdCardBank
     private static ICard C(string category, string title, string prompt, Difficulty difficulty = Difficulty.Easy)
     {
         var seed = $"{Deck}|{category}|{title}|{prompt}";
-        var digest = System.Security.Cryptography.MD5.HashData(System.Text.Encoding.UTF8.GetBytes(seed));
-        return new StandardCard(new Guid(digest), title, prompt, difficulty, category);
+        var digest = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(seed));
+        return new StandardCard(new Guid(digest[..16]), title, prompt, difficulty, category);
     }
 
     private static IReadOnlyList<ICard> Build() =>

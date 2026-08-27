@@ -53,8 +53,8 @@ public sealed class SlowBurnMode : BaseGameModeDefinition, ITableShapeMode
         {
             ["IOU"] = "#EC407A",
             ["Almost"] = "#EF5350",
-            ["House Rule"] = "#AB47BC",
-            ["Cash In"] = "#B71C4A",
+            [SlowBurnCardBank.HouseRuleCategory] = "#AB47BC",
+            [SlowBurnCardBank.CashInCategory] = "#B71C4A",
         };
 
     /// <summary>No points — the pot is the prize.</summary>
@@ -72,6 +72,9 @@ public sealed class SlowBurnMode : BaseGameModeDefinition, ITableShapeMode
 /// <summary>Built-in card bank for Slow Burn.</summary>
 public static class SlowBurnCardBank
 {
+    internal const string HouseRuleCategory = "House Rule";
+    internal const string CashInCategory = "Cash In";
+
     /// <summary>All slow-burn cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -187,12 +190,12 @@ public static class SlowBurnCardBank
             d, "Almost");
 
     private static ICard R(string text, Difficulty d) =>
-        StandardCard.Create("House Rule",
+        StandardCard.Create(HouseRuleCategory,
             "<b>📜 New standing rule:</b>\n\n" + text,
-            d, "House Rule");
+            d, HouseRuleCategory);
 
     private static ICard C(string text, Difficulty d) =>
-        StandardCard.Create("Cash In",
+        StandardCard.Create(CashInCategory,
             "<b>🔓 The pot pays early:</b>\n\n" + text,
-            d, "Cash In");
+            d, CashInCategory);
 }
