@@ -840,6 +840,16 @@ sealed class TableTop.Games.School.LogicLabMode
     String Description { get; }
     String Name { get; }
     String SkipLabel { get; }
+static class TableTop.Games.School.Math24CardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.Math24Mode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
 static class TableTop.Games.School.MentalMathsSprintCardBank
     IReadOnlyList<ICard> All { get; }
 sealed class TableTop.Games.School.MentalMathsSprintMode
