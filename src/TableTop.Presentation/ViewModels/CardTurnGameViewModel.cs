@@ -483,13 +483,13 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
     /// </summary>
     public async Task SaveSession()
     {
-        if (!CanSave) return;
+        if (_controller is null || IsGameOver) return;
         try
         {
             // No cancellation source of our own applies here — _timerCts governs
             // the per-turn countdown, an unrelated lifecycle, so opting out
             // explicitly is more honest than reusing it.
-            await _controller!.SaveAsync(CancellationToken.None);
+            await _controller.SaveAsync(CancellationToken.None);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {

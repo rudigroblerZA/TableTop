@@ -167,6 +167,7 @@ jobs:
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
           /d:sonar.host.url="https://sonarcloud.io"
           /d:sonar.cs.opencover.reportsPaths="tests/TableTop.Tests/TestResults/**/coverage.opencover.xml"
+          /d:sonar.coverage.exclusions="**/*.py"
 
       # ── Restore ──────────────────────────────────────────────────────────────
 
