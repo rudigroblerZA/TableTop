@@ -46,11 +46,11 @@ public sealed class LetterRushMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Classic"] = "#42A5F5",
-            ["Around the House"] = "#66BB6A",
-            ["Out in the World"] = "#FFA726",
-            ["Imagination"] = "#AB47BC",
-            ["Tricky"] = "#EF5350",
+            [LetterRushCardBank.ClassicCategory] = "#42A5F5",
+            [LetterRushCardBank.AroundTheHouseCategory] = "#66BB6A",
+            [LetterRushCardBank.OutInTheWorldCategory] = "#FFA726",
+            [LetterRushCardBank.ImaginationCategory] = "#AB47BC",
+            [LetterRushCardBank.TrickyCategory] = "#EF5350",
         };
 
     /// <summary>Trickier letter/category mixes are worth more.</summary>
@@ -68,6 +68,12 @@ public sealed class LetterRushMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Letter Rush.</summary>
 public static class LetterRushCardBank
 {
+    internal const string ClassicCategory = "Classic";
+    internal const string AroundTheHouseCategory = "Around the House";
+    internal const string OutInTheWorldCategory = "Out in the World";
+    internal const string ImaginationCategory = "Imagination";
+    internal const string TrickyCategory = "Tricky";
+
     /// <summary>All cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -77,57 +83,57 @@ public static class LetterRushCardBank
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── CLASSIC — the timeless Scattergories staples ─────────────────────
-        L("Classic", "The Big Five", 'B',
+        L(ClassicCategory, "The Big Five", 'B',
           "A country · An animal · A food · A name · A colour",
           Difficulty.Easy),
-        L("Classic", "Everyday Five", 'S',
+        L(ClassicCategory, "Everyday Five", 'S',
           "Something you wear · A drink · A job · A city · A sport",
           Difficulty.Easy),
-        L("Classic", "School Run", 'M',
+        L(ClassicCategory, "School Run", 'M',
           "A school subject · Something in a pencil case · A shape · A number-word · A playground game",
           Difficulty.Easy),
 
         // ── AROUND THE HOUSE — cosy, findable, kid-friendly ──────────────────
-        L("Around the House", "Kitchen Sweep", 'P',
+        L(AroundTheHouseCategory, "Kitchen Sweep", 'P',
           "Something in the fridge · A kitchen tool · A breakfast food · Something you drink · A snack",
           Difficulty.Easy),
-        L("Around the House", "Toy Box", 'T',
+        L(AroundTheHouseCategory, "Toy Box", 'T',
           "A toy · A cartoon character · A board game · Something bouncy · A thing with wheels",
           Difficulty.Medium),
-        L("Around the House", "Getting Ready", 'C',
+        L(AroundTheHouseCategory, "Getting Ready", 'C',
           "Something in the bathroom · An item of clothing · Something you brush · A smell · Something soft",
           Difficulty.Medium),
 
         // ── OUT IN THE WORLD — places, nature, going-places ──────────────────
-        L("Out in the World", "On Holiday", 'H',
+        L(OutInTheWorldCategory, "On Holiday", 'H',
           "A place you'd visit · Something you pack · A type of weather · A thing at the beach · A souvenir",
           Difficulty.Medium),
-        L("Out in the World", "Nature Walk", 'F',
+        L(OutInTheWorldCategory, "Nature Walk", 'F',
           "A tree · A flower · A bird · An insect · Something you'd find on the ground",
           Difficulty.Medium),
-        L("Out in the World", "Big City", 'G',
+        L(OutInTheWorldCategory, "Big City", 'G',
           "A capital city · Something tall · A vehicle · A shop · A landmark",
           Difficulty.Hard),
 
         // ── IMAGINATION — creative, sideways, funnier ────────────────────────
-        L("Imagination", "Storybook", 'D',
+        L(ImaginationCategory, "Storybook", 'D',
           "A magical creature · A hero's name · A spooky place · A superpower · A word in a spell",
           Difficulty.Medium),
-        L("Imagination", "Silly Business", 'W',
+        L(ImaginationCategory, "Silly Business", 'W',
           "A terrible band name · A made-up holiday · A rejected ice-cream flavour · A pet you shouldn't own · A worst-ever superpower",
           Difficulty.Hard),
-        L("Imagination", "Movie Night", 'R',
+        L(ImaginationCategory, "Movie Night", 'R',
           "A film · A film villain · A word in a movie title · A snack you'd sneak in · A genre",
           Difficulty.Hard),
 
         // ── TRICKY — spicier letters, meaner categories ──────────────────────
-        L("Tricky", "The Hard Letter", 'K',
+        L(TrickyCategory, "The Hard Letter", 'K',
           "A country · A famous person · A food · An animal · A verb",
           Difficulty.Extreme),
-        L("Tricky", "Brain Stretch", 'V',
+        L(TrickyCategory, "Brain Stretch", 'V',
           "A body part · A job · Something in space · A language · An adjective",
           Difficulty.Extreme),
-        L("Tricky", "No Easy Answers", 'J',
+        L(TrickyCategory, "No Easy Answers", 'J',
           "A boys' or girls' name · A country · A fruit or vegetable · A verb · Something you'd find in a garage",
           Difficulty.Extreme),
     ];

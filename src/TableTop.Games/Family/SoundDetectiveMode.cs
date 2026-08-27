@@ -41,11 +41,11 @@ public sealed class SoundDetectiveMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Nature"] = "#66BB6A",
-            ["Human"] = "#EC407A",
-            ["Mechanical"] = "#42A5F5",
-            ["Animal"] = "#FFCA28",
-            ["Abstract"] = "#AB47BC",
+            [SoundDetectiveCardBank.NatureCategory] = "#66BB6A",
+            [SoundDetectiveCardBank.HumanCategory] = "#EC407A",
+            [SoundDetectiveCardBank.MechanicalCategory] = "#42A5F5",
+            [SoundDetectiveCardBank.AnimalCategory] = "#FFCA28",
+            [SoundDetectiveCardBank.AbstractCategory] = "#AB47BC",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -63,25 +63,31 @@ public sealed class SoundDetectiveMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Sound Detective. Cards are also available as JSON in <c>Data/Json/</c>.</summary>
 public static class SoundDetectiveCardBank
 {
+    internal const string NatureCategory = "Nature";
+    internal const string HumanCategory = "Human";
+    internal const string MechanicalCategory = "Mechanical";
+    internal const string AnimalCategory = "Animal";
+    internal const string AbstractCategory = "Abstract";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── NATURE ────────────────────────────────────────────────────────────
-        D("Nature",
+        D(NatureCategory,
             "A persistent watery rush from above during storms.",
             "Nature's percussion section having a very emotional day.",
             "The sound of the sky crying aggressively.",
             "Answer: RAIN",
             Difficulty.Easy),
-        D("Nature",
+        D(NatureCategory,
             "Leaves being destroyed en masse by wind.",
             "A thousand tiny betrayals happening simultaneously.",
             "Autumn's violent panic attack.",
             "Answer: RUSTLING LEAVES",
             Difficulty.Medium),
-        D("Nature",
+        D(NatureCategory,
             "The ocean forcefully hitting the shore.",
             "Liquid violence in rhythmic waves.",
             "The earth's way of punching water.",
@@ -89,19 +95,19 @@ public static class SoundDetectiveCardBank
             Difficulty.Easy),
 
         // ── HUMAN ────────────────────────────────────────────────────────────
-        D("Human",
+        D(HumanCategory,
             "Air being pushed through your mouth quickly and forcefully.",
             "Angry nasal expression of frustration.",
             "The sound of 'yeah, whatever' without words.",
             "Answer: SIGH",
             Difficulty.Easy),
-        D("Human",
+        D(HumanCategory,
             "Your hands hitting together repeatedly in appreciation.",
             "The physical manifestation of 'good job'.",
             "Rhythmic hand violence out of respect.",
             "Answer: CLAPPING",
             Difficulty.Easy),
-        D("Human",
+        D(HumanCategory,
             "Vocal cords vibrating at high speed due to joy overload.",
             "The sound of chaos coming from your face.",
             "What happens when your brain breaks from happiness.",
@@ -109,19 +115,19 @@ public static class SoundDetectiveCardBank
             Difficulty.Easy),
 
         // ── MECHANICAL ────────────────────────────────────────────────────────
-        D("Mechanical",
+        D(MechanicalCategory,
             "Metal striking metal with force and purpose.",
             "Angry percussion in the construction department.",
             "What happens when two pieces of metal disagree violently.",
             "Answer: HAMMER",
             Difficulty.Medium),
-        D("Mechanical",
+        D(MechanicalCategory,
             "A rubber wheel rolling quickly across pavement.",
             "The sound of a vehicle aggressively abandoning a location.",
             "The dying scream of pavement under assault.",
             "Answer: SCREECHING TIRES",
             Difficulty.Medium),
-        D("Mechanical",
+        D(MechanicalCategory,
             "Electric device requesting your attention repeatedly.",
             "A robot's way of saying 'um, excuse me?'",
             "The sound of impatience coming from your pocket.",
@@ -129,19 +135,19 @@ public static class SoundDetectiveCardBank
             Difficulty.Easy),
 
         // ── ANIMAL ────────────────────────────────────────────────────────────
-        D("Animal",
+        D(AnimalCategory,
             "A four-legged creature with sharp teeth expressing unhappiness.",
             "Nature's way of saying 'personal space, buddy'.",
             "The angry voice of a creature that could eat you.",
             "Answer: DOG GROWL",
             Difficulty.Easy),
-        D("Animal",
+        D(AnimalCategory,
             "A feline mammal in supreme judgment of you.",
             "The sound of disdain from a creature that owns your house.",
             "What happens when a cat's soul leaves its body out of annoyance.",
             "Answer: CAT HISS",
             Difficulty.Easy),
-        D("Animal",
+        D(AnimalCategory,
             "A bird enthusiastically declaring the morning's arrival.",
             "Nature's alarm clock with a superiority complex.",
             "The sound of 'wake up you lazy humans' set to music.",
@@ -149,19 +155,19 @@ public static class SoundDetectiveCardBank
             Difficulty.Easy),
 
         // ── ABSTRACT ──────────────────────────────────────────────────────────
-        D("Abstract",
+        D(AbstractCategory,
             "Something heavy hitting something solid.",
             "An object expressing its regrets to the ground.",
             "Gravity's victory lap.",
             "Answer: THUD",
             Difficulty.Medium),
-        D("Abstract",
+        D(AbstractCategory,
             "Air escaping from a small opening rapidly.",
             "Pressure deciding it's had enough.",
             "The sound of 'I'm outta here' but physical.",
             "Answer: WHOOSH/AIR ESCAPE",
             Difficulty.Hard),
-        D("Abstract",
+        D(AbstractCategory,
             "Friction happening at extremely close range.",
             "Two surfaces in direct conflict about their existence.",
             "The sound of 'stop touching me' in material form.",

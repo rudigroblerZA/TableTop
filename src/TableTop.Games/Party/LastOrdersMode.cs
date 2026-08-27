@@ -61,7 +61,7 @@ public sealed class LastOrdersMode : BaseGameModeDefinition, ITableShapeMode
     public override string SkipLabel => "Pass (always fine)";
 
     /// <summary>House rules open the night; Last Round closes it.</summary>
-    public override IReadOnlyList<string> CategoriesPinnedToStart => ["House Rules"];
+    public override IReadOnlyList<string> CategoriesPinnedToStart => [LastOrdersCardBank.HouseRulesCategory];
 
     /// <inheritdoc cref="CategoriesPinnedToStart" />
     public override IReadOnlyList<string> CategoriesPinnedToEnd => [LastOrdersCardBank.LastRoundCategory];
@@ -70,11 +70,11 @@ public sealed class LastOrdersMode : BaseGameModeDefinition, ITableShapeMode
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["House Rules"] = "#26A69A",
+            [LastOrdersCardBank.HouseRulesCategory] = "#26A69A",
             [LastOrdersCardBank.WarmUpCategory] = "#66BB6A",
             [LastOrdersCardBank.PartyTricksCategory] = "#42A5F5",
-            ["Confessions"] = "#AB47BC",
-            ["Forfeits"] = "#FFA726",
+            [LastOrdersCardBank.ConfessionsCategory] = "#AB47BC",
+            [LastOrdersCardBank.ForfeitsCategory] = "#FFA726",
             [LastOrdersCardBank.LastRoundCategory] = "#7E57C2",
         };
 
@@ -96,6 +96,10 @@ public sealed class LastOrdersMode : BaseGameModeDefinition, ITableShapeMode
 /// <summary>Built-in card bank for Last Orders.</summary>
 public static class LastOrdersCardBank
 {
+    internal const string HouseRulesCategory = "House Rules";
+    internal const string ConfessionsCategory = "Confessions";
+    internal const string ForfeitsCategory = "Forfeits";
+
     internal const string WarmUpCategory = "Warm Up";
     internal const string PartyTricksCategory = "Party Tricks";
     internal const string LastRoundCategory = "Last Round";
@@ -159,44 +163,44 @@ public static class LastOrdersCardBank
               "Demonstrate the most useless skill you possess. It must be genuinely useless and genuinely yours."),
 
             // ── CONFESSIONS — truth-style, no drinking ───────────────────────
-            S("Confessions", "The Group Chat",
+            S(ConfessionsCategory, "The Group Chat",
               "What is the most recent thing you sent to a group chat and immediately regretted?"),
-            S("Confessions", "Worst Purchase",
+            S(ConfessionsCategory, "Worst Purchase",
               "What's the most money you've spent on something you used precisely once?"),
-            S("Confessions", "The White Lie",
+            S(ConfessionsCategory, "The White Lie",
               "Name a small lie you tell regularly. Nothing serious — just the everyday kind."),
-            S("Confessions", "Unpopular Opinion",
+            S(ConfessionsCategory, "Unpopular Opinion",
               "Share a genuinely unpopular opinion and defend it for thirty seconds."),
-            S("Confessions", "The Text You Didn't Send",
+            S(ConfessionsCategory, "The Text You Didn't Send",
               "Describe — don't read — a message you typed out and then deleted."),
-            S("Confessions", "Left On Read",
+            S(ConfessionsCategory, "Left On Read",
               "What's the message you've left unanswered the longest, and what's the real reason?"),
-            S("Confessions", "Worst Money",
+            S(ConfessionsCategory, "Worst Money",
               "What is the worst thing you have ever spent money on — and would you do it again?"),
 
             // ── FORFEITS — the drink-or-soft cards, age-gated ────────────────
-            D("Forfeits", "Cheers To That",
+            D(ForfeitsCategory, "Cheers To That",
               "Take a sip — or a soft sip, they're the same here — and say what you're actually toasting.",
               drinkingAge),
-            D("Forfeits", "The Last Person Who…",
+            D(ForfeitsCategory, "The Last Person Who…",
               "Last person to laugh takes a sip. Soft counts. Nobody keeps score of who's drinking what.",
               drinkingAge),
-            D("Forfeits", "Categories",
+            D(ForfeitsCategory, "Categories",
               "Name a category. Go round the table. First to stumble takes a sip — or a soft one — and picks the next category.",
               drinkingAge),
-            D("Forfeits", "Never Have I Ever, Gently",
+            D(ForfeitsCategory, "Never Have I Ever, Gently",
               "Say something you've never done. Anyone who has takes a sip, or the soft equivalent, and may explain — or may not.",
               drinkingAge),
-            D("Forfeits", "Toast the Room",
+            D(ForfeitsCategory, "Toast the Room",
               "Raise your glass to someone at the table and say one true nice thing. Everyone sips with you, soft or otherwise.",
               drinkingAge),
-            D("Forfeits", "Swap Rounds",
+            D(ForfeitsCategory, "Swap Rounds",
               "Buy or fetch the next round for the person opposite — including finding out what soft option they'd actually enjoy.",
               drinkingAge),
-            D("Forfeits", "Toast the Absent",
+            D(ForfeitsCategory, "Toast the Absent",
               "Take a sip — soft counts, same as ever — and toast someone who isn't here tonight. Say why them.",
               drinkingAge),
-            D("Forfeits", "The Round You Owe",
+            D(ForfeitsCategory, "The Round You Owe",
               "Take a sip, soft or otherwise, and name the person at this table you'd most like to buy a drink for, and what it would be.",
               drinkingAge),
 
@@ -222,7 +226,7 @@ public static class LastOrdersCardBank
     private static ICard H(string title, string body) =>
         StandardCard.Create(title,
             "<b>📋 HOUSE RULES</b>\n\n" + body,
-            Difficulty.Easy, "House Rules");
+            Difficulty.Easy, HouseRulesCategory);
 
     // Social dares: no alcohol, so no age gate.
     private static ICard S(string category, string title, string body) =>
@@ -250,7 +254,7 @@ public static class LastOrdersCardBank
     {
         WarmUpCategory => "🌤️",
         PartyTricksCategory => "🎭",
-        "Confessions" => "🎤",
+        ConfessionsCategory => "🎤",
         _ => "•",
     };
 }

@@ -53,11 +53,11 @@ public sealed class BetweenTheTwoOfYouMode : BaseGameModeDefinition, ITableShape
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Lead & Follow"] = "#7E57C2",
-            ["Give & Receive"] = "#EC407A",
-            ["Plan & Spark"] = "#42A5F5",
-            ["Words & Touch"] = "#26A69A",
-            ["Bold & Cosy"] = "#FFA726",
+            [BetweenTheTwoOfYouCardBank.LeadFollowCategory] = "#7E57C2",
+            [BetweenTheTwoOfYouCardBank.GiveReceiveCategory] = "#EC407A",
+            [BetweenTheTwoOfYouCardBank.PlanSparkCategory] = "#42A5F5",
+            [BetweenTheTwoOfYouCardBank.WordsTouchCategory] = "#26A69A",
+            [BetweenTheTwoOfYouCardBank.BoldCosyCategory] = "#FFA726",
             ["Results"] = "#FFD700",
             ["Grow Together"] = "#66BB6A",
         };
@@ -77,6 +77,12 @@ public sealed class BetweenTheTwoOfYouMode : BaseGameModeDefinition, ITableShape
 /// <summary>Built-in card bank for Between the Two of You.</summary>
 public static class BetweenTheTwoOfYouCardBank
 {
+    internal const string LeadFollowCategory = "Lead & Follow";
+    internal const string GiveReceiveCategory = "Give & Receive";
+    internal const string PlanSparkCategory = "Plan & Spark";
+    internal const string WordsTouchCategory = "Words & Touch";
+    internal const string BoldCosyCategory = "Bold & Cosy";
+
     /// <summary>All cards, ordered so each axis's questions are followed by its Results card.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -93,21 +99,21 @@ public static class BetweenTheTwoOfYouCardBank
         return
         [
             // ══ LEAD & FOLLOW — where you sit on taking charge vs handing it over ══
-            Q("Lead & Follow", "Who Sets the Pace",
+            Q(LeadFollowCategory, "Who Sets the Pace",
               "When things get intimate, you're most drawn to:\n" +
               "A) Taking charge — setting the pace and leading where it goes.\n" +
               "B) Being led — letting your partner set the pace and following.\n" +
               "C) Trading off — sometimes leading, sometimes following, by mood.\n" +
               "D) Fully mutual — neither leads; you move together.",
               Difficulty.Easy),
-            Q("Lead & Follow", "Being Told vs Asking",
+            Q(LeadFollowCategory, "Being Told vs Asking",
               "Which lands better for you in the moment?\n" +
               "A) Saying what you want to happen and having it followed.\n" +
               "B) Being told what to do, and enjoying letting go.\n" +
               "C) A back-and-forth where you swap who's steering.\n" +
               "D) Reading each other wordlessly, no one 'in charge'.",
               Difficulty.Medium),
-            Q("Lead & Follow", "Where You Feel Most Free",
+            Q(LeadFollowCategory, "Where You Feel Most Free",
               "You feel most yourself when you're:\n" +
               "A) Holding the reins and being trusted with them.\n" +
               "B) Handing the reins over and being taken care of.\n" +
@@ -123,21 +129,21 @@ public static class BetweenTheTwoOfYouCardBank
               "<i>Compare with your partner: a leader + a follower can fit beautifully — but only when both chose it, out loud. Two leaders or two followers just means taking turns is your growth work.</i>"),
 
             // ══ GIVE & RECEIVE — the pleasure of giving vs the pleasure of receiving ══
-            Q("Give & Receive", "Where Your Attention Goes",
+            Q(GiveReceiveCategory, "Where Your Attention Goes",
               "You get the most out of intimacy when you're:\n" +
               "A) Focused on your partner's pleasure — giving is your joy.\n" +
               "B) Able to receive — letting yourself be the focus.\n" +
               "C) Both flowing back and forth, roughly even.\n" +
               "D) Honestly not sure — you've never really thought about it.",
               Difficulty.Easy),
-            Q("Give & Receive", "The Harder One to Accept",
+            Q(GiveReceiveCategory, "The Harder One to Accept",
               "Which is harder for you?\n" +
               "A) Sitting still and simply receiving without 'returning' it.\n" +
               "B) Letting your partner give while you do nothing back.\n" +
               "C) Neither — you're comfortable on both sides.\n" +
               "D) Asking for what you want at all.",
               Difficulty.Medium),
-            Q("Give & Receive", "If You Had to Pick",
+            Q(GiveReceiveCategory, "If You Had to Pick",
               "A whole evening about just ONE of you — you'd rather it be about:\n" +
               "A) Your partner. You'd love an evening devoted to them.\n" +
               "B) You. You'd love, just once, to be thoroughly spoiled.\n" +
@@ -153,21 +159,21 @@ public static class BetweenTheTwoOfYouCardBank
               "<i>Compare: a giver and a receiver can be a perfect match — as long as the giver also gets received, and the receiver also gets to give. Two givers? Practise being 'selfish' on purpose. Two receivers? Take turns spoiling.</i>"),
 
             // ══ PLAN & SPARK — planned intimacy vs spontaneous ══
-            Q("Plan & Spark", "Anticipation vs Surprise",
+            Q(PlanSparkCategory, "Anticipation vs Surprise",
               "Intimacy works best for you when it's:\n" +
               "A) Planned and looked forward to — anticipation is half the fun.\n" +
               "B) Spontaneous — the best moments aren't scheduled.\n" +
               "C) A mix — some planned, some out of nowhere.\n" +
               "D) Whenever it happens; you don't think in those terms.",
               Difficulty.Easy),
-            Q("Plan & Spark", "A Date on the Calendar",
+            Q(PlanSparkCategory, "A Date on the Calendar",
               "'Intimacy night' written in the calendar for Friday makes you feel:\n" +
               "A) Great — something to build toward all week.\n" +
               "B) A bit flat — scheduling takes the spark out for you.\n" +
               "C) Fine occasionally, not as a rule.\n" +
               "D) Neutral — you'd go with the flow either way.",
               Difficulty.Medium),
-            Q("Plan & Spark", "The Free Evening",
+            Q(PlanSparkCategory, "The Free Evening",
               "An unexpected free evening turns up in both your diaries. You'd rather:\n" +
               "A) Make a plan for it now and enjoy the wait.\n" +
               "B) Leave it completely open and see what happens.\n" +
@@ -182,21 +188,21 @@ public static class BetweenTheTwoOfYouCardBank
               "<i>Compare: if one of you needs the calendar and the other needs surprise, the fix is a blend — a loosely-planned window that leaves room for spontaneity inside it.</i>"),
 
             // ══ WORDS & TOUCH — how you most naturally express and receive desire ══
-            Q("Words & Touch", "How Desire Reaches You",
+            Q(WordsTouchCategory, "How Desire Reaches You",
               "You most feel wanted when your partner:\n" +
               "A) Tells you — says out loud what they want and love about you.\n" +
               "B) Shows you — reaches for you, touch that says it without words.\n" +
               "C) Both equally; you need to hear it AND feel it.\n" +
               "D) Through effort — they make time and pay attention.",
               Difficulty.Easy),
-            Q("Words & Touch", "Talking During",
+            Q(WordsTouchCategory, "Talking During",
               "Talking, direction, and sound during intimacy is something you:\n" +
               "A) Love — words turn you on and keep you connected.\n" +
               "B) Prefer without — you go quieter and more physical.\n" +
               "C) Enjoy in small doses at the right moments.\n" +
               "D) Feel shy about but might like to try more.",
               Difficulty.Medium),
-            Q("Words & Touch", "In the Middle of the Day",
+            Q(WordsTouchCategory, "In the Middle of the Day",
               "It's an ordinary Tuesday afternoon. What reaches you most?\n" +
               "A) A message spelling out exactly what they're thinking about.\n" +
               "B) Coming home to them reaching for you before either of you speaks.\n" +
@@ -212,21 +218,21 @@ public static class BetweenTheTwoOfYouCardBank
               "<i>Compare: a words person paired with a touch person can each feel unloved while both are trying hard — in different languages. Name yours; ask for theirs.</i>"),
 
             // ══ BOLD & COSY — appetite for adventure vs the beloved familiar ══
-            Q("Bold & Cosy", "New vs Known",
+            Q(BoldCosyCategory, "New vs Known",
               "When it comes to trying new things together, you're:\n" +
               "A) The adventurer — keen to explore and push gently at edges.\n" +
               "B) The homebody — you love the familiar, trusted, and safe.\n" +
               "C) Adventurous with the right build-up and trust.\n" +
               "D) Curious but cautious — interested, slow to leap.",
               Difficulty.Easy),
-            Q("Bold & Cosy", "The Suggestion",
+            Q(BoldCosyCategory, "The Suggestion",
               "Your partner suggests something new. Your first honest reaction:\n" +
               "A) 'Yes — tell me more.' You light up at new.\n" +
               "B) 'I'm happy with what we have.' New isn't a need for you.\n" +
               "C) 'Maybe — walk me through it.' Warm but needs to feel safe.\n" +
               "D) 'Let me think.' You want time before you decide.",
               Difficulty.Medium),
-            Q("Bold & Cosy", "Somewhere That Isn't Here",
+            Q(BoldCosyCategory, "Somewhere That Isn't Here",
               "The idea of being together somewhere other than your usual place:\n" +
               "A) Exciting — you're already thinking of where.\n" +
               "B) Not for you; your own space is where you actually relax.\n" +

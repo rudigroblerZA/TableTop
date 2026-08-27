@@ -53,21 +53,21 @@ public sealed class SplitTheRoomMode : BaseGameModeDefinition, ITableShapeMode
     public override string SkipLabel => "No Point";
 
     /// <summary>Opens on the setup card so teams and scoring get agreed.</summary>
-    public override IReadOnlyList<string> CategoriesPinnedToStart => ["Setup"];
+    public override IReadOnlyList<string> CategoriesPinnedToStart => [SplitTheRoomCardBank.SetupCategory];
 
     /// <summary>Closes on the decider, for tables that end up level.</summary>
-    public override IReadOnlyList<string> CategoriesPinnedToEnd => ["Decider"];
+    public override IReadOnlyList<string> CategoriesPinnedToEnd => [SplitTheRoomCardBank.DeciderCategory];
 
     /// <inheritdoc />
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Setup"] = "#5AC8B0",
-            ["Describe"] = "#42A5F5",
-            ["Perform"] = "#AB47BC",
-            ["Guess Us"] = "#FFA726",
-            ["Race"] = "#EF5350",
-            ["Decider"] = "#B71C4A",
+            [SplitTheRoomCardBank.SetupCategory] = "#5AC8B0",
+            [SplitTheRoomCardBank.DescribeCategory] = "#42A5F5",
+            [SplitTheRoomCardBank.PerformCategory] = "#AB47BC",
+            [SplitTheRoomCardBank.GuessUsCategory] = "#FFA726",
+            [SplitTheRoomCardBank.RaceCategory] = "#EF5350",
+            [SplitTheRoomCardBank.DeciderCategory] = "#B71C4A",
         };
 
     /// <summary>Harder cards are worth more points, and the cards say so.</summary>
@@ -84,6 +84,13 @@ public sealed class SplitTheRoomMode : BaseGameModeDefinition, ITableShapeMode
 /// <summary>Built-in card bank for Split the Room.</summary>
 public static class SplitTheRoomCardBank
 {
+    internal const string SetupCategory = "Setup";
+    internal const string DescribeCategory = "Describe";
+    internal const string PerformCategory = "Perform";
+    internal const string GuessUsCategory = "Guess Us";
+    internal const string RaceCategory = "Race";
+    internal const string DeciderCategory = "Decider";
+
     /// <summary>All cards, in authored order.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -94,92 +101,92 @@ public static class SplitTheRoomCardBank
 
     private static string Emoji(string category) => category switch
     {
-        "Setup" => "📋",
-        "Describe" => "🗣️",
-        "Perform" => "🎭",
-        "Guess Us" => "🤔",
-        "Race" => "⏱️",
-        "Decider" => "🏆",
+        SetupCategory => "📋",
+        DescribeCategory => "🗣️",
+        PerformCategory => "🎭",
+        GuessUsCategory => "🤔",
+        RaceCategory => "⏱️",
+        DeciderCategory => "🏆",
         _ => "🎲",
     };
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── SETUP ─────────────────────────────────────────────────────────────
-        C("Setup", "Pick Your Sides",
+        C(SetupCategory, "Pick Your Sides",
           "Split into two teams. Uneven is fine — the smaller team goes first every time, which is the whole " +
           "handicap system and it works. Name your teams. Bad names are traditional.", Difficulty.Easy, 0),
-        C("Setup", "Who's Keeping Score",
+        C(SetupCategory, "Who's Keeping Score",
           "One person, from either team, keeps score on paper where everyone can see it. Each card says what " +
           "it's worth. Arguments about the score are settled by whoever is holding the pen.", Difficulty.Easy, 0),
 
         // ── DESCRIBE — talk, without the obvious words ────────────────────────
-        C("Describe", "Without The Word",
+        C(DescribeCategory, "Without The Word",
           "Your team picks a person in the room. Describe them to the other team without naming any part of " +
           "their appearance. They get three guesses.", Difficulty.Medium, 2),
-        C("Describe", "Explain Your Job Badly",
+        C(DescribeCategory, "Explain Your Job Badly",
           "One of you explains their job — or their day — as unhelpfully as possible while staying strictly " +
           "truthful. Other team guesses what it is.", Difficulty.Easy, 1),
-        C("Describe", "Three Clues Only",
+        C(DescribeCategory, "Three Clues Only",
           "Think of a film, book or song. You get exactly three clues, one word each. Other team gets one " +
           "guess. Land it and take three points.", Difficulty.Hard, 3),
-        C("Describe", "The Long Way Round",
+        C(DescribeCategory, "The Long Way Round",
           "Describe a common object without using its name or what it's for. Other team guesses. If they get " +
           "it in under ten seconds, they take the point instead.", Difficulty.Medium, 2),
 
         // ── PERFORM — act, sing, draw ─────────────────────────────────────────
-        C("Perform", "One Of You Acts",
+        C(PerformCategory, "One Of You Acts",
           "Nominate an actor. They get thirty seconds to act out something the other team has to name. No " +
           "sounds, no words, no pointing at objects in the room.", Difficulty.Medium, 2),
-        C("Perform", "Two Of You, One Thing",
+        C(PerformCategory, "Two Of You, One Thing",
           "Two of your team act out a single thing together — a machine, an animal, a situation. Other team " +
           "names it. Worth double because coordinating this is genuinely hard.", Difficulty.Hard, 3),
-        C("Perform", "Hum It",
+        C(PerformCategory, "Hum It",
           "One of you hums a tune. Nothing else. Other team names it. If they can't, someone from their team " +
           "may hum their guess back for a consolation point.", Difficulty.Easy, 1),
-        C("Perform", "Draw It Blind",
+        C(PerformCategory, "Draw It Blind",
           "One of you draws something with your eyes shut while your team calls instructions. Other team has " +
           "to name it from the drawing alone once you stop.", Difficulty.Hard, 3),
-        C("Perform", "The Reenactment",
+        C(PerformCategory, "The Reenactment",
           "Reenact something that actually happened to your team tonight — or on the way here. Other team " +
           "guesses what it was.", Difficulty.Medium, 2),
 
         // ── GUESS US — the other team predicts your team ───────────────────────
-        C("Guess Us", "How Would We Answer",
+        C(GuessUsCategory, "How Would We Answer",
           "The other team reads out a question. Every one of your team answers privately in writing. The other " +
           "team then predicts how many of you gave the same answer — exact match, they score.", Difficulty.Medium, 2),
-        C("Guess Us", "Rank Us",
+        C(GuessUsCategory, "Rank Us",
           "Other team ranks your team on something harmless — most likely to be late, worst at directions, " +
           "first to cry at a film. Your team privately agrees the real order. Points for how close they got.", Difficulty.Medium, 2),
-        C("Guess Us", "Who Said It",
+        C(GuessUsCategory, "Who Said It",
           "Each of your team writes down an opinion nobody would guess was theirs. Read them out shuffled. " +
           "Other team matches statements to people. One point each correct.", Difficulty.Hard, 3),
-        C("Guess Us", "Odd One Out",
+        C(GuessUsCategory, "Odd One Out",
           "Your team states three facts about itself; two true of everyone on the team, one true of only one " +
           "person. Other team finds the odd one and names who.", Difficulty.Hard, 3),
 
         // ── RACE — both teams at once ─────────────────────────────────────────
-        C("Race", "Both Teams, Same Category",
+        C(RaceCategory, "Both Teams, Same Category",
           "Someone neutral names a category. Both teams write as many items as they can in sixty seconds. " +
           "Longest valid list takes two points; anything on both lists gets struck off first.", Difficulty.Medium, 2),
-        C("Race", "First To Find It",
+        C(RaceCategory, "First To Find It",
           "Someone names an object that plausibly exists in this room or in somebody's bag. First team to " +
           "produce it takes the point. No breaking anything and no going outside.", Difficulty.Easy, 1),
-        C("Race", "Twenty Questions, Both Sides",
+        C(RaceCategory, "Twenty Questions, Both Sides",
           "One team thinks of something. The other asks yes/no questions and gets twenty. Guess it and they " +
           "take three; run out and the thinking team takes two.", Difficulty.Hard, 3),
-        C("Race", "Alphabet Sprint",
+        C(RaceCategory, "Alphabet Sprint",
           "A category, and both teams race to name something for every letter A to J. First team to finish " +
           "reads their list; anything the table rejects hands the round to the other side.", Difficulty.Extreme, 4),
 
         // ── DECIDER — for a level score ───────────────────────────────────────
-        C("Decider", "Sudden Death",
+        C(DeciderCategory, "Sudden Death",
           "Level scores only. One representative from each team. A category is named; you alternate answers " +
           "with no repeats and no hesitation. First to falter loses the whole game.", Difficulty.Extreme, 5),
-        C("Decider", "One Question Each",
+        C(DeciderCategory, "One Question Each",
           "Level scores only. Each team writes one question they believe the other cannot answer about them. " +
           "Swap. Answer correctly and you win; both right or both wrong and you go again.", Difficulty.Extreme, 5),
-        C("Decider", "Call It A Draw",
+        C(DeciderCategory, "Call It A Draw",
           "If you're level and nobody wants sudden death, this card ends it as a draw and says so out loud, " +
           "which is a better ending than an argument. That's the deck.", Difficulty.Easy, 0),
     ];

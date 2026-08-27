@@ -41,12 +41,12 @@ public sealed class UselessSuperpowersMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Barely Super"] = "#42A5F5",
-            ["Cursed Timing"] = "#FFA726",
-            ["Tiny Scale"] = "#66BB6A",
-            ["Wrong Target"] = "#AB47BC",
-            ["Showdown"] = "#EF5350",
-            ["Origin Story"] = "#EC407A",
+            [UselessSuperpowersCardBank.BarelySuperCategory] = "#42A5F5",
+            [UselessSuperpowersCardBank.CursedTimingCategory] = "#FFA726",
+            [UselessSuperpowersCardBank.TinyScaleCategory] = "#66BB6A",
+            [UselessSuperpowersCardBank.WrongTargetCategory] = "#AB47BC",
+            [UselessSuperpowersCardBank.ShowdownCategory] = "#EF5350",
+            [UselessSuperpowersCardBank.OriginStoryCategory] = "#EC407A",
         };
 
     /// <summary>One point to the round's voted-best pitch.</summary>
@@ -64,90 +64,97 @@ public sealed class UselessSuperpowersMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Useless Superpowers.</summary>
 public static class UselessSuperpowersCardBank
 {
+    internal const string BarelySuperCategory = "Barely Super";
+    internal const string CursedTimingCategory = "Cursed Timing";
+    internal const string TinyScaleCategory = "Tiny Scale";
+    internal const string WrongTargetCategory = "Wrong Target";
+    internal const string ShowdownCategory = "Showdown";
+    internal const string OriginStoryCategory = "Origin Story";
+
     /// <summary>All useless-superpower cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── BARELY SUPER ──────────────────────────────────────────────────────
-        P("Barely Super", "You can fly", "…at walking pace, 30 centimetres off the ground.", Difficulty.Easy),
-        P("Barely Super", "You are invisible", "…but only while nobody is looking at you.", Difficulty.Medium),
-        P("Barely Super", "Super strength", "…in your left little finger only.", Difficulty.Easy),
-        P("Barely Super", "You can read minds", "…but only of people who are currently thinking about sandwiches.", Difficulty.Easy),
-        P("Barely Super", "You can teleport", "…exactly one metre, once per day, with a loud honk.", Difficulty.Medium),
-        P("Barely Super", "You can breathe underwater", "…but only in water shallower than your knees.", Difficulty.Medium),
-        P("Barely Super", "Laser vision", "…at the temperature of a warm cup of tea.", Difficulty.Easy),
-        P("Barely Super", "You can stop time", "…for exactly one second, and you're frozen too.", Difficulty.Hard),
+        P(BarelySuperCategory, "You can fly", "…at walking pace, 30 centimetres off the ground.", Difficulty.Easy),
+        P(BarelySuperCategory, "You are invisible", "…but only while nobody is looking at you.", Difficulty.Medium),
+        P(BarelySuperCategory, "Super strength", "…in your left little finger only.", Difficulty.Easy),
+        P(BarelySuperCategory, "You can read minds", "…but only of people who are currently thinking about sandwiches.", Difficulty.Easy),
+        P(BarelySuperCategory, "You can teleport", "…exactly one metre, once per day, with a loud honk.", Difficulty.Medium),
+        P(BarelySuperCategory, "You can breathe underwater", "…but only in water shallower than your knees.", Difficulty.Medium),
+        P(BarelySuperCategory, "Laser vision", "…at the temperature of a warm cup of tea.", Difficulty.Easy),
+        P(BarelySuperCategory, "You can stop time", "…for exactly one second, and you're frozen too.", Difficulty.Hard),
 
         // ── CURSED TIMING ─────────────────────────────────────────────────────
-        P("Cursed Timing", "You can predict the future", "…exactly four seconds ahead, and only while sneezing.", Difficulty.Medium),
-        P("Cursed Timing", "You become incredibly persuasive", "…between 3:00 and 3:07 a.m.", Difficulty.Medium),
-        P("Cursed Timing", "You can run at the speed of sound", "…but only when you urgently need the toilet.", Difficulty.Easy),
-        P("Cursed Timing", "You gain photographic memory", "…of the previous Tuesday only, refreshed weekly.", Difficulty.Hard),
-        P("Cursed Timing", "You can talk to animals", "…but only ones that are asleep.", Difficulty.Medium),
-        P("Cursed Timing", "You are immune to all damage", "…during your birthday.", Difficulty.Medium),
-        P("Cursed Timing", "You can duplicate yourself", "…but the copy shows up 45 minutes late.", Difficulty.Hard),
-        P("Cursed Timing", "You can rewind time by ten seconds", "…but everyone remembers both versions.", Difficulty.Extreme),
+        P(CursedTimingCategory, "You can predict the future", "…exactly four seconds ahead, and only while sneezing.", Difficulty.Medium),
+        P(CursedTimingCategory, "You become incredibly persuasive", "…between 3:00 and 3:07 a.m.", Difficulty.Medium),
+        P(CursedTimingCategory, "You can run at the speed of sound", "…but only when you urgently need the toilet.", Difficulty.Easy),
+        P(CursedTimingCategory, "You gain photographic memory", "…of the previous Tuesday only, refreshed weekly.", Difficulty.Hard),
+        P(CursedTimingCategory, "You can talk to animals", "…but only ones that are asleep.", Difficulty.Medium),
+        P(CursedTimingCategory, "You are immune to all damage", "…during your birthday.", Difficulty.Medium),
+        P(CursedTimingCategory, "You can duplicate yourself", "…but the copy shows up 45 minutes late.", Difficulty.Hard),
+        P(CursedTimingCategory, "You can rewind time by ten seconds", "…but everyone remembers both versions.", Difficulty.Extreme),
 
         // ── TINY SCALE ────────────────────────────────────────────────────────
-        P("Tiny Scale", "You control the weather", "…inside a one-metre bubble around you.", Difficulty.Medium),
-        P("Tiny Scale", "You can move objects with your mind", "…up to the weight of a single grape.", Difficulty.Easy),
-        P("Tiny Scale", "You can heal any wound", "…paper cuts.", Difficulty.Easy),
-        P("Tiny Scale", "You can shape-shift", "…into a slightly shorter version of yourself.", Difficulty.Medium),
-        P("Tiny Scale", "You can speak every language", "…one word per language.", Difficulty.Hard),
-        P("Tiny Scale", "You can turn invisible any object", "…smaller than a coin, for five seconds.", Difficulty.Medium),
-        P("Tiny Scale", "You can summon any animal", "…snails. You can summon snails.", Difficulty.Easy),
-        P("Tiny Scale", "You generate electricity", "…enough to charge a phone by 1% per hour of vigorous dancing.", Difficulty.Medium),
+        P(TinyScaleCategory, "You control the weather", "…inside a one-metre bubble around you.", Difficulty.Medium),
+        P(TinyScaleCategory, "You can move objects with your mind", "…up to the weight of a single grape.", Difficulty.Easy),
+        P(TinyScaleCategory, "You can heal any wound", "…paper cuts.", Difficulty.Easy),
+        P(TinyScaleCategory, "You can shape-shift", "…into a slightly shorter version of yourself.", Difficulty.Medium),
+        P(TinyScaleCategory, "You can speak every language", "…one word per language.", Difficulty.Hard),
+        P(TinyScaleCategory, "You can turn invisible any object", "…smaller than a coin, for five seconds.", Difficulty.Medium),
+        P(TinyScaleCategory, "You can summon any animal", "…snails. You can summon snails.", Difficulty.Easy),
+        P(TinyScaleCategory, "You generate electricity", "…enough to charge a phone by 1% per hour of vigorous dancing.", Difficulty.Medium),
 
         // ── WRONG TARGET ──────────────────────────────────────────────────────
-        P("Wrong Target", "You can make anyone fall asleep instantly", "…it only works on yourself.", Difficulty.Easy),
-        P("Wrong Target", "You can find anything that's lost", "…that belongs to strangers.", Difficulty.Medium),
-        P("Wrong Target", "You always know when someone is lying", "…about cheese.", Difficulty.Easy),
-        P("Wrong Target", "You can grant wishes", "…exclusively wishes people mutter sarcastically.", Difficulty.Hard),
-        P("Wrong Target", "You can erase memories", "…only your own, only embarrassing ones, only at random.", Difficulty.Medium),
-        P("Wrong Target", "You can control machines with your mind", "…printers. Only printers. They still jam.", Difficulty.Medium),
-        P("Wrong Target", "Everything you touch turns to gold", "…for four seconds, then back, slightly stickier.", Difficulty.Hard),
-        P("Wrong Target", "You can talk to plants", "…they are extremely boring.", Difficulty.Easy),
+        P(WrongTargetCategory, "You can make anyone fall asleep instantly", "…it only works on yourself.", Difficulty.Easy),
+        P(WrongTargetCategory, "You can find anything that's lost", "…that belongs to strangers.", Difficulty.Medium),
+        P(WrongTargetCategory, "You always know when someone is lying", "…about cheese.", Difficulty.Easy),
+        P(WrongTargetCategory, "You can grant wishes", "…exclusively wishes people mutter sarcastically.", Difficulty.Hard),
+        P(WrongTargetCategory, "You can erase memories", "…only your own, only embarrassing ones, only at random.", Difficulty.Medium),
+        P(WrongTargetCategory, "You can control machines with your mind", "…printers. Only printers. They still jam.", Difficulty.Medium),
+        P(WrongTargetCategory, "Everything you touch turns to gold", "…for four seconds, then back, slightly stickier.", Difficulty.Hard),
+        P(WrongTargetCategory, "You can talk to plants", "…they are extremely boring.", Difficulty.Easy),
         // ── EXPANSION: MONKEY'S PAW EDITION ──────────────────────────────────
-        P("Barely Super", "You can read minds", "…but you read them out loud, in full, immediately.", Difficulty.Hard),
-        P("Barely Super", "You never need to sleep", "…but you are exhausted the entire time.", Difficulty.Medium),
-        P("Barely Super", "You can pause any conversation", "…everyone remembers exactly where it stopped, including the question you were avoiding.", Difficulty.Hard),
-        P("Barely Super", "You know everyone's secrets", "…and they instantly know that you know.", Difficulty.Extreme),
-        P("Cursed Timing", "You can time travel", "…only to moments you embarrassed yourself. As a spectator. Front row.", Difficulty.Medium),
-        P("Cursed Timing", "You always win arguments", "…three days after the argument has ended.", Difficulty.Medium),
-        P("Cursed Timing", "You can become famous instantly", "…for the least impressive thing you did this week.", Difficulty.Hard),
-        P("Cursed Timing", "Your wishes come true", "…in the order you made them, starting from age four.", Difficulty.Extreme),
-        P("Wrong Target", "You can silence any room", "…by starting to explain your hobbies.", Difficulty.Easy),
-        P("Wrong Target", "You can smell lies", "…and they smell like your least favourite food, and lingering.", Difficulty.Medium),
-        P("Wrong Target", "You can delete one memory per day", "…from your pet. Your pet has very few memories.", Difficulty.Medium),
-        P("Wrong Target", "Everyone tells you the truth", "…about your driving.", Difficulty.Hard),
-        P("Tiny Scale", "You can fly through time", "…at one second per second, forward only. So: living.", Difficulty.Hard),
-        P("Tiny Scale", "You can make anything disappear", "…into your other hand.", Difficulty.Easy),
-        P("Tiny Scale", "You have a sixth sense", "…for when bread is about to go stale. 45 seconds' warning.", Difficulty.Medium),
-        P("Tiny Scale", "You are fluent in sarcasm", "…written sarcasm. Only when reading tax documents.", Difficulty.Hard),
+        P(BarelySuperCategory, "You can read minds", "…but you read them out loud, in full, immediately.", Difficulty.Hard),
+        P(BarelySuperCategory, "You never need to sleep", "…but you are exhausted the entire time.", Difficulty.Medium),
+        P(BarelySuperCategory, "You can pause any conversation", "…everyone remembers exactly where it stopped, including the question you were avoiding.", Difficulty.Hard),
+        P(BarelySuperCategory, "You know everyone's secrets", "…and they instantly know that you know.", Difficulty.Extreme),
+        P(CursedTimingCategory, "You can time travel", "…only to moments you embarrassed yourself. As a spectator. Front row.", Difficulty.Medium),
+        P(CursedTimingCategory, "You always win arguments", "…three days after the argument has ended.", Difficulty.Medium),
+        P(CursedTimingCategory, "You can become famous instantly", "…for the least impressive thing you did this week.", Difficulty.Hard),
+        P(CursedTimingCategory, "Your wishes come true", "…in the order you made them, starting from age four.", Difficulty.Extreme),
+        P(WrongTargetCategory, "You can silence any room", "…by starting to explain your hobbies.", Difficulty.Easy),
+        P(WrongTargetCategory, "You can smell lies", "…and they smell like your least favourite food, and lingering.", Difficulty.Medium),
+        P(WrongTargetCategory, "You can delete one memory per day", "…from your pet. Your pet has very few memories.", Difficulty.Medium),
+        P(WrongTargetCategory, "Everyone tells you the truth", "…about your driving.", Difficulty.Hard),
+        P(TinyScaleCategory, "You can fly through time", "…at one second per second, forward only. So: living.", Difficulty.Hard),
+        P(TinyScaleCategory, "You can make anything disappear", "…into your other hand.", Difficulty.Easy),
+        P(TinyScaleCategory, "You have a sixth sense", "…for when bread is about to go stale. 45 seconds' warning.", Difficulty.Medium),
+        P(TinyScaleCategory, "You are fluent in sarcasm", "…written sarcasm. Only when reading tax documents.", Difficulty.Hard),
 
 
         // ── SHOWDOWN ──────────────────────────────────────────────────────────
-        S("Showdown", "A cat is stuck in a tree.",
+        S(ShowdownCategory, "A cat is stuck in a tree.",
           "Two players: argue whose previously-drawn power handles this crisis better. Group votes.", Difficulty.Medium),
-        S("Showdown", "The city's bridge is collapsing in ten minutes.",
+        S(ShowdownCategory, "The city's bridge is collapsing in ten minutes.",
           "Two players: argue whose previously-drawn power saves more people. Group votes.", Difficulty.Medium),
-        S("Showdown", "An alien delegation lands and demands to meet Earth's mightiest hero.",
+        S(ShowdownCategory, "An alien delegation lands and demands to meet Earth's mightiest hero.",
           "Two players: argue why the aliens should pick YOU. Group votes.", Difficulty.Hard),
-        S("Showdown", "A supervillain has stolen every left shoe in the country.",
+        S(ShowdownCategory, "A supervillain has stolen every left shoe in the country.",
           "Two players: argue whose power cracks the case. Group votes.", Difficulty.Medium),
-        S("Showdown", "The world's coffee supply will run out by Friday.",
+        S(ShowdownCategory, "The world's coffee supply will run out by Friday.",
           "Two players: argue whose power averts the crisis. Group votes.", Difficulty.Hard),
-        S("Showdown", "A toddler's birthday party has descended into chaos.",
+        S(ShowdownCategory, "A toddler's birthday party has descended into chaos.",
           "Two players: argue whose power restores order. Group votes.", Difficulty.Easy),
 
         // ── ORIGIN STORY ──────────────────────────────────────────────────────
-        O("Origin Story", "Tell the tragic origin story of how you got your most recently drawn power.", Difficulty.Medium),
-        O("Origin Story", "Deliver your hero catchphrase and pose. It must reference your power's limitation.", Difficulty.Easy),
-        O("Origin Story", "Describe your arch-nemesis — the one villain your useless power is PERFECTLY suited to defeat.", Difficulty.Hard),
-        O("Origin Story", "Pitch the blockbuster movie of your hero. Title, tagline, and the trailer voice-over.", Difficulty.Hard),
-        O("Origin Story", "Explain why the hero union rejected your application — and why they were wrong.", Difficulty.Medium),
-        O("Origin Story", "Design your hero costume out loud. Every element must be justified by your power.", Difficulty.Medium),
+        O(OriginStoryCategory, "Tell the tragic origin story of how you got your most recently drawn power.", Difficulty.Medium),
+        O(OriginStoryCategory, "Deliver your hero catchphrase and pose. It must reference your power's limitation.", Difficulty.Easy),
+        O(OriginStoryCategory, "Describe your arch-nemesis — the one villain your useless power is PERFECTLY suited to defeat.", Difficulty.Hard),
+        O(OriginStoryCategory, "Pitch the blockbuster movie of your hero. Title, tagline, and the trailer voice-over.", Difficulty.Hard),
+        O(OriginStoryCategory, "Explain why the hero union rejected your application — and why they were wrong.", Difficulty.Medium),
+        O(OriginStoryCategory, "Design your hero costume out loud. Every element must be justified by your power.", Difficulty.Medium),
     ];
 
     private static ICard P(string category, string power, string limitation, Difficulty d) =>

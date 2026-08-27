@@ -42,11 +42,11 @@ public sealed class ActItOutMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Animals"] = "#66BB6A",
-            ["Actions"] = "#42A5F5",
-            ["Jobs"] = "#FFA726",
-            ["Movies & Shows"] = "#AB47BC",
-            ["Whole Scenes"] = "#EF5350",
+            [ActItOutCardBank.AnimalsCategory] = "#66BB6A",
+            [ActItOutCardBank.ActionsCategory] = "#42A5F5",
+            [ActItOutCardBank.JobsCategory] = "#FFA726",
+            [ActItOutCardBank.MoviesShowsCategory] = "#AB47BC",
+            [ActItOutCardBank.WholeScenesCategory] = "#EF5350",
         };
 
     /// <summary>Harder mimes score more.</summary>
@@ -64,45 +64,51 @@ public sealed class ActItOutMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Act It Out.</summary>
 public static class ActItOutCardBank
 {
+    internal const string AnimalsCategory = "Animals";
+    internal const string ActionsCategory = "Actions";
+    internal const string JobsCategory = "Jobs";
+    internal const string MoviesShowsCategory = "Movies & Shows";
+    internal const string WholeScenesCategory = "Whole Scenes";
+
     /// <summary>All cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── ANIMALS — easiest, great for the youngest ────────────────────────
-        A("Animals", "A monkey", Difficulty.Easy),
-        A("Animals", "A snake", Difficulty.Easy),
-        A("Animals", "A kangaroo", Difficulty.Easy),
-        A("Animals", "A chicken laying an egg", Difficulty.Medium),
-        A("Animals", "A cat knocking things off a table", Difficulty.Medium),
-        A("Animals", "A sloth trying to catch a bus", Difficulty.Hard),
+        A(AnimalsCategory, "A monkey", Difficulty.Easy),
+        A(AnimalsCategory, "A snake", Difficulty.Easy),
+        A(AnimalsCategory, "A kangaroo", Difficulty.Easy),
+        A(AnimalsCategory, "A chicken laying an egg", Difficulty.Medium),
+        A(AnimalsCategory, "A cat knocking things off a table", Difficulty.Medium),
+        A(AnimalsCategory, "A sloth trying to catch a bus", Difficulty.Hard),
 
         // ── ACTIONS — verbs and everyday doings ──────────────────────────────
-        A("Actions", "Brushing your teeth", Difficulty.Easy),
-        A("Actions", "Swimming", Difficulty.Easy),
-        A("Actions", "Tiptoeing past someone asleep", Difficulty.Medium),
-        A("Actions", "Trying to open a jar that won't budge", Difficulty.Medium),
-        A("Actions", "Stepping on a plug in bare feet", Difficulty.Hard),
-        A("Actions", "Pretending you knew the answer all along", Difficulty.Hard),
+        A(ActionsCategory, "Brushing your teeth", Difficulty.Easy),
+        A(ActionsCategory, "Swimming", Difficulty.Easy),
+        A(ActionsCategory, "Tiptoeing past someone asleep", Difficulty.Medium),
+        A(ActionsCategory, "Trying to open a jar that won't budge", Difficulty.Medium),
+        A(ActionsCategory, "Stepping on a plug in bare feet", Difficulty.Hard),
+        A(ActionsCategory, "Pretending you knew the answer all along", Difficulty.Hard),
 
         // ── JOBS — occupations to mime ───────────────────────────────────────
-        A("Jobs", "A chef", Difficulty.Easy),
-        A("Jobs", "A firefighter", Difficulty.Easy),
-        A("Jobs", "A hairdresser", Difficulty.Medium),
-        A("Jobs", "A traffic officer directing cars", Difficulty.Medium),
-        A("Jobs", "A very unenthusiastic tour guide", Difficulty.Hard),
+        A(JobsCategory, "A chef", Difficulty.Easy),
+        A(JobsCategory, "A firefighter", Difficulty.Easy),
+        A(JobsCategory, "A hairdresser", Difficulty.Medium),
+        A(JobsCategory, "A traffic officer directing cars", Difficulty.Medium),
+        A(JobsCategory, "A very unenthusiastic tour guide", Difficulty.Hard),
 
         // ── MOVIES & SHOWS — mime the title/idea, no words ───────────────────
-        A("Movies & Shows", "A superhero movie", Difficulty.Medium),
-        A("Movies & Shows", "A nature documentary", Difficulty.Medium),
-        A("Movies & Shows", "A cooking competition show", Difficulty.Hard),
-        A("Movies & Shows", "A horror film where nothing works out", Difficulty.Hard),
+        A(MoviesShowsCategory, "A superhero movie", Difficulty.Medium),
+        A(MoviesShowsCategory, "A nature documentary", Difficulty.Medium),
+        A(MoviesShowsCategory, "A cooking competition show", Difficulty.Hard),
+        A(MoviesShowsCategory, "A horror film where nothing works out", Difficulty.Hard),
 
         // ── WHOLE SCENES — the absurd showstoppers ───────────────────────────
-        A("Whole Scenes", "A penguin realising it left the oven on", Difficulty.Extreme),
-        A("Whole Scenes", "A robot slowly running out of battery", Difficulty.Extreme),
-        A("Whole Scenes", "Someone winning the lottery on the bus, quietly", Difficulty.Extreme),
-        A("Whole Scenes", "A wizard whose spell went slightly wrong", Difficulty.Extreme),
+        A(WholeScenesCategory, "A penguin realising it left the oven on", Difficulty.Extreme),
+        A(WholeScenesCategory, "A robot slowly running out of battery", Difficulty.Extreme),
+        A(WholeScenesCategory, "Someone winning the lottery on the bus, quietly", Difficulty.Extreme),
+        A(WholeScenesCategory, "A wizard whose spell went slightly wrong", Difficulty.Extreme),
     ];
 
     private static ICard A(string category, string answer, Difficulty d) =>

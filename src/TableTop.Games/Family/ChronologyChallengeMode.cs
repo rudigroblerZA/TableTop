@@ -42,11 +42,11 @@ public sealed class ChronologyChallengeMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["History"] = "#42A5F5",
-            ["Invention"] = "#66BB6A",
-            ["Pop Culture"] = "#EC407A",
-            ["Science"] = "#AB47BC",
-            ["Modern"] = "#FFCA28",
+            [ChronologyChallengeCardBank.HistoryCategory] = "#42A5F5",
+            [ChronologyChallengeCardBank.InventionCategory] = "#66BB6A",
+            [ChronologyChallengeCardBank.PopCultureCategory] = "#EC407A",
+            [ChronologyChallengeCardBank.ScienceCategory] = "#AB47BC",
+            [ChronologyChallengeCardBank.ModernCategory] = "#FFCA28",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -64,13 +64,19 @@ public sealed class ChronologyChallengeMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Chronology Challenge. Cards are also available as JSON in <c>Data/Json/</c>.</summary>
 public static class ChronologyChallengeCardBank
 {
+    internal const string HistoryCategory = "History";
+    internal const string InventionCategory = "Invention";
+    internal const string PopCultureCategory = "Pop Culture";
+    internal const string ScienceCategory = "Science";
+    internal const string ModernCategory = "Modern";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── HISTORY ──────────────────────────────────────────────────────────
-        C("History",
+        C(HistoryCategory,
             "1) The Great Wall of China was completed\n" +
             "2) The Roman Empire fell\n" +
             "3) The Egyptian pyramids were built\n" +
@@ -79,7 +85,7 @@ public static class ChronologyChallengeCardBank
             "Wait, the pyramids were first? Yes. By a huge margin.",
             Difficulty.Hard),
 
-        C("History",
+        C(HistoryCategory,
             "1) Shakespeare was born\n" +
             "2) The American Declaration of Independence\n" +
             "3) The fall of the Berlin Wall\n" +
@@ -88,7 +94,7 @@ public static class ChronologyChallengeCardBank
             "Shakespeare lived closer to us than to the Moon landing.",
             Difficulty.Hard),
 
-        C("History",
+        C(HistoryCategory,
             "1) Julius Caesar was assassinated\n" +
             "2) London was founded\n" +
             "3) Cleopatra ruled Egypt\n" +
@@ -98,7 +104,7 @@ public static class ChronologyChallengeCardBank
             Difficulty.Hard),
 
         // ── INVENTION ────────────────────────────────────────────────────────
-        C("Invention",
+        C(InventionCategory,
             "1) The telephone was invented\n" +
             "2) The electric light bulb was invented\n" +
             "3) The aeroplane first flew\n" +
@@ -107,7 +113,7 @@ public static class ChronologyChallengeCardBank
             "That's only 30 years from first phone to first plane!",
             Difficulty.Medium),
 
-        C("Invention",
+        C(InventionCategory,
             "1) The wheel was invented\n" +
             "2) Writing was invented\n" +
             "3) Iron was first smelted\n" +
@@ -116,7 +122,7 @@ public static class ChronologyChallengeCardBank
             "Humans figured out beer before writing. Says something.",
             Difficulty.Hard),
 
-        C("Invention",
+        C(InventionCategory,
             "1) The steam engine was invented\n" +
             "2) The cotton gin was invented\n" +
             "3) The microscope was invented\n" +
@@ -126,7 +132,7 @@ public static class ChronologyChallengeCardBank
             Difficulty.Hard),
 
         // ── POP CULTURE ──────────────────────────────────────────────────────
-        C("Pop Culture",
+        C(PopCultureCategory,
             "1) The first Star Wars film was released\n" +
             "2) The first iPhone was released\n" +
             "3) The Beatles broke up\n" +
@@ -135,7 +141,7 @@ public static class ChronologyChallengeCardBank
             "The iPhone is more recent than Harry Potter!",
             Difficulty.Medium),
 
-        C("Pop Culture",
+        C(PopCultureCategory,
             "1) Elvis Presley was born\n" +
             "2) Michael Jackson released 'Thriller'\n" +
             "3) The first MTV video aired\n" +
@@ -144,7 +150,7 @@ public static class ChronologyChallengeCardBank
             "From Elvis to MTV was 46 years. MTV to Taylor was 8.",
             Difficulty.Hard),
 
-        C("Pop Culture",
+        C(PopCultureCategory,
             "1) The first Pokémon game was released\n" +
             "2) The first emoji was created\n" +
             "3) The first text message was sent\n" +
@@ -154,7 +160,7 @@ public static class ChronologyChallengeCardBank
             Difficulty.Hard),
 
         // ── SCIENCE ──────────────────────────────────────────────────────────
-        C("Science",
+        C(ScienceCategory,
             "1) Gravity was explained by Newton\n" +
             "2) DNA structure was discovered\n" +
             "3) The atom was split\n" +
@@ -163,7 +169,7 @@ public static class ChronologyChallengeCardBank
             "Only 6 years between splitting the atom and understanding DNA.",
             Difficulty.Hard),
 
-        C("Science",
+        C(ScienceCategory,
             "1) Penicillin was discovered\n" +
             "2) Vaccines were developed\n" +
             "3) Microbes were discovered\n" +
@@ -173,7 +179,7 @@ public static class ChronologyChallengeCardBank
             Difficulty.Hard),
 
         // ── MODERN ───────────────────────────────────────────────────────────
-        C("Modern",
+        C(ModernCategory,
             "1) The World Wide Web was created\n" +
             "2) The first text message was sent\n" +
             "3) The first webcam was used\n" +
@@ -182,7 +188,7 @@ public static class ChronologyChallengeCardBank
             "Email is older than the web!",
             Difficulty.Hard),
 
-        C("Modern",
+        C(ModernCategory,
             "1) Facebook was founded\n" +
             "2) YouTube was founded\n" +
             "3) Twitter was founded\n" +
@@ -191,7 +197,7 @@ public static class ChronologyChallengeCardBank
             "Wait, Twitter came after YouTube? Yes.",
             Difficulty.Medium),
 
-        C("Modern",
+        C(ModernCategory,
             "1) The first smartphone was released\n" +
             "2) The first tablet was released\n" +
             "3) Smartphones became mainstream\n" +

@@ -42,11 +42,11 @@ public sealed class DrawItMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Objects"] = "#66BB6A",
-            ["Animals & Nature"] = "#26A69A",
-            ["Actions"] = "#42A5F5",
-            ["Places"] = "#FFA726",
-            ["Idioms"] = "#EF5350",
+            [DrawItCardBank.ObjectsCategory] = "#66BB6A",
+            [DrawItCardBank.AnimalsNatureCategory] = "#26A69A",
+            [DrawItCardBank.ActionsCategory] = "#42A5F5",
+            [DrawItCardBank.PlacesCategory] = "#FFA726",
+            [DrawItCardBank.IdiomsCategory] = "#EF5350",
         };
 
     /// <summary>Harder things to draw score more.</summary>
@@ -64,44 +64,50 @@ public sealed class DrawItMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Draw It.</summary>
 public static class DrawItCardBank
 {
+    internal const string ObjectsCategory = "Objects";
+    internal const string AnimalsNatureCategory = "Animals & Nature";
+    internal const string ActionsCategory = "Actions";
+    internal const string PlacesCategory = "Places";
+    internal const string IdiomsCategory = "Idioms";
+
     /// <summary>All cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── OBJECTS — easiest, for the youngest artists ──────────────────────
-        D("Objects", "A house", Difficulty.Easy),
-        D("Objects", "An umbrella", Difficulty.Easy),
-        D("Objects", "A birthday cake", Difficulty.Easy),
-        D("Objects", "A pair of glasses", Difficulty.Medium),
-        D("Objects", "A washing machine", Difficulty.Medium),
+        D(ObjectsCategory, "A house", Difficulty.Easy),
+        D(ObjectsCategory, "An umbrella", Difficulty.Easy),
+        D(ObjectsCategory, "A birthday cake", Difficulty.Easy),
+        D(ObjectsCategory, "A pair of glasses", Difficulty.Medium),
+        D(ObjectsCategory, "A washing machine", Difficulty.Medium),
 
         // ── ANIMALS & NATURE ─────────────────────────────────────────────────
-        D("Animals & Nature", "A cat", Difficulty.Easy),
-        D("Animals & Nature", "A rainbow", Difficulty.Easy),
-        D("Animals & Nature", "An octopus", Difficulty.Medium),
-        D("Animals & Nature", "A volcano erupting", Difficulty.Medium),
-        D("Animals & Nature", "A hedgehog", Difficulty.Hard),
+        D(AnimalsNatureCategory, "A cat", Difficulty.Easy),
+        D(AnimalsNatureCategory, "A rainbow", Difficulty.Easy),
+        D(AnimalsNatureCategory, "An octopus", Difficulty.Medium),
+        D(AnimalsNatureCategory, "A volcano erupting", Difficulty.Medium),
+        D(AnimalsNatureCategory, "A hedgehog", Difficulty.Hard),
 
         // ── ACTIONS — harder to draw without words ───────────────────────────
-        D("Actions", "Sleeping", Difficulty.Medium),
-        D("Actions", "Juggling", Difficulty.Medium),
-        D("Actions", "Sneezing", Difficulty.Hard),
-        D("Actions", "Winning a race", Difficulty.Hard),
+        D(ActionsCategory, "Sleeping", Difficulty.Medium),
+        D(ActionsCategory, "Juggling", Difficulty.Medium),
+        D(ActionsCategory, "Sneezing", Difficulty.Hard),
+        D(ActionsCategory, "Winning a race", Difficulty.Hard),
 
         // ── PLACES ───────────────────────────────────────────────────────────
-        D("Places", "The beach", Difficulty.Easy),
-        D("Places", "A farm", Difficulty.Medium),
-        D("Places", "An airport", Difficulty.Hard),
-        D("Places", "A haunted house", Difficulty.Hard),
+        D(PlacesCategory, "The beach", Difficulty.Easy),
+        D(PlacesCategory, "A farm", Difficulty.Medium),
+        D(PlacesCategory, "An airport", Difficulty.Hard),
+        D(PlacesCategory, "A haunted house", Difficulty.Hard),
 
         // ── IDIOMS — the gloriously bad ones ─────────────────────────────────
-        D("Idioms", "Raining cats and dogs", Difficulty.Hard),
-        D("Idioms", "A piece of cake", Difficulty.Hard),
-        D("Idioms", "Butterflies in your stomach", Difficulty.Extreme),
-        D("Idioms", "The elephant in the room", Difficulty.Extreme),
-        D("Idioms", "Barking up the wrong tree", Difficulty.Extreme),
-        D("Idioms", "When pigs fly", Difficulty.Extreme),
+        D(IdiomsCategory, "Raining cats and dogs", Difficulty.Hard),
+        D(IdiomsCategory, "A piece of cake", Difficulty.Hard),
+        D(IdiomsCategory, "Butterflies in your stomach", Difficulty.Extreme),
+        D(IdiomsCategory, "The elephant in the room", Difficulty.Extreme),
+        D(IdiomsCategory, "Barking up the wrong tree", Difficulty.Extreme),
+        D(IdiomsCategory, "When pigs fly", Difficulty.Extreme),
     ];
 
     private static ICard D(string category, string answer, Difficulty d) =>

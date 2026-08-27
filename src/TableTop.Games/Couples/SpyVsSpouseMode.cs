@@ -58,10 +58,10 @@ public sealed class SpyVsSpouseMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Briefing"] = "#37474F",
-            ["Cover Story"] = "#EC407A",
-            ["Counterintel"] = "#FFA726",
-            ["Dead Drop"] = "#26A69A",
+            [SpyVsSpouseCardBank.BriefingCategory] = "#37474F",
+            [SpyVsSpouseCardBank.CoverStoryCategory] = "#EC407A",
+            [SpyVsSpouseCardBank.CounterintelCategory] = "#FFA726",
+            [SpyVsSpouseCardBank.DeadDropCategory] = "#26A69A",
         };
 
     /// <summary>Harder missions pay more when verified.</summary>
@@ -79,6 +79,11 @@ public sealed class SpyVsSpouseMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Spy vs Spouse.</summary>
 public static class SpyVsSpouseCardBank
 {
+    internal const string BriefingCategory = "Briefing";
+    internal const string CoverStoryCategory = "Cover Story";
+    internal const string CounterintelCategory = "Counterintel";
+    internal const string DeadDropCategory = "Dead Drop";
+
     /// <summary>All spy cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -160,26 +165,26 @@ public static class SpyVsSpouseCardBank
     ];
 
     private static ICard B(string mission, Difficulty d) =>
-        StandardCard.Create("Briefing",
+        StandardCard.Create(BriefingCategory,
             "<b>🕵️ EYES ONLY — read this SILENTLY. Do not read aloud.</b>\n\n" +
             "<b>YOUR MISSION:</b> " + mission + "\n\n" +
             "<i>Memorise it. Say 'understood.' Pass play on like nothing happened. " +
             "Announce 'MISSION COMPLETE' only when it's done — partner verifies from memory.</i>",
-            d, "Briefing");
+            d, BriefingCategory);
 
     private static ICard C(string prompt, Difficulty d) =>
-        StandardCard.Create("Cover Story",
+        StandardCard.Create(CoverStoryCategory,
             "<b>💬 COVER STORY — answer honestly, out loud:</b>\n\n" + prompt + "\n\n" +
             "<i>The conversation is real, even when the agenda isn't. Stay alert.</i>",
-            d, "Cover Story");
+            d, CoverStoryCategory);
 
     private static ICard A(string text, Difficulty d) =>
-        StandardCard.Create("Counterintel",
+        StandardCard.Create(CounterintelCategory,
             "<b>🔎 COUNTERINTELLIGENCE:</b>\n\n" + text,
-            d, "Counterintel");
+            d, CounterintelCategory);
 
     private static ICard D(string text, Difficulty d) =>
-        StandardCard.Create("Dead Drop",
+        StandardCard.Create(DeadDropCategory,
             "<b>📦 DEAD DROP — joint protocol:</b>\n\n" + text,
-            d, "Dead Drop");
+            d, DeadDropCategory);
 }

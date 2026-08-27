@@ -72,12 +72,12 @@ public sealed class BothOrNeitherMode : BaseGameModeDefinition, ITableShapeMode
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Consent"] = "#26A69A",
+            [BothOrNeitherCardBank.ConsentCategory] = "#26A69A",
             ["Opening"] = "#FFCA28",
             ["Warmer"] = "#FFA726",
             ["Serious"] = "#EF5350",
             ["No Mistaking"] = "#AD1457",
-            ["Aftercare"] = "#7E57C2",
+            [BothOrNeitherCardBank.AftercareCategory] = "#7E57C2",
         };
 
     /// <summary>
@@ -87,10 +87,10 @@ public sealed class BothOrNeitherMode : BaseGameModeDefinition, ITableShapeMode
     /// its reveal rules explained before the first real card or the mechanic
     /// simply doesn't work.
     /// </summary>
-    public override IReadOnlyList<string> CategoriesPinnedToStart => ["Consent"];
+    public override IReadOnlyList<string> CategoriesPinnedToStart => [BothOrNeitherCardBank.ConsentCategory];
 
     /// <inheritdoc cref="CategoriesPinnedToStart" />
-    public override IReadOnlyList<string> CategoriesPinnedToEnd => ["Aftercare"];
+    public override IReadOnlyList<string> CategoriesPinnedToEnd => [BothOrNeitherCardBank.AftercareCategory];
 
     /// <inheritdoc />
     protected override IScoringStrategy BuildScoring() => new DifficultyBasedScoringStrategy();
@@ -117,6 +117,9 @@ public sealed class BothOrNeitherMode : BaseGameModeDefinition, ITableShapeMode
 /// </summary>
 public static class BothOrNeitherCardBank
 {
+    internal const string ConsentCategory = "Consent";
+    internal const string AftercareCategory = "Aftercare";
+
     /// <summary>All cards, in intended play order.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -138,7 +141,7 @@ public static class BothOrNeitherCardBank
         .For("Both Or Neither")
 
         // ── CONSENT — the opening ritual, and the rules this mode needs ───────
-        .Category("Consent")
+        .Category(ConsentCategory)
             .Card("Before Anything — Your Safeword",
                 "Stop here and choose a safeword together — one word either of you can say to halt EVERYTHING instantly, no explanation owed and no guilt for killing the mood. Pick something you'd never say by accident (\"pineapple\" beats \"stop\"). Say it aloud now, twice, so it's real.\n\n" +
                 "Agree a tap-out gesture too, for when words are hard. The moment either of you uses either one, the game is over — that's the deal that makes the rest of it safe.",
@@ -297,7 +300,7 @@ public static class BothOrNeitherCardBank
                 Difficulty.Extreme)
 
         // ── AFTERCARE — how you land, pinned last ─────────────────────────────
-        .Category("Aftercare")
+        .Category(AftercareCategory)
             .Card("Come Back Down",
                 "No options on this one — you both do it. Stay close, get comfortable, and don't go anywhere for a few minutes. Water, a blanket, skin on skin, whatever the two of you actually want.\n\n" +
                 "No performance and no talking about it yet if you don't want to.",

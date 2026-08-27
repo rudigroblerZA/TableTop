@@ -41,12 +41,12 @@ public sealed class ForbiddenWordsMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Food"] = "#FFA726",
-            ["Places"] = "#42A5F5",
-            ["Things"] = "#AB47BC",
-            ["Actions"] = "#EC407A",
-            ["People"] = "#66BB6A",
-            ["Hard Mode"] = "#EF5350",
+            [ForbiddenWordsCardBank.FoodCategory] = "#FFA726",
+            [ForbiddenWordsCardBank.PlacesCategory] = "#42A5F5",
+            [ForbiddenWordsCardBank.ThingsCategory] = "#AB47BC",
+            [ForbiddenWordsCardBank.ActionsCategory] = "#EC407A",
+            [ForbiddenWordsCardBank.PeopleCategory] = "#66BB6A",
+            [ForbiddenWordsCardBank.HardModeCategory] = "#EF5350",
         };
 
     /// <summary>Describer and guesser each score one on success.</summary>
@@ -64,88 +64,95 @@ public sealed class ForbiddenWordsMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Forbidden Words.</summary>
 public static class ForbiddenWordsCardBank
 {
+    internal const string FoodCategory = "Food";
+    internal const string PlacesCategory = "Places";
+    internal const string ThingsCategory = "Things";
+    internal const string ActionsCategory = "Actions";
+    internal const string PeopleCategory = "People";
+    internal const string HardModeCategory = "Hard Mode";
+
     /// <summary>All forbidden-words cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── FOOD ──────────────────────────────────────────────────────────────
-        F("Food", "PIZZA",      "cheese", "Italy", "slice", Difficulty.Easy),
-        F("Food", "BANANA",     "yellow", "monkey", "peel", Difficulty.Easy),
-        F("Food", "CHOCOLATE",  "sweet", "brown", "cocoa", Difficulty.Easy),
-        F("Food", "SPAGHETTI",  "pasta", "long", "noodle", Difficulty.Medium),
-        F("Food", "POPCORN",    "cinema", "kernel", "butter", Difficulty.Medium),
-        F("Food", "SUSHI",      "fish", "rice", "Japan", Difficulty.Medium),
-        F("Food", "PANCAKE",    "flip", "flat", "syrup", Difficulty.Medium),
-        F("Food", "ICE CREAM",  "cold", "cone", "scoop", Difficulty.Easy),
+        F(FoodCategory, "PIZZA",      "cheese", "Italy", "slice", Difficulty.Easy),
+        F(FoodCategory, "BANANA",     "yellow", "monkey", "peel", Difficulty.Easy),
+        F(FoodCategory, "CHOCOLATE",  "sweet", "brown", "cocoa", Difficulty.Easy),
+        F(FoodCategory, "SPAGHETTI",  "pasta", "long", "noodle", Difficulty.Medium),
+        F(FoodCategory, "POPCORN",    "cinema", "kernel", "butter", Difficulty.Medium),
+        F(FoodCategory, "SUSHI",      "fish", "rice", "Japan", Difficulty.Medium),
+        F(FoodCategory, "PANCAKE",    "flip", "flat", "syrup", Difficulty.Medium),
+        F(FoodCategory, "ICE CREAM",  "cold", "cone", "scoop", Difficulty.Easy),
 
         // ── PLACES ────────────────────────────────────────────────────────────
-        F("Places", "BEACH",    "sand", "sea", "sun", Difficulty.Easy),
-        F("Places", "LIBRARY",  "books", "quiet", "borrow", Difficulty.Easy),
-        F("Places", "AIRPORT",  "plane", "fly", "luggage", Difficulty.Medium),
-        F("Places", "HOSPITAL", "doctor", "sick", "nurse", Difficulty.Medium),
-        F("Places", "DESERT",   "sand", "hot", "camel", Difficulty.Medium),
-        F("Places", "CINEMA",   "film", "screen", "popcorn", Difficulty.Easy),
-        F("Places", "FARM",     "animals", "tractor", "field", Difficulty.Easy),
-        F("Places", "VOLCANO",  "lava", "erupt", "mountain", Difficulty.Hard),
+        F(PlacesCategory, "BEACH",    "sand", "sea", "sun", Difficulty.Easy),
+        F(PlacesCategory, "LIBRARY",  "books", "quiet", "borrow", Difficulty.Easy),
+        F(PlacesCategory, "AIRPORT",  "plane", "fly", "luggage", Difficulty.Medium),
+        F(PlacesCategory, "HOSPITAL", "doctor", "sick", "nurse", Difficulty.Medium),
+        F(PlacesCategory, "DESERT",   "sand", "hot", "camel", Difficulty.Medium),
+        F(PlacesCategory, "CINEMA",   "film", "screen", "popcorn", Difficulty.Easy),
+        F(PlacesCategory, "FARM",     "animals", "tractor", "field", Difficulty.Easy),
+        F(PlacesCategory, "VOLCANO",  "lava", "erupt", "mountain", Difficulty.Hard),
 
         // ── THINGS ────────────────────────────────────────────────────────────
-        F("Things", "UMBRELLA",   "rain", "wet", "open", Difficulty.Easy),
-        F("Things", "TOOTHBRUSH", "teeth", "clean", "paste", Difficulty.Easy),
-        F("Things", "PILLOW",     "sleep", "soft", "head", Difficulty.Medium),
-        F("Things", "MIRROR",     "reflection", "look", "glass", Difficulty.Medium),
-        F("Things", "CANDLE",     "wax", "flame", "birthday", Difficulty.Medium),
-        F("Things", "KEYBOARD",   "type", "computer", "keys", Difficulty.Medium),
-        F("Things", "TRAMPOLINE", "jump", "bounce", "springs", Difficulty.Hard),
-        F("Things", "COMPASS",    "north", "direction", "needle", Difficulty.Hard),
+        F(ThingsCategory, "UMBRELLA",   "rain", "wet", "open", Difficulty.Easy),
+        F(ThingsCategory, "TOOTHBRUSH", "teeth", "clean", "paste", Difficulty.Easy),
+        F(ThingsCategory, "PILLOW",     "sleep", "soft", "head", Difficulty.Medium),
+        F(ThingsCategory, "MIRROR",     "reflection", "look", "glass", Difficulty.Medium),
+        F(ThingsCategory, "CANDLE",     "wax", "flame", "birthday", Difficulty.Medium),
+        F(ThingsCategory, "KEYBOARD",   "type", "computer", "keys", Difficulty.Medium),
+        F(ThingsCategory, "TRAMPOLINE", "jump", "bounce", "springs", Difficulty.Hard),
+        F(ThingsCategory, "COMPASS",    "north", "direction", "needle", Difficulty.Hard),
 
         // ── ACTIONS ───────────────────────────────────────────────────────────
-        F("Actions", "SNEEZE",   "achoo", "nose", "bless", Difficulty.Medium),
-        F("Actions", "WHISPER",  "quiet", "secret", "ear", Difficulty.Medium),
-        F("Actions", "JUGGLE",   "balls", "throw", "circus", Difficulty.Medium),
-        F("Actions", "YAWN",     "tired", "mouth", "sleepy", Difficulty.Easy),
-        F("Actions", "SWIM",     "water", "pool", "stroke", Difficulty.Easy),
-        F("Actions", "HICCUP",   "sound", "scare", "water", Difficulty.Hard),
-        F("Actions", "APPLAUD",  "clap", "hands", "audience", Difficulty.Medium),
-        F("Actions", "SHIVER",   "cold", "shake", "goosebumps", Difficulty.Hard),
+        F(ActionsCategory, "SNEEZE",   "achoo", "nose", "bless", Difficulty.Medium),
+        F(ActionsCategory, "WHISPER",  "quiet", "secret", "ear", Difficulty.Medium),
+        F(ActionsCategory, "JUGGLE",   "balls", "throw", "circus", Difficulty.Medium),
+        F(ActionsCategory, "YAWN",     "tired", "mouth", "sleepy", Difficulty.Easy),
+        F(ActionsCategory, "SWIM",     "water", "pool", "stroke", Difficulty.Easy),
+        F(ActionsCategory, "HICCUP",   "sound", "scare", "water", Difficulty.Hard),
+        F(ActionsCategory, "APPLAUD",  "clap", "hands", "audience", Difficulty.Medium),
+        F(ActionsCategory, "SHIVER",   "cold", "shake", "goosebumps", Difficulty.Hard),
 
         // ── PEOPLE ────────────────────────────────────────────────────────────
-        F("People", "FIREFIGHTER", "fire", "hose", "ladder", Difficulty.Easy),
-        F("People", "MAGICIAN",    "trick", "rabbit", "hat", Difficulty.Medium),
-        F("People", "ASTRONAUT",   "space", "rocket", "moon", Difficulty.Easy),
-        F("People", "REFEREE",     "whistle", "sport", "rules", Difficulty.Medium),
-        F("People", "PIRATE",      "ship", "treasure", "parrot", Difficulty.Easy),
-        F("People", "DENTIST",     "teeth", "drill", "mouth", Difficulty.Medium),
-        F("People", "DETECTIVE",   "mystery", "clues", "solve", Difficulty.Hard),
-        F("People", "LIFEGUARD",   "pool", "rescue", "whistle", Difficulty.Medium),
+        F(PeopleCategory, "FIREFIGHTER", "fire", "hose", "ladder", Difficulty.Easy),
+        F(PeopleCategory, "MAGICIAN",    "trick", "rabbit", "hat", Difficulty.Medium),
+        F(PeopleCategory, "ASTRONAUT",   "space", "rocket", "moon", Difficulty.Easy),
+        F(PeopleCategory, "REFEREE",     "whistle", "sport", "rules", Difficulty.Medium),
+        F(PeopleCategory, "PIRATE",      "ship", "treasure", "parrot", Difficulty.Easy),
+        F(PeopleCategory, "DENTIST",     "teeth", "drill", "mouth", Difficulty.Medium),
+        F(PeopleCategory, "DETECTIVE",   "mystery", "clues", "solve", Difficulty.Hard),
+        F(PeopleCategory, "LIFEGUARD",   "pool", "rescue", "whistle", Difficulty.Medium),
 
         // ── HARD MODE ─────────────────────────────────────────────────────────
-        F("Hard Mode", "GRAVITY",     "fall", "Earth", "Newton", Difficulty.Extreme),
-        F("Hard Mode", "ECHO",        "sound", "repeat", "cave", Difficulty.Extreme),
-        F("Hard Mode", "SHADOW",      "dark", "light", "sun", Difficulty.Extreme),
-        F("Hard Mode", "DÉJÀ VU",     "before", "feeling", "again", Difficulty.Extreme),
-        F("Hard Mode", "WIFI",        "internet", "signal", "router", Difficulty.Extreme),
-        F("Hard Mode", "MIDNIGHT",    "twelve", "night", "clock", Difficulty.Extreme),
-        F("Hard Mode", "NOSTALGIA",   "past", "memory", "miss", Difficulty.Extreme),
-        F("Hard Mode", "SARCASM",     "joke", "tone", "mean", Difficulty.Extreme),
+        F(HardModeCategory, "GRAVITY",     "fall", "Earth", "Newton", Difficulty.Extreme),
+        F(HardModeCategory, "ECHO",        "sound", "repeat", "cave", Difficulty.Extreme),
+        F(HardModeCategory, "SHADOW",      "dark", "light", "sun", Difficulty.Extreme),
+        F(HardModeCategory, "DÉJÀ VU",     "before", "feeling", "again", Difficulty.Extreme),
+        F(HardModeCategory, "WIFI",        "internet", "signal", "router", Difficulty.Extreme),
+        F(HardModeCategory, "MIDNIGHT",    "twelve", "night", "clock", Difficulty.Extreme),
+        F(HardModeCategory, "NOSTALGIA",   "past", "memory", "miss", Difficulty.Extreme),
+        F(HardModeCategory, "SARCASM",     "joke", "tone", "mean", Difficulty.Extreme),
 
         // ── EXPANSION: FAN FAVOURITES ─────────────────────────────────────────
-        F("Things", "SELFIE",       "photo", "phone", "yourself", Difficulty.Medium),
-        F("Things", "ALARM CLOCK",  "wake", "morning", "ring", Difficulty.Easy),
-        F("Things", "GLITTER",      "sparkle", "craft", "everywhere", Difficulty.Hard),
-        F("Things", "SOCKS",        "feet", "pair", "missing", Difficulty.Easy),
-        F("Actions", "PROCRASTINATE", "later", "delay", "tomorrow", Difficulty.Hard),
-        F("Actions", "BINGE-WATCH", "episodes", "series", "one more", Difficulty.Medium),
-        F("Actions", "GHOSTING",    "reply", "disappear", "message", Difficulty.Hard),
-        F("Actions", "EAVESDROP",   "listen", "secret", "conversation", Difficulty.Medium),
-        F("People", "INFLUENCER",   "followers", "post", "sponsored", Difficulty.Medium),
-        F("People", "VILLAIN",      "evil", "hero", "plan", Difficulty.Medium),
-        F("People", "TODDLER",      "small", "tantrum", "nap", Difficulty.Easy),
-        F("People", "CONSPIRACY THEORIST", "government", "secret", "truth", Difficulty.Hard),
-        F("Hard Mode", "AWKWARD SILENCE", "quiet", "uncomfortable", "conversation", Difficulty.Extreme),
-        F("Hard Mode", "REVENGE",   "payback", "hurt", "even", Difficulty.Extreme),
-        F("Hard Mode", "PASSWORD",  "secret", "login", "forgot", Difficulty.Extreme),
-        F("Hard Mode", "MONDAY",    "week", "work", "morning", Difficulty.Extreme),
+        F(ThingsCategory, "SELFIE",       "photo", "phone", "yourself", Difficulty.Medium),
+        F(ThingsCategory, "ALARM CLOCK",  "wake", "morning", "ring", Difficulty.Easy),
+        F(ThingsCategory, "GLITTER",      "sparkle", "craft", "everywhere", Difficulty.Hard),
+        F(ThingsCategory, "SOCKS",        "feet", "pair", "missing", Difficulty.Easy),
+        F(ActionsCategory, "PROCRASTINATE", "later", "delay", "tomorrow", Difficulty.Hard),
+        F(ActionsCategory, "BINGE-WATCH", "episodes", "series", "one more", Difficulty.Medium),
+        F(ActionsCategory, "GHOSTING",    "reply", "disappear", "message", Difficulty.Hard),
+        F(ActionsCategory, "EAVESDROP",   "listen", "secret", "conversation", Difficulty.Medium),
+        F(PeopleCategory, "INFLUENCER",   "followers", "post", "sponsored", Difficulty.Medium),
+        F(PeopleCategory, "VILLAIN",      "evil", "hero", "plan", Difficulty.Medium),
+        F(PeopleCategory, "TODDLER",      "small", "tantrum", "nap", Difficulty.Easy),
+        F(PeopleCategory, "CONSPIRACY THEORIST", "government", "secret", "truth", Difficulty.Hard),
+        F(HardModeCategory, "AWKWARD SILENCE", "quiet", "uncomfortable", "conversation", Difficulty.Extreme),
+        F(HardModeCategory, "REVENGE",   "payback", "hurt", "even", Difficulty.Extreme),
+        F(HardModeCategory, "PASSWORD",  "secret", "login", "forgot", Difficulty.Extreme),
+        F(HardModeCategory, "MONDAY",    "week", "work", "morning", Difficulty.Extreme),
     ];
 
     private static ICard F(string category, string target, string ban1, string ban2, string ban3, Difficulty d) =>

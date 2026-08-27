@@ -41,11 +41,11 @@ public sealed class PredictThisMode : BaseGameModeDefinition
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Preferences"] = "#42A5F5",
-            ["Choices"] = "#66BB6A",
-            ["Personality"] = "#AB47BC",
-            ["Secrets"] = "#EC407A",
-            ["Lies"] = "#EF5350",
+            [PredictThisCardBank.PreferencesCategory] = "#42A5F5",
+            [PredictThisCardBank.ChoicesCategory] = "#66BB6A",
+            [PredictThisCardBank.PersonalityCategory] = "#AB47BC",
+            [PredictThisCardBank.SecretsCategory] = "#EC407A",
+            [PredictThisCardBank.LiesCategory] = "#EF5350",
         };
 
     /// <summary>Initialises a new <see cref="BuildScoring"/> instance.</summary>
@@ -63,93 +63,99 @@ public sealed class PredictThisMode : BaseGameModeDefinition
 /// <summary>Built-in card bank for Predict This. Cards are also available as JSON in <c>Data/Json/</c>.</summary>
 public static class PredictThisCardBank
 {
+    internal const string PreferencesCategory = "Preferences";
+    internal const string ChoicesCategory = "Choices";
+    internal const string PersonalityCategory = "Personality";
+    internal const string SecretsCategory = "Secrets";
+    internal const string LiesCategory = "Lies";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── PREFERENCES ───────────────────────────────────────────────────────
-        P("Preferences",
+        P(PreferencesCategory,
             "What's their favourite food?",
             "Everyone bets points on what they'll say. They answer. Correct bets double their points.",
             Difficulty.Easy),
-        P("Preferences",
+        P(PreferencesCategory,
             "If they could only drink one beverage forever, what would it be?",
             "Everyone bets on the answer. Winner takes the pot plus bonus.",
             Difficulty.Medium),
-        P("Preferences",
+        P(PreferencesCategory,
             "What's their guilty pleasure movie or show?",
             "Everyone predicts. Correct predictions get rewarded double.",
             Difficulty.Medium),
-        P("Preferences",
+        P(PreferencesCategory,
             "What music artist would they never admit to liking?",
             "Bet on the answer. Get it right, get the points.",
             Difficulty.Hard),
-        P("Preferences",
+        P(PreferencesCategory,
             "What food do they claim to hate but secretly love?",
             "Everyone bets. Correct bets win big.",
             Difficulty.Hard),
 
         // ── CHOICES ───────────────────────────────────────────────────────────
-        P("Choices",
+        P(ChoicesCategory,
             "In a zombie apocalypse, what would be their first tool?",
             "Everyone bets on their choice. Correct predictions win.",
             Difficulty.Medium),
-        P("Choices",
+        P(ChoicesCategory,
             "If stuck on an island, what one item would they take?",
             "Bet on the answer. Predictions win double.",
             Difficulty.Medium),
-        P("Choices",
+        P(ChoicesCategory,
             "They find $100. What's their first purchase?",
             "Everyone predicts. Win big if you're right.",
             Difficulty.Easy),
-        P("Choices",
+        P(ChoicesCategory,
             "Given a time machine, which era would they visit?",
             "Bet on their answer. Correct bets doubled.",
             Difficulty.Hard),
 
         // ── PERSONALITY ───────────────────────────────────────────────────────
-        P("Personality",
+        P(PersonalityCategory,
             "How would they describe themselves in one word?",
             "Everyone bets. Closest answer wins.",
             Difficulty.Hard),
-        P("Personality",
+        P(PersonalityCategory,
             "What's a trait they secretly don't like about themselves?",
             "Bet on the confession. Predictions win.",
             Difficulty.Hard),
-        P("Personality",
+        P(PersonalityCategory,
             "What's their biggest fear?",
             "Everyone predicts. Correct bets win double.",
             Difficulty.Hard),
-        P("Personality",
+        P(PersonalityCategory,
             "If they could change one thing about their life, what would it be?",
             "Bet on the answer. Get it right, win big.",
             Difficulty.Hard),
 
         // ── SECRETS ───────────────────────────────────────────────────────────
-        P("Secrets",
+        P(SecretsCategory,
             "What's a secret they've never told anyone in this group?",
             "Everyone bets on what they'll reveal. Correct predictions win.",
             Difficulty.Hard),
-        P("Secrets",
+        P(SecretsCategory,
             "What's the most embarrassing thing that's happened to them?",
             "Bet on their confession. Predictions get rewarded.",
             Difficulty.Hard),
-        P("Secrets",
+        P(SecretsCategory,
             "What's one thing they're ashamed of?",
             "Everyone predicts. Correct bets doubled.",
             Difficulty.Hard),
 
         // ── LIES ──────────────────────────────────────────────────────────────
-        P("Lies",
+        P(LiesCategory,
             "They will tell one lie mixed with truths. What's the lie?",
             "Everyone bets on which answer is false. Correct predictions win big.",
             Difficulty.Hard),
-        P("Lies",
+        P(LiesCategory,
             "They will describe a fake memory. Can you predict which one is the lie?",
             "Bet on the false memory. Win if you're right.",
             Difficulty.Hard),
-        P("Lies",
+        P(LiesCategory,
             "They will give fake credentials. Which one is the lie?",
             "Everyone predicts the false claim. Correct bets doubled.",
             Difficulty.Hard),

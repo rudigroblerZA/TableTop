@@ -51,8 +51,8 @@ public sealed class SlowBurnMode : BaseGameModeDefinition, ITableShapeMode
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["IOU"] = "#EC407A",
-            ["Almost"] = "#EF5350",
+            [SlowBurnCardBank.IOUCategory] = "#EC407A",
+            [SlowBurnCardBank.AlmostCategory] = "#EF5350",
             [SlowBurnCardBank.HouseRuleCategory] = "#AB47BC",
             [SlowBurnCardBank.CashInCategory] = "#B71C4A",
         };
@@ -72,6 +72,9 @@ public sealed class SlowBurnMode : BaseGameModeDefinition, ITableShapeMode
 /// <summary>Built-in card bank for Slow Burn.</summary>
 public static class SlowBurnCardBank
 {
+    internal const string IOUCategory = "IOU";
+    internal const string AlmostCategory = "Almost";
+
     internal const string HouseRuleCategory = "House Rule";
     internal const string CashInCategory = "Cash In";
 
@@ -178,16 +181,16 @@ public static class SlowBurnCardBank
     ];
 
     private static ICard I(string text, Difficulty d) =>
-        StandardCard.Create("IOU",
+        StandardCard.Create(IOUCategory,
             "<b>✉️ Seal it in the pot:</b>\n\n" + text +
             "\n\n<i>Fold it. Nobody reads it yet. The pot opens when the game ends — and either of you can always trade any IOU for a kiss and a rain check.</i>",
-            d, "IOU");
+            d, IOUCategory);
 
     private static ICard A(string text, Difficulty d) =>
-        StandardCard.Create("Almost",
+        StandardCard.Create(AlmostCategory,
             "<b>🫧 Stop at the best part:</b>\n\n" + text +
             "\n\n<i>Yes, stopping is the whole card. What you start now, the pot finishes later.</i>",
-            d, "Almost");
+            d, AlmostCategory);
 
     private static ICard R(string text, Difficulty d) =>
         StandardCard.Create(HouseRuleCategory,

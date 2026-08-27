@@ -54,12 +54,12 @@ public sealed class UndividedMode : BaseGameModeDefinition, ITableShapeMode
     public override IReadOnlyDictionary<string, string> CategoryColours =>
         new Dictionary<string, string>
         {
-            ["Consent"] = "#26A69A",
-            ["Attention"] = "#FFCA28",
-            ["Devotion"] = "#FFA726",
-            ["Worship"] = "#AD1457",
+            [UndividedCardBank.ConsentCategory] = "#26A69A",
+            [UndividedCardBank.AttentionCategory] = "#FFCA28",
+            [UndividedCardBank.DevotionCategory] = "#FFA726",
+            [UndividedCardBank.WorshipCategory] = "#AD1457",
             ["Swap"] = "#42A5F5",
-            ["Aftercare"] = "#7E57C2",
+            [UndividedCardBank.AftercareCategory] = "#7E57C2",
         };
 
     /// <summary>Deeper attention is worth more — but the score isn't the point.</summary>
@@ -69,10 +69,10 @@ public sealed class UndividedMode : BaseGameModeDefinition, ITableShapeMode
     /// a stylistic preference: a safeword has to be agreed before the cards it
     /// governs, and how a session lands matters as much as anything in it.
     /// </summary>
-    public override IReadOnlyList<string> CategoriesPinnedToStart => ["Consent"];
+    public override IReadOnlyList<string> CategoriesPinnedToStart => [UndividedCardBank.ConsentCategory];
 
     /// <inheritdoc cref="CategoriesPinnedToStart" />
-    public override IReadOnlyList<string> CategoriesPinnedToEnd => ["Aftercare"];
+    public override IReadOnlyList<string> CategoriesPinnedToEnd => [UndividedCardBank.AftercareCategory];
 
     /// <inheritdoc />
     protected override IScoringStrategy BuildScoring() =>
@@ -92,6 +92,12 @@ public sealed class UndividedMode : BaseGameModeDefinition, ITableShapeMode
 /// </summary>
 public static class UndividedCardBank
 {
+    internal const string ConsentCategory = "Consent";
+    internal const string AttentionCategory = "Attention";
+    internal const string DevotionCategory = "Devotion";
+    internal const string WorshipCategory = "Worship";
+    internal const string AftercareCategory = "Aftercare";
+
     /// <summary>All cards, in intended play order.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -112,13 +118,13 @@ public static class UndividedCardBank
           Difficulty.Easy),
 
         // ── ATTENTION — warm, clothed-to-bare, the Giver follows the Receiver ─
-        R("Attention", "Just Look",
+        R(AttentionCategory, "Just Look",
           "Giver: take a slow moment to really look at your Receiver, and tell them one specific thing you love about looking at them right now. Then kiss them once, unhurried.",
           Difficulty.Easy),
-        R("Attention", "Where They Want",
+        R(AttentionCategory, "Where They Want",
           "Receiver: name one place you'd love attention first. Giver: begin exactly there — hands or mouth, still mostly clothed — and stay until the Receiver says more or moves you on.",
           Difficulty.Easy),
-        R("Attention", "Unhurried Hands",
+        R(AttentionCategory, "Unhurried Hands",
           "Giver: run your hands over your Receiver, following their breath, going only where you're welcomed. Receiver: steer freely — slower, higher, stay. There's no rush and nowhere to get to.",
           Difficulty.Medium),
 
@@ -127,13 +133,13 @@ public static class UndividedCardBank
           "Trade roles. Whoever was giving now receives — settle in and let yourself be attended to. Whoever was receiving now gives. Take a breath, check in with a smile, and carry on from the same warmth."),
 
         // ── ATTENTION — warm, clothed-to-bare, the Giver follows the Receiver ─
-        R("Attention", "Undress Them",
+        R(AttentionCategory, "Undress Them",
           "Giver: take off one layer for your Receiver, slowly, kissing whatever you uncover. Receiver: green for more, yellow to linger. Stop there.",
           Difficulty.Medium),
-        R("Attention", "Ask, Then Begin",
+        R(AttentionCategory, "Ask, Then Begin",
               "Giver: ask your Receiver where they'd like to be touched first. Do exactly that, and only that, for a slow minute.",
           Difficulty.Easy),
-        R("Attention", "Read the Breath",
+        R(AttentionCategory, "Read the Breath",
               "Giver: touch your Receiver slowly and watch nothing but their breathing. Wherever it changes, stay there. Let their body do the talking.",
           Difficulty.Medium),
 
@@ -142,22 +148,22 @@ public static class UndividedCardBank
           "Trade back — or trade forward. The one who just gave now gets to receive. Take your time settling into it; being received well is the whole point."),
 
         // ── DEVOTION — skin, the Giver serves the Receiver ───────────────────
-        R("Devotion", "Tell Me, I'll Do It",
+        R(DevotionCategory, "Tell Me, I'll Do It",
           "Receiver: describe out loud exactly how you like to be touched right now. Giver: do precisely that, adjusting as they talk, asking nothing in return.",
           Difficulty.Medium),
-        R("Devotion", "Slow Trace",
+        R(DevotionCategory, "Slow Trace",
           "Giver: trace a slow path down your Receiver with fingertips or mouth, pausing wherever their breath catches. Follow the reactions, not a plan. Receiver: steer.",
           Difficulty.Hard),
-        R("Devotion", "Their Hands, Your Guide",
+        R(DevotionCategory, "Their Hands, Your Guide",
           "Receiver: take the Giver's hand and show them exactly the pressure and pace you like, then let them take over. Giver: keep doing it just like that.",
           Difficulty.Hard),
-        R("Devotion", "Make Them Wait",
+        R(DevotionCategory, "Make Them Wait",
           "Giver: attend to your Receiver everywhere but where they most want it, for two full minutes — building the wait. Receiver: you set when the wait ends.",
           Difficulty.Hard),
-        R("Devotion", "Nothing Back",
+        R(DevotionCategory, "Nothing Back",
               "Giver: this whole card is your hands only. Receiver: you're not allowed to reciprocate — your only job is to receive it and say what's working.",
           Difficulty.Medium),
-        R("Devotion", "Past The Point",
+        R(DevotionCategory, "Past The Point",
               "Receiver: name the one thing you like most. Giver: do it, and keep doing it well past the point you'd normally move on. Only the Receiver decides when it's done.",
           Difficulty.Hard),
 
@@ -166,19 +172,19 @@ public static class UndividedCardBank
               "The Receiver decides when. Whenever they say swap, you swap — mid-anything. Until they say it, nothing changes."),
 
         // ── WORSHIP — explicit, the Receiver still holds every yes ───────────
-        R("Worship", "Undivided",
+        R(WorshipCategory, "Undivided",
           "Giver: use your mouth on your Receiver however they like, checking \"colour?\" as you go and staying only on green. This is entirely about them; there's nothing you need back.",
           Difficulty.Hard),
-        R("Worship", "Exactly What You Want",
+        R(WorshipCategory, "Exactly What You Want",
           "Receiver: say out loud, explicit, exactly what you want next. Giver: if you're both enthusiastic, give them precisely that — their pleasure is the only agenda.",
           Difficulty.Extreme),
-        R("Worship", "All The Way",
+        R(WorshipCategory, "All The Way",
           "Receiver: if you want to be taken all the way like this, say so — and how. Giver: follow it exactly, staying close and vocal, green means more, anything else means pause.",
           Difficulty.Extreme),
-        R("Worship", "Your Way",
+        R(WorshipCategory, "Your Way",
           "No card knows the two of you better than you do. Receiver: ask for anything. Giver: give it, if you both want to. Set the deck aside — this round is theirs.",
           Difficulty.Extreme),
-        R("Worship", "Slower Than They Want",
+        R(WorshipCategory, "Slower Than They Want",
               "Giver: use your mouth on your Receiver, and go slower than they'd like. Check \"colour?\" as you go, and stay only on green.",
           Difficulty.Hard),
 
@@ -187,22 +193,22 @@ public static class UndividedCardBank
               "Stop at the halfway point of whatever's happening and trade roles. The new Giver picks up exactly where the last one left off — same pace, same place."),
 
         // ── WORSHIP — explicit, the Receiver still holds every yes ───────────
-        R("Worship", "Until They Say",
+        R(WorshipCategory, "Until They Say",
               "Giver: this ends when the Receiver says it ends — not before, not after. Receiver: say it out loud when you're ready, and take as long as you want getting there.",
           Difficulty.Extreme),
-        R("Worship", "Hands And Mouth",
+        R(WorshipCategory, "Hands And Mouth",
           "Giver: hands and mouth, both, and the Receiver says which goes where. Change the instant they ask, and don't get clever — do the obvious thing they asked for.",
           Difficulty.Hard),
-        R("Worship", "Every Inch",
+        R(WorshipCategory, "Every Inch",
           "Giver: start at your Receiver's mouth and work down, slowly, missing nothing. They say where to linger and what to skip, and skipped is skipped — no doubling back to try your luck.",
           Difficulty.Hard),
-        R("Worship", "Don't Stop",
+        R(WorshipCategory, "Don't Stop",
           "Receiver: when it's right, say \"don't stop\" — and the Giver changes nothing. Not the pace, not the pressure, not the place. Giver: hold exactly that until they say otherwise.",
           Difficulty.Extreme),
-        R("Worship", "Watch Me",
+        R(WorshipCategory, "Watch Me",
           "Receiver: keep your eyes open. Giver: keep yours on theirs, whatever else you're doing. Either of you may close them at any point, and that's its own answer.",
           Difficulty.Extreme),
-        R("Worship", "Again, If You Can",
+        R(WorshipCategory, "Again, If You Can",
           "Receiver: if you want it a second time, ask. Giver: give it slower than the first, and let them set every part of the pace.",
           Difficulty.Extreme),
 
@@ -227,7 +233,7 @@ public static class UndividedCardBank
     private static ICard C(string title, string body, Difficulty d) =>
         StandardCard.Create(title,
             "<b>🛟 CONSENT — set this up before you play on</b>\n\n" + body,
-            d, "Consent");
+            d, ConsentCategory);
 
     private static ICard R(string category, string title, string body, Difficulty d) =>
         StandardCard.Create(title,
@@ -244,13 +250,13 @@ public static class UndividedCardBank
     private static ICard A(string title, string body, Difficulty d) =>
         StandardCard.Create(title,
             "<b>💜 AFTERCARE</b>\n\n" + body,
-            d, "Aftercare");
+            d, AftercareCategory);
 
     private static string Emoji(string category) => category switch
     {
-        "Attention" => "🌤️",
-        "Devotion" => "🔥",
-        "Worship" => "🌶️",
+        AttentionCategory => "🌤️",
+        DevotionCategory => "🔥",
+        WorshipCategory => "🌶️",
         _ => "•",
     };
 }
