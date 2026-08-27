@@ -23,7 +23,7 @@ public sealed class FixedScoringStrategy : IScoringStrategy
     public string Name => "Fixed";
 
     /// <inheritdoc />
-    public int CalculateScore(ICard card, IPlayer player, CardOutcome outcome) =>
+    public int CalculateScore(ICard card, IPlayer player, CardOutcome outcome, TimeSpan? elapsed = null) =>
         outcome == CardOutcome.Completed ? _pointsPerCompletion : 0;
 }
 
@@ -38,7 +38,7 @@ public sealed class DifficultyBasedScoringStrategy : IScoringStrategy
     public string Name => "DifficultyBased";
 
     /// <inheritdoc />
-    public int CalculateScore(ICard card, IPlayer player, CardOutcome outcome)
+    public int CalculateScore(ICard card, IPlayer player, CardOutcome outcome, TimeSpan? elapsed = null)
     {
         if (outcome != CardOutcome.Completed) return 0;
 
@@ -73,7 +73,7 @@ public sealed class StreakScoringStrategy : IScoringStrategy
     public string Name => $"Streak({_base.Name})";
 
     /// <inheritdoc />
-    public int CalculateScore(ICard card, IPlayer player, CardOutcome outcome)
+    public int CalculateScore(ICard card, IPlayer player, CardOutcome outcome, TimeSpan? elapsed = null)
     {
         var baseScore = _base.CalculateScore(card, player, outcome);
         if (baseScore == 0) return 0;

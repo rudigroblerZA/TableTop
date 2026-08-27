@@ -105,7 +105,7 @@ public sealed class SessionReport
             MostSkips = perPlayer
                 .Where(s => s.SkippedTurns > 0)
                 .OrderByDescending(s => s.SkippedTurns)
-                .Select(s => ((IPlayer)s.Player, s.SkippedTurns))
+                .Select(s => (s.Player, s.SkippedTurns))
                 .Cast<(IPlayer, int)?>()
                 .FirstOrDefault(),
             HighScorer = perPlayer

@@ -15,7 +15,7 @@ public interface IScoringStrategy
     /// <summary>
     /// Returns the score change for the player after completing a card.
     /// </summary>
-    int CalculateScore(ICard card, IPlayer player, CardOutcome outcome);
+    int CalculateScore(ICard card, IPlayer player, CardOutcome outcome, TimeSpan? elapsed = null);
 }
 
 /// <summary>Represents what a player did with their card.</summary>
