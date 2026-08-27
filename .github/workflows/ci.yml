@@ -194,7 +194,7 @@ jobs:
 
       - name: Run tests
         run: dotnet test tests/TableTop.Tests/TableTop.Tests.csproj
-             --no-restore -c Release
+             -c Release
              --logger "trx;LogFileName=test-results.trx"
              --logger "console;verbosity=normal"
              --collect:"XPlat Code Coverage"
