@@ -35,7 +35,7 @@ abstract interface TableTop.Hosting.Abstractions.ICardTurnController
     event EventHandler<TurnUndoneEvent> TurnUndone
 abstract interface TableTop.Hosting.Abstractions.IClaimedController
     IReadOnlyDictionary<String, String> TerritoryHolders { get; }
-    IReadOnlyList<String> ChallengeableTerritories { get; }
+    IReadOnlyList<String> GetChallengeableTerritories()
     String CurrentPlayerName { get; }
     Void ChallengeTerritory(String territoryName)
     Void ResolveChallenge(Boolean succeeded)
@@ -211,7 +211,7 @@ sealed class TableTop.Hosting.Controllers.ClaimedController
     .ctor(IReadOnlyList<IPlayer> players, IReadOnlyList<ICard> deck, Int32 winningTerritoryCount)
     Boolean IsRunning { get; set; }
     IReadOnlyDictionary<String, String> TerritoryHolders { get; }
-    IReadOnlyList<String> ChallengeableTerritories { get; }
+    IReadOnlyList<String> GetChallengeableTerritories()
     String CurrentPlayerName { get; }
     Void ChallengeTerritory(String territoryName)
     Void Dispose()
@@ -257,7 +257,7 @@ sealed class TableTop.Hosting.Controllers.JsonGamePersistence
     .ctor(String filePath = default)
     Boolean HasSavedSession { get; }
     Task DeleteAsync(CancellationToken ct = default)
-    Task SaveAsync(SessionSnapshot s, CancellationToken ct = default)
+    Task SaveAsync(SessionSnapshot snapshot, CancellationToken ct = default)
     Task<SessionSnapshot> LoadAsync(CancellationToken ct = default)
 sealed class TableTop.Hosting.Controllers.MillionaireController
     .ctor(IReadOnlyList<IPlayer> players, IReadOnlyList<MultipleChoiceCard> questionBank = default)
@@ -916,7 +916,7 @@ static class TableTop.Hosting.Extensions.ServiceCollectionExtensions
     IServiceCollection UsePlayerRepository(IServiceCollection services)
 sealed class TableTop.Hosting.Hints.DefaultHintEngine
     .ctor()
-    NextTurnHint GenerateHint(IPlayer player, HintContext ctx)
+    NextTurnHint GenerateHint(IPlayer player, HintContext context)
 sealed class TableTop.Hosting.Hints.HintContext
     .ctor(IReadOnlyList<CardOutcome> RecentOutcomes, IReadOnlyList<Difficulty> RecentDifficulties, FlowState CurrentFlow, Int32 SkipCount, Int32 Round, IReadOnlyList<ValueTuple<Guid, Int32>> Standings)
     Boolean Equals(HintContext other)

@@ -238,7 +238,10 @@ jobs:
           path: coverage-report/
 
       - name: Scanner End
-        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+        # always(): a build or test failure earlier in the job must not leave
+        # this Sonar analysis session dangling without a matching end — run
+        # whenever Begin would have (same fork check), pass or fail.
+        if: always() && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
         continue-on-error: true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
