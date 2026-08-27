@@ -50,7 +50,9 @@ MAUI_PAGES = "ui/TableTop.Maui/Pages"
 # version exists — some calls are legitimately `.Execute()` etc. on a command,
 # which this does not attempt to model; those show up as false positives if
 # ever used, which is the safe direction to be wrong in.
-PUBLIC_METHOD = re.compile(r"public\s+(?:async\s+)?[\w<>\[\],?\s]+?\s+(\w+)\s*\(")
+PUBLIC_METHOD = re.compile(
+    r"public\s+(?:async\s+)?[\w<>\[\],?]+(?:\s+[\w<>\[\],?]+)*\s+(\w+)\s*\("
+)
 
 
 def shared_vm_members(repo: Path) -> dict[str, set[str]]:

@@ -263,7 +263,7 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         CompleteCommand = new RelayCommand(() => Complete(), () => IsPlaying);
         SkipCommand = new RelayCommand(() => Skip(), () => IsPlaying);
         QuitCommand = new RelayCommand(() => Quit());
-        SaveCommand = new RelayCommand(() => SaveSession(), () => CanSave);
+        SaveCommand = new RelayCommand(() => _ = SaveSession(), () => CanSave);
         UndoCommand = new RelayCommand(() => UndoLastTurn(), () => CanUndo);
         FlipCommand = new RelayCommand(() => FlipCard(), () => HasBack);
         LevelUpCommand = new RelayCommand(() => LevelUp(), () => SupportsFlow);
@@ -481,12 +481,15 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
     /// sessions are the one persistence path in this app the player explicitly
     /// asks for, so unlike settings, a failure here is always worth reporting.
     /// </summary>
-    public async void SaveSession()
+    public async Task SaveSession()
     {
         if (!CanSave) return;
         try
         {
-            await _controller!.SaveAsync();
+            // No cancellation source of our own applies here — _timerCts governs
+            // the per-turn countdown, an unrelated lifecycle, so opting out
+            // explicitly is more honest than reusing it.
+            await _controller!.SaveAsync(CancellationToken.None);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
