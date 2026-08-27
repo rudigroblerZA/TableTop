@@ -54,7 +54,7 @@ public sealed class GetToKnowYouMode : BaseGameModeDefinition
     /// a stripped publish where the file is absent.
     /// </summary>
     protected override IReadOnlyList<ICard> BuildCards(IReadOnlyList<IPlayer> players) =>
-        BuildBuiltInCards(players);
+        BuildBuiltInCards();
 
     /// <summary>
     /// The compiled card bank. Note that this generates a fresh <c>Guid</c> per
@@ -63,7 +63,7 @@ public sealed class GetToKnowYouMode : BaseGameModeDefinition
     /// across save/resume compares ids, so an unpinned deck re-deals cards the
     /// table has already seen.
     /// </summary>
-    private IReadOnlyList<ICard> BuildBuiltInCards(IReadOnlyList<IPlayer> players)
+    private IReadOnlyList<ICard> BuildBuiltInCards()
     {
         var parentsOnly = new ParentOnlyRestriction();
         var couplesOnly = new CoupleOnlyRestriction();
@@ -357,21 +357,5 @@ public sealed class GetToKnowYouMode : BaseGameModeDefinition
                 Difficulty.Extreme, VulnerableCategory,
                 restriction: new CoupleOnlyRestriction()),
         ];
-    }
-
-    private static IEnumerable<string> WrapText(string text, int width)
-    {
-        var words = text.Split(' ');
-        var line = string.Empty;
-        foreach (var word in words)
-        {
-            if ((line + word).Length > width)
-            {
-                if (line.Length > 0) yield return line.TrimEnd();
-                line = string.Empty;
-            }
-            line += word + " ";
-        }
-        if (line.Length > 0) yield return line.TrimEnd();
     }
 }
