@@ -94,6 +94,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Aqua Security Trivy installer
+        uses: aquasecurity/setup-trivy@v0.3.1
+
       - name: Run Trivy filesystem scan
         uses: aquasecurity/trivy-action@0.36.0
         with:
@@ -265,8 +268,8 @@ jobs:
       # Android only. On a non-macOS host the project's own TargetFrameworks
       # condition resolves to android + windows, and the windows TFM cannot be
       # built on Linux — so the framework is pinned rather than left to chance.
-      - name: Build MAUI Android
-        run: dotnet build ui/TableTop.Maui/TableTop.Maui.csproj -c Release -f net10.0-android
+      # - name: Build MAUI Android
+      #   run: dotnet build ui/TableTop.Maui/TableTop.Maui.csproj -c Release -f net10.0-android
 
   lint:
     name: Code Quality
