@@ -17,7 +17,7 @@ Core ← Games ← Hosting ← Presentation
 
 Four engine assemblies, three heads. `Core` defines the abstractions (cards,
 players, scoring, progression, rules) and has no dependency on anything else
-in the solution. `Games` is 97 modes and their decks. `Hosting` is the runtime
+in the solution. `Games` is 99 modes and their decks. `Hosting` is the runtime
 — controllers, the archetype registry, persistence, `ControllerFactory`.
 `Presentation` is shared ViewModels: plain `net10.0`, no platform SDK
 dependency, which is what makes it directly unit-testable without WinUI or
@@ -30,7 +30,7 @@ in practice.
 
 ## Content
 
-**97 modes, 3,591 cards, all compiled in.** Every mode builds its deck from an
+**99 modes, 3,657 cards, all compiled in.** Every mode builds its deck from an
 in-code card bank, called directly. There is no file lookup, no fallback and no
 diagnostic on the path — a mode's deck is a static list in the assembly.
 

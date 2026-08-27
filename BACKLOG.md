@@ -588,7 +588,7 @@ Same shape as the WinUI message, same fix: dropped the second line rather than
 deriving it from MAUI's declared families, since that would need a project
 reference Console has no other reason to carry.
 
-### 13. The doc counts disagree — **mode count CLOSED in 1.21.0; card and test counts still open**
+### 13. The doc counts disagree — **mode and card counts CLOSED; test count still open**
 
 The finding: README said 91 modes, ARCHITECTURE said 91 in one place and 97 in
 another, this backlog said 97, and the tree had 97 registered.
@@ -613,12 +613,21 @@ count is 102 for 97 distinct modes. All 97 display names are unique — checked,
 not assumed. README now says **97 modes**, which is the number a player can
 actually reach.
 
-**Still open — the card count.** README says **3,591 cards** and nothing checks
-it. The card half of the guard was removed in 1.18.0 with sound reasoning
-(regex-scraping C# initialisers is brittle), and the obvious replacement is
-summed `ModeManifest.TotalCards` — which is now trustworthy, since item 10 fixed
-the one mode that was reporting the wrong deck. That makes this a tractable
-one-line addition rather than the blocked item it was.
+**Closed for cards.** `Readme_card_count_matches_the_tree` sums
+`ModeManifest.TotalCards` across `ArchetypeRegistry.Default().AllModes`
+(deduped by name, same as the mode guard) rather than regex-scraping C#
+initialisers — the brittle proxy the original card guard was removed for in
+1.18.0. `GetManifest()` derives from whichever deck the controller for that
+mode's family actually gets handed, so this cannot disagree with what a
+player can actually deal, the same property item 10 fixed for Herd
+specifically.
+
+Turned up a real drift while adding the guard, just not in README: it was
+already correct. `ARCHITECTURE.md` said **97 modes, 3,591 cards** — both
+stale, since the mode count moved to 99 sometime after item 13 was first
+closed for modes and neither document's card figure had ever been checked
+by anything. README's **99 modes, 3,657 cards** is what the guard confirms
+the tree actually holds; `ARCHITECTURE.md` is corrected to match.
 
 **Still open — the test count.** README says 776; ARCHITECTURE says roughly 900.
 Neither is checked and the real figure moved again with 1.21.0's removals. Lower
