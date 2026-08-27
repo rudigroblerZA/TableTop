@@ -35,7 +35,7 @@ public partial class DayOneGamePage : ContentPage, IAsyncInitializablePage
 
     private void OnCompleteClicked(object sender, EventArgs e) => _vm.CompleteToday();
 
-    private async void OnDoneClicked(object sender, EventArgs e) => await Navigation.PopToRootAsync();
+    private async void OnDoneClicked(object sender, EventArgs e) => await this.SafePopToRootAsync();
 
     /// <inheritdoc />
     protected override void OnDisappearing()

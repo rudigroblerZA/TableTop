@@ -50,13 +50,26 @@ public partial class PlayerSetupPage : ContentPage
 
     private async void OnSaveRosterClicked(object sender, EventArgs e)
     {
-        _vm.SaveRosterAsDefault();
-        var n = _vm.Players.Count;
-        await DisplayAlert(
-            "Roster saved",
-            n == 0 ? "Saved roster cleared."
-                   : $"Saved {n} player{(n == 1 ? "" : "s")} for next time.",
-            "OK");
+        // An exception escaping an async void handler terminates the
+        // process on Android; surface it instead. SaveRosterAsDefault writes
+        // through the shared settings interface, which on MAUI is
+        // Preferences-backed and does not catch a write failure of its own
+        // (backlog item 19 deliberately left that alone — Preferences is not
+        // file I/O).
+        try
+        {
+            _vm.SaveRosterAsDefault();
+            var n = _vm.Players.Count;
+            await DisplayAlert(
+                "Roster saved",
+                n == 0 ? "Saved roster cleared."
+                       : $"Saved {n} player{(n == 1 ? "" : "s")} for next time.",
+                "OK");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Couldn't save the roster", ex.Message, "OK");
+        }
     }
 
     private void OnClearPlayersClicked(object sender, EventArgs e)
