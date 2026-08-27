@@ -1,4 +1,5 @@
 using TableTop.Maui.ViewModels;
+using TableTop.Presentation.Infrastructure;
 
 namespace TableTop.Maui.Pages;
 
@@ -45,9 +46,15 @@ public partial class RoasterPage : ContentPage
 
     private void OnRemovePlayerClicked(object sender, EventArgs e)
     {
-        if (ItemFrom<string>(sender) is { } name)
-            _vm.RemovePlayer(name);
+        if (ItemFrom<SavedPlayer>(sender) is { } player)
+            _vm.RemovePlayer(player);
     }
 
     private void OnSaveRosterClicked(object sender, EventArgs e) => _vm.SaveRoster();
+
+    private void OnDeleteRosterClicked(object sender, EventArgs e)
+    {
+        if (ItemFrom<SavedRoster>(sender) is { } roster)
+            _vm.DeleteRoster(roster);
+    }
 }
