@@ -359,6 +359,14 @@ sealed class TableTop.Games.Family.ChronologyChallengeMode
     String Description { get; }
     String Name { get; }
     String SkipLabel { get; }
+sealed class TableTop.Games.Family.DiceNightMode
+    .ctor()
+    IReadOnlyList<String> CategoriesInOrder { get; }
+    String CategoryForTotal(Int32 diceTotal)
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
 static class TableTop.Games.Family.DrawItCardBank
     IReadOnlyList<ICard> All { get; }
 sealed class TableTop.Games.Family.DrawItMode
