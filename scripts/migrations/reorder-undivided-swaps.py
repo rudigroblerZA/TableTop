@@ -24,8 +24,24 @@ two representations stay card-for-card identical in content AND in order.
 import json, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-DECK = ROOT / "src/TableTop.Games/Data/Json/undivided.deck.json"
-BANK = ROOT / "src/TableTop.Games/Couples/UndividedMode.cs"
+
+
+def resolve_within(base: pathlib.Path, candidate: pathlib.Path) -> pathlib.Path:
+    """Resolve `candidate` and refuse it if it would land outside `base`.
+
+    DECK and BANK below are fixed, hardcoded literals, never external input —
+    but the guard makes that guarantee explicit and load-bearing rather than
+    assumed.
+    """
+    base = base.resolve()
+    resolved = candidate.resolve()
+    if resolved != base and base not in resolved.parents:
+        raise ValueError(f"refusing to touch a path outside {base}: {resolved}")
+    return resolved
+
+
+DECK = resolve_within(ROOT, ROOT / "src/TableTop.Games/Data/Json/undivided.deck.json")
+BANK = resolve_within(ROOT, ROOT / "src/TableTop.Games/Couples/UndividedMode.cs")
 
 PLAN = [("Consent", 3), ("Attention", 3), ("Swap", 1), ("Attention", 3), ("Swap", 1),
         ("Devotion", 6), ("Swap", 1), ("Worship", 3), ("Swap", 1), ("Worship", 3),

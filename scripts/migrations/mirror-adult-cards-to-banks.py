@@ -19,6 +19,20 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 JSON = ROOT / "src/TableTop.Games/Data/Json"
 SRC = ROOT / "src/TableTop.Games/Couples"
 
+
+def resolve_within(base: pathlib.Path, candidate: pathlib.Path) -> pathlib.Path:
+    """Resolve `candidate` and refuse it if it would land outside `base`.
+
+    Both paths here are built from a fixed, hardcoded deck/file list (see
+    NEW and FILES below), never from external input — but the guard makes
+    that guarantee explicit and load-bearing rather than assumed.
+    """
+    base = base.resolve()
+    resolved = candidate.resolve()
+    if resolved != base and base not in resolved.parents:
+        raise ValueError(f"refusing to touch a path outside {base}: {resolved}")
+    return resolved
+
 NEW = {
     "afterglow": ["Ask First", "One Thing", "Somewhere Unobvious", "Hands Away",
                   "Say It While It Happens", "Half Speed", "The Unsaid Thing",
@@ -77,9 +91,10 @@ FILES = {
 
 def main():
     for deck, titles in NEW.items():
+        deck_json = resolve_within(JSON, JSON / f"{deck}.deck.json")
         cards = {c["title"]: c for c in
-                 json.loads((JSON / f"{deck}.deck.json").read_text(encoding="utf-8"))["cards"]}
-        path = FILES[deck]
+                 json.loads(deck_json.read_text(encoding="utf-8"))["cards"]}
+        path = resolve_within(SRC, FILES[deck])
         text = path.read_text(encoding="utf-8")
         added = 0
 

@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Hosting.Abstractions;
@@ -51,12 +52,11 @@ public sealed class ClaimedController : IClaimedController
         _players = players;
         _winningTerritoryCount = winningTerritoryCount;
 
-        var rng = new Random();
         _pools = deck
             .GroupBy(c => c.Category)
             .ToDictionary(
                 g => g.Key,
-                g => g.OrderBy(_ => rng.Next()).ToList());
+                g => g.OrderBy(_ => RandomNumberGenerator.GetInt32(int.MaxValue)).ToList());
 
         if (_pools.Count < winningTerritoryCount)
             throw new ArgumentException(

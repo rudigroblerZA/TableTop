@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+
 namespace TableTop.Core.Abstractions;
 
 /// <summary>
@@ -8,7 +10,7 @@ namespace TableTop.Core.Abstractions;
 /// card sequence, shuffle order, and all stochastic outcomes — invaluable for
 /// bug reproduction and for "share this game seed" features.
 ///
-/// The default implementation wraps <see cref="System.Random.Shared"/> (unseeded,
+/// The default implementation wraps <see cref="RandomNumberGenerator"/> (unseeded,
 /// non-deterministic) and is appropriate for all production scenarios where
 /// reproducibility isn't required.
 /// </summary>
@@ -31,8 +33,9 @@ public interface IRandomSource
 }
 
 /// <summary>
-/// Production implementation — wraps <see cref="System.Random.Shared"/>.
-/// Thread-safe via <c>Random.Shared</c> semantics.
+/// Production implementation — wraps <see cref="RandomNumberGenerator"/>, a
+/// cryptographically strong source. Thread-safe: every member is either a
+/// static call or backed by one.
 /// </summary>
 public sealed class SharedRandomSource : IRandomSource
 {
@@ -42,20 +45,33 @@ public sealed class SharedRandomSource : IRandomSource
     private SharedRandomSource() { }
 
     /// <inheritdoc />
-    public int Next(int maxValue) => Random.Shared.Next(maxValue);
+    public int Next(int maxValue) => RandomNumberGenerator.GetInt32(maxValue);
     /// <inheritdoc />
-    public int Next(int minValue, int maxValue) => Random.Shared.Next(minValue, maxValue);
+    public int Next(int minValue, int maxValue) => RandomNumberGenerator.GetInt32(minValue, maxValue);
     /// <inheritdoc />
-    public int Next() => Random.Shared.Next();
+    public int Next() => RandomNumberGenerator.GetInt32(int.MaxValue);
     /// <inheritdoc />
-    public double NextDouble() => Random.Shared.NextDouble();
+    public double NextDouble()
+    {
+        Span<byte> bytes = stackalloc byte[8];
+        RandomNumberGenerator.Fill(bytes);
+        // Top 53 bits give a uniform double in [0, 1), matching the precision
+        // System.Random.NextDouble provides.
+        var bits = BitConverter.ToUInt64(bytes) >> 11;
+        return bits / (double)(1UL << 53);
+    }
     /// <inheritdoc />
-    public void NextBytes(Span<byte> buffer) => Random.Shared.NextBytes(buffer);
+    public void NextBytes(Span<byte> buffer) => RandomNumberGenerator.Fill(buffer);
 }
 
 /// <summary>
 /// Seeded implementation — wraps a <see cref="System.Random"/> with a known seed.
 /// Not thread-safe; each game session should own its own instance.
+///
+/// Deliberately non-cryptographic: reproducibility is the entire point of this
+/// class ("share this game seed" / bug repro), and a cryptographically strong
+/// generator cannot be seeded to reproduce a sequence. Nothing security-sensitive
+/// is derived from it — only card order in a party game.
 /// </summary>
 public sealed class SeededRandomSource : IRandomSource
 {
