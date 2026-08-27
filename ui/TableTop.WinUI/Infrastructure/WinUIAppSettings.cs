@@ -15,7 +15,7 @@ namespace TableTop.WinUI.Infrastructure;
 
 /// <summary>
 /// Persists and exposes all user settings for the WinUI app — the desktop
-/// counterpart to MAUI's <c>AppSettings</c>. WPF has no equivalent of MAUI's
+/// counterpart to MAUI's <c>AppSettings</c>. WinUI has no equivalent of MAUI's
 /// Preferences API, so this writes a small JSON file next to the executable
 /// instead (the same pattern <c>JsonPlayerRepository</c> already uses).
 ///
@@ -56,7 +56,7 @@ public sealed class WinUIAppSettings : TableTop.Presentation.Infrastructure.IApp
 
     // ── Appearance ─────────────────────────────────────────────────────────
 
-    /// <summary>App colour theme: "dark", "light", or "system". WPF currently only ships dark, but the setting is honoured if a light theme is added later.</summary>
+    /// <summary>App colour theme: "dark", "light", or "system". WinUI currently only ships dark, but the setting is honoured if a light theme is added later.</summary>
     public string Theme
     {
         get => _data.Theme;
@@ -165,9 +165,9 @@ public sealed class WinUIAppSettings : TableTop.Presentation.Infrastructure.IApp
     /// <summary>
     /// The roster saved from the setup screen's "Save roster" button — name
     /// plus optional gender/age for each player, so a regular group can
-    /// pre-fill everyone next session instead of re-entering them. Unlike
-    /// MAUI (which auto-saves at game start), WinUI only writes this when the
-    /// user explicitly saves, so an experimental roster never clobbers the
+    /// pre-fill everyone next session instead of re-entering them. Written
+    /// only when the user explicitly saves — starting a game does not do
+    /// this, in either head — so an experimental roster never clobbers the
     /// remembered one. Stored as real JSON objects — no delimiter encoding.
     /// </summary>
     public IReadOnlyList<SavedPlayer> RecentPlayers

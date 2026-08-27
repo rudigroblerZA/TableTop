@@ -5,9 +5,9 @@ namespace TableTop.WinUI.Infrastructure;
 
 /// <summary>
 /// Wraps a real <see cref="IArchetypeRegistry"/> and applies an age-rating
-/// floor via <see cref="ArchetypeFilter"/> — the WPF counterpart to MAUI's
+/// floor via <see cref="ArchetypeFilter"/> — the WinUI counterpart to MAUI's
 /// filtered <c>GameSelectionViewModel</c>, but done once at the registry
-/// level here since WPF's picker screens are already a chain
+/// level here since WinUI's picker screens are already a chain
 /// (<c>ArchetypePickerViewModel</c> → <c>SubArchetypePickerViewModel</c> →
 /// <c>GameSelectionViewModel</c>) that all read from one injected registry —
 /// filtering it once means none of those three need to know filtering exists.

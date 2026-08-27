@@ -10,7 +10,7 @@ namespace TableTop.Games.Base;
 /// <summary>
 /// Abstract base for all card-per-turn game modes.
 /// Provides the mode's identity, card catalogue, scoring, and rules.
-/// Contains zero UI or console references — any host (Console, WPF, MAUI) can
+/// Contains zero UI or console references — any host (Console, WinUI, MAUI) can
 /// consume it through <see cref="IGameModeDefinition"/>.
 ///
 /// Replaces the old <c>BaseGameMode</c> which mixed card definitions with
@@ -63,7 +63,7 @@ public abstract class BaseGameModeDefinition : IGameMode, IGameModeDefinition
 
     /// <summary>
     /// Short label describing what "completing" a card means in this mode.
-    /// Shown by Console and WPF as the primary action button text.
+    /// Shown by Console and WinUI as the primary action button text.
     /// Default: "Completed".
     /// </summary>
     public virtual string CompleteLabel => "Completed";

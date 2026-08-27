@@ -4,9 +4,9 @@ namespace TableTop.Hosting;
 
 /// <summary>
 /// Text utilities for rendering card content in UIs that have no rich-text
-/// support (MAUI Labels). Card banks use light HTML
-/// (&lt;b&gt;, &lt;i&gt;, &lt;br&gt;) that WPF's HtmlTextBlock understands —
-/// everywhere else, strip it or the player sees literal tags.
+/// support (MAUI Labels, WinUI TextBlocks). Card banks use light HTML
+/// (&lt;b&gt;, &lt;i&gt;, &lt;br&gt;) for authoring — no current head renders it
+/// natively, so strip it or the player sees literal tags.
 /// </summary>
 public static class CardText
 {
