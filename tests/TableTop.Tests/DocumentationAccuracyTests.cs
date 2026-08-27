@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using TableTop.Core.Abstractions.Game;
 
 namespace TableTop.Tests;
 
@@ -61,6 +62,34 @@ public sealed class DocumentationAccuracyTests
             "if the wording changed, update this test's pattern in the same commit");
 
         Number(quoted.Groups["modes"]).Should().Be(modes, "README mode count is stale");
+    }
+
+    /// <summary>
+    /// Counts cards the same way <see cref="ArchetypeRegistry"/>'s own
+    /// <c>SurpriseMe</c> filter does — via each mode's <see cref="ModeManifest"/>
+    /// — rather than regex-scraping C# collection initialisers (backlog item 13
+    /// named that trap explicitly and this avoids it). <c>GetManifest()</c>
+    /// derives from whichever deck the controller for that mode's family will
+    /// actually be handed, so this cannot disagree with what a player can
+    /// actually deal — the same property item 10 fixed for Herd specifically.
+    /// </summary>
+    [Fact]
+    public void Readme_card_count_matches_the_tree()
+    {
+        var root = FindRepositoryRoot();
+        var readme = File.ReadAllText(Path.Combine(root, "README.md"));
+
+        var cards = ArchetypeRegistry.Default().AllModes
+            .DistinctBy(m => m.Name)
+            .Sum(m => m.GetManifest().TotalCards);
+
+        var quoted = Regex.Match(readme, @"\((?<modes>[\d,]+) modes, (?<cards>[\d,]+) cards\)");
+
+        quoted.Success.Should().BeTrue(
+            "README.md should carry a '(N modes, N cards)' line under src/TableTop.Games — " +
+            "if the wording changed, update this test's pattern in the same commit");
+
+        Number(quoted.Groups["cards"]).Should().Be(cards, "README card count is stale");
     }
 
     [Fact]
