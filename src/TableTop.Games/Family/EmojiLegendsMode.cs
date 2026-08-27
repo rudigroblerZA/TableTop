@@ -72,13 +72,13 @@ public static class EmojiLegendsCardBank
         E("Film", "🚗💨⚡", "Cars", Difficulty.Easy),
         E("Film", "🦁👑🌍", "The Lion King", Difficulty.Easy),
         E("Film", "🎬📽️🎞️", "The Truman Show", Difficulty.Medium),
-        E("Film", "🏴‍☠️💀🌊", "Pirates of the Caribbean", Difficulty.Easy),
+        E("Film", "🏴\u200D☠️💀🌊", "Pirates of the Caribbean", Difficulty.Easy),
         E("Film", "🔥🐉⚔️", "Game of Thrones", Difficulty.Easy),
         E("Film", "🎒🌍✈️", "Up", Difficulty.Easy),
         E("Film", "👶💼🎩", "Boss Baby", Difficulty.Easy),
-        E("Film", "🕷️🦸‍♂️💫", "Spider-Man", Difficulty.Easy),
-        E("Film", "🧙‍♂️⚡🪄", "Harry Potter", Difficulty.Easy),
-        E("Film", "🌊🧜‍♀️👑", "The Little Mermaid", Difficulty.Easy),
+        E("Film", "🕷️🦸\u200D♂️💫", "Spider-Man", Difficulty.Easy),
+        E("Film", "🧙\u200D♂️⚡🪄", "Harry Potter", Difficulty.Easy),
+        E("Film", "🌊🧜\u200D♀️👑", "The Little Mermaid", Difficulty.Easy),
         E("Film", "🐘👂💔", "Dumbo", Difficulty.Medium),
         E("Film", "💍⚔️🗻", "The Lord of the Rings", Difficulty.Easy),
 
@@ -97,24 +97,24 @@ public static class EmojiLegendsCardBank
         E("Book", "🔮🔬", "Invisible Woman", Difficulty.Hard),
         E("Book", "🧛💔", "Twilight", Difficulty.Easy),
         E("Book", "💀💀💀📚", "Macbeth (Shakespeare)", Difficulty.Hard),
-        E("Book", "🏃‍♂️🏃‍♀️💫", "The Hunger Games", Difficulty.Easy),
+        E("Book", "🏃\u200D♂️🏃\u200D♀️💫", "The Hunger Games", Difficulty.Easy),
         E("Book", "🎪🎡🌙", "The Phantom of the Opera", Difficulty.Medium),
         E("Book", "🐅📗", "The Tiger That Came to Tea", Difficulty.Medium),
 
         // ── TV SHOW ───────────────────────────────────────────────────────────
-        E("TV Show", "👨‍👩‍👧‍👦🏘️☕", "Friends", Difficulty.Easy),
+        E("TV Show", "👨\u200D👩\u200D👧\u200D👦🏘️☕", "Friends", Difficulty.Easy),
         E("TV Show", "🧛🏰🩸", "The Vampire Diaries", Difficulty.Medium),
-        E("TV Show", "🚗🏃‍♂️", "Breaking Bad", Difficulty.Easy),
+        E("TV Show", "🚗🏃\u200D♂️", "Breaking Bad", Difficulty.Easy),
         E("TV Show", "🖤💀🔮", "Wednesday", Difficulty.Easy),
         E("TV Show", "🎬🎭📺", "Curb Your Enthusiasm", Difficulty.Hard),
         E("TV Show", "🧋🧟", "Squid Game", Difficulty.Easy),
 
         // ── MIXED ────────────────────────────────────────────────────────────
-        E("Mixed", "🍎👩‍🦱", "Snow White", Difficulty.Easy),
+        E("Mixed", "🍎👩\u200D🦱", "Snow White", Difficulty.Easy),
         E("Mixed", "🐢🐢🐢🍕", "Teenage Mutant Ninja Turtles", Difficulty.Easy),
         E("Mixed", "🌹👸🐺", "Beauty and the Beast", Difficulty.Easy),
         E("Mixed", "⚡🪄✨", "Harry Potter (franchise)", Difficulty.Easy),
-        E("Mixed", "🦸‍♂️🛡️💫", "Captain America", Difficulty.Easy),
+        E("Mixed", "🦸\u200D♂️🛡️💫", "Captain America", Difficulty.Easy),
         E("Mixed", "🌳🗿🌍", "Lord of the Rings (extended)", Difficulty.Medium),
     ];
 

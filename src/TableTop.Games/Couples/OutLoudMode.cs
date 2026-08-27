@@ -119,8 +119,8 @@ internal static class OutLoudCardBank
     // Deterministic id from the card's own text, so the bank and the exported
     // JSON agree and neither drifts when cards are reordered.
     private static Guid StableId(string tier, string body) =>
-        new(System.Security.Cryptography.MD5.HashData(
-            System.Text.Encoding.UTF8.GetBytes($"out-loud|{tier}|{body}")));
+        new(System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes($"out-loud|{tier}|{body}"))[..16]);
 
     /// <summary>Every card, in authored order. The Closer is pinned to the end by the mode.</summary>
     public static readonly IReadOnlyList<ICard> All =

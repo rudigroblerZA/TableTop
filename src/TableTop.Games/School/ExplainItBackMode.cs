@@ -97,8 +97,8 @@ internal static class ExplainItBackCardBank
             category: category);
 
     private static Guid StableId(string category, string body) =>
-        new(System.Security.Cryptography.MD5.HashData(
-            System.Text.Encoding.UTF8.GetBytes($"explain-it-back|{category}|{body}")));
+        new(System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes($"explain-it-back|{category}|{body}"))[..16]);
 
     public static IReadOnlyList<ICard> All { get; } =
     [

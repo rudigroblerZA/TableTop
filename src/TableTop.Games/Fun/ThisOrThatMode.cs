@@ -88,8 +88,8 @@ public static class ThisOrThatCardBank
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static ICard Rules() => new StandardCard(
-        new Guid(System.Security.Cryptography.MD5.HashData(
-            System.Text.Encoding.UTF8.GetBytes($"{Deck}|How To Play|rules"))),
+        new Guid(System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes($"{Deck}|How To Play|rules"))[..16]),
         "How This Works",
         "Every card offers two options.\n\n" +
         "<b>Everyone picks at the same time</b> — count down from three and say it together, or point. " +

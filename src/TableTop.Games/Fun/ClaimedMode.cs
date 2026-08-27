@@ -57,8 +57,8 @@ internal static class ClaimedCardBank
             category: territory);
 
     private static Guid StableId(string territory, string title, string body) =>
-        new(System.Security.Cryptography.MD5.HashData(
-            System.Text.Encoding.UTF8.GetBytes($"claimed|{territory}|{title}|{body}")));
+        new(System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes($"claimed|{territory}|{title}|{body}"))[..16]);
 
     public static IReadOnlyList<ICard> All { get; } =
     [
