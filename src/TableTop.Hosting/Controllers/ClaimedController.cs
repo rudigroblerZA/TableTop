@@ -76,16 +76,13 @@ public sealed class ClaimedController : IClaimedController
     public string CurrentPlayerName => _players[_currentIndex].DisplayName;
 
     /// <inheritdoc />
-    public IReadOnlyList<string> ChallengeableTerritories
+    public IReadOnlyList<string> GetChallengeableTerritories()
     {
-        get
-        {
-            var mine = _players[_currentIndex].Id;
-            return _pools
-                .Where(kv => kv.Value.Count > 0 && _holders[kv.Key] != mine)
-                .Select(kv => kv.Key)
-                .ToList();
-        }
+        var mine = _players[_currentIndex].Id;
+        return _pools
+            .Where(kv => kv.Value.Count > 0 && _holders[kv.Key] != mine)
+            .Select(kv => kv.Key)
+            .ToList();
     }
 
     /// <inheritdoc />
@@ -98,7 +95,7 @@ public sealed class ClaimedController : IClaimedController
     public void ChallengeTerritory(string territoryName)
     {
         if (!IsRunning) return;
-        if (!ChallengeableTerritories.Contains(territoryName)) return;   // not legal this turn — silently ignored, same as Millionaire's SubmitAnswer guard
+        if (!GetChallengeableTerritories().Contains(territoryName)) return;   // not legal this turn — silently ignored, same as Millionaire's SubmitAnswer guard
 
         var card = _pools[territoryName][^1];
         _pools[territoryName].RemoveAt(_pools[territoryName].Count - 1);

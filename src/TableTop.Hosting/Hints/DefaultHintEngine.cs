@@ -21,13 +21,13 @@ public sealed class DefaultHintEngine : IHintEngine
     private const int WindowSize = Core.TableTopDefaults.Hints.WindowSize;
 
     /// <summary>Initialises a new <see cref="GenerateHint"/> instance.</summary>
-    public NextTurnHint? GenerateHint(IPlayer player, HintContext ctx)
+    public NextTurnHint? GenerateHint(IPlayer player, HintContext context)
     {
-        if (ctx.RecentOutcomes.Count == 0) return null;
+        if (context.RecentOutcomes.Count == 0) return null;
 
-        var window = ctx.RecentOutcomes.Take(WindowSize).ToList();
-        var difficulties = ctx.RecentDifficulties.Take(WindowSize).ToList();
-        var current = ctx.CurrentFlow?.CurrentDifficulty
+        var window = context.RecentOutcomes.Take(WindowSize).ToList();
+        var difficulties = context.RecentDifficulties.Take(WindowSize).ToList();
+        var current = context.CurrentFlow?.CurrentDifficulty
                           ?? (difficulties.Count > 0 ? difficulties[0] : Difficulty.Easy);
 
         var completions = window.Count(o => o == CardOutcome.Completed);
@@ -41,7 +41,7 @@ public sealed class DefaultHintEngine : IHintEngine
             var target = DecreaseDifficulty(current);
             return MakeHint(
                 player, target,
-                ctx.CurrentFlow is not null ? PaceHint.SlowDown : null,
+                context.CurrentFlow is not null ? PaceHint.SlowDown : null,
                 neutral: $"You've had a tough run — {target} cards might feel better right now.",
                 him: $"No shame in stepping back — {target} gives you room to build momentum again.",
                 her: $"Give yourself some grace — {target} is where the good stuff lives too.",
@@ -57,7 +57,7 @@ public sealed class DefaultHintEngine : IHintEngine
             if (target != current)
                 return MakeHint(
                     player, target,
-                    ctx.CurrentFlow is not null ? PaceHint.SpeedUp : null,
+                    context.CurrentFlow is not null ? PaceHint.SpeedUp : null,
                     neutral: $"You're on fire — ready to try {target}?",
                     him: $"You're clearly ready for {target}. Step it up.",
                     her: $"You're absolutely nailing this — {target} is your next move.",
@@ -96,12 +96,12 @@ public sealed class DefaultHintEngine : IHintEngine
         }
 
         // ── Rule 5: heavy skipping ────────────────────────────────────────────
-        if (ctx.SkipCount >= Core.TableTopDefaults.Hints.HeavySkipThreshold)
+        if (context.SkipCount >= Core.TableTopDefaults.Hints.HeavySkipThreshold)
         {
             var target = DecreaseDifficulty(current);
             return MakeHint(
                 player, target,
-                ctx.CurrentFlow is not null ? PaceHint.SlowDown : null,
+                context.CurrentFlow is not null ? PaceHint.SlowDown : null,
                 neutral: $"You've been skipping a lot — {target} might be a better fit.",
                 him: $"No pressure — {target} lets you actually engage rather than skip.",
                 her: $"It's worth finding your level — {target} might open things up.",

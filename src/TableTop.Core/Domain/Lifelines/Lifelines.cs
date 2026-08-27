@@ -25,7 +25,7 @@ public sealed class FiftyFiftyLifeline : ILifeline
     public bool IsAvailable { get; private set; } = true;
 
     /// <summary>Initialises a new <see cref="Activate"/> instance.</summary>
-    public LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> audience)
+    public LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> allPlayers)
     {
         EnsureAvailable();
 
@@ -76,7 +76,7 @@ public sealed class PhoneAFriendLifeline : ILifeline
     public bool IsAvailable { get; private set; } = true;
 
     /// <summary>Initialises a new <see cref="Activate"/> instance.</summary>
-    public LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> audience)
+    public LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> allPlayers)
     {
         EnsureAvailable();
 
@@ -148,7 +148,7 @@ public sealed class AskTheAudienceLifeline : ILifeline
     public bool IsAvailable { get; private set; } = true;
 
     /// <summary>Initialises a new <see cref="Activate"/> instance.</summary>
-    public LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> audience)
+    public LifelineResult Activate(IMultipleChoiceCard card, IPlayer player, IReadOnlyList<IPlayer> allPlayers)
     {
         EnsureAvailable();
 

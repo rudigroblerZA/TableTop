@@ -228,7 +228,7 @@ public sealed class ClaimedGameViewModel : ViewModelBase, IDisposable
         if (_controller is null) return;
 
         CurrentPlayerName = _controller.CurrentPlayerName;
-        var challengeable = _controller.ChallengeableTerritories;
+        var challengeable = _controller.GetChallengeableTerritories();
 
         Territories.Clear();
         foreach (var (name, holder) in _controller.TerritoryHolders)

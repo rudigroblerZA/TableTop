@@ -27,9 +27,10 @@ public interface IClaimedController : IGameController
 
     /// <summary>
     /// Every territory not already held by the current player and not yet
-    /// exhausted of cards — the legal choices for this turn.
+    /// exhausted of cards — the legal choices for this turn. Computed fresh
+    /// on each call, so it's a method rather than a property.
     /// </summary>
-    IReadOnlyList<string> ChallengeableTerritories { get; }
+    IReadOnlyList<string> GetChallengeableTerritories();
 
     /// <summary>
     /// Every territory and who holds it, or null for open ground — the full
@@ -40,7 +41,7 @@ public interface IClaimedController : IGameController
     /// <summary>
     /// Draws the next card for <paramref name="territoryName"/> and raises
     /// <see cref="TerritoryChallengeReady"/>. Must be one of
-    /// <see cref="ChallengeableTerritories"/>.
+    /// <see cref="GetChallengeableTerritories"/>.
     /// </summary>
     void ChallengeTerritory(string territoryName);
 

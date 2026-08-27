@@ -44,7 +44,6 @@ public sealed class HerdController : IHerdController
     /// <summary>Points for being the only player to give an answer. Deliberately fewer than <see cref="HerdPoints"/>.</summary>
     public const int LoneVoicePoints = 2;
 
-    private readonly IReadOnlyList<IPlayer> _players;
     private readonly IReadOnlyList<ICard> _deck;
     private readonly Dictionary<string, int> _scores = new(StringComparer.OrdinalIgnoreCase);
 
@@ -93,7 +92,6 @@ public sealed class HerdController : IHerdController
         if (deck.Count == 0)
             throw new ArgumentException("The prompt deck is empty.", nameof(deck));
 
-        _players = players;
         _deck = deck;
 
         foreach (var p in players) _scores[p.DisplayName] = 0;

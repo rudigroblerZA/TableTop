@@ -172,7 +172,7 @@ public sealed class JsonGamePersistence : IGamePersistence
     /// <inheritdoc />
     public bool HasSavedSession => _inner.HasSavedSession;
     /// <inheritdoc />
-    public Task SaveAsync(SessionSnapshot s, CancellationToken ct = default) => _inner.SaveAsync(s, ct);
+    public Task SaveAsync(SessionSnapshot snapshot, CancellationToken ct = default) => _inner.SaveAsync(snapshot, ct);
     /// <inheritdoc />
     public Task<SessionSnapshot?> LoadAsync(CancellationToken ct = default) => _inner.LoadAsync(ct);
     /// <inheritdoc />

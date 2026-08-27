@@ -74,7 +74,7 @@ internal sealed class ConsoleClaimedRenderer
 
     private string? PromptTerritory()
     {
-        var options = _controller.ChallengeableTerritories;
+        var options = _controller.GetChallengeableTerritories();
         SC.ForegroundColor = CC.DarkGray;
         for (var i = 0; i < options.Count; i++)
             SC.WriteLine($"  [{i + 1}] {options[i]}");
