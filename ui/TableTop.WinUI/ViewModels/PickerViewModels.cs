@@ -23,6 +23,9 @@ public sealed class IntroViewModel : ViewModelBase
     /// <summary>Command that opens the settings screen.</summary>
     public ICommand SettingsCommand { get; }
 
+    /// <summary>Command that opens the roster builder.</summary>
+    public ICommand RoasterCommand { get; }
+
     /// <summary>Continues the saved session. Hidden when there isn't one.</summary>
     public ICommand ResumeCommand { get; }
 
@@ -40,6 +43,16 @@ public sealed class IntroViewModel : ViewModelBase
         ResumeCommand = new AsyncRelayCommand(ResumeAsync, () => CanResume);
         _ = LookForSavedSessionAsync();
         SettingsCommand = new RelayCommand(() => _navigator.Navigate(new SettingsViewModel(_navigator, WinUIAppSettings.Instance)));
+
+        // Lives here rather than on SettingsViewModel — SettingsViewModel is
+        // shared and holds only INavigator (GoBack only, by design, so it
+        // stays constructible from MAUI too). Opening an arbitrary new
+        // screen needs the concrete Navigator.Navigate(ViewModelBase), which
+        // only WinUI-local ViewModels like this one hold. MAUI's equivalent
+        // button lives on its own SettingsPage code-behind for the same
+        // reason: per-head navigation plumbing, not a shared-VM concern.
+        RoasterCommand = new RelayCommand(() => _navigator.Navigate(
+            new RoasterViewModel(_navigator, new WinUIRosterStore())));
     }
 
     /// <summary>

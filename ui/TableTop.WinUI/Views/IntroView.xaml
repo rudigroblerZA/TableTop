@@ -30,6 +30,9 @@
                 <Button Content="Settings" Command="{Binding SettingsCommand}"
                         HorizontalAlignment="Stretch"
                         Style="{StaticResource FeltButtonStyle}"/>
+                <Button Content="Roaster" Command="{Binding RoasterCommand}"
+                        HorizontalAlignment="Stretch"
+                        Style="{StaticResource QuietButtonStyle}"/>
             </StackPanel>
             <Border Margin="8" CornerRadius="9" IsHitTestVisible="False"
                     BorderBrush="#40C49E4C" BorderThickness="1"/>

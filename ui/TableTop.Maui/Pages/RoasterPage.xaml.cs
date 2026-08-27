@@ -1,4 +1,6 @@
-using TableTop.Maui.ViewModels;
+using TableTop.Maui.Services;
+using TableTop.Presentation.Infrastructure;
+using TableTop.Presentation.ViewModels;
 
 namespace TableTop.Maui.Pages;
 
@@ -6,6 +8,9 @@ namespace TableTop.Maui.Pages;
 /// Three-column roster builder, reached from Settings: templates on the
 /// left, the roster being configured in the middle, saved rosters on the
 /// right.
+///
+/// Thin wrapper — <see cref="RoasterViewModel"/> is shared with WinUI. This
+/// page's whole job is supplying the MAUI-specific <see cref="RosterStore"/>.
 /// </summary>
 public partial class RoasterPage : ContentPage
 {
@@ -14,7 +19,7 @@ public partial class RoasterPage : ContentPage
     public RoasterPage()
     {
         InitializeComponent();
-        _vm = new RoasterViewModel();
+        _vm = new RoasterViewModel(new Services.MauiNavigator(this), RosterStore.Instance);
         BindingContext = _vm;
     }
 
@@ -45,9 +50,15 @@ public partial class RoasterPage : ContentPage
 
     private void OnRemovePlayerClicked(object sender, EventArgs e)
     {
-        if (ItemFrom<string>(sender) is { } name)
-            _vm.RemovePlayer(name);
+        if (ItemFrom<SavedPlayer>(sender) is { } player)
+            _vm.RemovePlayer(player);
     }
 
     private void OnSaveRosterClicked(object sender, EventArgs e) => _vm.SaveRoster();
+
+    private void OnDeleteRosterClicked(object sender, EventArgs e)
+    {
+        if (ItemFrom<SavedRoster>(sender) is { } roster)
+            _vm.DeleteRoster(roster);
+    }
 }

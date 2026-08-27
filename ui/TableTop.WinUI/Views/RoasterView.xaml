@@ -1,0 +1,142 @@
+<UserControl x:Class="TableTop.WinUI.Views.RoasterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:TableTop.Presentation.ViewModels"
+             xmlns:infra="using:TableTop.Presentation.Infrastructure">
+    <Grid Padding="30,24,30,24" ColumnSpacing="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1.4*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ══ COLUMN 1 — TEMPLATES ═══════════════════════════════════════ -->
+        <Grid Grid.Column="0" RowSpacing="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Templates" FontSize="19" Style="{StaticResource EngravedTitleStyle}"/>
+
+            <ListView Grid.Row="1" ItemsSource="{Binding Templates}"
+                      IsItemClickEnabled="True" SelectionMode="None" ItemClick="OnTemplateItemClick">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:RoasterTemplate">
+                        <Border CornerRadius="10" Background="{StaticResource PanelBrush}"
+                                Padding="12" Margin="0,4">
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextBrush}"/>
+                                <TextBlock Text="{x:Bind Description}" FontSize="11" TextWrapping="Wrap"
+                                           Foreground="{StaticResource TextDimBrush}"/>
+                                <TextBlock Text="{x:Bind RequirementText}" FontSize="10"
+                                           Foreground="{StaticResource BrassBrush}"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <!-- ══ COLUMN 2 — CONFIGURE ═══════════════════════════════════════ -->
+        <Grid Grid.Column="1" RowSpacing="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="Configure" FontSize="19" Style="{StaticResource EngravedTitleStyle}"/>
+
+            <TextBlock Grid.Row="1" Text="Pick a template to start configuring a roster."
+                       Style="{StaticResource PipTextStyle}" TextWrapping="Wrap"
+                       Visibility="{Binding IsNotConfiguring, Converter={StaticResource BoolToVis}}"/>
+
+            <TextBox Grid.Row="2" Text="{Binding RoasterName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="Roster name" FontFamily="Georgia"
+                     Visibility="{Binding IsConfiguring, Converter={StaticResource BoolToVis}}"/>
+
+            <Grid Grid.Row="3" ColumnSpacing="8"
+                  Visibility="{Binding IsConfiguring, Converter={StaticResource BoolToVis}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1.2*"/>
+                    <ColumnDefinition Width="0.8*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Text="{Binding NewPlayerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         PlaceholderText="Name" FontFamily="Georgia" KeyDown="OnPlayerEntryKeyDown"/>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding GenderOptions}"
+                          SelectedItem="{Binding SelectedGender, Mode=TwoWay}"
+                          HorizontalAlignment="Stretch" FontFamily="Georgia"
+                          PlaceholderText="Gender"/>
+                <TextBox Grid.Column="2" Text="{Binding NewPlayerAge, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         PlaceholderText="Age" InputScope="Number" FontFamily="Georgia"/>
+                <Button Grid.Column="3" Content="Add" Command="{Binding AddPlayerCommand}"
+                        Style="{StaticResource BrassButtonStyle}"/>
+            </Grid>
+
+            <ListView Grid.Row="4" ItemsSource="{Binding ConfiguredPlayers}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="infra:SavedPlayer">
+                        <Grid ColumnSpacing="8" Padding="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Foreground="{StaticResource TextBrush}"
+                                       VerticalAlignment="Center">
+                                <Run Text="{x:Bind Name}" FontWeight="SemiBold"/>
+                                <Run Text="{x:Bind Gender}" Foreground="{StaticResource TextDimBrush}"/>
+                                <Run Text="{x:Bind Age}" Foreground="{StaticResource TextDimBrush}"/>
+                            </TextBlock>
+                            <Button Grid.Column="1" Content="✕" Click="OnRemovePlayerClicked"
+                                    Style="{StaticResource QuietButtonStyle}" Padding="10,4"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <TextBlock Grid.Row="5" Text="{Binding SaveBlockedReason}"
+                       Style="{StaticResource PipTextStyle}" TextWrapping="Wrap"
+                       Visibility="{Binding IsConfiguring, Converter={StaticResource BoolToVis}}"/>
+
+            <Button Grid.Row="6" Content="Save Roster" Command="{Binding SaveRosterCommand}"
+                    Style="{StaticResource FeltButtonStyle}"
+                    Visibility="{Binding IsConfiguring, Converter={StaticResource BoolToVis}}"/>
+
+            <Button Grid.Row="7" Content="Back" Command="{Binding BackCommand}"
+                    Style="{StaticResource QuietButtonStyle}" Margin="0,8,0,0"/>
+        </Grid>
+
+        <!-- ══ COLUMN 3 — SAVED ROSTERS ════════════════════════════════════ -->
+        <Grid Grid.Column="2" RowSpacing="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Saved Rosters" FontSize="19" Style="{StaticResource EngravedTitleStyle}"/>
+
+            <ListView Grid.Row="1" ItemsSource="{Binding SavedRosters}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="infra:SavedRoster">
+                        <Border CornerRadius="10" Background="{StaticResource PanelBrush}"
+                                Padding="12" Margin="0,4">
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Spacing="2">
+                                    <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold"
+                                               Foreground="{StaticResource TextBrush}"/>
+                                    <TextBlock Text="{x:Bind Subtitle}" FontSize="11"
+                                               Foreground="{StaticResource TextDimBrush}"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="✕" Click="OnDeleteRosterClicked"
+                                        Style="{StaticResource QuietButtonStyle}" Padding="10,4"
+                                        VerticalAlignment="Top"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </Grid>
+</UserControl>
