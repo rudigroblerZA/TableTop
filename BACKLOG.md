@@ -637,24 +637,28 @@ the test assembly for `[Fact]` methods (1 each) and `[Theory]` methods'
 `[InlineData]` rows (one per row), rather than trusting a number typed into
 prose. `TheoryAttribute` derives from `FactAttribute`, so a Theory method is
 checked first or it would double-count as a Fact too. README's stale **776**
-is corrected to **871**, the count as of this change (813 Facts + 58 InlineData
-rows) — a number this guard will now keep honest instead of letting drift again.
+is corrected to **863** — the real number, confirmed by the guard itself
+failing on CI's actual `dotnet test` run.
+
+Worth recording exactly how, since it's the point of writing the guard as
+reflection rather than trusting a hand count. Authored with no local `dotnet`
+in this sandbox, so the README figure going into the PR was a static grep-based
+estimate of attribute usage in source — 871, arrived at by counting `[Fact]`/
+`[Theory]`/`[InlineData]` occurrences and excluding the false positives that
+came from this very guard's own doc comment, which mentions those same
+attribute names in prose and had inflated a first, naive pass of the count.
+CI's real run disagreed anyway — the assertion failure named the actual figure
+directly (863, a difference of 8 from the estimate) — and README was corrected
+to match in a follow-up push. The eight-count gap between careful static
+counting and the real reflected total is itself the argument for why this
+guard reflects over the assembly instead of grep-counting attributes: even a
+careful static count missed something a real `Type.GetMethods` pass didn't.
 
 Only covers `[InlineData]`: this assembly has no `[MemberData]` or `[ClassData]`
 today (checked when the guard was written). If one is added later without
 updating the guard, it will silently undercount rather than fail loudly — the
 same kind of scope note the mode and card guards above already carry for their
 own blind spots.
-
-Not verified by a local build (no `dotnet` in this sandbox) — the number above
-is a static count of attribute usage in source, cross-checked by excluding XML
-doc-comment text that happens to contain literal `[Fact]`/`[Theory]`/
-`[InlineData]` substrings (a real trap: the naive version of this same count
-was inflated by this guard's own doc comment, which is what caught the
-distinction). If CI's actual `dotnet test` run disagrees, the assertion
-message will name the real number directly, and README gets a follow-up fix
-to match it — the same close-the-loop pattern item 13's mode and card counts
-were fixed with.
 
 ### 14. Process-wide statics vs. parallel test classes — **half closed in 1.19.0**
 
