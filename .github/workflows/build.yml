@@ -43,6 +43,7 @@ jobs:
         shell: powershell
         run: |
           ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"rudigroblerZA_TableTop" /o:"rudigroblerza" /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          dotnet build TableTop.Engine.slnx
       - name: Build and analyze test
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
