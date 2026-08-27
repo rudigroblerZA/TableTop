@@ -23,9 +23,9 @@ namespace TableTop.Core.Domain.Cards;
 /// C# bank is only a fallback. But if that JSON ever goes missing, the
 /// fallback's ids change on every restart, and any saved session referencing
 /// those cards becomes unresolvable. <c>ClaimedController</c>'s card
-/// bank hit this deliberately and worked around it with a hand-rolled MD5
-/// hash; this builder makes that the default instead of something eleven
-/// other files would each have to reinvent correctly.
+/// bank hit this deliberately and worked around it with a hand-rolled hash;
+/// this builder makes that the default instead of something eleven other
+/// files would each have to reinvent correctly.
 /// </para>
 ///
 /// <para>
@@ -120,5 +120,5 @@ public sealed class CardDeckBuilder
     /// the whole point.
     /// </summary>
     private static Guid StableId(string deckName, string category, string title, string description) =>
-        new(MD5.HashData(Encoding.UTF8.GetBytes($"{deckName}|{category}|{title}|{description}")));
+        new(SHA256.HashData(Encoding.UTF8.GetBytes($"{deckName}|{category}|{title}|{description}"))[..16]);
 }

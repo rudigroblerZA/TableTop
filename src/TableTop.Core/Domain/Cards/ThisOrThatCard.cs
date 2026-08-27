@@ -64,7 +64,7 @@ public sealed class ThisOrThatCard : BaseCard, IThisOrThatCard
         ThisOrThatOption optionB)
     {
         var seed = $"{deckName}|{category}|{title}|{description}|{optionA.Label}|{optionB.Label}";
-        var digest = System.Security.Cryptography.MD5.HashData(System.Text.Encoding.UTF8.GetBytes(seed));
-        return new ThisOrThatCard(new Guid(digest), title, description, difficulty, category, optionA, optionB);
+        var digest = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(seed));
+        return new ThisOrThatCard(new Guid(digest[..16]), title, description, difficulty, category, optionA, optionB);
     }
 }
