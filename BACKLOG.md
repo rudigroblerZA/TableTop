@@ -22,12 +22,12 @@ across the existing numbering rather than adding to it.
 |---|---|---|
 | **P2** | **21** — stale UI comments | Nineteen surviving WPF references; several describe the WinUI file they sit in as WPF. One user-facing settings label may be wrong too. |
 
-**Items 4, 5, 12, 18, 19 and 20 are all closed** and have dropped out of this
-table entirely. Item 12 closed the coverage *mechanism* — the declarations
-and the gate that keeps them honest. Item 4 closed the actual gap that
-mechanism was reporting: real screens on every head for every family in the
-catalogue. Item 5 gave both heads a real composition root, so a
-container-registered `IControllerFactory`/`IAppSettings` now actually
+**Items 2, 4, 5, 12, 18, 19 and 20 are all closed** and have dropped out of
+this table entirely. Item 12 closed the coverage *mechanism* — the
+declarations and the gate that keeps them honest. Item 4 closed the actual
+gap that mechanism was reporting: real screens on every head for every
+family in the catalogue. Item 5 gave both heads a real composition root, so
+a container-registered `IControllerFactory`/`IAppSettings` now actually
 reaches the one path that was silently ignoring it. Item 18 deleted the
 inert `Presentation`/`Resolved*` layer rather than resurrecting it. Item 19
 finished what item 5 started — MAUI's remaining nine `AppSettings.Instance`
@@ -35,7 +35,12 @@ reads now go through the injected `IAppSettings` — and fixed the one
 persistence path that most needed it: a saved session failing silently. Item
 20 gave the three blocking MAUI pages a two-phase construct-then-initialise
 shape and converted WinUI's `ResumeCommand` to the async-command idiom the
-rest of the codebase already used. See each item's own section below.
+rest of the codebase already used. Item 2 turned out to be three real bugs
+deep — a test host that couldn't start, a reflection lookup broken by a
+newer BCL overload, and a null default that crashed two constructors — plus
+a structural gap where the test scanned an assembly with nothing mutable in
+it; `tests/TableTop.UiTests` now runs and passes for what appears to be the
+first time anywhere. See each item's own section below.
 
 Items 2, 3, 8, 13, 15 and 16 sit below this — real, but none of them is
 between a player and a working game.
@@ -116,7 +121,7 @@ both directions, same as previously found: it once flagged
 `TableTop.Games` low because mode-sweeping tests don't name types — a real
 run settles it instead of guessing.
 
-### 2. `tests/TableTop.UiTests` can't reach the shared ViewModels
+### 2. `tests/TableTop.UiTests` can't reach the shared ViewModels — **CLOSED**
 
 It references `TableTop.WinUI`, which needs the WinUI SDK. `TableTop.Tests`
 (SDK-free) got a direct `TableTop.Presentation` reference instead, so real
@@ -125,6 +130,78 @@ Whatever `UiTests` existed for is still blocked.
 
 Decide: give it a reason to exist that doesn't need the SDK, or accept it
 needs Windows and say so plainly.
+
+**Closed on a machine with the WinUI SDK — and what actually surfaced once
+it ran is worth recording in full, because none of it was visible before.**
+This project's own CI job (`build-windows-heads` in `ci.yml`) has its WinUI
+build and UI-test steps commented out, so as far as can be determined this
+suite had never actually executed and reported a result anywhere before
+now — every prior backlog entry that says "not verified — no `dotnet`-driven
+UI smoke test exists" was correct, but for a stronger reason than "no SDK
+was available": even on a machine that had one, the suite couldn't run.
+
+Three real, independent bugs, found in this order:
+
+1. **The test host couldn't start at all.** `dotnet test` threw
+   `FileNotFoundException` on `Microsoft.TestPlatform.CoreUtilities` before a
+   single test ran. That assembly is a plain compile+runtime asset in
+   `Microsoft.TestPlatform.ObjectModel`'s `lib/net8.0` folder — nothing
+   RID-specific — but with `RuntimeIdentifiers` set (required for
+   `UseWinUI`), the SDK stops copying framework-dependent package assets to
+   the build output on the assumption a publish step will resolve them via
+   the RID graph, and `dotnet test` never publishes. `TableTop.Tests` (no
+   `RuntimeIdentifiers`, no `UseWinUI`) never hits this. Fixed with
+   `<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>` on the
+   `UiTests` project.
+2. **`StubProxy.For` threw `AmbiguousMatchException`.** It located
+   `DispatchProxy.Create` via `Type.GetMethod(name, bindingFlags)`, which
+   requires exactly one match — true when this was written, false once the
+   BCL added the non-generic `DispatchProxy.Create(Type, Type)` overload
+   alongside the original `Create<T, TProxy>()`. The new overload is exactly
+   what this helper needs (a runtime-known `Type`, not a compile-time
+   generic argument), so the fix is to call it directly instead of
+   reflecting for the ambiguous one. `TryConstruct` swallowed the exception
+   as "this dependency can't be satisfied", so **every ViewModel with an
+   interface-typed constructor parameter silently dropped out of both
+   tests' coverage** — which in this codebase is nearly all of them.
+3. **`DefaultFor` returned `null` for `Archetype`**, which has no
+   parameterless constructor. `ArchetypePickerViewModel`,
+   `SubArchetypePickerViewModel` and `GameSelectionViewModel` all
+   dereference their `Archetype` parameter in the constructor body
+   (`parent.SubArchetypes`, `node.Modes`), so the null default threw a
+   `NullReferenceException` that `TryConstruct` again swallowed as a benign
+   "can't build this" — silently dropping three more ViewModels, including
+   the ones a fourth finding (below) made the only interesting targets left.
+   Fixed with a stub `Archetype` instance for `DefaultFor` to hand back.
+
+**A fourth finding, structural rather than a bug in any one place: even
+with the three fixes above, `Every_settable_property_raises_PropertyChanged`
+still failed — "found 0", the same failure as before, for a completely
+different reason.** Every ViewModel actually declared in `TableTop.WinUI` —
+the whole picker chain plus `UnsupportedModeViewModel` — is fully immutable:
+get-only properties, commands assigned once in the constructor, nothing to
+mutate. Every settable, `PropertyChanged`-raising ViewModel
+(`SettingsViewModel`, `CardTurnGameViewModel`, `MillionaireGameViewModel`,
+`PlayerSetupViewModel`, …) lives in `TableTop.Presentation`, which the
+test's `UiAssembly` anchor never scanned. The test could not have passed
+non-vacuously as originally written — not because anything was broken, but
+because the one assembly it looked at has nothing mutable in it. Fixed by
+scanning `TableTop.Presentation` too (anchored on `SettingsViewModel`,
+alongside the existing `Navigator` anchor for `TableTop.WinUI`) — an
+assembly `TableTop.WinUI` already references and which is therefore already
+loaded in the test host, so this costs nothing extra.
+
+Both tests now pass with real, non-vacuous coverage across both assemblies.
+Verified: the 862-test engine suite is unaffected, WinUI still builds clean,
+and `check-shared-usings.py`/`check-mvvm-method-parity.py`/
+`check-head-family-coverage.py` all still pass.
+
+**Not touched, and worth a decision rather than a silent re-enable:** the
+CI job's WinUI-build and UI-test steps are commented out by a deliberate
+commit (`91ffc27`, "Disable WinUI build and UI tests in CI") with no stated
+reason recorded. Given the suite genuinely runs and passes now, whether to
+uncomment those steps is a call for whoever disabled them, not something to
+flip back on the strength of one local run.
 
 ### 3. Xbox controller — designed, not implemented
 
