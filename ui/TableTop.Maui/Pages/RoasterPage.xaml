@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TableTop.Maui.Pages.RoasterPage"
+    Title="Roaster"
+    Background="{StaticResource BaizeBrush}">
+
+    <!--
+        LAYOUT: three Grid columns, each its own Grid with explicit rows —
+        not a VerticalStackLayout. A VerticalStackLayout hands a CollectionView
+        infinite height, so the list either measures to zero or grows past the
+        screen with nothing able to scroll (see GameSelectionPage.xaml for the
+        same reasoning). Explicit rows give each column's list a bounded * row
+        that scrolls internally instead.
+    -->
+    <Grid Padding="12" ColumnSpacing="10" ColumnDefinitions="1*,1.4*,1*">
+
+        <!-- ══ COLUMN 1 — TEMPLATES ═══════════════════════════════════════ -->
+        <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="8">
+            <Label Grid.Row="0"
+                   Text="Templates"
+                   Style="{StaticResource SubheaderLabelStyle}" />
+
+            <CollectionView Grid.Row="1"
+                            ItemsSource="{Binding Templates}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}"
+                            SelectionChanged="OnTemplateSelectionChanged">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Style="{StaticResource CardStyle}" Padding="12" Margin="0,4">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnTemplateTapped" />
+                            </Frame.GestureRecognizers>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding Name}"
+                                       FontFamily="{StaticResource DisplayFont}"
+                                       FontSize="15" FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}" />
+                                <Label Text="{Binding Description}"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+        <!-- ══ COLUMN 2 — CONFIGURE ═══════════════════════════════════════ -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,Auto,Auto,Auto,*,Auto" RowSpacing="8">
+            <Label Grid.Row="0"
+                   Text="Configure"
+                   Style="{StaticResource SubheaderLabelStyle}" />
+
+            <Label Grid.Row="1"
+                   Text="Pick a template to start configuring a roster."
+                   IsVisible="{Binding IsNotConfiguring}"
+                   FontSize="13"
+                   TextColor="{StaticResource TextSecondary}" />
+
+            <Entry Grid.Row="2"
+                   IsVisible="{Binding IsConfiguring}"
+                   Placeholder="Roster name"
+                   Text="{Binding RoasterName}"
+                   TextColor="White" />
+
+            <HorizontalStackLayout Grid.Row="3" IsVisible="{Binding IsConfiguring}" Spacing="8">
+                <Entry Placeholder="Player name"
+                       Text="{Binding NewPlayerName}"
+                       TextColor="White"
+                       WidthRequest="180"
+                       Completed="OnAddPlayerClicked" />
+                <Button Text="Add"
+                        Clicked="OnAddPlayerClicked"
+                        BackgroundColor="{StaticResource PrimaryColor}"
+                        TextColor="#22160A" />
+            </HorizontalStackLayout>
+
+            <CollectionView Grid.Row="4" ItemsSource="{Binding ConfiguredPlayers}">
+                <CollectionView.EmptyView>
+                    <Label Text="No players added yet."
+                           FontSize="12"
+                           TextColor="{StaticResource TextSecondary}" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <HorizontalStackLayout Spacing="8" Padding="4,6">
+                            <Label Text="{Binding .}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="FillAndExpand" />
+                            <Button Text="✕"
+                                    Clicked="OnRemovePlayerClicked"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{StaticResource TextSecondary}"
+                                    Padding="4,0" />
+                        </HorizontalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Grid.Row="5"
+                    IsVisible="{Binding IsConfiguring}"
+                    Text="Save Roster"
+                    Clicked="OnSaveRosterClicked"
+                    BackgroundColor="{StaticResource PrimaryColor}"
+                    TextColor="#22160A"
+                    FontAttributes="Bold" />
+        </Grid>
+
+        <!-- ══ COLUMN 3 — SAVED ROSTERS ════════════════════════════════════ -->
+        <Grid Grid.Column="2" RowDefinitions="Auto,*" RowSpacing="8">
+            <Label Grid.Row="0"
+                   Text="Saved Rosters"
+                   Style="{StaticResource SubheaderLabelStyle}" />
+
+            <CollectionView Grid.Row="1" ItemsSource="{Binding SavedRosters}">
+                <CollectionView.EmptyView>
+                    <Label Text="No rosters saved yet."
+                           FontSize="12"
+                           TextColor="{StaticResource TextSecondary}" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Style="{StaticResource CardStyle}" Padding="12" Margin="0,4">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding Name}"
+                                       FontFamily="{StaticResource DisplayFont}"
+                                       FontSize="15" FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}" />
+                                <Label Text="{Binding Subtitle}"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+    </Grid>
+</ContentPage>

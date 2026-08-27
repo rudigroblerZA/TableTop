@@ -250,6 +250,18 @@
                 </VerticalStackLayout>
             </Frame>
 
+            <!-- ══ ROASTER ════════════════════════════════════════════════════ -->
+            <Button Text="Roaster"
+                    x:Name="RoasterButton"
+                    Clicked="OnRoasterClicked"
+                    BackgroundColor="{StaticResource PrimaryColor}"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    Padding="12"
+                    CornerRadius="8"
+                    HorizontalOptions="FillAndExpand"
+                    Margin="0,24,0,0"/>
+
             <!-- ══ RESET ══════════════════════════════════════════════════════ -->
             <Button Text="Reset to Defaults"
                     x:Name="ResetButton"

@@ -39,6 +39,9 @@ public partial class SettingsPage : ContentPage
         };
     }
 
+    private async void OnRoasterClicked(object sender, EventArgs e) =>
+        await Navigation.PushAsync(new RoasterPage());
+
     private async void OnResetClicked(object sender, EventArgs e)
     {
         // An exception escaping an async void handler terminates the
