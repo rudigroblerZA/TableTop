@@ -524,23 +524,8 @@ public sealed class CardTurnController : ICardTurnController
 
         // ── Special card types — delegated to SpecialCardCoordinator ──────────
 
-        if (card is IBreakCard breakCard)
+        if (_specialCards!.TryHandleSpecialCard(card, player, _game.Round))
         {
-            _specialCards!.HandleBreakCard(breakCard, player, _game.Round);
-            _game.RecordOutcome(CardOutcome.Completed);
-            return;
-        }
-
-        if (card is IRewardCard rewardCard)
-        {
-            _specialCards!.HandleRewardCard(rewardCard, player, _game.Round);
-            _game.RecordOutcome(CardOutcome.Completed);
-            return;
-        }
-
-        if (card is IInspirationCard inspirationCard)
-        {
-            _specialCards!.HandleInspirationCard(inspirationCard, player, _game.Round);
             _game.RecordOutcome(CardOutcome.Completed);
             return;
         }

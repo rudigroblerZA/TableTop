@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.RegularExpressions;
 using TableTop.Core.Abstractions.Game;
 
@@ -90,6 +91,52 @@ public sealed class DocumentationAccuracyTests
             "if the wording changed, update this test's pattern in the same commit");
 
         Number(quoted.Groups["cards"]).Should().Be(cards, "README card count is stale");
+    }
+
+    /// <summary>
+    /// Counts test cases the way <c>dotnet test</c> reports them — one per
+    /// <c>[Fact]</c> method, one per <c>[InlineData]</c> row on a
+    /// <c>[Theory]</c> method — rather than trusting a number typed into prose
+    /// (backlog item 13: README said 776 while ARCHITECTURE.md said "roughly
+    /// 900" and neither was checked). <see cref="TheoryAttribute"/> derives
+    /// from <see cref="FactAttribute"/>, so a Theory method is checked first;
+    /// otherwise it would double-count as a Fact too.
+    ///
+    /// <para>
+    /// Only covers <c>[InlineData]</c>. This assembly has no
+    /// <c>[MemberData]</c> or <c>[ClassData]</c> today (checked when this test
+    /// was written) — if one is added later without updating this method, the
+    /// count will silently undercount rather than fail loudly. Worth knowing
+    /// before trusting this test blindly on a future assembly shape.
+    /// </para>
+    /// </summary>
+    [Fact]
+    public void Readme_test_count_matches_the_assembly()
+    {
+        var root = FindRepositoryRoot();
+        var readme = File.ReadAllText(Path.Combine(root, "README.md"));
+
+        var testCases = typeof(DocumentationAccuracyTests).Assembly
+            .GetTypes()
+            .SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.Instance |
+                                           BindingFlags.Static | BindingFlags.DeclaredOnly))
+            .Sum(CountTestCases);
+
+        var quoted = Regex.Match(readme, @"TableTop\.Tests/\s*←\s*(?<count>[\d,]+) tests");
+
+        quoted.Success.Should().BeTrue(
+            "README.md should carry a 'TableTop.Tests/ ← N tests' line under tests/ — " +
+            "if the wording changed, update this test's pattern in the same commit");
+
+        Number(quoted.Groups["count"]).Should().Be(testCases, "README test count is stale");
+    }
+
+    private static int CountTestCases(MethodInfo method)
+    {
+        if (method.IsDefined(typeof(TheoryAttribute), inherit: false))
+            return method.GetCustomAttributes<InlineDataAttribute>(inherit: false).Count();
+
+        return method.IsDefined(typeof(FactAttribute), inherit: false) ? 1 : 0;
     }
 
     [Fact]

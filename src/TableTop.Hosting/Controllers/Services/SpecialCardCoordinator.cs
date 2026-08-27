@@ -1,5 +1,6 @@
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
+using TableTop.Core.Abstractions.Scoring;
 using TableTop.Hosting.Events;
 using TableTop.Hosting.Persistence;
 
@@ -81,6 +82,30 @@ internal sealed class SpecialCardCoordinator
 
     /// <summary>Increments the regular-card counter used for bonus injection.</summary>
     public void IncrementRegularCard() => RegularCardsSinceBonus++;
+
+    /// <summary>
+    /// Dispatches a drawn card to its special-type handler (break, reward,
+    /// inspiration) if it is one. Returns true when handled, in which case
+    /// the caller should record <see cref="CardOutcome.Completed"/> and
+    /// return without raising <c>CardReady</c> for it.
+    /// </summary>
+    public bool TryHandleSpecialCard(ICard card, IPlayer player, int round)
+    {
+        switch (card)
+        {
+            case IBreakCard breakCard:
+                HandleBreakCard(breakCard, player, round);
+                return true;
+            case IRewardCard rewardCard:
+                HandleRewardCard(rewardCard, player, round);
+                return true;
+            case IInspirationCard inspirationCard:
+                HandleInspirationCard(inspirationCard, player, round);
+                return true;
+            default:
+                return false;
+        }
+    }
 
     // ── Special card handlers ──────────────────────────────────────────────────
 
