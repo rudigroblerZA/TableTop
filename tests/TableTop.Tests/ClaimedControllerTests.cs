@@ -105,7 +105,7 @@ public sealed class ClaimedControllerTests
         var c = BuildController(deck: Deck(territoryCount: 5));
         c.Start();
 
-        var first = c.ChallengeableTerritories.First();
+        var first = c.GetChallengeableTerritories().First();
         c.ChallengeTerritory(first);
         c.ResolveChallenge(succeeded: true);          // Alice claims it, turn passes to Bob
 
@@ -114,11 +114,11 @@ public sealed class ClaimedControllerTests
         // current player's own holdings, not anyone's. Fail Bob's move so the
         // turn cycles back to Alice without changing the board, then check
         // that SHE no longer sees the territory she holds.
-        c.ChallengeTerritory(c.ChallengeableTerritories.First());
+        c.ChallengeTerritory(c.GetChallengeableTerritories().First());
         c.ResolveChallenge(succeeded: false);
 
         c.CurrentPlayerName.Should().Be("Alice");
-        c.ChallengeableTerritories.Should().NotContain(first,
+        c.GetChallengeableTerritories().Should().NotContain(first,
             "the current player never sees their own held territory as challengeable");
     }
 
@@ -132,7 +132,7 @@ public sealed class ClaimedControllerTests
         TerritoryChallengeReadyEvent? ev = null;
         c.TerritoryChallengeReady += (_, e) => ev = e;
 
-        c.ChallengeTerritory(c.ChallengeableTerritories.First());
+        c.ChallengeTerritory(c.GetChallengeableTerritories().First());
 
         ev.Should().NotBeNull();
         ev!.DefenderName.Should().BeNull("no one holds open ground");
@@ -148,7 +148,7 @@ public sealed class ClaimedControllerTests
         c.TerritoryClaimed += (_, _) => claimed = true;
         c.TerritoryStolen += (_, _) => stolen = true;
 
-        c.ChallengeTerritory(c.ChallengeableTerritories.First());
+        c.ChallengeTerritory(c.GetChallengeableTerritories().First());
         c.ResolveChallenge(succeeded: true);
 
         claimed.Should().BeTrue();
@@ -162,7 +162,7 @@ public sealed class ClaimedControllerTests
         var c = BuildController(players: [alice, Bob()]);
         c.Start();
 
-        var territory = c.ChallengeableTerritories.First();
+        var territory = c.GetChallengeableTerritories().First();
         c.ChallengeTerritory(territory);
         c.ResolveChallenge(succeeded: true);
 
@@ -177,7 +177,7 @@ public sealed class ClaimedControllerTests
         ChallengeFailedEvent? ev = null;
         c.ChallengeFailed += (_, e) => ev = e;
 
-        var territory = c.ChallengeableTerritories.First();
+        var territory = c.GetChallengeableTerritories().First();
         c.ChallengeTerritory(territory);
         c.ResolveChallenge(succeeded: false);
 
@@ -197,14 +197,14 @@ public sealed class ClaimedControllerTests
         c.Start();
 
         // Alice claims A.
-        var territory = c.ChallengeableTerritories.First();
+        var territory = c.GetChallengeableTerritories().First();
         c.ChallengeTerritory(territory);
         c.ResolveChallenge(succeeded: true);
         c.TerritoryHolders[territory].Should().Be(alice.DisplayName);
 
         // Bob's turn: raid Alice's territory specifically.
         c.CurrentPlayerName.Should().Be(bob.DisplayName);
-        c.ChallengeableTerritories.Should().Contain(territory,
+        c.GetChallengeableTerritories().Should().Contain(territory,
             "a rival-held territory is a legal raid target");
 
         TerritoryStolenEvent? stolen = null;
@@ -226,7 +226,7 @@ public sealed class ClaimedControllerTests
         var c = BuildController(players: [alice, Bob()], deck: Deck(territoryCount: 5, cardsPerTerritory: 3));
         c.Start();
 
-        var territory = c.ChallengeableTerritories.First();
+        var territory = c.GetChallengeableTerritories().First();
         c.ChallengeTerritory(territory);
         c.ResolveChallenge(succeeded: true);   // Alice claims it
 
@@ -244,7 +244,7 @@ public sealed class ClaimedControllerTests
         var c = BuildController(players: [alice, Bob()], deck: Deck(territoryCount: 5, cardsPerTerritory: 3));
         c.Start();
 
-        var territory = c.ChallengeableTerritories.First();
+        var territory = c.GetChallengeableTerritories().First();
         c.ChallengeTerritory(territory);
         c.ResolveChallenge(succeeded: true);   // Alice claims it
 
@@ -275,13 +275,13 @@ public sealed class ClaimedControllerTests
         c.GameEnded += (_, e) => ended = e;
 
         // Alice claims #1.
-        c.ChallengeTerritory(c.ChallengeableTerritories.First());
+        c.ChallengeTerritory(c.GetChallengeableTerritories().First());
         c.ResolveChallenge(true);
         // Bob fails on purpose so the board stays simple.
-        c.ChallengeTerritory(c.ChallengeableTerritories.First());
+        c.ChallengeTerritory(c.GetChallengeableTerritories().First());
         c.ResolveChallenge(false);
         // Alice claims #2 -> hits winningTerritoryCount.
-        c.ChallengeTerritory(c.ChallengeableTerritories.First());
+        c.ChallengeTerritory(c.GetChallengeableTerritories().First());
         c.ResolveChallenge(true);
 
         ended.Should().NotBeNull();
@@ -312,9 +312,9 @@ public sealed class ClaimedControllerTests
         ClaimedGameEndedEvent? ended = null;
         c.GameEnded += (_, e) => ended = e;
 
-        c.ChallengeTerritory(c.ChallengeableTerritories.First()); c.ResolveChallenge(true);  // Alice #1
-        c.ChallengeTerritory(c.ChallengeableTerritories.First()); c.ResolveChallenge(true);   // Bob #1 (forced onto new ground)
-        c.ChallengeTerritory(c.ChallengeableTerritories.First()); c.ResolveChallenge(true);   // Alice #2 -> wins
+        c.ChallengeTerritory(c.GetChallengeableTerritories().First()); c.ResolveChallenge(true);  // Alice #1
+        c.ChallengeTerritory(c.GetChallengeableTerritories().First()); c.ResolveChallenge(true);   // Bob #1 (forced onto new ground)
+        c.ChallengeTerritory(c.GetChallengeableTerritories().First()); c.ResolveChallenge(true);   // Alice #2 -> wins
 
         ended.Should().NotBeNull();
         ended!.FinalHoldings[alice.DisplayName].Should().HaveCount(2);
@@ -341,8 +341,8 @@ public sealed class ClaimedControllerTests
         ClaimedGameEndedEvent? ended = null;
         c.GameEnded += (_, e) => ended = e;
 
-        c.ChallengeTerritory(c.ChallengeableTerritories.First()); c.ResolveChallenge(true);  // Alice claims A
-        c.ChallengeTerritory(c.ChallengeableTerritories.First()); c.ResolveChallenge(true);   // Bob claims B
+        c.ChallengeTerritory(c.GetChallengeableTerritories().First()); c.ResolveChallenge(true);  // Alice claims A
+        c.ChallengeTerritory(c.GetChallengeableTerritories().First()); c.ResolveChallenge(true);   // Bob claims B
 
         ended.Should().NotBeNull();
         ended!.Reason.Should().Be(ClaimedEndReason.DeckExhausted);
@@ -361,8 +361,8 @@ public sealed class ClaimedControllerTests
         ClaimedGameEndedEvent? ended = null;
         c.GameEnded += (_, e) => ended = e;
 
-        c.ChallengeTerritory(c.ChallengeableTerritories.First()); c.ResolveChallenge(true);  // Alice: A
-        c.ChallengeTerritory(c.ChallengeableTerritories.First()); c.ResolveChallenge(true);   // Bob: B
+        c.ChallengeTerritory(c.GetChallengeableTerritories().First()); c.ResolveChallenge(true);  // Alice: A
+        c.ChallengeTerritory(c.GetChallengeableTerritories().First()); c.ResolveChallenge(true);   // Bob: B
 
         ended!.WinnerNames.Should().HaveCount(2,
             "a 1-1 split is a genuine tie and both names must be reported");
@@ -386,11 +386,11 @@ public sealed class ClaimedControllerTests
         var c = BuildController(deck: Deck(territoryCount: 2, cardsPerTerritory: 1), winningTerritoryCount: 2);
         c.Start();
 
-        var first = c.ChallengeableTerritories.First();
+        var first = c.GetChallengeableTerritories().First();
         c.ChallengeTerritory(first);
         c.ResolveChallenge(succeeded: false);   // fails, but the card is still spent
 
-        c.ChallengeableTerritories.Should().NotContain(first,
+        c.GetChallengeableTerritories().Should().NotContain(first,
             "the pool is empty regardless of whether the challenge succeeded");
     }
 
@@ -401,11 +401,11 @@ public sealed class ClaimedControllerTests
     {
         var c = BuildController();
         c.Start();
-        var before = c.ChallengeableTerritories.Count;
+        var before = c.GetChallengeableTerritories().Count;
 
         c.ChallengeTerritory("NotARealTerritory");
 
-        c.ChallengeableTerritories.Count.Should().Be(before,
+        c.GetChallengeableTerritories().Count.Should().Be(before,
             "an unrecognised territory name must not change any state");
     }
 
@@ -426,7 +426,7 @@ public sealed class ClaimedControllerTests
         var c = BuildController();
         // Deliberately no Start().
 
-        var act = () => c.ChallengeTerritory(c.ChallengeableTerritories.First());
+        var act = () => c.ChallengeTerritory(c.GetChallengeableTerritories().First());
 
         act.Should().NotThrow();
     }
