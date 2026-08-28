@@ -132,7 +132,7 @@ public sealed class ControllerFactory : IControllerFactory
         Persistence.SessionSnapshot? resumeFrom,
         CancellationToken ct)
     {
-        return await CardTurnController.CreateAsync(
+        var controller = await CardTurnController.CreateAsync(
             definition: definition,
             players: players,
             modeName: modeName,
@@ -146,6 +146,14 @@ public sealed class ControllerFactory : IControllerFactory
             },
             ct: ct)
             .ConfigureAwait(false);
+
+        // CardTurnController is explicitly single-threaded (see ThreadingGuard.cs),
+        // but ThreadingGuard.Enabled defaults off in Release, so nothing actually
+        // stopped a caller that never marshals onto the owner thread from
+        // corrupting state in the build that ships. SerializedCardTurnController
+        // enforces serialized access unconditionally, at no behavioural cost to a
+        // host (every UI head today) that already calls everything from one thread.
+        return new SerializedCardTurnController(controller);
     }
 
     /// <inheritdoc />

@@ -52,9 +52,21 @@ public static class ServiceCollectionExtensions
         var descriptor = services.FirstOrDefault(d => d.ServiceType == typeof(IRandomSource));
         if (descriptor is not null) services.Remove(descriptor);
 
-        // Seeded Random is NOT thread-safe — register as scoped so each request/session
-        // gets its own instance, or as transient for single-threaded console apps.
-        services.AddSingleton<IRandomSource>(_ => new SeededRandomSource(seed));
+        // SeededRandomSource wraps System.Random, which is NOT thread-safe. It used
+        // to be registered AddSingleton — a comment right here said "register as
+        // scoped", but the line below it did the opposite, so every consumer in the
+        // process (every session, potentially running concurrently) shared one
+        // mutable Random instance. Scoped ties one instance, and the one seed it was
+        // built from, to one session: every transient consumer resolved within a
+        // session's scope (DeckBuilder, FisherYatesShuffleStrategy, …) shares that
+        // session's continuing sequence — a shuffle and a later dice roll draw from
+        // the same reproducible stream instead of two independent ones seeded
+        // identically — while two different sessions never share, and so can never
+        // race on, the same instance. A host with no scope-per-session concept yet
+        // (nothing in this repo creates an IServiceScope today) still resolves this
+        // exactly once from the root scope, same as the singleton did — this only
+        // starts mattering, safely, the moment a host adopts one scope per session.
+        services.AddScoped<IRandomSource>(_ => new SeededRandomSource(seed));
         return services;
     }
 
