@@ -189,18 +189,24 @@ jobs:
       - name: Build Core
         run: dotnet build src/TableTop.Core/TableTop.Core.csproj
              --no-restore -c Release
+             /p:TreatWarningsAsErrors=true
+             /p:WarningsAsErrors="1591,1573,1572"
 
       - name: Build Games
         run: dotnet build src/TableTop.Games/TableTop.Games.csproj
              --no-restore -c Release
+             /p:TreatWarningsAsErrors=true
+             /p:WarningsAsErrors="1591,1573,1572"
 
       - name: Build Hosting
         run: dotnet build src/TableTop.Hosting/TableTop.Hosting.csproj
              --no-restore -c Release
+             /p:TreatWarningsAsErrors=true
+             /p:WarningsAsErrors="1591,1573,1572"
 
-      # - name: Build Console UI
-      #   run: dotnet build ui/TableTop.Console/TableTop.Console.csproj
-      #        --no-restore -c Release
+      - name: Build Console UI
+        run: dotnet build ui/TableTop.Console/TableTop.Console.csproj
+             --no-restore -c Release /p:TreatWarningsAsErrors=true
 
       # ── Tests ─────────────────────────────────────────────────────────────────
 
@@ -287,22 +293,29 @@ jobs:
 
       # WinUI declares <Platforms>x86;x64;ARM64</Platforms> with no AnyCPU, so
       # an explicit platform is required or the build cannot pick one.
-      # - name: Build WinUI
-      #   run: dotnet build ui/TableTop.WinUI/TableTop.WinUI.csproj -c Release -p:Platform=x64
+      - name: Build WinUI
+        run: dotnet build ui/TableTop.WinUI/TableTop.WinUI.csproj -c Release -p:Platform=x64
 
       # Backlog G.4. The only tests that touch a ViewModel. They reference
       # TableTop.WinUI, so they run here rather than in the cross-platform job.
-      # - name: Run UI tests
-      #   run: dotnet test tests/TableTop.UiTests/TableTop.UiTests.csproj -c Release -p:Platform=x64
-      #        --logger "trx;LogFileName=ui-test-results.trx"
-      #        --results-directory tests/TableTop.UiTests/TestResults
+      #
+      # Re-enabled under backlog item 23. These were commented out because the
+      # test host could not start at all — a FileNotFoundException on
+      # Microsoft.TestPlatform.CoreUtilities before a single test ran. That is
+      # fixed (backlog item 2: CopyLocalLockFileAssemblies on the UiTests
+      # project), and the suite now runs and passes, so the reason for
+      # disabling it is gone.
+      - name: Run UI tests
+        run: dotnet test tests/TableTop.UiTests/TableTop.UiTests.csproj -c Release -p:Platform=x64
+             --logger "trx;LogFileName=ui-test-results.trx"
+             --results-directory tests/TableTop.UiTests/TestResults
 
-      # - name: Upload UI test results
-      #   uses: actions/upload-artifact@v4
-      #   if: always()
-      #   with:
-      #     name: ui-test-results
-      #     path: tests/TableTop.UiTests/TestResults/*.trx
+      - name: Upload UI test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-test-results
+          path: tests/TableTop.UiTests/TestResults/*.trx
 
   build-maui:
     name: Build MAUI (Android)
@@ -324,8 +337,15 @@ jobs:
       # Android only. On a non-macOS host the project's own TargetFrameworks
       # condition resolves to android + windows, and the windows TFM cannot be
       # built on Linux — so the framework is pinned rather than left to chance.
-      # - name: Build MAUI Android
-      #   run: dotnet build ui/TableTop.Maui/TableTop.Maui.csproj -c Release -f net10.0-android
+      #
+      # Re-enabled under backlog item 23. This could not have passed while it
+      # was commented out: a Release Android build failed outright with
+      # XA1030, because the SDK defaults RunAOTCompilation to true for Release
+      # while this project deliberately sets PublishTrimmed=false, and AOT
+      # requires trimming. Fixed by setting RunAOTCompilation=false explicitly
+      # in TableTop.Maui.csproj — see the comment there.
+      - name: Build MAUI Android
+        run: dotnet build ui/TableTop.Maui/TableTop.Maui.csproj -c Release -f net10.0-android
 
   lint:
     name: Code Quality
