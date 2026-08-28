@@ -48,6 +48,12 @@ public sealed class ClaimedMode : IGameMode, IClaimedDeckProvider
 /// </summary>
 internal static class ClaimedCardBank
 {
+    internal const string TriviaCategory = "Trivia";
+    internal const string WordplayCategory = "Wordplay";
+    internal const string PerformanceCategory = "Performance";
+    internal const string LogicCategory = "Logic";
+    internal const string SpeedCategory = "Speed";
+
     private static ICard C(string territory, string title, string body, Difficulty difficulty) =>
         new StandardCard(
             id: StableId(territory, title, body),
@@ -63,43 +69,43 @@ internal static class ClaimedCardBank
     public static IReadOnlyList<ICard> All { get; } =
     [
         // ── Trivia — general knowledge, table judges from memory or a phone ─────
-        C("Trivia", "Planets",   "How many planets are in our solar system?", Difficulty.Easy),
-        C("Trivia", "Elements",  "Name the chemical symbol for gold.", Difficulty.Medium),
-        C("Trivia", "Capitals",  "What's the capital of Australia? (It isn't Sydney.)", Difficulty.Medium),
-        C("Trivia", "Records",   "What's the world's longest river — Nile or Amazon? Depends who you ask, but pick one and defend it.", Difficulty.Hard),
-        C("Trivia", "Inventors", "Who's credited with inventing the telephone?", Difficulty.Medium),
-        C("Trivia", "Bodies",    "How many bones are in the adult human body?", Difficulty.Hard),
+        C(TriviaCategory, "Planets",   "How many planets are in our solar system?", Difficulty.Easy),
+        C(TriviaCategory, "Elements",  "Name the chemical symbol for gold.", Difficulty.Medium),
+        C(TriviaCategory, "Capitals",  "What's the capital of Australia? (It isn't Sydney.)", Difficulty.Medium),
+        C(TriviaCategory, "Records",   "What's the world's longest river — Nile or Amazon? Depends who you ask, but pick one and defend it.", Difficulty.Hard),
+        C(TriviaCategory, "Inventors", "Who's credited with inventing the telephone?", Difficulty.Medium),
+        C(TriviaCategory, "Bodies",    "How many bones are in the adult human body?", Difficulty.Hard),
 
         // ── Wordplay — puzzle it out under time pressure ────────────────────────
-        C("Wordplay", "Anagram",    "Unscramble: NEAPL. (One word, six letters — an appliance.)", Difficulty.Medium),
-        C("Wordplay", "Rhyme Time", "Name three words that rhyme with 'light' — go, out loud, no repeats.", Difficulty.Easy),
-        C("Wordplay", "Hidden Word","Find the smaller word hidden inside 'CARPET.' (There are two — name either.)", Difficulty.Medium),
-        C("Wordplay", "Opposite Day","Say the opposite of 'transparent' — the real word, not just 'not transparent.'", Difficulty.Hard),
-        C("Wordplay", "Compound",   "Combine 'sun' with another word to make a real compound word. Name three in 15 seconds.", Difficulty.Easy),
-        C("Wordplay", "Missing Vowels", "What word is this with the vowels removed: 'BC_S_'?", Difficulty.Hard),
+        C(WordplayCategory, "Anagram",    "Unscramble: NEAPL. (One word, six letters — an appliance.)", Difficulty.Medium),
+        C(WordplayCategory, "Rhyme Time", "Name three words that rhyme with 'light' — go, out loud, no repeats.", Difficulty.Easy),
+        C(WordplayCategory, "Hidden Word","Find the smaller word hidden inside 'CARPET.' (There are two — name either.)", Difficulty.Medium),
+        C(WordplayCategory, "Opposite Day","Say the opposite of 'transparent' — the real word, not just 'not transparent.'", Difficulty.Hard),
+        C(WordplayCategory, "Compound",   "Combine 'sun' with another word to make a real compound word. Name three in 15 seconds.", Difficulty.Easy),
+        C(WordplayCategory, "Missing Vowels", "What word is this with the vowels removed: 'BC_S_'?", Difficulty.Hard),
 
         // ── Performance — act it out, the table judges ──────────────────────────
-        C("Performance", "Silent Movie",  "Act out 'brushing your teeth' with no sound and no props for 15 seconds. Table judges if it read clearly.", Difficulty.Easy),
-        C("Performance", "One-Word Story","Tell a 10-second story using only the word 'banana,' with tone and gesture doing the rest.", Difficulty.Medium),
-        C("Performance", "Animal Impression", "Do your best impression of an animal of the table's choosing. They pick after you draw this card.", Difficulty.Easy),
-        C("Performance", "Emotion Swap",  "Say the sentence 'I can't believe it's already Monday' as if you just won the lottery.", Difficulty.Medium),
-        C("Performance", "Freeze Frame",  "Strike a pose that represents 'victory' and hold it for 10 seconds without laughing.", Difficulty.Hard),
-        C("Performance", "Weather Report","Deliver a 15-second weather forecast as if it were the most exciting news of the year.", Difficulty.Medium),
+        C(PerformanceCategory, "Silent Movie",  "Act out 'brushing your teeth' with no sound and no props for 15 seconds. Table judges if it read clearly.", Difficulty.Easy),
+        C(PerformanceCategory, "One-Word Story","Tell a 10-second story using only the word 'banana,' with tone and gesture doing the rest.", Difficulty.Medium),
+        C(PerformanceCategory, "Animal Impression", "Do your best impression of an animal of the table's choosing. They pick after you draw this card.", Difficulty.Easy),
+        C(PerformanceCategory, "Emotion Swap",  "Say the sentence 'I can't believe it's already Monday' as if you just won the lottery.", Difficulty.Medium),
+        C(PerformanceCategory, "Freeze Frame",  "Strike a pose that represents 'victory' and hold it for 10 seconds without laughing.", Difficulty.Hard),
+        C(PerformanceCategory, "Weather Report","Deliver a 15-second weather forecast as if it were the most exciting news of the year.", Difficulty.Medium),
 
         // ── Logic — riddles and deduction, answer explained if it stumps them ───
-        C("Logic", "Weight",     "Which weighs more: a kilogram of feathers or a kilogram of bricks?", Difficulty.Easy),
-        C("Logic", "Sequence",   "What comes next in the sequence: 2, 4, 8, 16, __?", Difficulty.Medium),
-        C("Logic", "Riddle",     "What has keys but can't open locks, space but no room, and you can enter but not go inside?", Difficulty.Hard),
-        C("Logic", "Liar",       "Two people: one always lies, one always tells the truth. You can ask one question to find the truth-teller — what do you ask?", Difficulty.Hard),
-        C("Logic", "Odd One Out","Which doesn't belong: apple, banana, carrot, orange? Explain your reasoning, not just the answer.", Difficulty.Medium),
-        C("Logic", "Counting",   "A farmer has 17 sheep. All but 9 die. How many are left?", Difficulty.Medium),
+        C(LogicCategory, "Weight",     "Which weighs more: a kilogram of feathers or a kilogram of bricks?", Difficulty.Easy),
+        C(LogicCategory, "Sequence",   "What comes next in the sequence: 2, 4, 8, 16, __?", Difficulty.Medium),
+        C(LogicCategory, "Riddle",     "What has keys but can't open locks, space but no room, and you can enter but not go inside?", Difficulty.Hard),
+        C(LogicCategory, "Liar",       "Two people: one always lies, one always tells the truth. You can ask one question to find the truth-teller — what do you ask?", Difficulty.Hard),
+        C(LogicCategory, "Odd One Out","Which doesn't belong: apple, banana, carrot, orange? Explain your reasoning, not just the answer.", Difficulty.Medium),
+        C(LogicCategory, "Counting",   "A farmer has 17 sheep. All but 9 die. How many are left?", Difficulty.Medium),
 
         // ── Speed — ten seconds, no thinking time ───────────────────────────────
-        C("Speed", "Colours",   "Name five colours in 10 seconds. Go.", Difficulty.Easy),
-        C("Speed", "Countries", "Name five countries in 10 seconds. Go.", Difficulty.Easy),
-        C("Speed", "Fruits",    "Name five fruits in 10 seconds. Go.", Difficulty.Easy),
-        C("Speed", "Movies",    "Name five movies in 10 seconds. Go.", Difficulty.Medium),
-        C("Speed", "Body Parts","Name eight body parts in 10 seconds. Go.", Difficulty.Medium),
-        C("Speed", "Kitchen",   "Name six things you'd find in a kitchen in 10 seconds. Go.", Difficulty.Easy),
+        C(SpeedCategory, "Colours",   "Name five colours in 10 seconds. Go.", Difficulty.Easy),
+        C(SpeedCategory, "Countries", "Name five countries in 10 seconds. Go.", Difficulty.Easy),
+        C(SpeedCategory, "Fruits",    "Name five fruits in 10 seconds. Go.", Difficulty.Easy),
+        C(SpeedCategory, "Movies",    "Name five movies in 10 seconds. Go.", Difficulty.Medium),
+        C(SpeedCategory, "Body Parts","Name eight body parts in 10 seconds. Go.", Difficulty.Medium),
+        C(SpeedCategory, "Kitchen",   "Name six things you'd find in a kitchen in 10 seconds. Go.", Difficulty.Easy),
     ];
 }
