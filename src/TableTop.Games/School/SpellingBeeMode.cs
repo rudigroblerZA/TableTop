@@ -57,7 +57,7 @@ public sealed class SpellingBeeMode : BaseGameModeDefinition, IFlowAwareMode
     public static IReadOnlyList<ICard> GetCards() => SpellingBeeCardBank.All;
 }
 
-/// <summary>120 spelling cards across four difficulty tiers.</summary>
+/// <summary>45 spelling cards across four difficulty tiers.</summary>
 public static class SpellingBeeCardBank
 {
     internal const string WordCategory = "Word";
@@ -70,104 +70,87 @@ public static class SpellingBeeCardBank
     private static IReadOnlyList<ICard> Build() =>
     [
         // ── Easy: common everyday words ──────────────────────────────────────
-        W("Smile",      Difficulty.Easy,   WordCategory,
-          "Spell the word <b>SMILE</b> and use it in a sentence."),
-        W("Climb",      Difficulty.Easy,   WordCategory,
-          "Spell the word <b>CLIMB</b> and use it in a sentence."),
-        W("Friend",     Difficulty.Easy,   WordCategory,
-          "Spell the word <b>FRIEND</b> and use it in a sentence."),
-        W("Bright",     Difficulty.Easy,   WordCategory,
-          "Spell the word <b>BRIGHT</b> and use it in a sentence."),
-        W("Strange",    Difficulty.Easy,   WordCategory,
-          "Spell the word <b>STRANGE</b> and use it in a sentence."),
-        W("Castle",     Difficulty.Easy,   WordCategory,
-          "Spell the word <b>CASTLE</b>. (Hint: silent T!) Use it in a sentence."),
-        W("Knife",      Difficulty.Easy,   WordCategory,
-          "Spell the word <b>KNIFE</b>. (Hint: silent K!) Use it in a sentence."),
-        W("Caught",     Difficulty.Easy,   WordCategory,
-          "Spell the word <b>CAUGHT</b> and use it in a sentence."),
-        W("Laugh",      Difficulty.Easy,   WordCategory,
-          "Spell the word <b>LAUGH</b> and use it in a sentence."),
-        W("Thought",    Difficulty.Easy,   WordCategory,
-          "Spell the word <b>THOUGHT</b> and use it in a sentence."),
-        W("Island",     Difficulty.Easy,   WordCategory,
-          "Spell the word <b>ISLAND</b>. (Hint: silent S!) Use it in a sentence."),
-        W("Doubt",      Difficulty.Easy,   WordCategory,
-          "Spell the word <b>DOUBT</b>. (Hint: silent B!) Use it in a sentence."),
-        W("Whole",      Difficulty.Easy,   WordCategory,
-          "Spell the word <b>WHOLE</b> and use it in a sentence."),
-        W("Write",      Difficulty.Easy,   WordCategory,
-          "Spell the word <b>WRITE</b>. (Hint: silent W!) Use it in a sentence."),
-        W("Guard",      Difficulty.Easy,   WordCategory,
-          "Spell the word <b>GUARD</b> and use it in a sentence."),
+        W("Smile", Difficulty.Easy),
+        W("Climb", Difficulty.Easy),
+        W("Friend", Difficulty.Easy),
+        W("Bright", Difficulty.Easy),
+        W("Strange", Difficulty.Easy),
+        W("Castle", Difficulty.Easy, hint: "Hint: silent T!"),
+        W("Knife", Difficulty.Easy, hint: "Hint: silent K!"),
+        W("Caught", Difficulty.Easy),
+        W("Laugh", Difficulty.Easy),
+        W("Thought", Difficulty.Easy),
+        W("Island", Difficulty.Easy, hint: "Hint: silent S!"),
+        W("Doubt", Difficulty.Easy, hint: "Hint: silent B!"),
+        W("Whole", Difficulty.Easy),
+        W("Write", Difficulty.Easy, hint: "Hint: silent W!"),
+        W("Guard", Difficulty.Easy),
 
         // ── Medium: trickier patterns ─────────────────────────────────────────
-        W("Necessary",   Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>NECESSARY</b>. (One C, two S!) Use it in a sentence."),
-        W("Believe",     Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>BELIEVE</b>. (I before E except after C!) Use it in a sentence."),
-        W("Separate",    Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>SEPARATE</b>. (There's a RAT in it!) Use it in a sentence."),
-        W("Definitely",  Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>DEFINITELY</b>. Use it in a sentence."),
-        W("Occasion",    Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>OCCASION</b>. (Two C's, one S!) Use it in a sentence."),
-        W("Conscience",  Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>CONSCIENCE</b> and use it in a sentence."),
-        W("Rhythm",      Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>RHYTHM</b>. (No vowels in the main part!) Use it in a sentence."),
-        W("Privilege",   Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>PRIVILEGE</b>. Use it in a sentence."),
-        W("Mischievous", Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>MISCHIEVOUS</b>. (Three syllables: MIS-CHIE-VOUS!) Use it in a sentence."),
-        W("Fluorescent", Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>FLUORESCENT</b> and use it in a sentence."),
-        W("Knowledge",   Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>KNOWLEDGE</b>. (Silent K!) Use it in a sentence."),
-        W("Lightning",   Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>LIGHTNING</b>. (Not 'lightening'!) Use it in a sentence."),
-        W("Embarrass",   Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>EMBARRASS</b>. (Two R's, two S's!) Use it in a sentence."),
-        W("Exaggerate",  Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>EXAGGERATE</b>. (Two G's!) Use it in a sentence."),
-        W("Environment", Difficulty.Medium, TrickyCategory,
-          "Spell the word <b>ENVIRONMENT</b>. (Don't forget the N!) Use it in a sentence."),
+        W("Necessary", Difficulty.Medium, hint: "One C, two S!"),
+        W("Believe", Difficulty.Medium, hint: "I before E except after C!"),
+        W("Separate", Difficulty.Medium, hint: "There's a RAT in it!"),
+        W("Definitely", Difficulty.Medium,
+          desc: "Spell the word <b>DEFINITELY</b>. Use it in a sentence."),
+        W("Occasion", Difficulty.Medium, hint: "Two C's, one S!"),
+        W("Conscience", Difficulty.Medium),
+        W("Rhythm", Difficulty.Medium, hint: "No vowels in the main part!"),
+        W("Privilege", Difficulty.Medium,
+          desc: "Spell the word <b>PRIVILEGE</b>. Use it in a sentence."),
+        W("Mischievous", Difficulty.Medium, hint: "Three syllables: MIS-CHIE-VOUS!"),
+        W("Fluorescent", Difficulty.Medium),
+        W("Knowledge", Difficulty.Medium, hint: "Silent K!"),
+        W("Lightning", Difficulty.Medium, hint: "Not 'lightening'!"),
+        W("Embarrass", Difficulty.Medium, hint: "Two R's, two S's!"),
+        W("Exaggerate", Difficulty.Medium, hint: "Two G's!"),
+        W("Environment", Difficulty.Medium, hint: "Don't forget the N!"),
 
         // ── Hard: subject vocabulary ──────────────────────────────────────────
-        W("Photosynthesis", Difficulty.Hard, ChallengeCategory,
-          "Spell the scientific word <b>PHOTOSYNTHESIS</b> and explain what it means."),
-        W("Miscellaneous",  Difficulty.Hard, ChallengeCategory,
-          "Spell the word <b>MISCELLANEOUS</b> and use it in a sentence."),
-        W("Perseverance",   Difficulty.Hard, ChallengeCategory,
-          "Spell the word <b>PERSEVERANCE</b> and use it in a sentence."),
-        W("Catastrophe",    Difficulty.Hard, ChallengeCategory,
-          "Spell the word <b>CATASTROPHE</b> and use it in a sentence."),
-        W("Phenomenon",     Difficulty.Hard, ChallengeCategory,
-          "Spell the word <b>PHENOMENON</b>. (PH = F sound!) Use it in a sentence."),
-        W("Metamorphosis",  Difficulty.Hard, ChallengeCategory,
-          "Spell the word <b>METAMORPHOSIS</b> and explain what it means."),
-        W("Archaeology",    Difficulty.Hard, ChallengeCategory,
-          "Spell the word <b>ARCHAEOLOGY</b> and use it in a sentence."),
-        W("Bureaucracy",    Difficulty.Hard, ChallengeCategory,
-          "Spell the word <b>BUREAUCRACY</b> and use it in a sentence."),
-        W("Pseudonym",      Difficulty.Hard, ChallengeCategory,
-          "Spell the word <b>PSEUDONYM</b>. (Silent P!) Use it in a sentence."),
-        W("Pneumonia",      Difficulty.Hard, ChallengeCategory,
-          "Spell the word <b>PNEUMONIA</b>. (Silent P!) Use it in a sentence."),
+        W("Photosynthesis", Difficulty.Hard,
+          desc: "Spell the scientific word <b>PHOTOSYNTHESIS</b> and explain what it means."),
+        W("Miscellaneous", Difficulty.Hard),
+        W("Perseverance", Difficulty.Hard),
+        W("Catastrophe", Difficulty.Hard),
+        W("Phenomenon", Difficulty.Hard, hint: "PH = F sound!"),
+        W("Metamorphosis", Difficulty.Hard,
+          desc: "Spell the word <b>METAMORPHOSIS</b> and explain what it means."),
+        W("Archaeology", Difficulty.Hard),
+        W("Bureaucracy", Difficulty.Hard),
+        W("Pseudonym", Difficulty.Hard, hint: "Silent P!"),
+        W("Pneumonia", Difficulty.Hard, hint: "Silent P!"),
 
         // ── Extreme: championship-level words ────────────────────────────────
-        W("Onomatopoeia",   Difficulty.Extreme, ChallengeCategory,
-          "Spell the literary term <b>ONOMATOPOEIA</b> and give an example of it."),
-        W("Conscientious",  Difficulty.Extreme, ChallengeCategory,
-          "Spell the word <b>CONSCIENTIOUS</b> and use it in a sentence."),
-        W("Rhododendron",   Difficulty.Extreme, ChallengeCategory,
-          "Spell the plant name <b>RHODODENDRON</b> and use it in a sentence."),
-        W("Supercilious",   Difficulty.Extreme, ChallengeCategory,
-          "Spell the word <b>SUPERCILIOUS</b> and use it in a sentence."),
-        W("Idiosyncrasy",   Difficulty.Extreme, ChallengeCategory,
-          "Spell the word <b>IDIOSYNCRASY</b> and use it in a sentence."),
+        W("Onomatopoeia", Difficulty.Extreme,
+          desc: "Spell the literary term <b>ONOMATOPOEIA</b> and give an example of it."),
+        W("Conscientious", Difficulty.Extreme),
+        W("Rhododendron", Difficulty.Extreme,
+          desc: "Spell the plant name <b>RHODODENDRON</b> and use it in a sentence."),
+        W("Supercilious", Difficulty.Extreme),
+        W("Idiosyncrasy", Difficulty.Extreme),
     ];
 
-    private static ICard W(string word, Difficulty d, string cat, string desc) =>
-        StandardCard.Create(word, desc, d, cat);
+    // Three defaults, for the three things every card was retyping.
+    //   cat  — each difficulty tier is a category (Hard and Extreme share
+    //          Challenge), so it derives from `d` unless a card passes its own.
+    //   hint — the parenthesised aside in "…</b>. (Silent K!) Use it in a
+    //          sentence." Pass the aside; the sentence around it is built here.
+    //   desc — the escape hatch for the six cards that ask for something other
+    //          than spell-and-use-in-a-sentence. Wins over `hint` when both are
+    //          given, since it replaces the whole prompt rather than filling a
+    //          slot in it.
+    private static ICard W(string word, Difficulty d, string? hint = null,
+                           string? cat = null, string? desc = null) =>
+        StandardCard.Create(word, desc ?? Prompt(word, hint), d, cat ?? CategoryFor(d));
+
+    private static string Prompt(string word, string? hint) =>
+        hint is null
+            ? $"Spell the word <b>{word.ToUpperInvariant()}</b> and use it in a sentence."
+            : $"Spell the word <b>{word.ToUpperInvariant()}</b>. ({hint}) Use it in a sentence.";
+
+    private static string CategoryFor(Difficulty d) => d switch
+    {
+        Difficulty.Easy => WordCategory,
+        Difficulty.Medium => TrickyCategory,
+        _ => ChallengeCategory,
+    };
 }
