@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.29.1**, August 2026. This replaces the accumulated
+Current as of **1.29.2**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -492,6 +492,21 @@ async work to block on, a different shape rather than a template to copy.
   commented-out code is itself a Sonar smell (S125), so leaving it that way
   in a Sonar-cleanup branch would trade one finding for another. Deleted
   outright. PATCH: fixes only, no public surface touched.
+- **1.29.2** finished the category-literal extraction PR #14 began, on the
+  two banks it missed: `ClaimedCardBank` (five territories × six cards) and
+  `DayOneCardBank` (three phases × seven days) now name their categories as
+  `internal const string` rather than repeating the literal once per card.
+  Day One's are `SparkPhase`/`WarmthPhase`/`EmbersPhase` rather than
+  `*Category`, matching that mode's own vocabulary.
+
+  Worth more care than a typical extraction because `ClaimedCardBank` derives
+  each card's `Guid` by hashing `"claimed|{territory}|{title}|{body}"` — a
+  category string off by one character would silently renumber the whole deck
+  and make already-seen cards look new across a save/resume, with no error
+  anywhere. Every constant holds byte-for-byte the literal it replaced.
+  `ScienceSprintMode` and `SoundAndSongMode` were checked at the same time and
+  needed nothing: PR #14 had already converted both fully. PATCH: refactor
+  only, no behaviour and no public surface change.
 
 ## What genuinely doesn't exist here
 
