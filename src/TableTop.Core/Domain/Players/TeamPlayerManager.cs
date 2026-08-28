@@ -94,10 +94,9 @@ public sealed class TeamPlayerManager : IPlayerManager
         if (ScoreMode is TeamScoreMode.Individual or TeamScoreMode.Both)
             _inner.ApplyScore(playerId, delta);
 
-        if (ScoreMode is TeamScoreMode.TeamOnly or TeamScoreMode.Both)
+        if ((ScoreMode is TeamScoreMode.TeamOnly or TeamScoreMode.Both) && _playerTeam.TryGetValue(playerId, out var team))
         {
-            if (_playerTeam.TryGetValue(playerId, out var team))
-                team.ApplyScore(delta);
+            team.ApplyScore(delta);
         }
     }
 

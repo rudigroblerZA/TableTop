@@ -33,7 +33,6 @@ public sealed class CardTurnController : ICardTurnController
     private readonly string? _modeFilePath;
     private readonly TableTop.Core.Abstractions.IEngineDiagnostics _diagnostics;
     private readonly Dictionary<Guid, List<CardOutcome>> _outcomeHistory = [];
-    private readonly Dictionary<Guid, List<Difficulty>> _difficultyHistory = [];
 
     // ── Thread-safety ─────────────────────────────────────────────────────────
     // CardTurnController is single-threaded. Ownership transfers to the caller
@@ -42,14 +41,14 @@ public sealed class CardTurnController : ICardTurnController
     private readonly ThreadingGuard _threadGuard = new();
 
     // ── Extracted services ────────────────────────────────────────────────────
-    private SkipPolicy? _skipPolicy;
-    private EffectApplicator? _effectApplicator;
-    private TurnHistoryTracker? _historyTracker;
-    private SpecialCardCoordinator? _specialCards;
-    private FlowCoordinator? _flow;
-    private PersistenceCoordinator? _persistence;
-    private HintCoordinator? _hints;
-    private UndoCoordinator? _undo;
+    private readonly SkipPolicy? _skipPolicy;
+    private readonly EffectApplicator? _effectApplicator;
+    private readonly TurnHistoryTracker? _historyTracker;
+    private readonly SpecialCardCoordinator? _specialCards;
+    private readonly FlowCoordinator? _flow;
+    private readonly PersistenceCoordinator? _persistence;
+    private readonly HintCoordinator? _hints;
+    private readonly UndoCoordinator? _undo;
 
     /// <summary>Score penalty per skip after the first (default: -1).</summary>
     public int SkipPenalty { get; init; } = -1;
@@ -506,7 +505,6 @@ public sealed class CardTurnController : ICardTurnController
                 continue;   // try the next player
             }
 
-            consecutiveSkips = 0;
             EmitCard(card);
             return;
         }

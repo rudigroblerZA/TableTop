@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.29.0**, August 2026. This replaces the accumulated
+Current as of **1.29.1**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -475,6 +475,23 @@ async work to block on, a different shape rather than a template to copy.
   try/catch blocks, and `scripts/check-maui-async-void.py` — the seventh
   gate — keeps it closed. MINOR: two new capabilities, no public-surface
   removals.
+- **1.29.1** SonarCloud code-smell cleanups, no behaviour change:
+  `TeamPlayerManager.ApplyScore`'s nested `if` merged into one condition
+  (S1066); an unused private `WrapText` helper and an unused `players`
+  parameter dropped from `GetToKnowYouMode` and `WouldYouRatherMode`
+  (S1144/S1172); `CardTurnController`'s eight extracted-service fields marked
+  `readonly` (S2933), each having exactly one assignment.
+
+  Recorded because the branch did not compile when it was picked up, and two
+  of the three repairs were the silent-looking kind. The `BuildBuiltInCards`
+  call sites had dropped their argument while both signatures still declared
+  the parameter (2 × `CS7036`). `CardTurnController._diagnostics` had been
+  commented out but is live and referenced eight times (8 × `CS0103`, which
+  also broke `TableTop.Console`) — restored. And `_difficultyHistory`, which
+  *is* genuinely dead, had been commented out rather than removed;
+  commented-out code is itself a Sonar smell (S125), so leaving it that way
+  in a Sonar-cleanup branch would trade one finding for another. Deleted
+  outright. PATCH: fixes only, no public surface touched.
 
 ## What genuinely doesn't exist here
 
