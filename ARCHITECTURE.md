@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.30.0**, August 2026. This replaces the accumulated
+Current as of **1.31.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a

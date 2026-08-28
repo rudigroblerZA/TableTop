@@ -79,7 +79,7 @@
     /p:VersionSuffix=beta.1 or similar for a pre-release without editing this.
   -->
   <PropertyGroup>
-    <VersionPrefix>1.30.0</VersionPrefix>
+    <VersionPrefix>1.31.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
 
     <!--
