@@ -22,16 +22,19 @@ across the existing numbering rather than adding to it.
 
 | | Item | Why it matters |
 |---|---|---|
-| **P1** | **23** — two CI jobs report green while building nothing | "Build WinUI" and "Build MAUI (Android)" have every real step commented out. Console's build and engine `TreatWarningsAsErrors` went too. A green check that verifies nothing is worse than a missing one. |
 | **P2** | **24** — `RoasterViewModel` is the only shared ViewModel with no tests | Nine of the ten in `TableTop.Presentation` have a test file. This one has none, and it is the newest and least exercised. |
 | **P2** | **25** — saved rosters are a closed loop | You can build and persist a roster, and then never play with it. Nothing outside the Roaster screen reads a `SavedRoster`. |
 | **P2** | **26** — the "Team" roster template promises sides it never assigns | Teams are a real first-class concept (`ITeamMode`, `AssignTeams`). The template's description says "split into sides" and does nothing of the kind. |
 | **P3** | **28** — Console has no Roaster | Third head, no roster builder and no `IRosterStore`. Smallest of the parity gaps but the one now written down. |
 
-**Item 27 is closed** and has dropped out of this table. It turned out to be
-eight unguarded handlers rather than the six this item counted by reading —
-the two extras found by the gate the item proposed, written before the fix
-for exactly that reason. `check-maui-async-void.py` now enforces it in CI.
+**Items 23 and 27 are closed** and have dropped out of this table. Item 27
+turned out to be eight unguarded handlers rather than the six it counted by
+reading — the two extras found by the gate the item proposed, written before
+the fix for exactly that reason. `check-maui-async-void.py` now enforces it
+in CI. Item 23 was closed by re-enabling every disabled step, which first
+required fixing two genuine build failures: MAUI Android could not build at
+all (`XA1030`, AOT-versus-trimming), and the UI-test host could not start
+until item 2 fixed it. CI now compiles all four heads again.
 
 Items 23–28 came from a review of the tree at 1.28.0 — the first review run
 on a machine with a full toolchain *and* a green suite, so unlike earlier
@@ -1349,7 +1352,7 @@ from source. Items 24–26 and half of 27 are faults in code added *during*
 shipped with a known gap is worth more as a written-down gap than as a
 silent one.
 
-### 23. Two CI jobs report green while building nothing
+### 23. Two CI jobs report green while building nothing — **CLOSED**
 
 **P1, and the most serious thing in this review.** `build-windows-heads`
 ("Build WinUI") and `build-maui` ("Build MAUI (Android)") both still exist,
@@ -1413,6 +1416,51 @@ reason to leave a green no-op standing in its place. Three honest options:
 
 Anything but the current state, which is option 2's cost with option 1's
 appearance.
+
+**Closed by taking option 1 — and re-enabling turned out to require fixing
+two real build failures, which is almost certainly why the steps were
+commented out in the first place.**
+
+The history matters, because it reads as triage rather than a decision. Four
+separate commits turned things off one at a time — `219d44e` ("Simplify build
+commands by removing warning options"), `ed1ec93` (Console), `9265df4`
+(MAUI Android), `91ffc27` (WinUI + UI tests) — none recording a reason. Each
+step was verified locally before being restored, rather than switched back on
+and hoped for:
+
+- **MAUI Android could not build at all.** `dotnet build -c Release -f
+  net10.0-android` failed with `XA1030: The 'RunAOTCompilation' MSBuild
+  property is only supported when trimming is enabled`. The Android SDK
+  defaults `RunAOTCompilation` to true for Release; this project
+  deliberately sets `PublishTrimmed=false` (the documented "Android release
+  safety" block, so the linker cannot strip card types reached reflectively
+  by `System.Text.Json`); AOT requires trimming, so the two are mutually
+  exclusive and the build dies. Fixed by setting `RunAOTCompilation=false`
+  explicitly in `TableTop.Maui.csproj` — the only value consistent with the
+  trimming decision already made there. **A job that cannot pass is a job
+  someone disables**, so this was very likely the actual cause rather than
+  runner cost.
+- **The UI-test step's blocker was already gone.** It could not start at all
+  (`FileNotFoundException` on `Microsoft.TestPlatform.CoreUtilities` before
+  any test ran) until item 2 fixed it in 1.28.0. It now runs and passes 2/2.
+- **`TreatWarningsAsErrors` restored** on Core, Games, Hosting and Console.
+  All four still build clean under it, so nothing was being hidden — the
+  flags had simply been dropped along with everything else.
+
+Every job now does real work, verified locally against the exact commands
+CI runs: engine builds with warnings-as-errors, Console with them, the
+893-test suite, WinUI `-p:Platform=x64`, `TableTop.UiTests` (2/2), MAUI
+Android Release, and the `lint` job's XML-doc completeness checks on Core
+and Hosting. `ci.yml` parses as valid YAML with **zero commented-out steps
+remaining**, and its own comment — *"That cost is the point: these heads are
+the product"* — is true again rather than self-contradictory.
+
+**Not verified, and worth saying plainly:** these ran on one Windows
+developer machine with the MAUI workload already installed, not on GitHub's
+runners. The Android job in particular installs `maui-android` fresh each
+time, and this machine has `android` + `maui-windows` instead — so the
+workload-install step itself is the one part of the chain still unproven.
+The first CI run after this merge is the real check.
 
 ### 24. `RoasterViewModel` is the only shared ViewModel with no tests
 

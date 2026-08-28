@@ -96,6 +96,24 @@
   <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' AND '$(Configuration)' == 'Release'">
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
     <PublishTrimmed>false</PublishTrimmed>
+
+    <!--
+      Must be set explicitly, and false is the only value consistent with the
+      PublishTrimmed=false above: the Android SDK defaults RunAOTCompilation
+      to true for Release, AOT is only supported when trimming is enabled, and
+      the two together fail the build outright with
+
+        error XA1030: The 'RunAOTCompilation' MSBuild property is only
+        supported when trimming is enabled.
+
+      Leaving it unset is why `dotnet build -c Release -f net10.0-android`
+      could not succeed at all, which is the likeliest reason CI's
+      "Build MAUI (Android)" step was commented out rather than fixed
+      (backlog item 23). The trade is startup time for the reflection safety
+      this property group exists to buy; that trade was already made when
+      PublishTrimmed was set to false.
+    -->
+    <RunAOTCompilation>false</RunAOTCompilation>
   </PropertyGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
