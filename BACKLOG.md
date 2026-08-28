@@ -1,6 +1,6 @@
 # TableTop — Backlog
 
-Current as of **1.29.0**, August 2026. Open items only; git history has the rest.
+Current as of **1.29.1**, August 2026. Open items only; git history has the rest.
 
 Items 1–8 predate the 1.18.0 review and keep their numbers — rewriting a
 numbered item in place is how item 7 vanished once (see its note). Items 9–16
