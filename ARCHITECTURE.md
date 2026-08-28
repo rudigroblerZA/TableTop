@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.31.0**, August 2026. This replaces the accumulated
+Current as of **1.32.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -12,21 +12,23 @@ than archaeologically verified.
 ```
 Core ← Games ← Hosting ← Presentation
                               ↑
-                    Console · WinUI · MAUI
+              Console · Android · WinUI · MAUI
 ```
 
-Four engine assemblies, three heads. `Core` defines the abstractions (cards,
+Four engine assemblies, four heads. `Core` defines the abstractions (cards,
 players, scoring, progression, rules) and has no dependency on anything else
 in the solution. `Games` is 99 modes and their decks. `Hosting` is the runtime
 — controllers, the archetype registry, persistence, `ControllerFactory`.
 `Presentation` is shared ViewModels: plain `net10.0`, no platform SDK
-dependency, which is what makes it directly unit-testable without WinUI or
-MAUI installed anywhere.
+dependency, which is what makes it directly unit-testable without WinUI, MAUI
+or the Android workload installed anywhere.
 
-Console, WinUI and MAUI are the three heads. Console is text-only and builds
-here. WinUI and MAUI need their respective SDKs, which this environment does
-not have — see **Verification, honestly** below for what that actually means
-in practice.
+Console, Android, WinUI and MAUI are the four heads. Console is text-only and
+builds here. `TableTop.Android` (added 1.32.0) is a native .NET for Android
+head — Mono.Android bindings, Activities and view trees built in code, **not**
+MAUI — and needs only the `android` workload, which builds on any OS. WinUI and
+MAUI need their respective SDKs, which this environment does not have — see
+**Verification, honestly** below for what that actually means in practice.
 
 ## Content
 
@@ -152,6 +154,11 @@ does the one thing it cannot delegate:
 - **WinUI** swaps ViewModels through `Navigator`/`ViewLocator` — no page stack.
 - **MAUI** uses a page stack, plus one thin adapter (`GameplayViewModel`) for
   platform `Color`, resolved fonts, and settings that must update live.
+- **Android** (`TableTop.Android`, native Mono.Android) swaps `Screen` objects
+  over one container with a hand-rolled back-stack, and binds each shared
+  ViewModel by hand through a single `render()` callback (`ViewModelBinder`) —
+  there is no XAML binding engine. It consumes the shared ViewModels directly,
+  with no per-head wrapper.
 - **Console** renders controllers directly, with no ViewModel layer at all.
 
 Everything below that line is shared; everything above it is genuinely
@@ -584,6 +591,29 @@ async work to block on, a different shape rather than a template to copy.
   tested: that sandbox had no `dotnet` and no NuGet, so each closed item's
   own note in `BACKLOG.md` says what was checked instead. The seven
   `check-*.py` gates were run and pass; `check-ui-compiles.py` could not be.
+- **1.32.0** added a fourth head: **`TableTop.Android`**, a native .NET for
+  Android app. Not MAUI — it references the raw Mono.Android bindings and
+  builds its screens as Activity + view trees in code, driven by the same
+  `TableTop.Presentation` ViewModels WinUI and MAUI already share. A single
+  `MainActivity` swaps lightweight `Screen` objects over one `FrameLayout`
+  with a hand-rolled back-stack (the analog of WinUI's ViewModel-swapping, no
+  page stack); `StackNavigator` implements `INavigator`, `AndroidAppSettings`
+  implements `IAppSettings` over `SharedPreferences` (a near-line-for-line port
+  of MAUI's `AppSettings`), and `AndroidRosterStore` implements `IRosterStore`.
+  `GameScreenFactory` is the Android mirror of WinUI's `GameViewModelFactory`,
+  including its `SupportedFamilies` declaration — the head shipped at **full
+  parity**, a screen for all six `ControllerFamily` values, so
+  `HeadFamilyCoverageTests` gets an `AndroidSupported` array and a
+  `_CanNowPlay_` test alongside the other three heads, and
+  `scripts/check-head-family-coverage.py` reads a fourth source. The head
+  needs only the `android` workload (builds on any OS); its Release config
+  carries the same `PublishTrimmed=false` / `RunAOTCompilation=false`
+  reflection-safety pair `TableTop.Maui.csproj` documents (backlog item 23).
+  MINOR: new capability, no change to Core/Games/Hosting's public surface —
+  same reasoning class as the UI-only bumps 1.25.0 and 1.27.0. Built and
+  verified here (`-f net10.0-android`, Debug and Release); the engine suite
+  and all `check-*.py` gates pass. Not exercised on a device or emulator —
+  the same honest gap the other graphical heads carry.
 
 ## What genuinely doesn't exist here
 

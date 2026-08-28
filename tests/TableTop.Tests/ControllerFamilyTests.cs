@@ -272,6 +272,25 @@ public sealed class HeadFamilyCoverageTests
         ControllerFamily.SimultaneousAnswer,
     ];
 
+    /// <summary>
+    /// Mirrors <c>GameScreenFactory.SupportedFamilies</c> in the native
+    /// .NET for Android head. That project needs the <c>android</c> workload,
+    /// so — same reasoning as <see cref="MauiSupported"/> and
+    /// <see cref="WinUiSupported"/> — this project cannot reference it and reads
+    /// a copy instead, kept honest by
+    /// <c>scripts/check-head-family-coverage.py</c>. The head shipped at full
+    /// parity: a screen for every family.
+    /// </summary>
+    private static readonly ControllerFamily[] AndroidSupported =
+    [
+        ControllerFamily.CardTurn,
+        ControllerFamily.Quiz,
+        ControllerFamily.Monogamy,
+        ControllerFamily.DailyCampaign,
+        ControllerFamily.AreaControl,
+        ControllerFamily.SimultaneousAnswer,
+    ];
+
     [Fact]
     public void EveryModeInTheRegistry_MapsToAKnownFamily()
     {
@@ -294,6 +313,14 @@ public sealed class HeadFamilyCoverageTests
     {
         // Same closure as the MAUI test above — backlog item 4.
         ControllerFamilies.UnsupportedIn(AllModes(), WinUiSupported).Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Android_CanNowPlayEveryModeInTheCatalogue()
+    {
+        // The native .NET for Android head shipped at full parity with WinUI —
+        // a screen for all six families (its own README / ARCHITECTURE entry).
+        ControllerFamilies.UnsupportedIn(AllModes(), AndroidSupported).Should().BeEmpty();
     }
 
     [Fact]

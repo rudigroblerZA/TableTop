@@ -14,6 +14,12 @@
       console only), or exclude TableTop.Maui from the build in Visual Studio
       via Configuration Manager.
 
+    TableTop.Android
+      Native .NET for Android head (Mono.Android bindings, not MAUI). Requires
+      the `android` workload:
+          dotnet workload install android
+      Builds on any OS; without the workload, open TableTop.Engine.slnx instead.
+
     TableTop.WinUI
       Windows only. Requires the Windows App SDK. Declares x86;x64;ARM64 and no
       AnyCPU. Naming a platform is still the explicit, preferred form and is what
@@ -55,6 +61,7 @@
   -->
   <Folder Name="/UI/">
     <Project Path="ui/TableTop.Console/TableTop.Console.csproj" />
+    <Project Path="ui/TableTop.Android/TableTop.Android.csproj" />
     <Project Path="ui/TableTop.Maui/TableTop.Maui.csproj" />
     <Project Path="ui/TableTop.WinUI/TableTop.WinUI.csproj">
       <Platform Solution="Debug|*" Project="x64" />
