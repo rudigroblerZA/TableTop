@@ -6,8 +6,20 @@ namespace TableTop.Presentation.Infrastructure;
 /// Previously declared twice — once in MAUI's <c>AppSettings.cs</c> and once in
 /// WinUI's <c>WinUIAppSettings.cs</c> — as identical records that could drift
 /// apart without anything noticing. One declaration now.
+///
+/// <para>
+/// <paramref name="Team"/> is null for every roster built before the Roaster's
+/// "Team" template dealt sides (backlog item 26), and stays null for any
+/// template that doesn't. When set, <c>PlayerSetupViewModel.LoadRoster</c>
+/// carries it into <c>IPlayer.Attributes["team"]</c> via <c>Teams</c>, so a
+/// saved Team roster starts a team mode with sides already assigned instead of
+/// an unassigned table. The delimited <c>RecentPlayers</c> encoding in each
+/// head's settings store does not persist it — that list is a flat setup
+/// prefill, not a roster.
+/// </para>
 /// </summary>
-public sealed record SavedPlayer(string Name, string? Gender, int? Age, bool IsCoupleMember = false);
+public sealed record SavedPlayer(
+    string Name, string? Gender, int? Age, bool IsCoupleMember = false, string? Team = null);
 
 /// <summary>
 /// The settings surface a shared ViewModel can rely on.

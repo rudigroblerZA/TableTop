@@ -328,6 +328,43 @@ public sealed class PlayerSetupViewModelTests
     }
 
     [Fact]
+    public void LoadRoster_WithATeamRoster_RestoresTheSidesItCarries()
+    {
+        // Backlog item 26: the Roaster's "Team" template deals sides and stamps
+        // SavedPlayer.Team. Loading such a roster must bring those assignments
+        // in, so a team mode started from it has real sides — not the
+        // unassigned table the item was filed against.
+        var (vm, _, _) = Build(new FakeTeamMode());
+
+        vm.LoadRoster(Roster("Regulars",
+            new SavedPlayer("Amy", null, null, Team: "Red"),
+            new SavedPlayer("Ben", null, null, Team: "Blue"),
+            new SavedPlayer("Cara", null, null, Team: "Red"),
+            new SavedPlayer("Dan", null, null, Team: "Blue")));
+
+        vm.HasTeams.Should().BeTrue();
+        vm.TeamSummary.Should().Contain("Red: Amy, Cara").And.Contain("Blue: Ben, Dan");
+
+        var built = vm.BuildPlayers();
+        built.Should().OnlyContain(p => p.Attributes.ContainsKey("team"));
+        built.Single(p => p.DisplayName == "Amy").Attributes["team"].Should().Be("Red");
+        built.Single(p => p.DisplayName == "Ben").Attributes["team"].Should().Be("Blue");
+    }
+
+    [Fact]
+    public void LoadRoster_WithATeamlessRoster_AssignsNoTeams()
+    {
+        var (vm, _, _) = Build(new FakeTeamMode());
+
+        vm.LoadRoster(Roster("Regulars",
+            new SavedPlayer("Amy", null, null),
+            new SavedPlayer("Ben", null, null)));
+
+        vm.HasTeams.Should().BeFalse();
+        vm.BuildPlayers().Should().OnlyContain(p => !p.Attributes.ContainsKey("team"));
+    }
+
+    [Fact]
     public void SavedRosterOption_Invoke_LoadsThatRoster()
     {
         var store = new FakeRosterStore([Roster("Regulars", new SavedPlayer("Alice", "female", 30))]);
