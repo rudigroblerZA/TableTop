@@ -1,0 +1,75 @@
+<!--
+  Native .NET for Android head — requires the `android` workload:
+      dotnet workload install android
+      dotnet build ui/TableTop.Android/TableTop.Android.csproj -f net10.0-android
+
+  This is a fourth UI head alongside Console, WinUI and MAUI. It uses the raw
+  Mono.Android bindings directly (Activities + View trees + AXML), NOT MAUI, and
+  consumes the same shared ViewModels in TableTop.Presentation as WinUI and MAUI.
+  MAUI still emits its own Android APK; the two apps use different ApplicationIds
+  and can be installed side by side.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>24</SupportedOSPlatformVersion>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Namespace is TableTop.Droid, not TableTop.Android: a namespace beginning
+         with "Android" shadows the Mono.Android root namespace (Android.App, …)
+         and makes every framework reference ambiguous. -->
+    <AssemblyName>TableTop.Android</AssemblyName>
+    <RootNamespace>TableTop.Droid</RootNamespace>
+
+    <ApplicationId>com.tabletop.game.droid</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <!-- Derived from VersionPrefix so the app version cannot drift from the engine,
+         the same call TableTop.Maui.csproj makes. -->
+    <ApplicationDisplayVersion>$(VersionPrefix)</ApplicationDisplayVersion>
+
+    <AndroidPackageFormats Condition="'$(Configuration)' == 'Release'">aab;apk</AndroidPackageFormats>
+  </PropertyGroup>
+
+  <!--
+    ANDROID RELEASE SAFETY — identical reasoning to TableTop.Maui.csproj.
+
+    Debug deployments don't run the linker; Release builds do. Card types are
+    reached reflectively by System.Text.Json, so:
+
+      * PublishTrimmed=false          keeps the linker from stripping them
+      * AndroidLinkMode=SdkOnly       links the BCL only, not app assemblies
+      * the three engine assemblies are explicitly rooted below
+      * RunAOTCompilation=false       MUST be set explicitly: the Android SDK
+                                      defaults it to true for Release, AOT is
+                                      only supported with trimming enabled, and
+                                      the two together fail the build with
+                                      error XA1030 (backlog item 23).
+  -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <PublishTrimmed>false</PublishTrimmed>
+    <RunAOTCompilation>false</RunAOTCompilation>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <TrimmerRootAssembly Include="TableTop.Core" />
+    <TrimmerRootAssembly Include="TableTop.Games" />
+    <TrimmerRootAssembly Include="TableTop.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Composition root: same package WinUI references for the same reason. -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TableTop.Core\TableTop.Core.csproj" />
+    <ProjectReference Include="..\..\src\TableTop.Games\TableTop.Games.csproj" />
+    <ProjectReference Include="..\..\src\TableTop.Hosting\TableTop.Hosting.csproj" />
+    <ProjectReference Include="..\..\src\TableTop.Presentation\TableTop.Presentation.csproj" />
+  </ItemGroup>
+
+</Project>

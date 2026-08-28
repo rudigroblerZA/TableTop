@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+	<!--
+		TableTop is a fully local party-game app: it stores settings and the
+		remembered roster in Android SharedPreferences and talks to no network
+		or hardware. It deliberately requests NO permissions.
+	-->
+	<uses-sdk android:minSdkVersion="24" android:targetSdkVersion="36" />
+	<application
+		android:allowBackup="true"
+		android:icon="@drawable/appicon"
+		android:label="TableTop"
+		android:supportsRtl="true"
+		android:theme="@style/TableTop.Theme" />
+</manifest>

@@ -341,7 +341,37 @@ jobs:
 
       - name: Build MAUI Android
         run: dotnet build ui/TableTop.Maui/TableTop.Maui.csproj -c Release -f net10.0-android
-  
+
+  # ── Native Android head ──────────────────────────────────────────────────
+  # TableTop.Android is a native .NET for Android head (Mono.Android, not MAUI).
+  # It needs only the `android` workload and a JDK — no MAUI workload, no
+  # Windows — so it builds on the cheap Linux runner.
+  build-android:
+    name: Build Android (native)
+    runs-on: ubuntu-latest
+    needs: xaml
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Install workload
+        run: dotnet workload install android --ignore-failed-sources
+
+      - name: Build Android (Release)
+        run: dotnet build ui/TableTop.Android/TableTop.Android.csproj -c Release -f net10.0-android
+
   lint:
     name: Code Quality
     runs-on: ubuntu-latest
