@@ -176,21 +176,36 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
     ///
     /// MAUI did this and WinUI did not: a missing or malformed deck took the
     /// WinUI app down instead of showing why. Shared, so both behave the same.
+    ///
+    /// <para>
+    /// Goes through <see cref="IControllerFactory"/> rather than constructing
+    /// <c>MonogamyController</c> directly — this used to be one of the last
+    /// production call sites that bypassed the factory, which meant it also
+    /// bypassed whatever persistence override, diagnostics sink, or future
+    /// policy a host registered on it. <paramref name="winningTokenCount"/> is
+    /// null by default, which lets the factory fall back to the mode's own
+    /// <see cref="IMonogamyDeckProvider.WinningTokenCount"/>
+    /// instead of this method silently overriding it with its own literal 10.
+    /// </para>
     /// </summary>
-    public static MonogamyGameViewModel Create(
+    public static async Task<MonogamyGameViewModel> CreateAsync(
         INavigator navigator,
         IGameMode mode,
         IReadOnlyList<IPlayer> players,
-        int winningTokenCount = 10)
+        int? winningTokenCount = null,
+        IControllerFactory? controllerFactory = null)
     {
         try
         {
-            var deck = mode is IMonogamyDeckProvider p
-                ? p.GetDeck()
-                : throw new NotSupportedException($"'{mode.Name}' provides no Monogamy deck.");
+            var controller = await (controllerFactory ?? new ControllerFactory())
+                .CreateAsync(mode, players, monogamyWinningTokenCount: winningTokenCount);
+            if (controller is not IMonogamyController mc)
+            {
+                controller.Dispose();
+                throw new NotSupportedException($"'{mode.Name}' isn't a Monogamy-style mode.");
+            }
 
-            return new MonogamyGameViewModel(
-                navigator, new MonogamyController(players, deck, winningTokenCount));
+            return new MonogamyGameViewModel(navigator, mc);
         }
         catch (Exception ex)
         {
