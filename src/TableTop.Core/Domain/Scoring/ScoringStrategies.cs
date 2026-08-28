@@ -14,8 +14,7 @@ public sealed class FixedScoringStrategy : IScoringStrategy
     /// <summary>Initialises a new <see cref="FixedScoringStrategy"/> instance.</summary>
     public FixedScoringStrategy(int pointsPerCompletion = 1)
     {
-        if (pointsPerCompletion < 0)
-            throw new ArgumentOutOfRangeException(nameof(pointsPerCompletion));
+        ArgumentOutOfRangeException.ThrowIfNegative(pointsPerCompletion);
         _pointsPerCompletion = pointsPerCompletion;
     }
 

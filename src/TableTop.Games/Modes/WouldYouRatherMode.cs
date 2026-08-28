@@ -46,7 +46,7 @@ public sealed class WouldYouRatherMode : BaseGameModeDefinition
     /// across save/resume compares ids, so an unpinned deck re-deals cards the
     /// table has already seen.
     /// </summary>
-    private IReadOnlyList<ICard> BuildBuiltInCards()
+    private static IReadOnlyList<ICard> BuildBuiltInCards()
     {
         var adultsOnly = new AdultOnlyRestriction();
         var couplesOnly = new CoupleOnlyRestriction();

@@ -63,11 +63,8 @@ public sealed class GetToKnowYouMode : BaseGameModeDefinition
     /// across save/resume compares ids, so an unpinned deck re-deals cards the
     /// table has already seen.
     /// </summary>
-    private IReadOnlyList<ICard> BuildBuiltInCards()
+    private static IReadOnlyList<ICard> BuildBuiltInCards()
     {
-        var parentsOnly = new ParentOnlyRestriction();
-        var couplesOnly = new CoupleOnlyRestriction();
-
         return
         [
             // ════════════════════════════════════════════════════════════════
