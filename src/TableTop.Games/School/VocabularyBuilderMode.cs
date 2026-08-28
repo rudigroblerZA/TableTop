@@ -194,6 +194,8 @@ public static class VocabularyBuilderCardBank
     ];
 
     private static ICard V(
+#pragma warning disable IDE0060 // Remove unused parameter
         string word, string partOfSpeech, Difficulty d, string desc, string synonym) =>
         StandardCard.Create(word, desc, d, partOfSpeech);
+#pragma warning restore IDE0060 // Remove unused parameter
 }

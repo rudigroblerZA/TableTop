@@ -135,8 +135,6 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
     /// Controller-injected rather than mode-and-players, because WinUI's
     /// factory already builds the controller centrally and passing it in keeps
     /// that single construction path. MAUI built its own inside the ViewModel;
-    /// <see cref="Create"/> preserves that entry point without duplicating the
-    /// screen.
     /// </summary>
     /// <param name="navigator">Used to leave the screen.</param>
     /// <param name="controller">A started or unstarted Monogamy controller.</param>

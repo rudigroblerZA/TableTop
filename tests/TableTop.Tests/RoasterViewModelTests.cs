@@ -1,6 +1,5 @@
 using TableTop.Presentation.Infrastructure;
 using TableTop.Presentation.ViewModels;
-using TableTop.Tests.Helpers;
 
 namespace TableTop.Tests;
 
@@ -249,7 +248,8 @@ public sealed class RoasterViewModelTests
     {
         var existing = new SavedRoster
         {
-            Name = "Old Crew", TemplateName = "Friends",
+            Name = "Old Crew",
+            TemplateName = "Friends",
             Players = [new SavedPlayer("Amy", null, null), new SavedPlayer("Ben", null, null)],
         };
         var (vm, store, _) = Build(seed: [existing]);
