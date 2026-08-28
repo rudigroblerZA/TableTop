@@ -32,7 +32,9 @@ public partial class PlayerSetupPage : ContentPage
     public PlayerSetupPage(IGameMode gameMode)
     {
         InitializeComponent();
-        _vm = new PlayerSetupViewModel(new Services.MauiNavigator(this), gameMode, Services.AppSettings.Instance);
+        _vm = new PlayerSetupViewModel(
+            new Services.MauiNavigator(this), gameMode, Services.AppSettings.Instance,
+            rosterStore: Services.RosterStore.Instance);
         BindingContext = _vm;
     }
 
@@ -46,6 +48,12 @@ public partial class PlayerSetupPage : ContentPage
     {
         if (sender is Button { BindingContext: PlayerSetupViewModel.PlayerEntry player })
             _vm.RemovePlayer(player);
+    }
+
+    private void OnLoadRosterClicked(object sender, EventArgs e)
+    {
+        if (sender is Button { BindingContext: PlayerSetupViewModel.SavedRosterOption option })
+            option.Invoke();
     }
 
     private async void OnSaveRosterClicked(object sender, EventArgs e)

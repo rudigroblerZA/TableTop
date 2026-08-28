@@ -26,6 +26,34 @@
             </VerticalStackLayout>
         </Frame>
 
+        <!-- Saved rosters — a shortcut into "Add Players" below, not a
+             replacement for it: picking one fills the list from a roster
+             built on the Roaster screen instead of retyping everyone.
+             Hidden entirely when there's nothing saved. -->
+        <VerticalStackLayout IsVisible="{Binding HasSavedRosters}" Spacing="8">
+            <Label
+                Text="Use a Saved Roster"
+                Style="{StaticResource SubheaderLabelStyle}" />
+            <CollectionView ItemsSource="{Binding SavedRosters}"
+                             HeightRequest="72">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Button
+                            Text="{Binding Name}"
+                            Clicked="OnLoadRosterClicked"
+                            BackgroundColor="{StaticResource CardBackground}"
+                            TextColor="{StaticResource TextPrimary}"
+                            FontSize="14"
+                            CornerRadius="10"
+                            Padding="14,8" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+
         <!-- Add Player Section -->
         <Label
             Text="Add Players"

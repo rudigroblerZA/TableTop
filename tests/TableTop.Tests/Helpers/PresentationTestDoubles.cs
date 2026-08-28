@@ -72,6 +72,32 @@ public sealed class FakeAppSettings : IAppSettings
 }
 
 /// <summary>
+/// In-memory <see cref="IRosterStore"/> — no head-specific storage, just the
+/// load/save round-trip both real implementations (MAUI's <c>RosterStore</c>,
+/// WinUI's <c>WinUIRosterStore</c>) already provide.
+/// </summary>
+public sealed class FakeRosterStore : IRosterStore
+{
+    /// <summary>What <see cref="Save"/> was last called with.</summary>
+    public IReadOnlyList<SavedRoster> Saved { get; private set; } = [];
+
+    private IReadOnlyList<SavedRoster> _stored = [];
+
+    /// <summary>Seeds the store as if these rosters were already saved.</summary>
+    public FakeRosterStore(IReadOnlyList<SavedRoster>? seed = null) => _stored = seed ?? [];
+
+    /// <inheritdoc />
+    public IReadOnlyList<SavedRoster> Load() => _stored;
+
+    /// <inheritdoc />
+    public void Save(IReadOnlyList<SavedRoster> rosters)
+    {
+        _stored = rosters;
+        Saved = rosters;
+    }
+}
+
+/// <summary>
 /// Mutable <see cref="IClock"/> for testing day-gated controllers without
 /// sleeping for real days — exactly what the interface's own doc comment
 /// says it exists for.

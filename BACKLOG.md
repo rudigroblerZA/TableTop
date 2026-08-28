@@ -1489,7 +1489,7 @@ non-null and its settable properties asserted to raise `PropertyChanged`.
 That is real coverage and it caught nothing — but it is generic, and it
 knows nothing about what any of the behaviour above is *supposed* to do.
 
-### 25. Saved rosters are a closed loop — you can build one and never play it
+### 25. Saved rosters are a closed loop — you can build one and never play it — **CLOSED**
 
 **P2, and a product gap rather than a code fault.** `SavedRoster` is written
 by the Roaster screen and read by the Roaster screen. A repo-wide search for
@@ -1523,6 +1523,39 @@ Note the adjacent duplication while deciding: `IAppSettings.RecentPlayers`
 already remembers the last roster and already pre-fills player setup. A saved
 roster and the recent-players list are now two overlapping answers to "don't
 make them retype everyone", and only the older one is actually wired up.
+
+**Closed with "Load from setup".** `PlayerSetupViewModel` gained an optional
+`IRosterStore` dependency (null-safe — a caller that doesn't supply one, a
+test included, gets the exact pre-existing behaviour: no roster picker,
+nothing else different) and two new members: `SavedRosters`, populated from
+`rosterStore.Load()` at construction, and `LoadRoster(SavedRoster)`, which
+replaces `Players` wholesale from the chosen roster — same replace-not-append
+shape as `ClearPlayers` and the `RecentPlayers` prefill, so picking a roster
+gives a predictable result regardless of what was already typed in. Each
+saved roster is wrapped in a new `SavedRosterOption` (`Name`, `Subtitle`,
+`LoadCommand` for WinUI's binding, `Invoke()` for MAUI's code-behind) — the
+same duality every other per-item option class here already carries
+(`MonogamyGameViewModel.ZoneOption`, `ClaimedGameViewModel.TerritoryOption`).
+Both heads wire their own `IRosterStore` in at the one place they already
+construct `PlayerSetupViewModel` (`GameSelectionViewModel` for WinUI,
+`PlayerSetupPage` for MAUI) — no new DI registration, matching how each head
+already constructs its own `WinUIRosterStore`/`RosterStore.Instance` for the
+Roaster screen itself. MAUI's `PlayerSetupPage.xaml` and WinUI's
+`PlayerSetupView.xaml` each gained a row of roster buttons above the
+name-entry field, hidden entirely (`HasSavedRosters`) when nothing is saved.
+
+The adjacent duplication noted above is **not** resolved by this — a saved
+roster and `RecentPlayers` remain two separate answers to the same problem,
+now both reachable from the same screen rather than one of them being
+reachable from nowhere. Worth its own item if it becomes confusing in
+practice; out of scope for closing the "you can never play it" gap.
+
+Not verified by a local build (no `dotnet`/NuGet access in this sandbox) —
+checked by grepping every `new PlayerSetupViewModel(` call site (two: WinUI,
+MAUI, both updated) and every XAML file for well-formedness, and by the new
+`PlayerSetupViewModelTests` coverage: the store-absent default, the
+store-present load, replace-not-append, error/status clearing, team-clearing
+on replace, and both halves of the `SavedRosterOption` duality.
 
 ### 26. The "Team" roster template promises sides it never assigns
 
@@ -1725,6 +1758,83 @@ test files (none left), confirming no call site anywhere passes
 caller either omits it or names `maxRounds`/`gameplayOptions`/`resumeFrom`
 explicitly, so inserting a parameter before `ct` cannot have shifted one),
 and a brace/paren parity check on every changed file.
+
+### 30. JSON persistence shared a temp filename with no locking, and wrote beside the executable — **CLOSED**
+
+**Critical.** Two separate defects in the same four stores
+(`JsonSessionRepository`, `JsonPlayerRepository`, and their WinUI-only
+siblings `WinUIAppSettings`, `WinUIRosterStore`, which turned out to share
+both bugs verbatim rather than just the first).
+
+**1. Shared `.tmp` filename, no synchronisation.** Every one of the four
+wrote to a fixed `{file}.tmp` path — `session.json.tmp`, `players.json.tmp`,
+etc. — with nothing stopping two calls from overlapping. Two concurrent
+`SaveAsync`s on the same instance (a manual save racing an autosave, two
+settings changed in quick succession from different threads) could have the
+second call's `File.Create` truncate the first's still-open stream, and
+whichever `File.Move` ran second throw because the source it expected had
+already been consumed by the first rename. Fixed with two changes together —
+either alone is insufficient:
+
+  - A **unique temp filename per call** (`{file}.{Guid.NewGuid():N}.tmp`),
+    so two overlapping writes can never target the same path.
+  - A **per-instance gate** — `SemaphoreSlim` for the two async repositories,
+    a plain `lock` for the two synchronous WinUI stores, since a unique name
+    alone still leaves two renames racing for "whichever finishes last wins"
+    in an unpredictable order. The gate serialises every call (save, load,
+    *and* delete — not just save, so a save's in-flight write is never read
+    half-committed by a concurrent caller sharing the same instance) rather
+    than only the write path.
+
+  A leftover temp file from a genuine failure (disk full, permissions) is
+  now cleaned up in a `catch`/before returning — safe because its name is
+  unique to that one call and cannot collide with a future save's.
+
+**2. Beside the executable, not app-data.** All four defaulted to
+`AppContext.BaseDirectory` — the install directory. `AddTableTopHosting`'s
+own doc comment claimed `%AppData%/TableTop/...` "(or platform equivalent)"
+and never did that; nothing passed `sessionFilePath`/`playerFilePath` from
+any of the three real hosts, so every one of them silently got the
+beside-the-executable default. That default is not writable by a standard
+user for an app installed to `Program Files` (or the equivalent), and even
+where a location happens to be writable, an app update that replaces the
+install directory's contents takes the player's data with it.
+
+`TableTop.Hosting` cannot resolve a real app-data directory itself — it has
+no dependency on any platform storage API, which is what keeps it usable
+from a console app, a test host, or a future head this project doesn't have
+yet. So each host now resolves its own, and passes it explicitly:
+
+  - **Console** (`Program.cs`) — `Environment.SpecialFolder.ApplicationData`
+    plus a `TableTop` subfolder, the portable choice for a plain .NET
+    console app on any OS.
+  - **WinUI** (`App.xaml.cs`) — a new `WinUIAppPaths.DataDirectory`,
+    `%LOCALAPPDATA%\TableTop`. Not the WinRT `ApplicationData.Current` API:
+    this app ships unpackaged (`WindowsPackageType=None`), and that API
+    requires package identity and throws without it.
+    `WinUIAppSettings`/`WinUIRosterStore` now default to the same directory
+    instead of their own independent `AppContext.BaseDirectory` reads —
+    three call sites that used to each answer "where does WinUI's data
+    live?" slightly differently now answer it once.
+  - **MAUI** (`MauiProgram.cs`) — `FileSystem.AppDataDirectory`, MAUI's own
+    sandboxed, always-writable per-platform location. MAUI's `AppSettings`
+    and `RosterStore` were never affected by this half of the bug — both
+    already used `Preferences`, which handles its own storage — only the
+    `IGamePersistence`/`IPlayerRepository` registrations `AddTableTopHosting`
+    creates needed a path.
+
+`AddTableTopHosting`'s doc comment is corrected to say what actually happens
+now: its own fallback is still beside-the-executable (unchanged, and now
+honestly documented as such, since removing it would be a bigger, riskier
+change than this item's scope), and every real host overrides it.
+
+Not verified by a local build (no `dotnet`/NuGet access in this sandbox) —
+checked by a new `JsonPersistenceConcurrencyTests` (twenty concurrent saves
+against a real temp file, on both repositories: no exception, the file left
+behind is always exactly one complete write, and no orphaned temp file
+survives a clean run), by re-reading each of the three hosts' composition
+roots to confirm every one now passes an explicit path, and by a brace/paren
+parity check on every changed file.
 
 ---
 

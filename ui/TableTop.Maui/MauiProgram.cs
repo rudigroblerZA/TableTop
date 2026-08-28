@@ -22,7 +22,16 @@ public static class MauiProgram
         // ── Engine ───────────────────────────────────────────────────────────
         // Registers IControllerFactory, IArchetypeRegistry, IGamePersistence,
         // IPlayerRepository, and IHintEngine with their default implementations.
-        builder.Services.AddTableTopHosting();
+        //
+        // Explicit paths under FileSystem.AppDataDirectory — MAUI's own
+        // sandboxed, always-writable per-platform app-data location (Android's
+        // internal files dir, iOS/macOS's Library, Windows's LocalState).
+        // AddTableTopHosting's own defaults fall back to AppContext.BaseDirectory
+        // (beside the executable/app bundle), which several MAUI targets don't
+        // allow writing to at all.
+        builder.Services.AddTableTopHosting(
+            sessionFilePath: Path.Combine(FileSystem.AppDataDirectory, "session.json"),
+            playerFilePath: Path.Combine(FileSystem.AppDataDirectory, "players.json"));
 
         // ── App Settings ─────────────────────────────────────────────────────
         // Registered under both the concrete type (existing consumers still

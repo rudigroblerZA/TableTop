@@ -19,7 +19,7 @@ TableTop/
 │   ├── TableTop.Hosting/      ← Controllers, events, hints, persistence
 │   └── TableTop.Presentation/ ← ViewModels shared by WinUI + MAUI (plain net10.0)
 ├── tests/
-│   ├── TableTop.Tests/        ← 899 tests — engine only, no UI required, any OS
+│   ├── TableTop.Tests/        ← 910 tests — engine only, no UI required, any OS
 │   └── TableTop.UiTests/      ← ViewModel tests     (Windows — references WinUI)
 ├── ui/
 │   ├── TableTop.Console/      ← Terminal UI         (any OS, no extra installs)
