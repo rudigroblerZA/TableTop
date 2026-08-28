@@ -789,9 +789,9 @@ sealed class TableTop.Core.Domain.Players.Team
 sealed class TableTop.Core.Domain.Players.TeamAlternatingPlayerManager
     .ctor()
     IPlayer GetNextPlayer()
+    IReadOnlyCollection<String> TeamOrder { get; }
     IReadOnlyList<IPlayer> ActivePlayers { get; }
     IReadOnlyList<IPlayer> Players { get; }
-    IReadOnlyList<String> TeamOrder { get; }
     Int32 GetScore(Guid playerId)
     PlayerStatus GetStatus(Guid playerId)
     Void AddPlayer(IPlayer player)
