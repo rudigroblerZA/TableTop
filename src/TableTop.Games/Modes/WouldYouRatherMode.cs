@@ -37,7 +37,7 @@ public sealed class WouldYouRatherMode : BaseGameModeDefinition
     /// a stripped publish where the file is absent.
     /// </summary>
     protected override IReadOnlyList<ICard> BuildCards(IReadOnlyList<IPlayer> players) =>
-        BuildBuiltInCards(players);
+        BuildBuiltInCards();
 
     /// <summary>
     /// The compiled card bank. Note that this generates a fresh <c>Guid</c> per
@@ -46,7 +46,7 @@ public sealed class WouldYouRatherMode : BaseGameModeDefinition
     /// across save/resume compares ids, so an unpinned deck re-deals cards the
     /// table has already seen.
     /// </summary>
-    private IReadOnlyList<ICard> BuildBuiltInCards(IReadOnlyList<IPlayer> players)
+    private IReadOnlyList<ICard> BuildBuiltInCards()
     {
         var adultsOnly = new AdultOnlyRestriction();
         var couplesOnly = new CoupleOnlyRestriction();
