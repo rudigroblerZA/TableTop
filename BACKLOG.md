@@ -25,10 +25,18 @@ across the existing numbering rather than adding to it.
 
 | | Item | Why it matters |
 |---|---|---|
-| **P2** | **24** — `RoasterViewModel` is the only shared ViewModel with no tests | Nine of the ten in `TableTop.Presentation` have a test file. This one has none, and it is the newest and least exercised. |
-| **P2** | **26** — the "Team" roster template promises sides it never assigns | Teams are a real first-class concept (`ITeamMode`, `AssignTeams`). The template's description says "split into sides" and does nothing of the kind. Item 25's close is what makes the *better* of its two fixes viable: a saved roster now reaches `PlayerSetupViewModel`, so team assignments it carries would finally have a consumer. |
 | **P3** | **28** — Console has no Roaster | Third head, no roster builder and no `IRosterStore`. Smallest of the parity gaps but the one now written down. Its own text sequenced it after item 25; that gate is now clear. |
 | **P3** | **32** — `SerializedCardTurnController`'s guarantee has one hole, and its docstring doesn't say so | The adapter item 31 added holds its lock for the whole of every member — except the one async member, where the post-`await` half escapes it. Narrow and currently harmless; the docstring claims otherwise, which is the part that isn't. |
+
+**Items 24 and 26 are closed** (1.33.0) and have dropped out of this table.
+Item 24 was pure omission — `RoasterViewModelTests` now covers template
+selection resetting the in-progress roster, the `CanAddPlayer` ceiling,
+`SaveBlockedReason`'s wording, the `SaveRoster` no-op guard, and the
+`IRosterStore` round-trip, against the `FakeRosterStore` that already existed.
+Item 26 took the better of its two options: `SavedPlayer` gained an optional
+`Team`, the Roaster's "Team" template deals sides through the tested
+`Teams.Deal` on save, and `PlayerSetupViewModel.LoadRoster` restores those
+assignments so a saved Team roster starts a team mode with real sides.
 
 **Items 23 and 27 are closed** and have dropped out of this table. Item 27
 turned out to be eight unguarded handlers rather than the six it counted by
@@ -1490,7 +1498,26 @@ time, and this machine has `android` + `maui-windows` instead — so the
 workload-install step itself is the one part of the chain still unproven.
 The first CI run after this merge is the real check.
 
-### 24. `RoasterViewModel` is the only shared ViewModel with no tests
+### 24. `RoasterViewModel` is the only shared ViewModel with no tests — **CLOSED in 1.33.0**
+
+**Closed.** `tests/TableTop.Tests/RoasterViewModelTests.cs` — 18 cases against
+the `FakeRosterStore`/`FakeNavigator` doubles that already lived in
+`Helpers/PresentationTestDoubles.cs`, so nothing new was needed to reach the
+save/load path. Covers exactly what this item named as untested: selecting a
+template starts configuring and seeds the name; changing template clears the
+in-progress roster; `CanAddPlayer` is false before a template, without a name,
+and at a template's `MaxPlayers` ceiling; `AddPlayer` parses age/gender, tags
+the couple flag under a couple template, and clears the entry fields;
+`SaveBlockedReason` carries the template's own `RequirementText` plus an
+"N so far" count until the floor is met; `SaveRoster` is a no-op when blocked,
+persists the full list and resets to template-picking when not, and falls back
+to the template name when the name is blank; construction loads the store's
+existing rosters; `DeleteRoster` removes and persists. The item 26 change is
+tested here too (the "Team" template deals sides on save).
+
+The original text is kept below for the record.
+
+---
 
 **P2.** `TableTop.Presentation/ViewModels` holds ten files. Nine of the ten
 type names are referenced by at least one file under `tests/TableTop.Tests` —
@@ -1585,7 +1612,28 @@ MAUI, both updated) and every XAML file for well-formedness, and by the new
 store-present load, replace-not-append, error/status clearing, team-clearing
 on replace, and both halves of the `SavedRosterOption` duality.
 
-### 26. The "Team" roster template promises sides it never assigns
+### 26. The "Team" roster template promises sides it never assigns — **CLOSED in 1.33.0**
+
+**Closed by the first of the two options — the one this item and item 25's
+close both pointed at.** `SavedPlayer` gained an optional `Team` (5th
+positional param, defaults null, so every existing `new SavedPlayer(...)` call
+and every pre-1.33.0 saved-roster JSON reads back unchanged). `RoasterTemplate`
+gained `DealTeams`/`TeamCount`; the "Team" template sets `DealTeams` and its
+description is now "Players dealt into two sides" — a claim it backs up.
+`RoasterViewModel.SaveRoster` runs the tested `Teams.Deal` over stand-in
+`Player`s and maps the Red/Blue result back onto the `SavedPlayer` records by
+position. `PlayerSetupViewModel.LoadRoster` seeds `_teamAssignments` from any
+`SavedPlayer.Team` it finds, and `BuildPlayers` already writes `TeamFor(name)`
+into `Attributes["team"]` — so a saved Team roster now starts a team mode with
+sides assigned instead of the unassigned table this item was filed against.
+The delimited `RecentPlayers` encoding in each head's settings store was left
+alone: that list is a flat setup prefill, not a roster. Tests:
+`RoasterViewModelTests` (deal-on-save, non-team templates leave `Team` null)
+and `PlayerSetupViewModelTests.LoadRoster_WithATeamRoster_RestoresTheSidesItCarries`.
+
+The original text is kept below for the record.
+
+---
 
 **P2, an honesty gap of exactly the kind this file keeps catching.** The
 Roaster's four templates differ in real ways — `MinPlayers`, `MaxPlayers`,

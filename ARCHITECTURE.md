@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.32.0**, August 2026. This replaces the accumulated
+Current as of **1.33.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -614,6 +614,19 @@ async work to block on, a different shape rather than a template to copy.
   verified here (`-f net10.0-android`, Debug and Release); the engine suite
   and all `check-*.py` gates pass. Not exercised on a device or emulator —
   the same honest gap the other graphical heads carry.
+- **1.33.0** closed backlog items 24 and 26. **26** made the Roaster's "Team"
+  template real: `SavedPlayer` gained an optional `Team` (5th positional
+  param, defaults null — every existing call site and every pre-1.33.0
+  saved-roster JSON reads back unchanged), `RoasterViewModel.SaveRoster` deals
+  sides through the already-tested `Teams.Deal` when the template asks for it,
+  and `PlayerSetupViewModel.LoadRoster` restores those assignments so a saved
+  Team roster starts a team mode with sides instead of the unassigned table
+  the item described. **24** was pure test omission —
+  `RoasterViewModelTests` (18 cases) now covers `RoasterViewModel`, the last
+  shared ViewModel without its own test file, using the `FakeRosterStore`
+  double that already existed. MINOR: new capability (team-carrying rosters),
+  no Core/Games/Hosting public-surface change — `SavedPlayer` lives in
+  `TableTop.Presentation`, which `api/*.api.txt` does not track.
 
 ## What genuinely doesn't exist here
 

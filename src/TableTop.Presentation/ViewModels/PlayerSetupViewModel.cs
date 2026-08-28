@@ -239,9 +239,19 @@ public sealed class PlayerSetupViewModel : ViewModelBase
         foreach (var p in roster.Players)
             Players.Add(new PlayerEntry(p.Name, p.Gender, p.Age, p.IsCoupleMember));
 
+        // A replaced roster invalidates any prior deal (see AddPlayer) — but a
+        // roster that carries its own team assignments (the Roaster's "Team"
+        // template, backlog item 26) restores them here, so starting a team
+        // mode from a saved Team roster gets sides, not an unassigned table.
+        // BuildPlayers already writes TeamFor(name) into Attributes["team"].
+        _teamAssignments.Clear();
+        foreach (var p in roster.Players)
+            if (p.Team is { Length: > 0 } team)
+                _teamAssignments[p.Name] = team;
+        RaiseTeamState();
+
         Error = "";
         RosterStatus = $"Loaded \"{roster.Name}\".";
-        ClearTeams();   // see AddPlayer — a replaced roster invalidates any prior deal
     }
 
     /// <summary>

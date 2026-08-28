@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using TableTop.Core.Abstractions.Players;
+using TableTop.Core.Domain.Players;
 using TableTop.Presentation.Infrastructure;
 
 namespace TableTop.Presentation.ViewModels;
@@ -31,6 +33,18 @@ public sealed class RoasterTemplate
     /// a table suits a <c>TableShape.Couple</c>-only mode.
     /// </summary>
     public bool TagAsCouple { get; init; }
+
+    /// <summary>
+    /// Whether saving a roster under this template deals its players into
+    /// sides — <see cref="TeamCount"/> of them, via <c>Teams.Deal</c> — and
+    /// stamps each <see cref="SavedPlayer.Team"/>. Backlog item 26: without
+    /// this the "Team" template's description ("split into sides") was a claim
+    /// it did not back up.
+    /// </summary>
+    public bool DealTeams { get; init; }
+
+    /// <summary>How many sides <see cref="DealTeams"/> deals into. Ignored unless <see cref="DealTeams"/> is set.</summary>
+    public int TeamCount { get; init; } = 2;
 
     /// <summary>"Needs exactly 2 players." / "Needs at least 2." / "Needs 3–40 players."</summary>
     public string RequirementText => (MinPlayers, MaxPlayers) switch
@@ -75,7 +89,7 @@ public sealed class RoasterViewModel : ViewModelBase
     [
         new() { Name = "Couple", Description = "Two players, tagged as a couple", MinPlayers = 2, MaxPlayers = 2, TagAsCouple = true },
         new() { Name = "Friends", Description = "A casual group of any size", MinPlayers = 2 },
-        new() { Name = "Team", Description = "Two or more players split into sides", MinPlayers = 4 },
+        new() { Name = "Team", Description = "Players dealt into two sides", MinPlayers = 4, DealTeams = true },
         new() { Name = "Class", Description = "A larger group, e.g. a classroom", MinPlayers = 3, MaxPlayers = 40 },
     ];
 
@@ -258,11 +272,31 @@ public sealed class RoasterViewModel : ViewModelBase
         {
             Name = name.Length > 0 ? name : SelectedTemplate!.Name,
             TemplateName = SelectedTemplate!.Name,
-            Players = ConfiguredPlayers.ToList(),
+            Players = BuildRosterPlayers(),
         });
         _store.Save(SavedRosters);
 
         SelectedTemplate = null;
+    }
+
+    /// <summary>
+    /// The configured players, with <see cref="SavedPlayer.Team"/> stamped when
+    /// the template deals sides. Reuses the tested <c>Teams.Deal</c> for the
+    /// alternating deal and the shared Red/Blue names, mapping its result back
+    /// onto the records by position — <c>Deal</c> preserves input order.
+    /// </summary>
+    private IReadOnlyList<SavedPlayer> BuildRosterPlayers()
+    {
+        var players = ConfiguredPlayers.ToList();
+        if (SelectedTemplate is not { DealTeams: true } template || players.Count < template.TeamCount)
+            return players;
+
+        var standIns = players
+            .Select(p => (IPlayer)new Player(Guid.NewGuid(), p.Name, null, null))
+            .ToList();
+        var dealt = Teams.Deal(standIns, template.TeamCount);
+
+        return players.Select((p, i) => p with { Team = dealt[i].Team }).ToList();
     }
 
     /// <summary>Deletes a saved roster and persists the change.</summary>
