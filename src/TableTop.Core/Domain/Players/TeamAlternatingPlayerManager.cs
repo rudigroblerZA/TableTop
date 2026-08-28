@@ -51,7 +51,7 @@ public sealed class TeamAlternatingPlayerManager : IPlayerManager
     public IReadOnlyList<IPlayer> ActivePlayers => _inner.ActivePlayers;
 
     /// <summary>Teams in the order they take turns — first-appearance order of their members.</summary>
-    public IReadOnlyList<string> TeamOrder => TeamKeys(ActivePlayers);
+    public IReadOnlyCollection<string> TeamOrder => TeamKeys(ActivePlayers);
 
     /// <inheritdoc />
     public void AddPlayer(IPlayer player) => _inner.AddPlayer(player);
@@ -71,7 +71,7 @@ public sealed class TeamAlternatingPlayerManager : IPlayerManager
         var active = ActivePlayers;
         if (active.Count == 0) return null;
 
-        var teams = TeamKeys(active);
+        var teams = TeamKeys(active).ToList(); // materialize to list so we can index
         if (teams.Count == 0) return null;
 
         // Try each team in turn starting from the cursor, so a team whose
@@ -128,7 +128,7 @@ public sealed class TeamAlternatingPlayerManager : IPlayerManager
     /// </summary>
     private static string KeyFor(IPlayer player) => Teams.TeamOf(player) ?? player.DisplayName;
 
-    private static IReadOnlyList<string> TeamKeys(IEnumerable<IPlayer> players)
+    private static IReadOnlyCollection<string> TeamKeys(IEnumerable<IPlayer> players)
     {
         var seen = new List<string>();
         foreach (var p in players)

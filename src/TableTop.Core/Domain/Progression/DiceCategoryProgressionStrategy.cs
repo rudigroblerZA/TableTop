@@ -30,7 +30,7 @@ namespace TableTop.Core.Domain.Progression;
 public sealed class DiceCategoryProgressionStrategy : IProgressionStrategy
 {
     private readonly Random _rng;
-    private readonly IReadOnlyList<string> _categoriesInOrder;
+    private readonly IReadOnlyCollection<string> _categoriesInOrder;
     private readonly Func<int, string> _totalToCategory;
     private string? _overrideCategory;
 
