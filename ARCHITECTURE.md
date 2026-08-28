@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.33.0**, August 2026. This replaces the accumulated
+Current as of **1.34.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -627,6 +627,23 @@ async work to block on, a different shape rather than a template to copy.
   double that already existed. MINOR: new capability (team-carrying rosters),
   no Core/Games/Hosting public-surface change — `SavedPlayer` lives in
   `TableTop.Presentation`, which `api/*.api.txt` does not track.
+- **1.34.0** closed backlog items 28 and 32. **28** gave the non-graphical
+  heads a roster: `RosterProfile` / `IRosterRepository` / `JsonRosterRepository`
+  in `TableTop.Hosting` — a `PlayerProfile`-shaped sibling of
+  `IPlayerRepository` (same `SemaphoreSlim` + unique-temp-file + atomic-replace
+  pattern), so it's unit-tested (`RosterRepositoryTests`) and Console needs no
+  `TableTop.Presentation` reference. `AddTableTopHosting` gained an optional
+  `rosterFilePath`; `ConsoleRoster` is the text-mode build/load/delete flow,
+  wired into `ConsolePlayerSetup`. This deliberately does **not** converge with
+  the graphical heads' `SavedRoster`/`SavedPlayer` — the two roster shapes
+  answering the same question differently is a real open question, not a gap.
+  **32** was doc-only: `SerializedCardTurnController`'s docstring claimed the
+  lock covers "the full duration of a call", which is untrue of `SaveAsync`
+  (the post-`await` `SessionSavedEvent` raise escapes the synchronous
+  `Invoke`); the type docstring and a `SaveAsync` remark now state exactly
+  what is and isn't gated. MINOR: new public surface in Hosting
+  (`api/TableTop.Hosting.api.txt` regenerated in the same commit), same rule as
+  item 29's optional-parameter addition in 1.30.0.
 
 ## What genuinely doesn't exist here
 

@@ -946,7 +946,7 @@ sealed class TableTop.Hosting.Events.WalkedAwayEvent
     Void Deconstruct(Int64& Prize)
     WalkedAwayEvent <Clone>$()
 static class TableTop.Hosting.Extensions.ServiceCollectionExtensions
-    IServiceCollection AddTableTopHosting(IServiceCollection services, String sessionFilePath = default, String playerFilePath = default)
+    IServiceCollection AddTableTopHosting(IServiceCollection services, String sessionFilePath = default, String playerFilePath = default, String rosterFilePath = default)
     IServiceCollection UseEngineDiagnostics(IServiceCollection services)
     IServiceCollection UseGamePersistence(IServiceCollection services)
     IServiceCollection UseHintEngine(IServiceCollection services)
@@ -1013,12 +1013,21 @@ abstract interface TableTop.Hosting.Persistence.IPlayerRepository
     Task ClearAsync(CancellationToken ct = default)
     Task SaveAsync(IEnumerable<PlayerProfile> profiles, CancellationToken ct = default)
     Task<IReadOnlyList<PlayerProfile>> LoadAsync(CancellationToken ct = default)
+abstract interface TableTop.Hosting.Persistence.IRosterRepository
+    Task ClearAsync(CancellationToken ct = default)
+    Task SaveAsync(IEnumerable<RosterProfile> rosters, CancellationToken ct = default)
+    Task<IReadOnlyList<RosterProfile>> LoadAsync(CancellationToken ct = default)
 abstract interface TableTop.Hosting.Persistence.ISessionRepository
 sealed class TableTop.Hosting.Persistence.JsonPlayerRepository
     .ctor(String filePath = default)
     Task ClearAsync(CancellationToken ct = default)
     Task SaveAsync(IEnumerable<PlayerProfile> profiles, CancellationToken ct = default)
     Task<IReadOnlyList<PlayerProfile>> LoadAsync(CancellationToken ct = default)
+sealed class TableTop.Hosting.Persistence.JsonRosterRepository
+    .ctor(String filePath = default)
+    Task ClearAsync(CancellationToken ct = default)
+    Task SaveAsync(IEnumerable<RosterProfile> rosters, CancellationToken ct = default)
+    Task<IReadOnlyList<RosterProfile>> LoadAsync(CancellationToken ct = default)
 sealed class TableTop.Hosting.Persistence.JsonSessionRepository
     .ctor(String filePath = default)
     Boolean HasSavedSession { get; }
@@ -1047,6 +1056,13 @@ sealed class TableTop.Hosting.Persistence.PlayerSessionState
     List<String> Tags { get; set; }
     String DisplayName { get; set; }
     String Status { get; set; }
+sealed class TableTop.Hosting.Persistence.RosterProfile
+    .ctor()
+    IReadOnlyList<PlayerProfile> Players { get; set; }
+    Int32 CurrentSchemaVersion
+    Int32 SchemaVersion { get; set; }
+    String Name { get; set; }
+    String Summary { get; }
 sealed class TableTop.Hosting.Persistence.SavedInspiration
     .ctor()
     DateTimeOffset SavedAt { get; set; }

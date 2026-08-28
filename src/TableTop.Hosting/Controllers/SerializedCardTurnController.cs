@@ -55,6 +55,26 @@ namespace TableTop.Hosting.Controllers;
 /// </para>
 ///
 /// <para>
+/// <strong>One exception to "full duration": <see cref="SaveAsync"/>.</strong>
+/// <see cref="Invoke{T}"/> is synchronous, so wrapping an <c>async</c> method
+/// gates it only up to that method's first <c>await</c>: the gate covers
+/// <c>CardTurnController.SaveAsync</c>'s synchronous prefix —
+/// <c>PersistenceCoordinator.BuildSnapshot()</c>, the part that reads mutable
+/// game state and the part that most needs serialising — then the wrapped
+/// <see cref="Task"/> is returned and the lock released before the
+/// continuation after <c>await _repository.SaveAsync(...)</c> runs. What
+/// escapes the gate is that continuation: the <c>SessionSavedEvent</c> raise,
+/// which touches no controller state, on top of a repository that has been
+/// per-instance serialised itself since backlog item 30. So the exposure is
+/// currently nil in practice — but it is a property of the implementation, not
+/// of this adapter, and closing it properly needs a second primitive (a
+/// <see cref="System.Threading.SemaphoreSlim"/>, since a <c>Monitor</c> cannot
+/// be held across an <c>await</c>). That is more machinery than the exposure
+/// justifies today; add it only alongside a member that mutates controller
+/// state after an <c>await</c>. Backlog item 32.
+/// </para>
+///
+/// <para>
 /// <strong>Interaction with <see cref="ThreadingGuard.Enabled"/>.</strong> The
 /// wrapped controller's own guard tracks the thread that first called <c>Start()</c>
 /// as its owner. Because this adapter runs a foreign-thread call on the calling
@@ -201,6 +221,12 @@ public sealed class SerializedCardTurnController : ICardTurnController
     public void Quit() => Invoke(_inner.Quit);
 
     /// <inheritdoc />
+    /// <remarks>
+    /// The gate covers only the wrapped method's synchronous prefix —
+    /// <c>BuildSnapshot()</c>, which reads mutable state — not the post-<c>await</c>
+    /// continuation (the <c>SessionSavedEvent</c> raise). See the type docstring
+    /// ("One exception to 'full duration'") and backlog item 32.
+    /// </remarks>
     public Task SaveAsync(CancellationToken ct = default) => Invoke(() => _inner.SaveAsync(ct));
 
     /// <inheritdoc />
