@@ -24,8 +24,14 @@ public partial class App : Application
     {
         InitializeComponent();
 
+        // Explicit paths in WinUIAppPaths.DataDirectory (%LOCALAPPDATA%\TableTop) —
+        // AddTableTopHosting's own defaults fall back to AppContext.BaseDirectory
+        // (beside the executable), which an installed, unpackaged app cannot
+        // reliably write to and which an update can wipe. See WinUIAppPaths.
         _services = new ServiceCollection()
-            .AddTableTopHosting()
+            .AddTableTopHosting(
+                sessionFilePath: Path.Combine(WinUIAppPaths.DataDirectory, "session.json"),
+                playerFilePath: Path.Combine(WinUIAppPaths.DataDirectory, "players.json"))
             .AddSingleton<IAppSettings>(_ => WinUIAppSettings.Instance)
             .BuildServiceProvider();
     }

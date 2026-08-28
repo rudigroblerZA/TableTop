@@ -207,7 +207,8 @@ public sealed class GameSelectionViewModel : ViewModelBase
             _navigator.Navigate(new PlayerSetupViewModel(
                 _navigator, m, _navigator.Services.GetRequiredService<IAppSettings>(),
                 onStart: async players =>
-                    _navigator.Navigate(await GameViewModelFactory.CreateAsync(_navigator, m, players))));
+                    _navigator.Navigate(await GameViewModelFactory.CreateAsync(_navigator, m, players)),
+                rosterStore: new WinUIRosterStore()));
         });
     }
 }
