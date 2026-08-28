@@ -5,15 +5,31 @@ using TableTop.Presentation.ViewModels;
 namespace TableTop.Maui.Pages;
 
 /// <summary>Screen for the Herd simultaneous-answer mode.</summary>
-public partial class HerdGamePage : ContentPage
+public partial class HerdGamePage : ContentPage, IAsyncInitializablePage
 {
-    private readonly HerdGameViewModel _vm;
+    private readonly IGameMode _gameMode;
+    private readonly List<IPlayer> _players;
+    private HerdGameViewModel _vm = null!;
 
-    /// <summary>Builds the page for the chosen mode and players.</summary>
+    /// <summary>
+    /// Builds the page for the chosen mode and players.
+    ///
+    /// Cheap on purpose — same two-phase shape as <c>DayOneGamePage</c> and
+    /// <c>MillionaireGamePage</c> (backlog item 20). The controller now
+    /// builds through <c>IControllerFactory</c> in <see cref="InitializeAsync"/>,
+    /// which a caller must await before pushing this page.
+    /// </summary>
     public HerdGamePage(IGameMode gameMode, List<IPlayer> players)
     {
         InitializeComponent();
-        _vm = HerdGameViewModel.Create(new Services.MauiNavigator(this), gameMode, players);
+        _gameMode = gameMode;
+        _players = players;
+    }
+
+    /// <inheritdoc />
+    public async Task InitializeAsync()
+    {
+        _vm = await HerdGameViewModel.CreateAsync(new Services.MauiNavigator(this), _gameMode, _players);
         BindingContext = _vm;
     }
 

@@ -99,9 +99,9 @@ public sealed class HerdGameViewModelTests
     }
 
     [Fact]
-    public void Create_WithAModeThatProvidesNoHerdDeck_ProducesALoadError()
+    public async Task Create_WithAModeThatProvidesNoHerdDeck_ProducesALoadError()
     {
-        var vm = HerdGameViewModel.Create(new FakeNavigator(), new NoCapabilityMode(), Players());
+        var vm = await HerdGameViewModel.CreateAsync(new FakeNavigator(), new NoCapabilityMode(), Players());
 
         vm.HasLoadError.Should().BeTrue();
         vm.IsPlaying.Should().BeFalse();

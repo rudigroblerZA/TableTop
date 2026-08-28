@@ -57,6 +57,7 @@ public sealed class ControllerFactory : IControllerFactory
         int maxRounds = Core.TableTopDefaults.Session.MaxRounds,
         GameplayOptions? gameplayOptions = null,
         Persistence.SessionSnapshot? resumeFrom = null,
+        int? monogamyWinningTokenCount = null,
         CancellationToken ct = default)
     {
         // GameplayOptions (shuffle/difficulty-range/session-length) currently
@@ -66,6 +67,8 @@ public sealed class ControllerFactory : IControllerFactory
         // "shuffle" or "difficulty range" doesn't map cleanly onto the same
         // concept, so those branches accept the parameter but don't apply it
         // — an honest scope boundary rather than a forced, misleading fit.
+        // monogamyWinningTokenCount gets the same treatment in the other
+        // direction: only the Monogamy arm reads it.
         return mode switch
         {
             // ── Monogamy — mode supplies its own deck + win condition ─────────
@@ -73,7 +76,7 @@ public sealed class ControllerFactory : IControllerFactory
                 new MonogamyController(
                     players,
                     monogamy.GetDeck(),
-                    winningTokenCount: monogamy.WinningTokenCount)),
+                    winningTokenCount: monogamyWinningTokenCount ?? monogamy.WinningTokenCount)),
 
             // ── Millionaire family — mode supplies its own question bank ──────
             IQuestionBankProvider quiz => Task.FromResult<IGameController>(

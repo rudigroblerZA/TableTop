@@ -107,9 +107,9 @@ public sealed class ClaimedGameViewModelTests
     }
 
     [Fact]
-    public void Create_WithAModeThatProvidesNoClaimedDeck_ProducesALoadError()
+    public async Task Create_WithAModeThatProvidesNoClaimedDeck_ProducesALoadError()
     {
-        var vm = ClaimedGameViewModel.Create(new FakeNavigator(), new NoCapabilityMode(), Players());
+        var vm = await ClaimedGameViewModel.CreateAsync(new FakeNavigator(), new NoCapabilityMode(), Players());
 
         vm.HasLoadError.Should().BeTrue();
         vm.IsPlaying.Should().BeFalse();

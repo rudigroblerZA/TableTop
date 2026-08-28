@@ -130,19 +130,26 @@ public sealed class ClaimedGameViewModel : ViewModelBase, IDisposable
     /// <summary>
     /// Builds the controller from a mode, surfacing a deck-load failure as a
     /// message rather than an exception — same reasoning as
-    /// <see cref="MonogamyGameViewModel.Create"/>.
+    /// <see cref="MonogamyGameViewModel.CreateAsync"/>, including going
+    /// through <see cref="IControllerFactory"/> rather than constructing
+    /// <c>ClaimedController</c> directly.
     /// </summary>
-    public static ClaimedGameViewModel Create(
-        INavigator navigator, IGameMode mode, IReadOnlyList<IPlayer> players)
+    public static async Task<ClaimedGameViewModel> CreateAsync(
+        INavigator navigator,
+        IGameMode mode,
+        IReadOnlyList<IPlayer> players,
+        IControllerFactory? controllerFactory = null)
     {
         try
         {
-            var provider = mode as IClaimedDeckProvider
-                ?? throw new NotSupportedException($"'{mode.Name}' provides no Claimed! deck.");
+            var controller = await (controllerFactory ?? new ControllerFactory()).CreateAsync(mode, players);
+            if (controller is not IClaimedController cc)
+            {
+                controller.Dispose();
+                throw new NotSupportedException($"'{mode.Name}' isn't a Claimed!-style mode.");
+            }
 
-            return new ClaimedGameViewModel(
-                navigator,
-                new ClaimedController(players, provider.GetClaimedDeck(), provider.WinningTerritoryCount));
+            return new ClaimedGameViewModel(navigator, cc);
         }
         catch (Exception ex)
         {

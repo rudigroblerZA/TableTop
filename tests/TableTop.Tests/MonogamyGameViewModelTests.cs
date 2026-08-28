@@ -270,22 +270,22 @@ public sealed class MonogamyGameViewModelTests
     // ── Load-error path (was MAUI-only; WinUI took the whole app down) ───────
 
     [Fact]
-    public void Create_WithAModeThatProvidesNoDeck_SetsLoadErrorInsteadOfThrowing()
+    public async Task Create_WithAModeThatProvidesNoDeck_SetsLoadErrorInsteadOfThrowing()
     {
         var badMode = new NoDeckMode();
-        var act = () => MonogamyGameViewModel.Create(new FakeNavigator(), badMode, [Male(), Female()]);
+        var act = () => MonogamyGameViewModel.CreateAsync(new FakeNavigator(), badMode, [Male(), Female()]);
 
-        act.Should().NotThrow("a bad mode must surface as LoadError, matching MAUI's original behaviour");
+        await act.Should().NotThrowAsync("a bad mode must surface as LoadError, matching MAUI's original behaviour");
 
-        var vm = MonogamyGameViewModel.Create(new FakeNavigator(), badMode, [Male(), Female()]);
+        var vm = await MonogamyGameViewModel.CreateAsync(new FakeNavigator(), badMode, [Male(), Female()]);
         vm.HasLoadError.Should().BeTrue();
         vm.IsPlaying.Should().BeFalse();
     }
 
     [Fact]
-    public void Create_WithALoadError_CommandsAreAllDisabled_NotThrowing()
+    public async Task Create_WithALoadError_CommandsAreAllDisabled_NotThrowing()
     {
-        var vm = MonogamyGameViewModel.Create(new FakeNavigator(), new NoDeckMode(), [Male(), Female()]);
+        var vm = await MonogamyGameViewModel.CreateAsync(new FakeNavigator(), new NoDeckMode(), [Male(), Female()]);
 
         vm.CompleteCommand.CanExecute(null).Should().BeFalse();
         var act = () => vm.CompleteCommand.Execute(null);

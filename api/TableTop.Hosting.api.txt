@@ -48,7 +48,7 @@ abstract interface TableTop.Hosting.Abstractions.IClaimedController
 abstract interface TableTop.Hosting.Abstractions.IClock
     DateTimeOffset UtcNow { get; }
 abstract interface TableTop.Hosting.Abstractions.IControllerFactory
-    Task<IGameController> CreateAsync(IGameMode mode, IReadOnlyList<IPlayer> players, Int32 maxRounds = default, GameplayOptions gameplayOptions = default, SessionSnapshot resumeFrom = default, CancellationToken ct = default)
+    Task<IGameController> CreateAsync(IGameMode mode, IReadOnlyList<IPlayer> players, Int32 maxRounds = default, GameplayOptions gameplayOptions = default, SessionSnapshot resumeFrom = default, Nullable<Int32> monogamyWinningTokenCount = default, CancellationToken ct = default)
     Task<SessionSnapshot> LoadSavedSessionAsync(CancellationToken ct = default)
 abstract interface TableTop.Hosting.Abstractions.IDayOneController
     Boolean HasPendingCard { get; }
@@ -224,7 +224,7 @@ sealed class TableTop.Hosting.Controllers.ClaimedController
     event EventHandler<TerritoryStolenEvent> TerritoryStolen
 sealed class TableTop.Hosting.Controllers.ControllerFactory
     .ctor(IGamePersistence persistence = default)
-    Task<IGameController> CreateAsync(IGameMode mode, IReadOnlyList<IPlayer> players, Int32 maxRounds = default, GameplayOptions gameplayOptions = default, SessionSnapshot resumeFrom = default, CancellationToken ct = default)
+    Task<IGameController> CreateAsync(IGameMode mode, IReadOnlyList<IPlayer> players, Int32 maxRounds = default, GameplayOptions gameplayOptions = default, SessionSnapshot resumeFrom = default, Nullable<Int32> monogamyWinningTokenCount = default, CancellationToken ct = default)
     Task<SessionSnapshot> LoadSavedSessionAsync(CancellationToken ct = default)
 sealed class TableTop.Hosting.Controllers.DayOneController
     .ctor(IReadOnlyList<ICard> deck, IReadOnlyList<IPlayer> players, String modeName, IClock clock = default, String filePath = default)

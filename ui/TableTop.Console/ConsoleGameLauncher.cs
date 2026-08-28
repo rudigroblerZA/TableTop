@@ -112,13 +112,24 @@ internal sealed class ConsoleGameLauncher
         // ControllerFactory and ControllerFamilies pick this family, and
         // generalises to any future IMonogamyDeckProvider mode rather than
         // staying pinned to the one that exists today.
-        if (mode is IMonogamyDeckProvider monogamyProvider)
+        if (mode is IMonogamyDeckProvider)
         {
             var target = ConsoleUi.PromptInt("Tokens to win?", 3, 30);
-            var controller = new MonogamyController(
-                players,
-                monogamyProvider.GetDeck(),
-                winningTokenCount: target);
+
+            // Delegate to the injected factory — same single source of truth
+            // for mode→controller mapping as every other family below, just
+            // with the player-chosen target threaded through it rather than
+            // constructing MonogamyController here.
+            var built = _controllerFactory
+                .CreateAsync(mode, players, monogamyWinningTokenCount: target)
+                .GetAwaiter().GetResult();
+
+            if (built is not IMonogamyController controller)
+            {
+                built.Dispose();
+                throw new NotSupportedException($"'{mode.Name}' isn't a Monogamy-style mode.");
+            }
+
             new ConsoleMonogamyRenderer(controller).RunBlocking();
             return;
         }
