@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.28.0**, August 2026. This replaces the accumulated
+Current as of **1.29.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -443,6 +443,38 @@ async work to block on, a different shape rather than a template to copy.
   `IntroViewModel` hold. MINOR: new capability (Roaster), plus fixes and a
   test-infrastructure repair — nothing removed from the public surface of
   Core, Games or Hosting.
+- **1.29.0** added two game modes and closed backlog item 27.
+
+  **Dice Night** (`fun.family.dicenight`, AllAges) reuses the generic
+  `IDiceProgressionMode` mechanic that Roll With It proved, rather than
+  inventing a second one: two dice, the total picks one of five categories,
+  doubles let the roller choose. It exists because Roll With It sits at a
+  Teen floor and `fun.family` had no dice-driven option at all. Implementing
+  the interface is the entire integration surface — `ControllerFactory`
+  already dispatches it and every head already renders any card-turn mode.
+
+  **Math 24** (`classroom.math24`, AllAges) is four numbers, each used once,
+  combined with + − × ÷ and brackets to make 24. Worth recording *how* its
+  deck was built, because it is a different standard from every other mode
+  here: the puzzles are **machine-verified, not proofread**. An exhaustive
+  solver over all parenthesisations, in exact rational arithmetic (floats
+  lose `6 ÷ (1 − 3∕4) = 24` to rounding), generated the deck and rejected
+  two quads that looked obviously fine while hand-picking — `4 4 6 6` and
+  `1 1 8 12` — which have no solution at all. Difficulty tiers are the
+  solver's solution count rather than an author's impression, and every
+  `Legendary` card is one where *every* route passes through a non-integer
+  intermediate. `Math24ModeTests` re-solves all 34 puzzles inside the suite
+  using a second, independent solver implementation — a generator checked
+  against itself proves nothing — and that check was confirmed non-vacuous
+  by planting a known-unsolvable quad and watching it fail by name.
+
+  **Item 27** (unguarded `async void` MAUI handlers) closed, and its own
+  count was wrong: writing the proposed gate *before* fixing anything found
+  **eight**, not the six counted by reading. `SafeNavigation
+  .SafePopToRootAsync` owns the shared guard once rather than five pasted
+  try/catch blocks, and `scripts/check-maui-async-void.py` — the seventh
+  gate — keeps it closed. MINOR: two new capabilities, no public-surface
+  removals.
 
 ## What genuinely doesn't exist here
 

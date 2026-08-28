@@ -359,6 +359,14 @@ sealed class TableTop.Games.Family.ChronologyChallengeMode
     String Description { get; }
     String Name { get; }
     String SkipLabel { get; }
+sealed class TableTop.Games.Family.DiceNightMode
+    .ctor()
+    IReadOnlyList<String> CategoriesInOrder { get; }
+    String CategoryForTotal(Int32 diceTotal)
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
 static class TableTop.Games.Family.DrawItCardBank
     IReadOnlyList<ICard> All { get; }
 sealed class TableTop.Games.Family.DrawItMode
@@ -825,6 +833,16 @@ sealed class TableTop.Games.School.GrammarQuestMode
 static class TableTop.Games.School.LogicLabCardBank
     IReadOnlyList<ICard> All { get; }
 sealed class TableTop.Games.School.LogicLabMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.Math24CardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.Math24Mode
     .ctor()
     IReadOnlyDictionary<String, String> CategoryColours { get; }
     IReadOnlyList<ICard> GetCards()

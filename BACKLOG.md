@@ -1,13 +1,15 @@
 # TableTop — Backlog
 
-Current as of **1.28.0**, August 2026. Open items only; git history has the rest.
+Current as of **1.29.0**, August 2026. Open items only; git history has the rest.
 
 Items 1–8 predate the 1.18.0 review and keep their numbers — rewriting a
 numbered item in place is how item 7 vanished once (see its note). Items 9–16
 came from that review; 1.19.0 closed three of them and half of a fourth, and
 those are marked **CLOSED** in place rather than deleted, so the next reader can
 see what was done and why. Items 17–18 came out of actually building and running
-1.19.0 — the step every previous entry here had to be written without.
+1.19.0 — the step every previous entry here had to be written without. Items
+23–28 came from a review of 1.28.0, the first pass run with a full toolchain
+*and* a green suite behind it.
 
 ---
 
@@ -18,8 +20,23 @@ referred to without being renumbered (item 7 explains what happens otherwise).
 This is the ordering to work in. It comes from a UI-architecture review that cut
 across the existing numbering rather than adding to it.
 
-This table is now empty — **item 21, its last P2 entry, is closed** (see
-below). Nothing outstanding is currently between a player and a working game.
+| | Item | Why it matters |
+|---|---|---|
+| **P1** | **23** — two CI jobs report green while building nothing | "Build WinUI" and "Build MAUI (Android)" have every real step commented out. Console's build and engine `TreatWarningsAsErrors` went too. A green check that verifies nothing is worse than a missing one. |
+| **P2** | **24** — `RoasterViewModel` is the only shared ViewModel with no tests | Nine of the ten in `TableTop.Presentation` have a test file. This one has none, and it is the newest and least exercised. |
+| **P2** | **25** — saved rosters are a closed loop | You can build and persist a roster, and then never play with it. Nothing outside the Roaster screen reads a `SavedRoster`. |
+| **P2** | **26** — the "Team" roster template promises sides it never assigns | Teams are a real first-class concept (`ITeamMode`, `AssignTeams`). The template's description says "split into sides" and does nothing of the kind. |
+| **P3** | **28** — Console has no Roaster | Third head, no roster builder and no `IRosterStore`. Smallest of the parity gaps but the one now written down. |
+
+**Item 27 is closed** and has dropped out of this table. It turned out to be
+eight unguarded handlers rather than the six this item counted by reading —
+the two extras found by the gate the item proposed, written before the fix
+for exactly that reason. `check-maui-async-void.py` now enforces it in CI.
+
+Items 23–28 came from a review of the tree at 1.28.0 — the first review run
+on a machine with a full toolchain *and* a green suite, so unlike earlier
+passes nothing below is "not verified by a build". Every claim was checked
+by running something.
 
 **Items 2, 4, 5, 12, 18, 19, 20 and 21 are all closed** and have dropped out
 of this table entirely. Item 12 closed the coverage *mechanism* — the
@@ -1322,6 +1339,274 @@ wanted a fixed fixture.
 
 ---
 
+## From the 1.28.0 review
+
+Items 23–28 came from reading and running the tree at 1.28.0. Unlike the
+1.18.0 and 1.21.0 passes, this one had the full toolchain and a green suite,
+so every claim below was checked by executing something rather than inferred
+from source. Items 24–26 and half of 27 are faults in code added *during*
+1.28.0 — recorded here rather than quietly fixed, because a feature that
+shipped with a known gap is worth more as a written-down gap than as a
+silent one.
+
+### 23. Two CI jobs report green while building nothing
+
+**P1, and the most serious thing in this review.** `build-windows-heads`
+("Build WinUI") and `build-maui` ("Build MAUI (Android)") both still exist,
+still run on every push, and still report green — with every step that does
+real work commented out. What remains:
+
+- **`build-windows-heads`**: checkout, `setup-dotnet`, and then nothing. The
+  WinUI build, the `TableTop.UiTests` run and the results upload are all
+  commented out.
+- **`build-maui`**: checkout, `setup-dotnet`, `dotnet workload install
+  maui-android` — and then nothing. It installs a workload it never uses,
+  which is the tell: the job takes minutes, looks busy, and compiles no code.
+
+Two more removals in the same commit (`91ffc27`), both easy to miss:
+
+- **Console's build is gone** from `build-and-test` — so of the four
+  buildable heads, CI now compiles **none**.
+- **`TreatWarningsAsErrors` is gone** from Build Core / Games / Hosting.
+  Those steps used to pass `/p:TreatWarningsAsErrors=true
+  /p:WarningsAsErrors="1591,1573,1572"`; now they are bare `-c Release`. The
+  `lint` job still enforces XML docs on Core and Hosting, so that half
+  survives — but Games has no warnings gate at all any more, and nothing
+  fails on a new warning anywhere.
+
+`TableTop.Presentation` is also never built by name in any job. It compiles
+transitively via `dotnet test`, so this one is covered in practice — noted
+only so the next person doesn't "fix" it and think they've achieved
+something.
+
+**Why this is worse than having no job at all.** These jobs are branch-visible
+green checks that assert "Build WinUI ✓" and "Build MAUI (Android) ✓" while
+asserting nothing. That is precisely the shape this backlog already condemns
+twice — `NoHeadSilentlyDropsAFamilyItClaimsToSupport`, a test whose predicate
+was its own filter, and the `ModeManifestExtensions` dispatch that had
+acquired the bug it was written to prevent. Both got the same verdict: *a
+check that reads as load-bearing and is structurally incapable of failing is
+worse than no check, because it buys confidence.* Same verdict here.
+
+The stakes are not hypothetical. Every head-facing change in 1.28.0 — items
+18, 19 and 20, and the whole Roaster feature across both graphical heads —
+would have sailed through CI without one line of head code being compiled.
+They were verified locally on a Windows machine with the MAUI workload, which
+is exactly the environment this repo cannot assume a contributor has, and the
+reason these jobs were written in the first place. `ci.yml`'s own surviving
+comment still says, of these heads: *"That cost is the point: these heads are
+the product."* The file now contradicts itself.
+
+**Decide, don't drift.** The commit that disabled them (`91ffc27`, "Disable
+WinUI build and UI tests in CI") records no reason, so the cost that motivated
+it is unknown — plausibly runner minutes, plausibly a red build someone needed
+to get past. Either is a legitimate reason to turn a job off; neither is a
+reason to leave a green no-op standing in its place. Three honest options:
+
+1. **Re-enable them.** `TableTop.UiTests` genuinely runs and passes now
+   (item 2, closed in 1.28.0) — the blocker that plausibly justified
+   disabling the UI-test step is gone.
+2. **Delete the jobs.** If the runner cost is not worth it, say so in
+   `ci.yml` and remove them, so nothing claims a guarantee it isn't giving.
+3. **Keep them, gated.** `if:` on a label or a path filter, so they run when
+   head code changes and are visibly skipped — not falsely green — otherwise.
+
+Anything but the current state, which is option 2's cost with option 1's
+appearance.
+
+### 24. `RoasterViewModel` is the only shared ViewModel with no tests
+
+**P2.** `TableTop.Presentation/ViewModels` holds ten files. Nine of the ten
+type names are referenced by at least one file under `tests/TableTop.Tests` —
+`PlayerSetupViewModel` in four, `MillionaireGameViewModel` in two, and even
+`ModeListItem` (which is a row type, not strictly a ViewModel) in one. The
+tenth, `RoasterViewModel`, appears in none.
+
+It is also the newest (added in 1.28.0) and the one with the most untested
+logic per line: template selection resetting the in-progress roster,
+`CanAddPlayer` gating on a template's `MaxPlayers`, `SaveBlockedReason`'s
+message text, `SaveRoster`'s no-op guard, the `IRosterStore` round-trip. None
+of that is exercised anywhere.
+
+`TableTop.Tests` references `TableTop.Presentation` directly and needs no
+SDK, so — unlike the WinUI/MAUI wrappers — there is no structural obstacle
+here at all. This is a gap of omission, nothing more. Worth pairing with a
+fake `IRosterStore` (trivial: two methods) so the save/load path is covered
+without touching real storage.
+
+Worth noting what *does* cover it, so the gap isn't overstated:
+`TableTop.UiTests`' two reflection-driven tests now sweep
+`TableTop.Presentation`, so `RoasterViewModel`'s commands are asserted
+non-null and its settable properties asserted to raise `PropertyChanged`.
+That is real coverage and it caught nothing — but it is generic, and it
+knows nothing about what any of the behaviour above is *supposed* to do.
+
+### 25. Saved rosters are a closed loop — you can build one and never play it
+
+**P2, and a product gap rather than a code fault.** `SavedRoster` is written
+by the Roaster screen and read by the Roaster screen. A repo-wide search for
+consumers finds the ViewModel, the two `IRosterStore` implementations, and
+the two views' delete handlers — and nothing else. In particular
+`PlayerSetupViewModel`, which is where a game actually gets its roster, has
+never heard of it.
+
+So the whole feature terminates in itself: a player picks a template, enters
+everyone's name, gender and age, saves it, sees it in the third column — and
+then, to actually play, goes to the picker and types all those names in
+again. The persistence works; it just isn't wired to the one place it would
+save anyone effort.
+
+This was flagged when the feature landed and deliberately not built, because
+"load a roster into player setup" is a real navigation and UX decision, not a
+detail. It needs deciding:
+
+- **Load from setup** — a "use a saved roster" control on `PlayerSetupPage`
+  / `PlayerSetupView` that fills `Players` from a chosen `SavedRoster`. Most
+  useful, most work; both heads need it, and `PlayerSetupViewModel` would
+  gain an `IRosterStore` dependency.
+- **Play from the roster screen** — a "play with this" action per saved
+  roster, jumping into mode selection with the roster pre-loaded. Fewer
+  touches, but inverts the app's existing mode-then-players flow.
+- **Accept it as a planning tool** — decide the feature is for *composing*
+  groups, not launching them, and say so on the screen. Cheapest, and
+  honest, but then the third column needs to stop looking like a launcher.
+
+Note the adjacent duplication while deciding: `IAppSettings.RecentPlayers`
+already remembers the last roster and already pre-fills player setup. A saved
+roster and the recent-players list are now two overlapping answers to "don't
+make them retype everyone", and only the older one is actually wired up.
+
+### 26. The "Team" roster template promises sides it never assigns
+
+**P2, an honesty gap of exactly the kind this file keeps catching.** The
+Roaster's four templates differ in real ways — `MinPlayers`, `MaxPlayers`,
+and `TagAsCouple`, which genuinely tags players `couple-member` and is what
+makes `TableSuitability` accept a Couple-only mode. Three of the four are
+truthful. "Team" is not:
+
+```
+new() { Name = "Team", Description = "Two or more players split into sides", MinPlayers = 4 },
+```
+
+Nothing splits anyone into sides. `SavedPlayer` carries `Name`, `Gender`,
+`Age` and `IsCoupleMember` — there is no team field for a roster to populate.
+So "Team" differs from "Friends" by exactly one integer (`MinPlayers` 4 vs 2)
+while its description claims a mechanic it does not have.
+
+Teams are not a missing concept elsewhere — they are first-class and real:
+`ITeamMode`, `PreferredTeamCount`, `PlayerSetupViewModel.AssignTeams()`,
+`Teams.Deal`, `TeamAlternatingPlayerManager`. That is what makes this a gap
+rather than a wording quibble: a player who reads "split into sides",
+saves a Team roster, and then starts a team mode gets an unassigned table and
+no explanation, exactly as if they had picked Friends.
+
+Either give `SavedPlayer` an optional team and have the Team template deal
+them (`Teams.Deal` already exists and is tested), or reword the description
+to what the template actually does — a bigger group with a higher floor. The
+first is better and is entangled with item 25: a roster that carries team
+assignments is only worth building if something downstream can consume it.
+
+### 27. Six MAUI `async void` handlers are unguarded — **CLOSED (it was eight)**
+
+**P3.** This codebase already knows the hazard and writes it down in four
+places. Three say it verbatim — *"An exception escaping an async void handler
+terminates the process on Android; surface it instead"* — above
+`GameplayPage.OnEndGameClicked`, `PlayerSetupPage.OnStartGameClicked` and
+`SettingsPage.OnResetClicked`, each of which wraps its body in try/catch and
+shows a `DisplayAlert`. The fourth, on `GameSelectionPage`'s `_navigating`
+field, states the same hazard and adds the trigger: *"Two PushAsync calls in
+flight — trivially caused by an impatient double-tap — throw, and an exception
+escaping an async void handler terminates the process on Android rather than
+being caught anywhere useful."* `GameSelectionPage` and `PlayerSetupPage` both
+carry that re-entrancy flag as well as the try/catch.
+
+Six handlers have neither guard:
+
+- `ClaimedGamePage.OnDoneClicked`, `DayOneGamePage.OnDoneClicked`,
+  `HerdGamePage.OnDoneClicked`, `MillionaireGamePage.OnDoneClicked`,
+  `MonogamyGamePage.OnDoneClicked` — five identical one-liners,
+  `async void … => await Navigation.PopToRootAsync();`
+- `SettingsPage.OnRoasterClicked` — `async void … => await
+  Navigation.PushAsync(new RoasterPage());`, added in 1.28.0, sitting three
+  lines above `OnResetClicked`'s try/catch and its explanatory comment.
+
+Honest severity, since P3 is deliberate: `PopToRootAsync` on an already-rooted
+stack is the realistic double-tap case and MAUI tolerates it, so the five
+`OnDoneClicked` handlers are unlikely to fire in practice. `OnRoasterClicked`
+is the one that matches the shape `GameSelectionPage`'s comment was written
+about — a `PushAsync` reachable by double-tap, with no `_navigating` flag —
+and it is the newest of the six. The reason to fix all six together is not
+that each is dangerous; it is that the rule is already written down, already
+followed in four places, and a rule followed 4-of-10 times is one nobody can
+rely on.
+
+A `check-*.py` gate would fit the existing pattern exactly: flag any `async
+void` event handler in a MAUI page whose body is not wrapped in a try/catch.
+That is a purely syntactic check, which is what the other six gates are.
+
+**Closed — and the count in this item's own title was wrong.** Writing the
+proposed gate first, before fixing anything, is what exposed that: it found
+**eight** unguarded handlers, not six. The two the manual read had missed:
+
+- **`GameSelectionPage.OnAppearing`** — the only handler in the app that runs
+  with no user action at all, on every appearance of the landing page. Low
+  real risk, because `SavedSessionLookup.RefreshAsync` catches everything
+  internally, so nothing can currently reach the handler — but that is a
+  property of today's implementation rather than a guarantee, the same
+  distinction item 20 drew about its deadlock. Guarded, and deliberately
+  silent: a resume offer that can't be built is not worth an alert on a
+  screen the player just opened.
+- **`PlayerSetupPage.OnSaveRosterClicked`** — genuinely exposed.
+  `SaveRosterAsDefault` writes through `IAppSettings`, which on MAUI is
+  `Preferences`-backed and catches nothing (item 19 left that alone on
+  purpose — `Preferences` is not file I/O), and the `DisplayAlert` that
+  follows can throw in its own right.
+
+**The five identical `OnDoneClicked` one-liners were fixed by extraction, not
+by five try/catch blocks.** `SafeNavigation.SafePopToRootAsync` (a `Page`
+extension in `ui/TableTop.Maui/Pages`) owns the guard once and each page
+delegates in a single line. Copy-pasting the same ten lines five times would
+have restated the rule five times — precisely the "a guard that duplicates
+the thing it's checking is the shape that rots" failure this file's own
+Guards section closes on. `SettingsPage.OnRoasterClicked` got the fuller
+treatment instead, because it is a `PushAsync` reachable by double-tap: a
+`_navigating` re-entrancy flag *and* a try/catch, matching
+`GameSelectionPage` exactly.
+
+**`scripts/check-maui-async-void.py` is what makes this stay closed**, and it
+is wired into CI's `xaml` job alongside the other six. Verified it catches
+drift, not merely that it passes: reverting one `OnDoneClicked` to the bare
+`await Navigation.PopToRootAsync()` made it fail naming that exact file and
+line; restoring it made it pass again. All 16 `async void` handlers across 12
+MAUI pages now report guarded.
+
+The lesson generalises past this item, and is the reason the gate was written
+before the fix rather than after: **a rule enforced by review gets applied at
+the rate people remember it — here, 4 of 12 — and a careful manual audit of
+the remainder still missed a quarter of what was left.** The gate found in one
+run what two passes of reading did not.
+
+### 28. Console has no Roaster
+
+**P3, the smallest gap here, recorded so it stops being invisible.** The
+Roaster shipped in 1.28.0 to two heads. Console has no roster builder, and no
+`IRosterStore` implementation — the interface has exactly two, MAUI's
+`RosterStore` and `WinUIRosterStore`.
+
+Deliberate in the moment: the parity pass that added WinUI was scoped to the
+graphical heads, and Console genuinely is a different surface — it already
+has its own player-setup flow in `ConsolePlayerSetup`, backed by
+`IPlayerRepository` and `PlayerProfile` rather than `SavedPlayer`. A Console
+Roaster is therefore not a port of the shared ViewModel; it is a third
+storage shape and a text-mode flow.
+
+Worth doing only if item 25 resolves toward rosters being genuinely useful.
+If a saved roster stays a thing you build and never play, adding a third head
+that can also build-and-never-play it is not progress. Sequence this after 25,
+not before.
+
+---
+
 ## Guards that must not rot
 
 Each exists because a specific bug shipped. If one fails for a reason unrelated
@@ -1335,10 +1620,11 @@ to what it catches, fix the false positive — don't delete the check.
 | `check-xaml-bindings.py` | bindings resolving to nothing — silently empty UI | a dropped `StartCommand` binding |
 | `check-mvvm-method-parity.py` | MAUI page calling a method a shared VM only exposes as `ICommand` | four call sites broke in one build |
 | `check-head-family-coverage.py` | a head's declared `SupportedFamilies` drifting from `HeadFamilyCoverageTests`' copy of it | WinUI shipped with no declaration at all, and the coverage test that should have caught that read only its own copy |
+| `check-maui-async-void.py` | an `async void` MAUI handler that awaits without a try/catch — on Android an escaping exception kills the process | the rule was documented above four handlers and applied by hand; eight others never got it, two of which a careful manual count still missed |
 | `PublicApiSurfaceTests` | unnoticed breaking change to public surface | written proactively |
 | `ModeManifestExtensions` dispatch | a mode's manifest reporting zero cards | `Claimed!` excluded from capped `SurpriseMe` for a version |
 
-All six `check-*.py` gates pass, verified by actually running them on Windows
+All seven `check-*.py` gates pass, verified by actually running them on Windows
 with Python 3.12 (matching CI's pin). `check-ui-compiles.py` passes too, on a
 machine that has both Python and the .NET SDK — the first time that has been
 confirmed rather than assumed.

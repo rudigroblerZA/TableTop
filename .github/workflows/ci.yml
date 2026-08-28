@@ -68,6 +68,14 @@ jobs:
       - name: Check head family-coverage declarations match their test copy
         run: python3 scripts/check-head-family-coverage.py
 
+      # Backlog item 27. An exception escaping an `async void` handler
+      # terminates the process on Android. The codebase documented that above
+      # four handlers and applied it by hand, so eight others never got it —
+      # and two of the eight were missed even by a careful manual count, which
+      # is why this is a script and not a review habit.
+      - name: Check MAUI async void handlers are guarded
+        run: python3 scripts/check-maui-async-void.py
+
       # Backlog K.4. Five directories literally named "{Base,Modes,Data}" and
       # similar were committed — brace expansion run under sh, which doesn't
       # expand braces. All empty, and one had an unbalanced brace, meaning that

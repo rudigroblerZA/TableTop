@@ -106,7 +106,23 @@ public partial class GameSelectionPage : ContentPage
         base.OnAppearing();
         // Re-checked every time this page shows, so finishing a game removes the
         // stale offer without a restart.
-        await _vm.LookForSavedSessionAsync();
+        //
+        // Guarded even though the shared saved-session lookup already catches
+        // everything inside its own RefreshAsync, so nothing can reach here
+        // today. That is a property of today's implementation rather than a
+        // guarantee — the same reasoning backlog item 20 applied to its
+        // deadlock risk — and this is the one handler that runs with no user
+        // action at all, on every appearance. Silent is the right failure
+        // here: a resume offer that can't be built is not worth an alert on a
+        // screen the player just opened.
+        try
+        {
+            await _vm.LookForSavedSessionAsync();
+        }
+        catch
+        {
+            // Leave the resume offer hidden; the picker below still works.
+        }
     }
 
     private async void OnResumeClicked(object sender, EventArgs e)
