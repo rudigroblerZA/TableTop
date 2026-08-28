@@ -19,10 +19,11 @@ Directory.CreateDirectory(appDataDir);
 
 var services = new ServiceCollection()
     .AddTableTop()         // Core: IGameFactory, IDeckBuilder, IRuleEvaluator …
-    .AddTableTopHosting(   // Hosting: IControllerFactory, IArchetypeRegistry,
-                           //          IGamePersistence, IPlayerRepository, IHintEngine
+    .AddTableTopHosting(   // Hosting: IControllerFactory, IArchetypeRegistry, IGamePersistence,
+                           //          IPlayerRepository, IRosterRepository, IHintEngine
         sessionFilePath: Path.Combine(appDataDir, "session.json"),
-        playerFilePath: Path.Combine(appDataDir, "players.json"));
+        playerFilePath: Path.Combine(appDataDir, "players.json"),
+        rosterFilePath: Path.Combine(appDataDir, "rosters.json"));
 
 var provider = services.BuildServiceProvider();
 
@@ -30,7 +31,8 @@ try
 {
     var launcher = new ConsoleGameLauncher(
         repository: provider.GetRequiredService<TableTop.Hosting.Persistence.IPlayerRepository>(),
-        controllerFactory: provider.GetRequiredService<TableTop.Hosting.Abstractions.IControllerFactory>());
+        controllerFactory: provider.GetRequiredService<TableTop.Hosting.Abstractions.IControllerFactory>(),
+        rosterRepository: provider.GetRequiredService<TableTop.Hosting.Persistence.IRosterRepository>());
 
     launcher.Run();
 }

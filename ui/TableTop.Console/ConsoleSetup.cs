@@ -12,11 +12,16 @@ namespace TableTop.Console;
 /// </summary>
 internal static class ConsolePlayerSetup
 {
-    public static IReadOnlyList<IPlayer> Run(IPlayerRepository repository)
+    public static IReadOnlyList<IPlayer> Run(IPlayerRepository repository, IRosterRepository rosterRepository)
     {
+        var savedRosters = rosterRepository.LoadAsync().GetAwaiter().GetResult();
         var saved = repository.LoadAsync().GetAwaiter().GetResult().ToList();
 
-        var profiles = saved.Count > 0
+        List<PlayerProfile>? profiles = null;
+        if (savedRosters.Count > 0 && ConsoleUi.PromptYesNo("Load a saved roster?"))
+            profiles = ConsoleRoster.Choose(rosterRepository, savedRosters);
+
+        profiles ??= saved.Count > 0
             ? EditSavedProfiles(saved)
             : CreateNewProfiles();
 
@@ -34,6 +39,13 @@ internal static class ConsolePlayerSetup
         {
             ConsoleUi.PrintError("Couldn't save player profiles — check disk space and permissions.");
         }
+
+        // Offer to remember this group as a named roster (backlog item 28).
+        if (ConsoleUi.PromptYesNo("Save this group as a roster for next time?"))
+            ConsoleRoster.SaveCurrent(
+                rosterRepository,
+                rosterRepository.LoadAsync().GetAwaiter().GetResult(),
+                profiles);
         SC.WriteLine();
 
         return profiles.Select(p => (IPlayer)p.ToPlayer()).ToList().AsReadOnly();
