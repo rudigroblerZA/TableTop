@@ -1,9 +1,7 @@
 # TableTop — Backlog
 
-Current as of **1.29.3 plus four unreleased fixes on top of it** — items 25,
-29, 30 and 31 all landed after the 1.29.3 bump and none of them has moved
-`VersionPrefix`, so the number in `Directory.Build.props` currently understates
-the tree. August 2026. Open items only; git history has the rest.
+Current as of **1.30.0**, August 2026. Open items only; git history has the
+rest.
 
 Items 1–8 predate the 1.18.0 review and keep their numbers — rewriting a
 numbered item in place is how item 7 vanished once (see its note). Items 9–16
@@ -41,8 +39,8 @@ required fixing two genuine build failures: MAUI Android could not build at
 all (`XA1030`, AOT-versus-trimming), and the UI-test host could not start
 until item 2 fixed it. CI now compiles all four heads again.
 
-**Items 25, 29, 30 and 31 are closed too**, all four after the 1.29.3 bump
-and none of them versioned yet (see the note at the top). Item 25 closed
+**Items 25, 29, 30 and 31 are closed too** — the four that 1.30.0 released,
+having accumulated unversioned above 1.29.3. Item 25 closed
 toward "load from setup" — the most useful of the three options it laid out
 and the most work — so a saved roster is no longer a thing you build and can
 never play. Item 29 was the last of the `new Controller(...)` bypasses:
@@ -1961,10 +1959,10 @@ the type's docstring currently contradicts:
 
 `SerializedCardTurnController` is public, so `api/TableTop.Hosting.api.txt`
 grew by a type and `PublicApiSurfaceTests` flagged it correctly; the snapshot
-is regenerated in the same commit. New public surface makes this MINOR under
-`Directory.Build.props`'s rule when it is eventually versioned — and it has not
-been (see the top of this file: this and three other closed items sit above
-`VersionPrefix` 1.29.3).
+is regenerated in the same commit. New public surface is what makes 1.30.0 a
+MINOR under `Directory.Build.props`'s rule; see that entry in
+`ARCHITECTURE.md` for why item 29's interface-parameter change was taken as
+MINOR too, where the rule as written argues for MAJOR.
 
 **Not verified by a local build** (no `dotnet`/NuGet in this sandbox) — covered
 instead by three new `SerializedCardTurnControllerTests`: that same-thread use
