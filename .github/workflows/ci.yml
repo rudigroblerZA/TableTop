@@ -290,8 +290,8 @@ jobs:
       - name: Build WinUI
         run: dotnet build ui/TableTop.WinUI/TableTop.WinUI.csproj -c Release -p:Platform=x64
 
-      - name: Publish WinUI
-        run: dotnet publish ui/TableTop.WinUI/TableTop.WinUI.csproj -f net10.0-windows10.0.19041.0 -c Release -p:Platform=x64 -p:GenerateAppxPackageOnBuild=true -p:AppxPackageSigningEnabled=false
+      # - name: Publish WinUI
+      #   run: dotnet publish ui/TableTop.WinUI/TableTop.WinUI.csproj -f net10.0-windows10.0.19041.0 -c Release -p:Platform=x64 -p:GenerateAppxPackageOnBuild=true -p:AppxPackageSigningEnabled=false
 
   build-maui:
     name: Build MAUI (Android)
