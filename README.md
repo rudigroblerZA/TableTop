@@ -17,12 +17,13 @@ TableTop/
 │   ├── TableTop.Games/        ← Game mode definitions (101 modes, 3,721 cards)
 │   │                             cards live in the in-code banks; see ARCHITECTURE.md
 │   ├── TableTop.Hosting/      ← Controllers, events, hints, persistence
-│   └── TableTop.Presentation/ ← ViewModels shared by WinUI + MAUI (plain net10.0)
+│   └── TableTop.Presentation/ ← ViewModels shared by WinUI + MAUI + Android (plain net10.0)
 ├── tests/
-│   ├── TableTop.Tests/        ← 910 tests — engine only, no UI required, any OS
+│   ├── TableTop.Tests/        ← 911 tests — engine only, no UI required, any OS
 │   └── TableTop.UiTests/      ← ViewModel tests     (Windows — references WinUI)
 ├── ui/
 │   ├── TableTop.Console/      ← Terminal UI         (any OS, no extra installs)
+│   ├── TableTop.Android/      ← Native .NET for Android (Mono.Android, not MAUI; `android` workload)
 │   ├── TableTop.WinUI/        ← WinUI 3 desktop     (Windows App SDK, x64/x86/ARM64)
 │   └── TableTop.Maui/         ← Mobile/desktop      (requires MAUI workload)
 ├── TableTop.Engine.slnx       ← Engine + Tests + Console (recommended start)
@@ -82,6 +83,25 @@ default. Those two stay native-runner-only, in the container and in CI alike.
 
 ## UI-specific setup
 
+### Android (native .NET for Android)
+
+`TableTop.Android` is a fourth head: native Mono.Android bindings (Activities +
+view trees, no AXML-heavy layouts, no MAUI), consuming the same
+`TableTop.Presentation` ViewModels as WinUI and MAUI. It uses its own
+`ApplicationId` (`com.tabletop.game.droid`), so it installs alongside the MAUI
+Android app rather than replacing it.
+
+```bash
+dotnet workload install android                 # one-time
+dotnet build ui/TableTop.Android/TableTop.Android.csproj -f net10.0-android
+dotnet build ui/TableTop.Android/TableTop.Android.csproj -c Release -f net10.0-android
+```
+
+The Release config sets `RunAOTCompilation=false` deliberately — the same
+trimming-vs-AOT constraint documented in `TableTop.Maui.csproj` (backlog item
+23): card types are reached reflectively by `System.Text.Json`, so the linker
+must not trim (`PublishTrimmed=false`), and AOT requires trimming.
+
 ### MAUI (iOS / Android / macOS / Windows)
 
 The `Microsoft.Maui.Sdk could not be found` error means the workload is not installed:
@@ -122,6 +142,7 @@ MSBuild's AnyCPU default, and the MSIX packaging targets reject AnyCPU even with
 
 ```
 Core  ←  Games  ←  Hosting  ←  Console
+                            ←  Android
                             ←  WinUI   ←  UiTests
                             ←  Maui
                             ←  Tests
@@ -129,7 +150,9 @@ Core  ←  Games  ←  Hosting  ←  Console
 
 No UI code ever reaches Core, Games, or Hosting. `TableTop.Tests` is
 deliberately engine-only and cross-platform; only `TableTop.UiTests` references
-a UI head, which is what confines it to Windows.
+a UI head, which is what confines it to Windows. `TableTop.Android` is a native
+.NET for Android head (Mono.Android bindings, not MAUI) that consumes the same
+`TableTop.Presentation` ViewModels as WinUI and MAUI.
 
 ---
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shared board-game palette, matching the WinUI and MAUI heads. -->
+    <color name="baize">#174034</color>
+    <color name="baize_dark">#0F2A22</color>
+    <color name="walnut">#4A2E1D</color>
+    <color name="brass">#E3C67F</color>
+    <color name="parchment">#F3E9D2</color>
+    <color name="ink">#1E1E22</color>
+    <color name="hint_gentle">#C49E4C</color>
+    <color name="hint_moderate">#F59E0B</color>
+    <color name="hint_strong">#EF4444</color>
+</resources>

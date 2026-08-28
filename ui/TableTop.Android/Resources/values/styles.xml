@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Plain platform Material dark theme — minSdk is 24, so no AppCompat /
+        AndroidX dependency is needed. The felt colour is the window background
+        so every screen sits on the same board.
+    -->
+    <style name="TableTop.Theme" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/baize</item>
+        <item name="android:colorPrimary">@color/walnut</item>
+        <item name="android:colorPrimaryDark">@color/baize_dark</item>
+        <item name="android:colorAccent">@color/brass</item>
+        <item name="android:textColorPrimary">@color/parchment</item>
+        <item name="android:statusBarColor">@color/baize_dark</item>
+    </style>
+</resources>

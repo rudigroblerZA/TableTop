@@ -47,9 +47,10 @@ TEST_FILE = "tests/TableTop.Tests/ControllerFamilyTests.cs"
 
 # (label, head source file, property name in the head, array name in the test)
 SOURCES = [
-    ("MAUI",    "ui/TableTop.Maui/Pages/PlayerSetupPage.xaml.cs", "SupportedFamilies", "MauiSupported"),
-    ("WinUI",   "ui/TableTop.WinUI/ViewModels/GameViewModels.cs", "SupportedFamilies", "WinUiSupported"),
-    ("Console", "ui/TableTop.Console/ConsoleGameLauncher.cs",     "SupportedFamilies", "ConsoleSupported"),
+    ("MAUI",    "ui/TableTop.Maui/Pages/PlayerSetupPage.xaml.cs",            "SupportedFamilies", "MauiSupported"),
+    ("WinUI",   "ui/TableTop.WinUI/ViewModels/GameViewModels.cs",            "SupportedFamilies", "WinUiSupported"),
+    ("Console", "ui/TableTop.Console/ConsoleGameLauncher.cs",                "SupportedFamilies", "ConsoleSupported"),
+    ("Android", "ui/TableTop.Android/Infrastructure/GameScreenFactory.cs",   "SupportedFamilies", "AndroidSupported"),
 ]
 
 FAMILY = re.compile(r"ControllerFamily\.(\w+)")
