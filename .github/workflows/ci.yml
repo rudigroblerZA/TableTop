@@ -287,22 +287,8 @@ jobs:
 
       # WinUI declares <Platforms>x86;x64;ARM64</Platforms> with no AnyCPU, so
       # an explicit platform is required or the build cannot pick one.
-      # - name: Build WinUI
-      #   run: dotnet build ui/TableTop.WinUI/TableTop.WinUI.csproj -c Release -p:Platform=x64
-
-      # Backlog G.4. The only tests that touch a ViewModel. They reference
-      # TableTop.WinUI, so they run here rather than in the cross-platform job.
-      # - name: Run UI tests
-      #   run: dotnet test tests/TableTop.UiTests/TableTop.UiTests.csproj -c Release -p:Platform=x64
-      #        --logger "trx;LogFileName=ui-test-results.trx"
-      #        --results-directory tests/TableTop.UiTests/TestResults
-
-      # - name: Upload UI test results
-      #   uses: actions/upload-artifact@v4
-      #   if: always()
-      #   with:
-      #     name: ui-test-results
-      #     path: tests/TableTop.UiTests/TestResults/*.trx
+      - name: Build WinUI
+        run: dotnet build ui/TableTop.WinUI/TableTop.WinUI.csproj -c Release -p:Platform=x64
 
   build-maui:
     name: Build MAUI (Android)
