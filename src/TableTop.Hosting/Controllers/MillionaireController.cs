@@ -21,7 +21,6 @@ public sealed class MillionaireController : IMillionaireController
 
     private List<MultipleChoiceCard> _questionPool = [];
     private PrizeLadder _ladder = new();
-    private List<Core.Domain.Lifelines.FiftyFiftyLifeline> _lifelineList = [];
     private List<Core.Abstractions.Lifelines.ILifeline> _lifelines = [];
     private List<AnswerLabel> _activeOptions = [];
     private MultipleChoiceCard? _currentQuestion;

@@ -166,8 +166,7 @@ public sealed class MinimumAgeRestriction : IRestriction
     /// <summary>Initialises a new <see cref="MinimumAgeRestriction"/> instance.</summary>
     public MinimumAgeRestriction(int minimumAge)
     {
-        if (minimumAge < 0)
-            throw new ArgumentOutOfRangeException(nameof(minimumAge));
+        ArgumentOutOfRangeException.ThrowIfNegative(minimumAge);
         _minimumAge = minimumAge;
     }
 

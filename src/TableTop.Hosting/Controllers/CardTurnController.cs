@@ -32,7 +32,6 @@ public sealed class CardTurnController : ICardTurnController
     private readonly string _modeName;
     private readonly string? _modeFilePath;
     private readonly TableTop.Core.Abstractions.IEngineDiagnostics _diagnostics;
-    private readonly Dictionary<Guid, List<CardOutcome>> _outcomeHistory = [];
 
     // ── Thread-safety ─────────────────────────────────────────────────────────
     // CardTurnController is single-threaded. Ownership transfers to the caller
