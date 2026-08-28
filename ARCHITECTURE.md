@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.29.3**, August 2026. This replaces the accumulated
+Current as of **1.30.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -530,6 +530,60 @@ async work to block on, a different shape rather than a template to copy.
   they pass 2/2), and the packaging step stays commented as work in progress
   rather than being treated as a switched-off step. PATCH: CI configuration
   and one build property, no behaviour and no public surface change.
+- **1.30.0** released the four backlog items that had accumulated above 1.29.3
+  — 25, 29, 30 and 31 — plus a card-bank refactor that changes nothing at
+  runtime.
+
+  **What earns the MINOR.** Item 31 added `SerializedCardTurnController`, a
+  new public type in Hosting: `CardTurnController` is documented
+  single-threaded and asserts it through `ThreadingGuard`, but `Enabled`
+  defaults false in Release — the configuration CI and every release build
+  use — so the contract was enforced only where nobody ships. The adapter
+  serialises every call through a reentrant lock and `ControllerFactory`'s
+  CardTurn arm returns it, so the guarantee holds unconditionally. Item 25 is
+  the other half of the case: `PlayerSetupViewModel` gained an optional
+  `IRosterStore`, `SavedRosters` and `LoadRoster`, so a saved roster can
+  finally start a game instead of only existing on the Roaster screen. New
+  capability on both counts.
+
+  **The judgement call, recorded because the rule points two ways.** Item 29
+  added an optional `monogamyWinningTokenCount` parameter to
+  `IControllerFactory.CreateAsync` so Console's Monogamy flow — which needs
+  the table's token target before the controller exists — could stop calling
+  `new MonogamyController(...)` and go through the factory like every other
+  family. That is a change to an interface member's signature, and the
+  INTERFACE row in `Directory.Build.props` reads MAJOR unless the addition
+  carries a default implementation; an optional parameter is a default
+  *argument*, which helps callers and does nothing for implementers. Taken as
+  MINOR anyway, on the same reasoning as the removal carve-out one row above
+  it: `ControllerFactory` is the only implementer in the tree, nothing is
+  published, no `PackageReference` to these assemblies exists anywhere, and
+  every existing caller compiles unchanged because the parameter is optional
+  and was inserted before `ct` rather than at the end. The precedent points
+  the same way — `ICardTurnController` gained `Players` with a default
+  implementation explicitly rejected, and that shipped as 1.27.0, not 2.0.0.
+  Publish a package and this reverts to MAJOR, exactly as the removal row
+  says of itself. The narrow reading is defensible and was considered; this
+  is the deliberate answer, not an oversight.
+
+  **Also in it, neither affecting the digit.** Item 30 fixed two defects in
+  four JSON stores: a fixed `.tmp` filename with no synchronisation (now a
+  per-call GUID name plus a per-instance gate) and a default write location
+  beside the executable rather than app-data (each of the three hosts now
+  resolves and passes its own). Item 29's other two thirds routed Monogamy,
+  Claimed! and Herd through `IControllerFactory` and gave their MAUI pages the
+  two-phase `IAsyncInitializablePage` shape. Item 31 also changed
+  `UseSeededRandom` from `AddSingleton` to `AddScoped`, matching the comment
+  that had sat above the wrong line since both existed. Four card banks
+  (`FactOrFiction`, `SpellingBee`, `CouplesQuestions`, `RelationshipDares`)
+  gained default parameters on their private card helpers — 208 call sites
+  rewritten, every card's resolved fields verified byte-identical, no public
+  surface and no behaviour touched.
+
+  **Verification, honestly.** None of the work above 1.29.3 was built or
+  tested: that sandbox had no `dotnet` and no NuGet, so each closed item's
+  own note in `BACKLOG.md` says what was checked instead. The seven
+  `check-*.py` gates were run and pass; `check-ui-compiles.py` could not be.
 
 ## What genuinely doesn't exist here
 

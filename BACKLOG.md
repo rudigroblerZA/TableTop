@@ -1,6 +1,7 @@
 # TableTop — Backlog
 
-Current as of **1.29.3**, August 2026. Open items only; git history has the rest.
+Current as of **1.30.0**, August 2026. Open items only; git history has the
+rest.
 
 Items 1–8 predate the 1.18.0 review and keep their numbers — rewriting a
 numbered item in place is how item 7 vanished once (see its note). Items 9–16
@@ -9,7 +10,9 @@ those are marked **CLOSED** in place rather than deleted, so the next reader can
 see what was done and why. Items 17–18 came out of actually building and running
 1.19.0 — the step every previous entry here had to be written without. Items
 23–28 came from a review of 1.28.0, the first pass run with a full toolchain
-*and* a green suite behind it.
+*and* a green suite behind it. Items 29–31 came from three separate passes over
+the tree after 1.29.3 — one commit each — and are all closed; item 32 came out
+of reading item 31's own fix rather than out of a review of anything else.
 
 ---
 
@@ -23,9 +26,9 @@ across the existing numbering rather than adding to it.
 | | Item | Why it matters |
 |---|---|---|
 | **P2** | **24** — `RoasterViewModel` is the only shared ViewModel with no tests | Nine of the ten in `TableTop.Presentation` have a test file. This one has none, and it is the newest and least exercised. |
-| **P2** | **25** — saved rosters are a closed loop | You can build and persist a roster, and then never play with it. Nothing outside the Roaster screen reads a `SavedRoster`. |
-| **P2** | **26** — the "Team" roster template promises sides it never assigns | Teams are a real first-class concept (`ITeamMode`, `AssignTeams`). The template's description says "split into sides" and does nothing of the kind. |
-| **P3** | **28** — Console has no Roaster | Third head, no roster builder and no `IRosterStore`. Smallest of the parity gaps but the one now written down. |
+| **P2** | **26** — the "Team" roster template promises sides it never assigns | Teams are a real first-class concept (`ITeamMode`, `AssignTeams`). The template's description says "split into sides" and does nothing of the kind. Item 25's close is what makes the *better* of its two fixes viable: a saved roster now reaches `PlayerSetupViewModel`, so team assignments it carries would finally have a consumer. |
+| **P3** | **28** — Console has no Roaster | Third head, no roster builder and no `IRosterStore`. Smallest of the parity gaps but the one now written down. Its own text sequenced it after item 25; that gate is now clear. |
+| **P3** | **32** — `SerializedCardTurnController`'s guarantee has one hole, and its docstring doesn't say so | The adapter item 31 added holds its lock for the whole of every member — except the one async member, where the post-`await` half escapes it. Narrow and currently harmless; the docstring claims otherwise, which is the part that isn't. |
 
 **Items 23 and 27 are closed** and have dropped out of this table. Item 27
 turned out to be eight unguarded handlers rather than the six it counted by
@@ -36,10 +39,27 @@ required fixing two genuine build failures: MAUI Android could not build at
 all (`XA1030`, AOT-versus-trimming), and the UI-test host could not start
 until item 2 fixed it. CI now compiles all four heads again.
 
+**Items 25, 29, 30 and 31 are closed too** — the four that 1.30.0 released,
+having accumulated unversioned above 1.29.3. Item 25 closed
+toward "load from setup" — the most useful of the three options it laid out
+and the most work — so a saved roster is no longer a thing you build and can
+never play. Item 29 was the last of the `new Controller(...)` bypasses:
+Monogamy, Claimed! and Herd now go through `IControllerFactory` like everyone
+else, which is what makes a host-registered persistence or diagnostics sink
+actually reach them. Item 30 was two defects in one place — four JSON stores
+sharing a fixed `.tmp` filename with no locking, all four writing beside the
+executable instead of app-data. Item 31 closed the gap `ThreadingGuard` could
+not: it only *detects* cross-thread misuse, and only in Debug, so the build
+that ships had nothing enforcing `CardTurnController`'s single-threaded
+contract at all.
+
 Items 23–28 came from a review of the tree at 1.28.0 — the first review run
 on a machine with a full toolchain *and* a green suite, so unlike earlier
 passes nothing below is "not verified by a build". Every claim was checked
-by running something.
+by running something. **That does not extend to items 25 and 29–32.** Those
+were written in a sandbox with no `dotnet` and no NuGet: the four closed ones
+each say so in their own closing note and say what was checked instead, and
+item 32 is a reading of item 31's diff rather than anything that was run.
 
 **Items 2, 4, 5, 12, 18, 19, 20 and 21 are all closed** and have dropped out
 of this table entirely. Item 12 closed the coverage *mechanism* — the
@@ -785,6 +805,14 @@ was free:
 `[Collection]` exists for. That one is load-bearing and cannot simply be
 deleted — it is a real runtime guard with a real global switch. Nothing about it
 changed; it just no longer has company.
+
+Item 31 narrowed what that switch is load-bearing *for*, without removing the
+need for the `[Collection]`. Enforcement of the single-threaded contract now
+comes from `SerializedCardTurnController` and holds in Release; the switch is
+back to being a diagnostic — it reports a thread mismatch rather than being the
+only thing standing between a stray caller and corrupted state. It is still
+process-wide, still flipped by tests, and still the reason those two classes
+share a collection.
 
 If a "flaky on Windows, green locally" report predates 1.19.0, the two deleted
 statics are now a plausible past cause rather than a present one.
@@ -1587,6 +1615,14 @@ to what the template actually does — a bigger group with a higher floor. The
 first is better and is entangled with item 25: a roster that carries team
 assignments is only worth building if something downstream can consume it.
 
+**Item 25 is now closed, which resolves that entanglement in the first
+option's favour.** `PlayerSetupViewModel.LoadRoster` replaces `Players` from a
+chosen `SavedRoster`, and `AssignTeams()` sits on the same ViewModel — so a
+`SavedPlayer` carrying an optional team would land somewhere that already
+knows what to do with it. The description-reword fallback is still available
+and still cheaper; it is just no longer the only honest option, because the
+downstream consumer this item said was missing exists now.
+
 ### 27. Six MAUI `async void` handlers are unguarded — **CLOSED (it was eight)**
 
 **P3.** This codebase already knows the hazard and writes it down in four
@@ -1685,6 +1721,17 @@ Worth doing only if item 25 resolves toward rosters being genuinely useful.
 If a saved roster stays a thing you build and never play, adding a third head
 that can also build-and-never-play it is not progress. Sequence this after 25,
 not before.
+
+**That gate is now clear** — item 25 closed toward "load from setup", so a
+saved roster does lead somewhere. The rest of this item is unchanged and is
+still the reason it sits at P3: Console's flow is `ConsolePlayerSetup` over
+`IPlayerRepository`/`PlayerProfile`, not the shared ViewModel over
+`SavedPlayer`, so this remains a third storage shape and a text-mode flow to
+design rather than a port of something that exists. Worth checking whether the
+two shapes should converge before building the second one — `SavedPlayer` and
+`PlayerProfile` answering the same question differently is the kind of
+duplication item 25's own closing note flagged between `SavedRoster` and
+`RecentPlayers`.
 
 ### 29. Three controller families bypassed `IControllerFactory` — **CLOSED**
 
@@ -1836,6 +1883,139 @@ survives a clean run), by re-reading each of the three hosts' composition
 roots to confirm every one now passes an explicit path, and by a brace/paren
 parity check on every changed file.
 
+### 31. `ThreadingGuard` detects, it does not enforce — and it is off in the build that ships — **CLOSED**
+
+**Critical.** `CardTurnController` is documented single-threaded and asserts it
+on every mutating call through `ThreadingGuard.Assert()`. That guard is a
+*diagnostic*: it throws on a thread mismatch when `ThreadingGuard.Enabled` is
+true, and `Enabled` starts `true` in Debug and `false` in Release
+(`ThreadingGuard.cs`, and the docstring there says so plainly). CI builds and
+tests in Release — every `dotnet build`/`dotnet test` step in `ci.yml` passes
+`-c Release` — and releases ship Release. So the contract was enforced in
+exactly the configuration nobody ships and unenforced in the one everybody
+runs: a caller that never marshals onto the owner thread — a raw
+`System.Threading.Timer` callback, a background service, two callers sharing a
+session — got silent state corruption rather than an exception.
+
+The same commit found a second, unrelated defect one assembly over.
+`ServiceCollectionExtensions.UseSeededRandom` carried a comment reading
+*"Seeded Random is NOT thread-safe — register as scoped so each request/session
+gets its own instance"* directly above a line that registered it
+`AddSingleton`. One mutable `System.Random`, shared by every consumer in the
+process. The comment had been right and the code under it wrong for as long as
+both existed — the same class of drift item 26 catches in a template
+description and item 27 caught in a rule applied 4-of-12 times.
+
+**The fix, in two parts:**
+
+- **`SerializedCardTurnController`** (new, `TableTop.Hosting/Controllers`) —
+  an adapter implementing `ICardTurnController` that forwards every member to
+  the wrapped controller inside a `lock`. `Monitor` is recursive per thread,
+  which is load-bearing here rather than incidental: the controller's own event
+  handlers call back into it (`AdvanceTurn` re-enters itself), and a
+  non-reentrant gate would deadlock the normal path instead of the pathological
+  one. `ControllerFactory`'s CardTurn arm returns the wrapper, so every
+  production controller of that family is protected unconditionally — a
+  single-threaded host (Console, MAUI, WinUI, all three today) sees no
+  behavioural change at all, since the same thread runs every call and receives
+  every event exactly as before, and a foreign-thread caller is now
+  blocked-and-serialised instead of racing.
+- **`UseSeededRandom` registers `AddScoped`**, matching the comment that was
+  already there. The seed still flows to every instance the factory produces.
+  Nothing in this repo creates an `IServiceScope` yet, so today this resolves
+  once from the root scope exactly as the singleton did; the change is what
+  makes a host that adopts one-scope-per-session correct by default instead of
+  quietly sharing a `Random` across concurrent sessions. Scoped also gives one
+  session's shuffle and its later dice rolls a single continuing reproducible
+  stream, rather than two independent ones seeded identically.
+
+**Three limitations, all deliberate. The first two are documented on the type
+itself**, because an adapter that overstates its guarantee is worse than none;
+the third is recorded here and nowhere else, and item 32 covers a fourth that
+the type's docstring currently contradicts:
+
+1. **The lock is held across synchronously-raised events.** A host whose event
+   handler blocks waiting on another thread that calls back into the same
+   instance deadlocks — the same risk `ThreadingGuard`'s own docstring gives as
+   its reason for not taking a lock internally. No handler in this codebase
+   does that today (they return immediately, or resume via the UI thread's
+   `SynchronizationContext`). A host that adds one takes the risk knowingly
+   rather than by silent corruption, which is the trade.
+2. **`ThreadingGuard.Enabled` and this adapter are two strategies for one
+   problem, and they do not compose.** The adapter serialises a foreign call on
+   the *calling* thread; it does not marshal it onto the owner thread. So a
+   build with the guard enabled still throws on the mismatch even though access
+   was correctly serialised. Leave the switch off when wrapping a controller
+   for genuine cross-thread traffic.
+3. **CardTurn only.** The other five families (`Millionaire`, `Monogamy`,
+   `DayOne`, `Claimed`, `Herd`) are unwrapped, and nothing regressed for them:
+   none has ever had a `ThreadingGuard` or claimed a single-threaded contract,
+   so there is no assertion here that stopped holding. Whether they *should*
+   make and enforce the same claim is a real question and not one this item
+   answers — worth its own item if a host ever drives one off the UI thread.
+   Note the asymmetry is newer than it looks: item 29 had just routed three of
+   those five through `ControllerFactory` for the first time, so all six now
+   arrive from one place that treats one of them differently.
+
+`SerializedCardTurnController` is public, so `api/TableTop.Hosting.api.txt`
+grew by a type and `PublicApiSurfaceTests` flagged it correctly; the snapshot
+is regenerated in the same commit. New public surface is what makes 1.30.0 a
+MINOR under `Directory.Build.props`'s rule; see that entry in
+`ARCHITECTURE.md` for why item 29's interface-parameter change was taken as
+MINOR too, where the rule as written argues for MAJOR.
+
+**Not verified by a local build** (no `dotnet`/NuGet in this sandbox) — covered
+instead by three new `SerializedCardTurnControllerTests`: that same-thread use
+behaves exactly like the unwrapped controller, that concurrent foreign-thread
+calls are serialised with no host-supplied pump, and that disposing from a
+foreign thread does not deadlock; plus three new `ServiceCollectionExtensionsTests`
+pinning the scoped lifetime, that the registration replaces the default rather
+than adding a second, and that every resolution keeps the configured seed.
+
+### 32. `SerializedCardTurnController`'s one async member escapes its own lock
+
+**P3, and narrow — recorded because the type's docstring currently claims
+otherwise.** Item 31's adapter says of itself: *"The lock is held for the full
+duration of a call, including any event it raises synchronously."* That is true
+of every member but one. `SaveAsync` is:
+
+```csharp
+public Task SaveAsync(CancellationToken ct = default) => Invoke(() => _inner.SaveAsync(ct));
+```
+
+`Invoke` is synchronous, so the gate covers the call only up to the wrapped
+method's first `await` — it returns the `Task`, releases the lock, and the
+caller awaits the rest outside it. Tracing what that actually splits:
+`CardTurnController.SaveAsync` delegates to `PersistenceCoordinator.SaveAsync`,
+whose first statement is `BuildSnapshot()` — the part that reads mutable game
+state, and the part that most needs the gate. That runs synchronously and *is*
+protected. What escapes is the continuation after
+`await _repository.SaveAsync(...)`: the `SessionSavedEvent` raise.
+
+So the exposure today is small and arguably nil: the store underneath is
+itself serialised per instance since item 30, and raising an event touches no
+controller state. But "small" is a property of the current implementation, not
+of the contract — the same distinction item 27 drew about `OnAppearing` and
+item 20 drew about its deadlock — and the docstring states the stronger
+guarantee without qualification.
+
+Two honest fixes, in preference order:
+
+- **Say what it does.** Add the caveat to the type docstring and a line
+  comment on `SaveAsync` naming exactly what is and isn't inside the gate.
+  Costs nothing and makes the type's own claim true, which is the actual
+  defect here.
+- **Close it.** Make the adapter's `SaveAsync` genuinely serialised end to end
+  with a `SemaphoreSlim` alongside the `lock` (an `async` method cannot hold a
+  `Monitor` across an `await`, so it needs a second primitive, and the two
+  would then need an ordering rule between them). More machinery than the
+  exposure currently justifies — worth it only if a member with real
+  post-`await` state mutation is ever added, and worth re-reading this item
+  before adding one.
+
+Not a regression: before item 31 there was no adapter and no lock at all. This
+is a gap in a new guarantee, not a lost one.
+
 ---
 
 ## Guards that must not rot
@@ -1859,6 +2039,14 @@ All seven `check-*.py` gates pass, verified by actually running them on Windows
 with Python 3.12 (matching CI's pin). `check-ui-compiles.py` passes too, on a
 machine that has both Python and the .NET SDK — the first time that has been
 confirmed rather than assumed.
+
+**Re-run at the tree this revision of the file describes** (Linux, all seven,
+all pass). Two caveats on that run, so it is not read as more than it is:
+`check-ui-compiles.py` was *not* run — no `dotnet` in that sandbox, which is
+the same reason items 25 and 29–32 carry their own "not verified by a build"
+notes — and the Python there was 3.11.15, below the 3.12 floor `README.md`
+documents and CI pins. All seven ran clean on 3.11 anyway; that is worth
+knowing and is not a claim that 3.11 is supported.
 
 **Two of them had to be fixed before they could run at all, and the reason is
 worth keeping.** `check-maui-xaml.py` and `check-xaml-bindings.py` both did

@@ -70,246 +70,252 @@ public static class FactOrFictionCardBank
         // ── EVERYDAY — Easy facts most people don't know ──────────────────
 
         F("A group of flamingos is called a 'flamboyance'.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("Honey never spoils. Archaeologists have found 3000-year-old honey in Egyptian tombs that was still edible.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("Bananas are berries, but strawberries are not.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("A shark must keep moving or it will sink.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("Octopuses have three hearts.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("Wombats produce cube-shaped droppings.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("A penguin's knees are inside its body.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("Cats have a third eyelid called a nictitating membrane.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("Koalas sleep 22 hours a day.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("Sloths only defecate once a week.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("A group of crows is called a 'murder'.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("Horses can't vomit.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("Snakes can dislocate their jaws to swallow things larger than their head.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("Butterflies taste with their feet.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("A giraffe's tongue is 20 inches long.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         F("Dolphins sleep with one eye open.",
-          true, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy),
 
         // ── SURPRISING — Weird but true facts ────────────────────────────
 
         F("Cleopatra lived closer to the invention of the iPhone than to the building of the Great Pyramid.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("The shortest war in history lasted 38 minutes (between Britain and Zanzibar in 1896).",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("A day on Venus is longer than a year on Venus.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("Honey is the only food that doesn't rot and can last thousands of years.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("Scotland's national animal is a unicorn.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("There are more stars in the universe than grains of sand on all Earth's beaches.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("Octopuses have blue blood.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("A group of zebras is called a 'zeal'.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("The fingerprints of koalas are so similar to humans that they could confuse crime scene investigators.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("Almonds are technically not nuts — they're seeds.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("Peanuts are legumes, not nuts.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("A cockroach can live for a week without its head.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("Tardigrades (water bears) can survive in space.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("A mantis shrimp can punch with the force of a .22 caliber bullet.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("Platypuses glow under ultraviolet light.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("The oldest known recipe is for beer, dating back 4000 years.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("Bananas are radioactive due to potassium-40.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         F("Carrots were originally purple, not orange.",
-          true, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium),
 
         // ── OUTLANDISH — These seem impossible but are true ──────────────
 
         F("A narwhal's tusk is actually a giant tooth with 10 million sensory receptors.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("Axolotls can regenerate their brains.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("Jellyfish are older than dinosaurs.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("Some flatworms are hermaphrodites that engage in 'penis fencing'.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("The Anglerfish female is 40 times larger than the male, and they fuse together permanently.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("A blue whale's heart is as big as a car.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("Swordfish can heat their eyes and brains to improve vision in cold water.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("Some sea cucumbers expel their organs as a defence mechanism.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("The blobfish looks normal in the deep ocean but becomes blob-like when brought to the surface due to pressure change.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("A parrot fish can change its sex.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("Dolphins have names for each other.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("Cuttlefish can change colour and pattern while sleeping.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("A mantis shrimp can see 16 types of colour receptors (humans see 3).",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("Some whales sing songs that get remixed by other whales.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         F("The Greenland shark is the longest-living vertebrate, living over 400 years.",
-          true, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard),
 
         // ── WILD — Unbelievable facts that are actually true ──────────────
 
         F("A snail can have over 25,000 teeth.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("The smell of petrichor (rain on dry earth) comes from bacteria called actinomycetes.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("T-Rex couldn't bend their arms enough to touch their own mouth.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("A flea can jump 150 times its body length.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("Clownfish are all born female, and the dominant female becomes male if needed.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("A cat's purr vibrates at the same frequency that promotes bone healing.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("The Earth's magnetic poles swap positions every 200,000-300,000 years.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("Glass frogs have transparent skin and you can see their eggs through their belly.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("A hummingbird's heart can beat up to 1,260 times per minute.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("Elephants are afraid of bees.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("Ants don't sleep.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("A cockroach has been alive for 300 million years without changing much.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("Some jellyfish are technically immortal — they can revert to their juvenile form.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("A giraffe can clean its own ears with its tongue.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("Porcupines float naturally due to their quills.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         F("The mantis shrimp sees colours that don't exist in human perception.",
-          true, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme),
 
         // ── FICTION — Made-up statements to trick people ─────────────────
 
         F("An ostrich buries its head in the sand when scared.",
-          false, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy, isFact: false),
 
         F("Goldfish have a 3-second memory.",
-          false, EverydayCategory, Difficulty.Easy),
+          Difficulty.Easy, isFact: false),
 
         F("Glass is a liquid.",
-          false, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium, isFact: false),
 
         F("Napoleon was very short.",
-          false, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium, isFact: false),
 
         F("We only use 10% of our brains.",
-          false, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium, isFact: false),
 
         F("Sharks never get cancer.",
-          false, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium, isFact: false),
 
         F("Cracking your knuckles causes arthritis.",
-          false, SurprisingCategory, Difficulty.Medium),
+          Difficulty.Medium, isFact: false),
 
         F("Hot water freezes faster than cold water (without any specific conditions).",
-          false, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard, isFact: false),
 
         F("Humans shed their entire outer skin layer weekly.",
-          false, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard, isFact: false),
 
         F("A person can sneeze with their eyes open without them popping out.",
-          false, OutlandishCategory, Difficulty.Hard),
+          Difficulty.Hard, isFact: false),
 
         F("Dinosaurs and humans coexisted.",
-          false, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme, isFact: false),
 
         F("The Great Wall of China is visible from space with the naked eye.",
-          false, WildCategory, Difficulty.Extreme),
+          Difficulty.Extreme, isFact: false),
     ];
 
-    private static ICard F(string text, bool isFact, string category, Difficulty d) =>
+    // Two defaults, for the two things every card was repeating. The four
+    // difficulty tiers and the four categories are the same four bands — every
+    // card in the bank pairs them the same way — so `category` derives from `d`
+    // unless a card passes its own. `isFact` defaults to true because the
+    // fiction cards are the minority (12 of 77), and a bank where the exception
+    // is the thing spelled out is easier to scan than one where both are.
+    private static ICard F(string text, Difficulty d, bool isFact = true, string? category = null) =>
         StandardCard.Create(
             title: "Fact… or Fiction?",
             description:
@@ -318,5 +324,13 @@ public static class FactOrFictionCardBank
                 "\n\n<i>Reader: keep the next line to yourself until then…</i>\n\n" +
                 "<b>Answer: " + (isFact ? "✅ FACT" : "❌ FICTION") + "</b>",
             difficulty: d,
-            category: category);
+            category: category ?? CategoryFor(d));
+
+    private static string CategoryFor(Difficulty d) => d switch
+    {
+        Difficulty.Easy => EverydayCategory,
+        Difficulty.Medium => SurprisingCategory,
+        Difficulty.Hard => OutlandishCategory,
+        _ => WildCategory,
+    };
 }
