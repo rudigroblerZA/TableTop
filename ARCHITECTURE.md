@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.29.2**, August 2026. This replaces the accumulated
+Current as of **1.29.3**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -507,6 +507,29 @@ async work to block on, a different shape rather than a template to copy.
   `ScienceSprintMode` and `SoundAndSongMode` were checked at the same time and
   needed nothing: PR #14 had already converted both fully. PATCH: refactor
   only, no behaviour and no public surface change.
+- **1.29.3** closed backlog item 23: CI was compiling none of the four heads
+  while two jobs — "Build WinUI" and "Build MAUI (Android)" — reported green
+  with every real step commented out, the latter installing a MAUI workload
+  it then never used. Console's build and the engine `TreatWarningsAsErrors`
+  flags had gone the same way across three earlier commits.
+
+  Re-enabling them required fixing a real break first, which is likely why
+  they were commented out rather than repaired: **MAUI Android could not
+  build at all.** `dotnet build -c Release -f net10.0-android` died with
+  `XA1030` — the Android SDK defaults `RunAOTCompilation` to true for
+  Release, this project deliberately sets `PublishTrimmed=false` so the
+  linker cannot strip card types reached reflectively by `System.Text.Json`,
+  and AOT requires trimming. Fixed by setting `RunAOTCompilation=false`
+  explicitly, the only value consistent with the trimming decision that
+  property group already documents. The UI-test step's own blocker was
+  already gone — item 2 fixed the test host in 1.28.0.
+
+  Merged against concurrent work on `main` that had independently restored
+  the WinUI build step and added a commented-out `Publish WinUI` placeholder.
+  Both intents kept: the UI tests are enabled (their blocker is fixed and
+  they pass 2/2), and the packaging step stays commented as work in progress
+  rather than being treated as a switched-off step. PATCH: CI configuration
+  and one build property, no behaviour and no public surface change.
 
 ## What genuinely doesn't exist here
 
