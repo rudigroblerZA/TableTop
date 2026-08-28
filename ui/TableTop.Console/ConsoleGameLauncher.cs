@@ -42,13 +42,16 @@ internal sealed class ConsoleGameLauncher
     ];
 
     private readonly IPlayerRepository _repository;
+    private readonly IRosterRepository _rosterRepository;
     private readonly IControllerFactory _controllerFactory;
 
     public ConsoleGameLauncher(
         IPlayerRepository? repository = null,
-        IControllerFactory? controllerFactory = null)
+        IControllerFactory? controllerFactory = null,
+        IRosterRepository? rosterRepository = null)
     {
         _repository = repository ?? new JsonPlayerRepository();
+        _rosterRepository = rosterRepository ?? new JsonRosterRepository();
         _controllerFactory = controllerFactory ?? new ControllerFactory();
         SeedDefaultsIfEmpty();
     }
@@ -60,7 +63,7 @@ internal sealed class ConsoleGameLauncher
             ConsoleUi.Clear();
             ConsoleUi.Banner();
 
-            var players = ConsolePlayerSetup.Run(_repository);
+            var players = ConsolePlayerSetup.Run(_repository, _rosterRepository);
 
             // Build archetype registry (includes any JSON modes from ./modes/)
             var registry = BuildRegistry();

@@ -25,8 +25,22 @@ across the existing numbering rather than adding to it.
 
 | | Item | Why it matters |
 |---|---|---|
-| **P3** | **28** — Console has no Roaster | Third head, no roster builder and no `IRosterStore`. Smallest of the parity gaps but the one now written down. Its own text sequenced it after item 25; that gate is now clear. |
-| **P3** | **32** — `SerializedCardTurnController`'s guarantee has one hole, and its docstring doesn't say so | The adapter item 31 added holds its lock for the whole of every member — except the one async member, where the post-`await` half escapes it. Narrow and currently harmless; the docstring claims otherwise, which is the part that isn't. |
+| — | *(none open)* | Every numbered item from the UI-architecture review is closed. Items 3, 7 and 8 below stay open by design — each needs a human product decision or hardware CI doesn't have — and the guard table at the end is permanent. |
+
+**Items 28 and 32 are closed** (1.34.0) and have dropped out of this table.
+Item 28 gave the non-graphical heads a roster: `RosterProfile` /
+`IRosterRepository` / `JsonRosterRepository` in Hosting (a `PlayerProfile`-shaped
+sibling of `IPlayerRepository`, so it's unit-tested and Console needs no
+`TableTop.Presentation` reference), a text-mode build/load/delete flow in
+`ConsoleRoster`, and a "load a saved roster" / "save this group" pair of
+prompts in `ConsolePlayerSetup`. Whether `RosterProfile` and the graphical
+heads' `SavedRoster` should converge is left as a genuine open question, not a
+gap. Item 32 was doc-only: `SerializedCardTurnController`'s docstring claimed
+the lock covers "the full duration of a call" — true of every member except
+`SaveAsync`, whose post-`await` continuation escapes it. The type docstring and
+a `SaveAsync` remark now say exactly what is and isn't inside the gate; closing
+the hole for real needs a `SemaphoreSlim` and isn't worth it until a member
+mutates state after an `await`.
 
 **Items 24 and 26 are closed** (1.33.0) and have dropped out of this table.
 Item 24 was pure omission — `RoasterViewModelTests` now covers template
@@ -1751,7 +1765,39 @@ the rate people remember it — here, 4 of 12 — and a careful manual audit of
 the remainder still missed a quarter of what was left.** The gate found in one
 run what two passes of reading did not.
 
-### 28. Console has no Roaster
+### 28. Console has no Roaster — **CLOSED in 1.34.0**
+
+**Closed as its own storage shape, not a port** — the option this item's own
+text argued for. New in Hosting: `RosterProfile` (a named
+`List<PlayerProfile>` with schema versioning and a `Summary`),
+`IRosterRepository`, and `JsonRosterRepository` — a line-for-line sibling of
+`IPlayerRepository`/`JsonPlayerRepository`, same per-instance `SemaphoreSlim`,
+unique temp file, atomic replace, corrupt-file-tolerant load. Putting it in
+Hosting (rather than a Console-local store like `WinUIRosterStore`) is what
+makes it unit-testable — `RosterRepositoryTests`, 6 cases — and keeps Console
+free of a `TableTop.Presentation` reference. `AddTableTopHosting` gained an
+optional `rosterFilePath`; Console's `Program.cs` passes an app-data path like
+the other two files. `ConsoleRoster` is the text-mode flow (numbered list,
+choose / delete, name-and-save), wired into `ConsolePlayerSetup` as a "Load a
+saved roster?" prompt up front and a "Save this group as a roster?" prompt
+after players are chosen — a chosen roster's `PlayerProfile`s are cloned so
+editing them in setup doesn't mutate the saved copy before the player decides
+to re-save.
+
+**Left open on purpose:** whether `RosterProfile` (Console/Hosting) and
+`SavedRoster`/`SavedPlayer` (`TableTop.Presentation`, the graphical heads'
+Roaster) should converge. They answer the same question in two vocabularies —
+the same `SavedPlayer`-vs-`PlayerProfile` duplication this item's original text
+flagged. Building the Console side on `PlayerProfile` reused the shape Console
+already had rather than adding a third; convergence is a separate call.
+
+New public surface in Hosting (`RosterProfile`, `IRosterRepository`,
+`JsonRosterRepository`, the `AddTableTopHosting` parameter), so
+`api/TableTop.Hosting.api.txt` is regenerated in the same commit and 1.34.0 is
+MINOR under `Directory.Build.props`'s rule. Verified: full engine suite
+(937 tests, 6 new), the Console build, all seven `check-*.py` gates.
+
+---
 
 **P3, the smallest gap here, recorded so it stops being invisible.** The
 Roaster shipped in 1.28.0 to two heads. Console has no roster builder, and no
@@ -2020,7 +2066,24 @@ foreign thread does not deadlock; plus three new `ServiceCollectionExtensionsTes
 pinning the scoped lifetime, that the registration replaces the default rather
 than adding a second, and that every resolution keeps the configured seed.
 
-### 32. `SerializedCardTurnController`'s one async member escapes its own lock
+### 32. `SerializedCardTurnController`'s one async member escapes its own lock — **CLOSED in 1.34.0**
+
+**Closed with the first of the two fixes — "say what it does".** The type
+docstring gained a "One exception to 'full duration'" paragraph spelling out
+that `Invoke` is synchronous, so wrapping `SaveAsync` gates only its
+synchronous prefix (`BuildSnapshot()`, the state-reading part — which *is*
+protected), and the post-`await` continuation (the `SessionSavedEvent` raise,
+which touches no controller state, on a repository per-instance serialised
+since item 30) runs outside the lock. `SaveAsync` itself gained a `<remarks>`
+saying the same in one line. No behaviour change: the exposure is nil in
+practice today, and closing it for real needs a second primitive (a
+`SemaphoreSlim`, since a `Monitor` can't be held across an `await`) — more
+machinery than the current exposure justifies, worth adding only alongside a
+member that mutates controller state after an `await`. Doc-only, so no test
+change; verified by the Code Quality doc build (`TreatWarningsAsErrors` +
+`GenerateDocumentationFile` on Hosting).
+
+---
 
 **P3, and narrow — recorded because the type's docstring currently claims
 otherwise.** Item 31's adapter says of itself: *"The lock is held for the full

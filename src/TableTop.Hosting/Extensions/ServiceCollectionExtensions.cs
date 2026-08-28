@@ -54,10 +54,15 @@ public static class ServiceCollectionExtensions
     /// Optional custom path for the JSON player-profile file. Same default
     /// and the same reasoning as <paramref name="sessionFilePath"/>.
     /// </param>
+    /// <param name="rosterFilePath">
+    /// Optional custom path for the JSON saved-roster file (backlog item 28).
+    /// Same default and the same reasoning as <paramref name="sessionFilePath"/>.
+    /// </param>
     public static IServiceCollection AddTableTopHosting(
         this IServiceCollection services,
         string? sessionFilePath = null,
-        string? playerFilePath = null)
+        string? playerFilePath = null,
+        string? rosterFilePath = null)
     {
         // ── Controller factory ───────────────────────────────────────────────
         // Transient: a new factory is cheap and now genuinely carries no state of
@@ -78,6 +83,9 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IPlayerRepository>(
             _ => new JsonPlayerRepository(playerFilePath));
+
+        services.AddSingleton<IRosterRepository>(
+            _ => new JsonRosterRepository(rosterFilePath));
 
         // ── Hint engine ──────────────────────────────────────────────────────
         // Singleton: stateless — holds no mutable data, safe to share.
