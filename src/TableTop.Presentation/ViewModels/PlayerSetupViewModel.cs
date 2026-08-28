@@ -34,6 +34,7 @@ public sealed class PlayerSetupViewModel : ViewModelBase
 
     private readonly IGameMode _mode;
     private readonly IAppSettings _settings;
+    private readonly IRosterStore? _rosterStore;
 
     private string _newName = "", _newAge = "", _selectedGender = "";
     private string _error = "", _rosterStatus = "";
@@ -41,6 +42,19 @@ public sealed class PlayerSetupViewModel : ViewModelBase
 
     /// <summary>The players added so far.</summary>
     public ObservableCollection<PlayerEntry> Players { get; } = [];
+
+    /// <summary>
+    /// Saved rosters built on the Roaster screen, offered here so a player
+    /// doesn't have to retype a group they already saved (backlog item 25 —
+    /// the Roaster screen used to be a closed loop: build a roster, see it in
+    /// its own list, and never anywhere else). Empty when no
+    /// <see cref="IRosterStore"/> was supplied — WinUI and MAUI both wire one
+    /// up; a caller that doesn't (a test, say) simply gets no roster picker.
+    /// </summary>
+    public ObservableCollection<SavedRosterOption> SavedRosters { get; } = [];
+
+    /// <summary>True when there's at least one saved roster to offer.</summary>
+    public bool HasSavedRosters => SavedRosters.Count > 0;
 
     /// <summary>The mode being set up.</summary>
     public IGameMode Mode => _mode;
@@ -128,15 +142,22 @@ public sealed class PlayerSetupViewModel : ViewModelBase
     /// Invoked with the built players once validation passes. The head does its
     /// own navigation here.
     /// </param>
+    /// <param name="rosterStore">
+    /// Optional saved-roster store. Null (the default) means no rosters are
+    /// offered — the screen behaves exactly as it did before this parameter
+    /// existed.
+    /// </param>
     public PlayerSetupViewModel(
         INavigator navigator,
         IGameMode mode,
         IAppSettings settings,
-        Func<IReadOnlyList<IPlayer>, Task>? onStart = null)
+        Func<IReadOnlyList<IPlayer>, Task>? onStart = null,
+        IRosterStore? rosterStore = null)
     {
         _mode = mode;
         _settings = settings;
         _onStart = onStart;
+        _rosterStore = rosterStore;
 
         AddPlayerCommand = new RelayCommand(AddPlayer, () => NewName.Trim().Length > 0);
         ClearPlayersCommand = new RelayCommand(ClearPlayers);
@@ -148,6 +169,9 @@ public sealed class PlayerSetupViewModel : ViewModelBase
         // now — starting a game no longer overwrites it silently.
         foreach (var p in settings.RecentPlayers)
             Players.Add(new PlayerEntry(p.Name, p.Gender, p.Age, p.IsCoupleMember));
+
+        foreach (var r in rosterStore?.Load() ?? [])
+            SavedRosters.Add(new SavedRosterOption(r, this));
 
         Players.CollectionChanged += (_, _) =>
         {
@@ -198,6 +222,26 @@ public sealed class PlayerSetupViewModel : ViewModelBase
         Players.Clear();
         RosterStatus = "";
         ClearTeams();
+    }
+
+    /// <summary>
+    /// Replaces the current roster with <paramref name="roster"/>'s players —
+    /// the same way <see cref="Players"/> is cleared and rebuilt everywhere
+    /// else on this screen (<see cref="ClearPlayers"/>, the settings prefill),
+    /// rather than appending, so picking a saved roster gives a predictable
+    /// result regardless of what was already typed in.
+    /// </summary>
+    public void LoadRoster(SavedRoster roster)
+    {
+        ArgumentNullException.ThrowIfNull(roster);
+
+        Players.Clear();
+        foreach (var p in roster.Players)
+            Players.Add(new PlayerEntry(p.Name, p.Gender, p.Age, p.IsCoupleMember));
+
+        Error = "";
+        RosterStatus = $"Loaded \"{roster.Name}\".";
+        ClearTeams();   // see AddPlayer — a replaced roster invalidates any prior deal
     }
 
     /// <summary>
@@ -374,5 +418,38 @@ public sealed class PlayerSetupViewModel : ViewModelBase
         {
             Name = name; Gender = gender; Age = age; IsCoupleMember = isCoupleMember;
         }
+    }
+
+    /// <summary>
+    /// One saved roster offered in the picker — same
+    /// <see cref="ICommand"/>-for-WinUI/<c>Invoke()</c>-for-MAUI duality as
+    /// <c>MonogamyGameViewModel.ZoneOption</c> and
+    /// <c>ClaimedGameViewModel.TerritoryOption</c>.
+    /// </summary>
+    public sealed class SavedRosterOption
+    {
+        private readonly PlayerSetupViewModel _owner;
+
+        /// <summary>The roster this option loads.</summary>
+        public SavedRoster Roster { get; }
+
+        /// <summary>Display name, e.g. "Friday Regulars".</summary>
+        public string Name => Roster.Name;
+
+        /// <summary>"Couple · 2 players", from <see cref="SavedRoster.Subtitle"/>.</summary>
+        public string Subtitle => Roster.Subtitle;
+
+        /// <summary>Command that loads this roster. WinUI binds this.</summary>
+        public ICommand LoadCommand { get; }
+
+        internal SavedRosterOption(SavedRoster roster, PlayerSetupViewModel owner)
+        {
+            Roster = roster;
+            _owner = owner;
+            LoadCommand = new RelayCommand(() => owner.LoadRoster(roster));
+        }
+
+        /// <summary>Loads this roster. Called directly by MAUI's buttons.</summary>
+        public void Invoke() => _owner.LoadRoster(Roster);
     }
 }

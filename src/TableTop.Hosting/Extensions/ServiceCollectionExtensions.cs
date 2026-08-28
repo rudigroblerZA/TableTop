@@ -36,12 +36,23 @@ public static class ServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
     /// <param name="sessionFilePath">
-    /// Optional custom path for the JSON session file.
-    /// Defaults to <c>%AppData%/TableTop/session.json</c> (or platform equivalent).
+    /// Optional custom path for the JSON session file. Left null, this falls
+    /// through to <see cref="JsonSessionRepository"/>'s own default —
+    /// <c>session.json</c> next to the executable — which is <em>not</em> an
+    /// app-data location and is not writable by an installed, unelevated app
+    /// on several platforms. This package cannot resolve a real app-data
+    /// directory itself (it has no dependency on any platform storage API,
+    /// which is what keeps it usable from a console app, a test host, or a
+    /// future head this project doesn't have yet); every real host in this
+    /// repo resolves its own platform-appropriate directory and passes it
+    /// here explicitly — see <c>Program.cs</c> (Console),
+    /// <c>App.xaml.cs</c>/<c>WinUIAppPaths</c> (WinUI), and
+    /// <c>MauiProgram.cs</c> (<c>FileSystem.AppDataDirectory</c>, MAUI). A
+    /// new host should do the same rather than relying on this default.
     /// </param>
     /// <param name="playerFilePath">
-    /// Optional custom path for the JSON player-profile file.
-    /// Defaults to <c>%AppData%/TableTop/players.json</c> (or platform equivalent).
+    /// Optional custom path for the JSON player-profile file. Same default
+    /// and the same reasoning as <paramref name="sessionFilePath"/>.
     /// </param>
     public static IServiceCollection AddTableTopHosting(
         this IServiceCollection services,

@@ -8,10 +8,21 @@ using SC = System.Console;
 // Build the service container once at startup. All services are resolved here;
 // nothing else in the Console project uses `new` for engine or hosting types.
 
+// AddTableTopHosting's own defaults fall back to AppContext.BaseDirectory
+// (beside the executable) when no path is given — writable for a build
+// output folder, not guaranteed for wherever this gets installed to. The
+// per-user app-data directory is the portable, always-writable choice every
+// platform .NET runs on provides through the same API.
+var appDataDir = Path.Combine(
+    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TableTop");
+Directory.CreateDirectory(appDataDir);
+
 var services = new ServiceCollection()
     .AddTableTop()         // Core: IGameFactory, IDeckBuilder, IRuleEvaluator …
-    .AddTableTopHosting(); // Hosting: IControllerFactory, IArchetypeRegistry,
+    .AddTableTopHosting(   // Hosting: IControllerFactory, IArchetypeRegistry,
                            //          IGamePersistence, IPlayerRepository, IHintEngine
+        sessionFilePath: Path.Combine(appDataDir, "session.json"),
+        playerFilePath: Path.Combine(appDataDir, "players.json"));
 
 var provider = services.BuildServiceProvider();
 

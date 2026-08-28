@@ -1,6 +1,7 @@
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Abstractions.Rules;
+using TableTop.Presentation.Infrastructure;
 using TableTop.Presentation.ViewModels;
 
 namespace TableTop.Tests;
@@ -26,12 +27,20 @@ public sealed class PlayerSetupViewModelTests
         public IEnumerable<IRule> GetRules() => [];
     }
 
+    /// <summary>A team mode for exercising <see cref="PlayerSetupViewModel.AssignTeams"/> — takes the default <see cref="ITeamMode.PreferredTeamCount"/> of 2.</summary>
+    private sealed class FakeTeamMode : IGameMode, ITeamMode
+    {
+        public string Name => "Fake Team Mode";
+        public string Description => "test";
+    }
+
     private static (PlayerSetupViewModel vm, FakeAppSettings settings, FakeNavigator nav) Build(
-        IGameMode? mode = null, Func<IReadOnlyList<IPlayer>, Task>? onStart = null)
+        IGameMode? mode = null, Func<IReadOnlyList<IPlayer>, Task>? onStart = null,
+        IRosterStore? rosterStore = null)
     {
         var settings = new FakeAppSettings();
         var nav = new FakeNavigator();
-        var vm = new PlayerSetupViewModel(nav, mode ?? new FakeMode(), settings, onStart);
+        var vm = new PlayerSetupViewModel(nav, mode ?? new FakeMode(), settings, onStart, rosterStore);
         return (vm, settings, nav);
     }
 
@@ -236,6 +245,114 @@ public sealed class PlayerSetupViewModelTests
         var vm = new PlayerSetupViewModel(new FakeNavigator(), new FakeMode(), settings);
 
         vm.Players.Should().ContainSingle().Which.Name.Should().Be("Remembered");
+    }
+
+    // ── Saved rosters (backlog item 25) ──────────────────────────────────────
+
+    private static SavedRoster Roster(string name, params SavedPlayer[] players) =>
+        new() { Name = name, TemplateName = "Friends", Players = players };
+
+    [Fact]
+    public void Constructor_WithNoRosterStore_OffersNoSavedRosters()
+    {
+        // The default before this feature existed, and still the shape a
+        // caller that doesn't wire an IRosterStore gets — a test, or any
+        // future host that hasn't decided on one yet.
+        var (vm, _, _) = Build();
+
+        vm.SavedRosters.Should().BeEmpty();
+        vm.HasSavedRosters.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Constructor_WithARosterStore_LoadsItsSavedRosters()
+    {
+        var store = new FakeRosterStore([
+            Roster("Regulars", new SavedPlayer("Alice", "female", 30), new SavedPlayer("Bob", "male", 32)),
+            Roster("Classroom", new SavedPlayer("Cara", null, 10)),
+        ]);
+
+        var (vm, _, _) = Build(rosterStore: store);
+
+        vm.HasSavedRosters.Should().BeTrue();
+        vm.SavedRosters.Select(r => r.Name).Should().Equal("Regulars", "Classroom");
+    }
+
+    [Fact]
+    public void LoadRoster_ReplacesWhateverWasAlreadyTyped()
+    {
+        var (vm, _, _) = Build();
+        vm.NewName = "Typed"; vm.AddPlayer();
+
+        vm.LoadRoster(Roster("Regulars",
+            new SavedPlayer("Alice", "female", 30, IsCoupleMember: true),
+            new SavedPlayer("Bob", "male", 32)));
+
+        vm.Players.Select(p => p.Name).Should().Equal("Alice", "Bob");
+        vm.Players[0].IsCoupleMember.Should().BeTrue();
+        vm.Players[0].Age.Should().Be(30);
+    }
+
+    [Fact]
+    public void LoadRoster_ClearsAnyPriorError_AndSetsRosterStatus()
+    {
+        var (vm, _, _) = Build();
+        vm.NewName = "   "; vm.AddPlayer();   // sets Error
+        vm.HasError.Should().BeTrue("test setup: this should have failed to add");
+
+        vm.LoadRoster(Roster("Regulars", new SavedPlayer("Alice", "female", 30)));
+
+        vm.HasError.Should().BeFalse();
+        vm.HasRosterStatus.Should().BeTrue();
+        vm.RosterStatus.Should().Contain("Regulars");
+    }
+
+    [Fact]
+    public void LoadRoster_ClearsAnyPriorTeamAssignment()
+    {
+        // Same reasoning as AddPlayer/RemovePlayer: a team deal is dealt FROM
+        // the roster, so replacing the roster must invalidate it — otherwise
+        // a player from the OLD roster could be left with a team assignment
+        // that no longer corresponds to anyone actually at the table.
+        var (vm, _, _) = Build(new FakeTeamMode());
+        vm.NewName = "Alice"; vm.AddPlayer();
+        vm.NewName = "Bob"; vm.AddPlayer();
+        vm.NewName = "Cara"; vm.AddPlayer();
+        vm.NewName = "Dan"; vm.AddPlayer();
+        vm.AssignTeams().Should().BeTrue("test setup: four players is enough for two teams");
+        vm.HasTeams.Should().BeTrue("test setup");
+
+        vm.LoadRoster(Roster("Regulars", new SavedPlayer("Eve", null, null)));
+
+        vm.HasTeams.Should().BeFalse();
+    }
+
+    [Fact]
+    public void SavedRosterOption_Invoke_LoadsThatRoster()
+    {
+        var store = new FakeRosterStore([Roster("Regulars", new SavedPlayer("Alice", "female", 30))]);
+        var (vm, _, _) = Build(rosterStore: store);
+        var option = vm.SavedRosters.Single();
+
+        option.Invoke();
+
+        vm.Players.Should().ContainSingle().Which.Name.Should().Be("Alice");
+    }
+
+    [Fact]
+    public void SavedRosterOption_LoadCommand_LoadsThatRoster()
+    {
+        // WinUI binds LoadCommand rather than calling Invoke() directly —
+        // both must reach the same place, the same duality every other
+        // per-item option class in this project carries (ZoneOption,
+        // TerritoryOption, …).
+        var store = new FakeRosterStore([Roster("Regulars", new SavedPlayer("Alice", "female", 30))]);
+        var (vm, _, _) = Build(rosterStore: store);
+        var option = vm.SavedRosters.Single();
+
+        option.LoadCommand.Execute(null);
+
+        vm.Players.Should().ContainSingle().Which.Name.Should().Be("Alice");
     }
 
     // ── StartAsync ────────────────────────────────────────────────────────────

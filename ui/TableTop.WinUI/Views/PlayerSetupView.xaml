@@ -16,6 +16,28 @@
             <TextBlock Text="Who's playing?" Style="{StaticResource PipTextStyle}"/>
             <TextBlock Text="{Binding Mode.Name}" FontSize="27"
                        Style="{StaticResource EngravedTitleStyle}"/>
+
+            <!-- Saved rosters — a shortcut into the fields below, not a
+                 replacement for them: picking one fills Players from a
+                 roster built on the Roaster screen instead of retyping
+                 everyone. Hidden entirely when there's nothing saved. -->
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,10,0,0"
+                        Visibility="{Binding HasSavedRosters, Converter={StaticResource BoolToVis}}">
+                <ItemsControl ItemsSource="{Binding SavedRosters}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="8"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding Name}" Command="{Binding LoadCommand}"
+                                    Style="{StaticResource QuietButtonStyle}"
+                                    ToolTipService.ToolTip="{Binding Subtitle}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </StackPanel>
 
         <Grid Grid.Row="1" ColumnSpacing="10" Margin="0,16,0,0">

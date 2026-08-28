@@ -16,8 +16,9 @@ namespace TableTop.WinUI.Infrastructure;
 /// <summary>
 /// Persists and exposes all user settings for the WinUI app — the desktop
 /// counterpart to MAUI's <c>AppSettings</c>. WinUI has no equivalent of MAUI's
-/// Preferences API, so this writes a small JSON file next to the executable
-/// instead (the same pattern <c>JsonPlayerRepository</c> already uses).
+/// Preferences API, so this writes a small JSON file in
+/// <see cref="WinUIAppPaths.DataDirectory"/> instead (the same pattern
+/// <c>JsonPlayerRepository</c> already uses).
 ///
 /// Two kinds of settings live here, matching the split established when
 /// these were first wired to the real engine:
@@ -31,13 +32,20 @@ namespace TableTop.WinUI.Infrastructure;
 public sealed class WinUIAppSettings : TableTop.Presentation.Infrastructure.IAppSettings
 {
     private static readonly string DefaultPath =
-        Path.Combine(AppContext.BaseDirectory, "settings.json");
+        Path.Combine(WinUIAppPaths.DataDirectory, "settings.json");
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         WriteIndented = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     };
+
+    // Guards Load()/Persist() against overlapping calls — see WinUIRosterStore's
+    // remarks (and JsonSessionRepository's, for the async case) for why a
+    // shared ".tmp" name and no synchronisation is the same bug in every one
+    // of these stores. This class is fully synchronous, so a plain lock does
+    // the job a SemaphoreSlim does for the async repositories.
+    private readonly object _gate = new();
 
     private readonly string _filePath;
     private SettingsData _data;
@@ -187,36 +195,47 @@ public sealed class WinUIAppSettings : TableTop.Presentation.Infrastructure.IApp
 
     private SettingsData Load()
     {
-        if (!File.Exists(_filePath)) return new SettingsData();
-        try
+        lock (_gate)
         {
-            var json = File.ReadAllText(_filePath);
-            return JsonSerializer.Deserialize<SettingsData>(json, JsonOptions) ?? new SettingsData();
-        }
-        catch (JsonException)
-        {
-            return new SettingsData();   // corrupt file — start fresh rather than crash
+            if (!File.Exists(_filePath)) return new SettingsData();
+            try
+            {
+                var json = File.ReadAllText(_filePath);
+                return JsonSerializer.Deserialize<SettingsData>(json, JsonOptions) ?? new SettingsData();
+            }
+            catch (JsonException)
+            {
+                return new SettingsData();   // corrupt file — start fresh rather than crash
+            }
         }
     }
 
     private void Persist(string changedKey)
     {
-        try
+        lock (_gate)
         {
-            var dir = Path.GetDirectoryName(_filePath);
-            if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
-            var tmp = _filePath + ".tmp";
-            File.WriteAllText(tmp, JsonSerializer.Serialize(_data, JsonOptions));
-            File.Move(tmp, _filePath, overwrite: true);
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-        {
-            // Best-effort — a failed save shouldn't crash the app. Both are
-            // named explicitly because they're the two real causes (disk full,
-            // permissions denied) and only the first used to be caught here:
-            // a permissions failure threw UnauthorizedAccessException straight
-            // through this method instead of being swallowed like this comment
-            // always claimed.
+            // Unique per call, not shared — two overlapping Persist() calls
+            // (two settings changed from different threads in quick
+            // succession) used to both target "settings.json.tmp", so the
+            // second's write could truncate the first's still-open stream.
+            var tmp = $"{_filePath}.{Guid.NewGuid():N}.tmp";
+            try
+            {
+                var dir = Path.GetDirectoryName(_filePath);
+                if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
+                File.WriteAllText(tmp, JsonSerializer.Serialize(_data, JsonOptions));
+                File.Move(tmp, _filePath, overwrite: true);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                // Best-effort — a failed save shouldn't crash the app. Both are
+                // named explicitly because they're the two real causes (disk full,
+                // permissions denied) and only the first used to be caught here:
+                // a permissions failure threw UnauthorizedAccessException straight
+                // through this method instead of being swallowed like this comment
+                // always claimed.
+                if (File.Exists(tmp)) File.Delete(tmp);
+            }
         }
 
         Changed?.Invoke(this, changedKey);
