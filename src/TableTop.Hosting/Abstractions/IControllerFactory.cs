@@ -34,6 +34,15 @@ public interface IControllerFactory
     /// existed there was no way for a host to ask for it through the factory,
     /// which is why no graphical head could offer it.
     /// </param>
+    /// <param name="monogamyWinningTokenCount">
+    /// Overrides the mode's own token target for a Monogamy-family mode (see
+    /// <see cref="IMonogamyDeckProvider.WinningTokenCount"/>). Null (the
+    /// default) uses the mode's own value. Ignored by every other family —
+    /// same honest-scope-boundary treatment as <paramref name="gameplayOptions"/>.
+    /// Exists so a host that lets the table pick their own target (Console
+    /// prompts for one) can still go through this factory rather than
+    /// constructing <c>MonogamyController</c> itself.
+    /// </param>
     /// <param name="ct">Optional cancellation token for async deck building.</param>
     Task<IGameController> CreateAsync(
         IGameMode mode,
@@ -41,6 +50,7 @@ public interface IControllerFactory
         int maxRounds = Core.TableTopDefaults.Session.MaxRounds,
         GameplayOptions? gameplayOptions = null,
         Persistence.SessionSnapshot? resumeFrom = null,
+        int? monogamyWinningTokenCount = null,
         CancellationToken ct = default);
 
     /// <summary>

@@ -136,18 +136,26 @@ public sealed class HerdGameViewModel : ViewModelBase, IDisposable
     /// <summary>
     /// Builds the controller from a mode, surfacing a deck-load failure as a
     /// message rather than an exception — same reasoning as
-    /// <see cref="MonogamyGameViewModel.Create"/>.
+    /// <see cref="MonogamyGameViewModel.CreateAsync"/>, including going
+    /// through <see cref="IControllerFactory"/> rather than constructing
+    /// <c>HerdController</c> directly.
     /// </summary>
-    public static HerdGameViewModel Create(
-        INavigator navigator, IGameMode mode, IReadOnlyList<IPlayer> players)
+    public static async Task<HerdGameViewModel> CreateAsync(
+        INavigator navigator,
+        IGameMode mode,
+        IReadOnlyList<IPlayer> players,
+        IControllerFactory? controllerFactory = null)
     {
         try
         {
-            var deck = mode is IHerdDeckProvider p
-                ? p.GetHerdDeck()
-                : throw new NotSupportedException($"'{mode.Name}' provides no Herd deck.");
+            var controller = await (controllerFactory ?? new ControllerFactory()).CreateAsync(mode, players);
+            if (controller is not IHerdController hc)
+            {
+                controller.Dispose();
+                throw new NotSupportedException($"'{mode.Name}' isn't a Herd-style mode.");
+            }
 
-            return new HerdGameViewModel(navigator, new HerdController(players, deck));
+            return new HerdGameViewModel(navigator, hc);
         }
         catch (Exception ex)
         {

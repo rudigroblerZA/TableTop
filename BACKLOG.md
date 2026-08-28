@@ -1653,6 +1653,79 @@ If a saved roster stays a thing you build and never play, adding a third head
 that can also build-and-never-play it is not progress. Sequence this after 25,
 not before.
 
+### 29. Three controller families bypassed `IControllerFactory` — **CLOSED**
+
+**Critical.** `MonogamyController`, `ClaimedController` and `HerdController`
+were each constructed directly with `new` in production code, in four places:
+`MonogamyGameViewModel.Create`, `ClaimedGameViewModel.Create`,
+`HerdGameViewModel.Create` — all three called from a MAUI page's constructor
+— and `ConsoleGameLauncher.RunMode`'s early Monogamy arm. Item 20 recorded the
+three `.Create` call sites in passing ("**Deliberately not touched**") for a
+different reason — there was no blocking call to remove — without flagging
+that they were also the last production paths skipping the factory entirely.
+Every controller built this way carried none of what `IControllerFactory`
+gives every other family: the `IGamePersistence` a host registered, any
+diagnostics sink, and whatever policy a future `ControllerFactory` change
+adds. WinUI never had this problem — `GameViewModelFactory` already resolved
+every family through the injected `IControllerFactory` and passed the built
+controller into these same ViewModels' constructor-injected overload; only
+MAUI's `.Create` and Console's Monogamy special case skipped it.
+
+(The finding that prompted this said "five controller families." Only three
+actually bypass the factory — Millionaire and Day One already went through
+`IControllerFactory.CreateAsync` in their own `CreateAsync` methods, verified
+by grep before touching anything. Fixed what the code actually showed rather
+than chasing a count the code doesn't support.)
+
+**The fix, in three parts:**
+
+- `IControllerFactory.CreateAsync` gained one new optional parameter,
+  `monogamyWinningTokenCount`. Console's Monogamy arm needs the table's
+  chosen token target *before* the controller exists, which the interface had
+  no way to carry through; every other family ignores it, the same
+  honest-scope-boundary treatment `gameplayOptions` already gets from the
+  families that don't need it. `ControllerFactory`'s Monogamy arm now reads
+  `monogamyWinningTokenCount ?? monogamy.WinningTokenCount` — falling back to
+  the mode's own default exactly as the other four capability branches do for
+  their own settings.
+- `MonogamyGameViewModel.Create` / `ClaimedGameViewModel.Create` /
+  `HerdGameViewModel.Create` became `CreateAsync`, matching the shape
+  `MillionaireGameViewModel.CreateAsync` and `DayOneGameViewModel.CreateAsync`
+  already used: resolve `controllerFactory ?? new ControllerFactory()`, await
+  `CreateAsync`, pattern-match the result to the family's controller
+  interface, dispose and throw `NotSupportedException` on a mismatch, catch
+  that (and the factory's own `NotSupportedException` for a mode with no
+  matching capability interface) into the existing `LoadError` path. A side
+  effect worth naming: `MonogamyGameViewModel.Create` used to default the
+  token target to a literal `10` regardless of what the mode itself declared;
+  going through the factory means it now defers to
+  `IMonogamyDeckProvider.WinningTokenCount` like WinUI's path always did — a
+  latent MAUI/WinUI inconsistency this incidentally closes.
+- `MonogamyGamePage` / `ClaimedGamePage` / `HerdGamePage` moved to the same
+  two-phase `IAsyncInitializablePage` shape item 20 already established for
+  `GameplayPage`/`DayOneGamePage`/`MillionaireGamePage`: a cheap constructor
+  that stores the mode and players, and an `InitializeAsync()` that awaits the
+  ViewModel's new `CreateAsync` and sets `BindingContext`. `PlayerSetupPage`'s
+  routing switch needed no change — it already calls
+  `InitializeAsync()` on any page implementing the interface, generically.
+
+Five test call sites (`MonogamyGameViewModelTests`,
+`ClaimedGameViewModelTests`, `HerdGameViewModelTests`) moved from `Create` to
+`await CreateAsync`; the tests that construct a real controller directly to
+drive a ViewModel in isolation (`RealController` helpers in the same files)
+are unaffected — that is a test fixture reaching for a known concrete type on
+purpose, not a production path guessing at one.
+
+**Not verified by a local build** (no `dotnet` in this sandbox, consistent
+with every other item in this file authored the same way) — checked instead
+by grepping for every remaining `new MonogamyController(`/`new
+ClaimedController(`/`new HerdController(` outside `ControllerFactory.cs` and
+test files (none left), confirming no call site anywhere passes
+`ControllerFactory.CreateAsync`'s new parameter positionally (every existing
+caller either omits it or names `maxRounds`/`gameplayOptions`/`resumeFrom`
+explicitly, so inserting a parameter before `ct` cannot have shifted one),
+and a brace/paren parity check on every changed file.
+
 ---
 
 ## Guards that must not rot

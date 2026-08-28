@@ -48,7 +48,7 @@ abstract interface TableTop.Hosting.Abstractions.IClaimedController
 abstract interface TableTop.Hosting.Abstractions.IClock
     DateTimeOffset UtcNow { get; }
 abstract interface TableTop.Hosting.Abstractions.IControllerFactory
-    Task<IGameController> CreateAsync(IGameMode mode, IReadOnlyList<IPlayer> players, Int32 maxRounds = default, GameplayOptions gameplayOptions = default, SessionSnapshot resumeFrom = default, CancellationToken ct = default)
+    Task<IGameController> CreateAsync(IGameMode mode, IReadOnlyList<IPlayer> players, Int32 maxRounds = default, GameplayOptions gameplayOptions = default, SessionSnapshot resumeFrom = default, Nullable<Int32> monogamyWinningTokenCount = default, CancellationToken ct = default)
     Task<SessionSnapshot> LoadSavedSessionAsync(CancellationToken ct = default)
 abstract interface TableTop.Hosting.Abstractions.IDayOneController
     Boolean HasPendingCard { get; }
@@ -224,7 +224,7 @@ sealed class TableTop.Hosting.Controllers.ClaimedController
     event EventHandler<TerritoryStolenEvent> TerritoryStolen
 sealed class TableTop.Hosting.Controllers.ControllerFactory
     .ctor(IGamePersistence persistence = default)
-    Task<IGameController> CreateAsync(IGameMode mode, IReadOnlyList<IPlayer> players, Int32 maxRounds = default, GameplayOptions gameplayOptions = default, SessionSnapshot resumeFrom = default, CancellationToken ct = default)
+    Task<IGameController> CreateAsync(IGameMode mode, IReadOnlyList<IPlayer> players, Int32 maxRounds = default, GameplayOptions gameplayOptions = default, SessionSnapshot resumeFrom = default, Nullable<Int32> monogamyWinningTokenCount = default, CancellationToken ct = default)
     Task<SessionSnapshot> LoadSavedSessionAsync(CancellationToken ct = default)
 sealed class TableTop.Hosting.Controllers.DayOneController
     .ctor(IReadOnlyList<ICard> deck, IReadOnlyList<IPlayer> players, String modeName, IClock clock = default, String filePath = default)
@@ -297,6 +297,44 @@ sealed class TableTop.Hosting.Controllers.MonogamyController
     event EventHandler<MonogamyGameEndedEvent> GameEnded
     event EventHandler<MonogamyTimedCardEvent> TimedCardStarted
     event EventHandler<TokensAwardedEvent> TokensAwarded
+sealed class TableTop.Hosting.Controllers.SerializedCardTurnController
+    .ctor(ICardTurnController inner)
+    Boolean IsRunning { get; }
+    Boolean SupportsFlow { get; }
+    Boolean UndoLastTurn()
+    FlowState GetFlowState(Guid playerId)
+    IReadOnlyDictionary<Guid, IReadOnlyList<SavedInspiration>> PlayerInspirations { get; }
+    IReadOnlyList<IPlayer> Players { get; }
+    Int32 CardsRemaining { get; }
+    SessionReport SessionReport { get; }
+    Task SaveAsync(CancellationToken ct = default)
+    Void ApplySteal(Guid fromPlayerId, Guid toPlayerId, Int32 points)
+    Void Dispose()
+    Void JumpTo(Guid playerId, Difficulty difficulty)
+    Void LevelDown(Guid playerId)
+    Void LevelUp(Guid playerId)
+    Void Quit()
+    Void RecordOutcome(CardOutcome outcome)
+    Void RecordTimedOutcome(CardOutcome outcome, TimeSpan elapsed)
+    Void ResetFlow(Guid playerId)
+    Void SlowDown(Guid playerId)
+    Void SpeedUp(Guid playerId)
+    Void Start()
+    Void TogglePause()
+    event EventHandler<BreakCardDrawnEvent> BreakCardDrawn
+    event EventHandler<CardReadyEvent> CardReady
+    event EventHandler<FlowChangedEvent> FlowChanged
+    event EventHandler<GameEndedEvent> GameEnded
+    event EventHandler<GamePausedEvent> GamePaused
+    event EventHandler<InspirationCardDrawnEvent> InspirationCardDrawn
+    event EventHandler<NextTurnHintEvent> NextTurnHint
+    event EventHandler<RewardCardDrawnEvent> RewardCardDrawn
+    event EventHandler<SessionSavedEvent> SessionSaved
+    event EventHandler<SkipAttemptedEvent> SkipAttempted
+    event EventHandler<TimerExpiredEvent> TimerExpired
+    event EventHandler<TurnResultEvent> TurnResult
+    event EventHandler<TurnSkippedEvent> TurnSkipped
+    event EventHandler<TurnUndoneEvent> TurnUndone
 sealed class TableTop.Hosting.Controllers.Services.EffectApplicator
     .ctor(IPlayerManager playerManager, SkipPolicy skipPolicy)
     Boolean ConsumeExtraCard(Guid playerId)
