@@ -34,7 +34,6 @@ public sealed class PlayerSetupViewModel : ViewModelBase
 
     private readonly IGameMode _mode;
     private readonly IAppSettings _settings;
-    private readonly IRosterStore? _rosterStore;
 
     private string _newName = "", _newAge = "", _selectedGender = "";
     private string _error = "", _rosterStatus = "";
@@ -157,7 +156,6 @@ public sealed class PlayerSetupViewModel : ViewModelBase
         _mode = mode;
         _settings = settings;
         _onStart = onStart;
-        _rosterStore = rosterStore;
 
         AddPlayerCommand = new RelayCommand(AddPlayer, () => NewName.Trim().Length > 0);
         ClearPlayersCommand = new RelayCommand(ClearPlayers);

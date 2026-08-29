@@ -15,7 +15,6 @@ namespace TableTop.Presentation.ViewModels;
 /// <para>
 /// Same shape as <see cref="MonogamyGameViewModel"/> — controller-injected
 /// public constructor for WinUI (which builds the controller centrally via
-/// <c>ControllerFactory</c>), plus a mode-and-players <see cref="Create"/>
 /// factory for MAUI that turns a deck-build failure into <see cref="LoadError"/>
 /// instead of a crash.
 /// </para>
