@@ -274,7 +274,7 @@ also needs `IAppSettings`, so folding it into `AppServices` is tidying, not a fi
 so no behaviour changed. This closes the structural gap; X.2 is what stops it
 recurring.
 
-### X.2 — Retire the `?? new ControllerFactory()` idiom
+### X.2 — Retire the `?? new ControllerFactory()` idiom — **FIXED**
 
 The root cause behind N.1 and X.1. Seven places in `TableTop.Presentation` accept
 `IControllerFactory? = null` and silently substitute a factory with no
@@ -295,10 +295,28 @@ Making the parameter required is a `TableTop.Presentation` signature change, and
 `api/*.api.txt` does not track Presentation — so no API-snapshot churn, and MINOR
 per `Directory.Build.props`.
 
-**Done when:** the fallback is gone from all seven, every call site passes a
-factory explicitly, and a test asserts a custom factory is the one actually used.
+**Resolved.** Zero `?? new ControllerFactory()` left in `TableTop.Presentation`.
+The parameter is required on all six `CreateAsync` methods and on
+`SavedSessionLookup`'s constructor, each with `ArgumentNullException.ThrowIfNull`.
 
-### X.3 — UI tests are still commented out in CI
+Two signatures needed reordering, since a required parameter cannot follow an
+optional one: `controllerFactory` moved ahead of `resumeFrom` on
+`CardTurnGameViewModel` and ahead of `winningTokenCount` on
+`MonogamyGameViewModel`. The MAUI pages already used named arguments and were
+unaffected; `GameplayViewModel`'s positional call was updated.
+
+~30 call sites in the test suite now pass `TestFactory.PlainControllerFactory()`,
+a named helper rather than a bare `new ControllerFactory()`. That is the point
+rather than a workaround: tests genuinely want plain defaults, they just have to
+say so. A new test asserts the constructor rejects null.
+
+**A side effect worth recording.** Adding a `<param>` tag triggered CS1573 —
+"other parameters do" — on all six methods, which would have failed the lint
+gate X.4 had just extended to `TableTop.Presentation`. So every parameter on
+those methods is now documented. Two fixes landing in the same change caught
+each other, which is the argument for X.4 covering all four assemblies.
+
+### X.3 — UI tests are still commented out in CI — **FIXED**
 
 `.github/workflows/ci.yml` (the `build-windows-heads` job) has the UI-test steps
 commented, under a comment that says the blocking bug is fixed and *"the suite
@@ -313,9 +331,14 @@ scaffolding producing two assembly-wide `[Fact]`s. That is a reasonable design �
 but it also means a single failure reports as one red test covering every
 ViewModel, so the diagnostic value depends entirely on the assertion messages.
 
-**Done when:** the two steps are uncommented and green in CI.
+**Resolved.** Both steps uncommented. Verified locally twice on this job's
+exact configuration (Release, x64): 2/2 in ~300ms.
 
-### X.4 — `lint` checks XML docs for two of four engine assemblies
+Worth recording *why* it stayed off: item 23's note said "re-enabled", and only
+the comment changed — the steps stayed commented for four more releases. A
+comment claiming a thing is enabled is not the thing being enabled.
+
+### X.4 — `lint` checks XML docs for two of four engine assemblies — **FIXED**
 
 The `lint` job runs `TreatWarningsAsErrors` + `GenerateDocumentationFile` against
 `TableTop.Core` and `TableTop.Hosting` only. `TableTop.Games` and
@@ -327,10 +350,31 @@ Same shape as the deliberately-deferred `TreatWarningsAsErrors` on the UI heads,
 which is also still open. The engine builds warning-clean today, so turning these
 on is cheap *now* and gets more expensive with every undocumented member added.
 
-**Done when:** all four engine assemblies are in the `lint` job, and each UI head
-has `TreatWarningsAsErrors` turned on in its own commit.
+**Resolved,** and it turned up a bigger gap than the item described.
 
-### X.5 — Documentation drift
+All four engine assemblies are now in the `lint` job. Games and Presentation
+were measured clean first, so this turned on with no fixes attached.
+
+The staged `TreatWarningsAsErrors` rollout the CI comment promised is now done
+per head, each measured with `--no-incremental` before being switched on:
+
+| Head | Warnings | Now |
+|---|---|---|
+| WinUI | 0 | on |
+| Android (native) | 0 | on |
+| Console | 0 | on |
+| MAUI | **96** | **off** — see X.6 |
+
+**The gap: `TableTop.Console` was never compiled by CI at all.** It is a
+shipping head. `build-and-test` names individual projects rather than building
+the solution, and Console was not in `TableTop.Engine.slnx` — even though
+README and CLAUDE.md both described that solution as "engine + tests +
+console". A `dotnet restore` of the solution does not compile anything. Fixed
+both ways: Console added to `Engine.slnx` (matching what the docs already
+claimed) and given its own CI build step, with warnings-as-errors from the
+start since it builds clean today.
+
+### X.5 — Documentation drift — **FIXED**
 
 Concrete, checkable errors found this pass. Grouped because they are one commit,
 not seven.
@@ -350,9 +394,55 @@ not seven.
 that is the boundary, and it is the right one; prose is not testable. But the
 version number and the gate list are *not* prose, and could be.
 
-**Done when:** the table is applied, and `DocumentationAccuracyTests` gains two
-cases: README's quoted version matches `VersionPrefix`, and README's script list
-matches `scripts/check-*.py` on disk.
+**Resolved,** and the list grew before it shrank. `ARCHITECTURE.md` turned out
+to carry more drift than the original table recorded — it is only read closely
+when someone is changing architecture, and nothing enforces any of it:
+
+| Where | Said | Actually |
+|---|---|---|
+| `ARCHITECTURE.md` header | "Current as of **1.34.0**" | 1.35.1 |
+| `ARCHITECTURE.md` ×2 | "99 modes, 3,657 cards" | 101 / 3,721 — two releases behind |
+| `ARCHITECTURE.md` | "MAUI has no AreaControl or SimultaneousAnswer screen, Console has neither plus no Monogamy or DailyCampaign" | **false** — all four heads render all six |
+| `CLAUDE.md` | same families claim | same |
+
+The families one is the dangerous kind: it reads as a deliberate architectural
+limitation, so a reader would plan around a constraint that no longer exists.
+Both copies now state the true position *and* why the mechanism still matters.
+
+Every row from the original table is applied. Two new
+`DocumentationAccuracyTests` cases stop the mechanical half recurring:
+
+- `Readme_quoted_version_matches_the_build_props` — README's "Currently
+  **N.N.N**" against `VersionPrefix`. This is what let 1.31.0 sit there for
+  four releases.
+- `Readme_names_every_static_gate_script` — every `scripts/check-*.py` must be
+  named somewhere in README. Presence, not count or order: the count is prose
+  that may legitimately be reworded, and a gate documented in a sentence is
+  still documented.
+
+**The rest stays unenforceable, deliberately.** ARCHITECTURE.md's counts could
+be tested the same way, but its prose — which is most of its value — cannot be,
+and a test that pins two numbers in a 700-line document invites the belief that
+the whole file is checked. The honest fix there is that README is the enforced
+copy, which ARCHITECTURE.md now says out loud at the point it repeats them.
+
+### X.6 — MAUI's 96 CS0618 warnings block its warnings-as-errors
+
+The one head still without `TreatWarningsAsErrors`, and the reason X.4 stopped
+short of four out of four. All 96 are .NET 10 MAUI deprecations, concentrated in
+a handful of APIs: `DisplayAlert`→`DisplayAlertAsync`, `Frame`→`Border`, and
+`ScaleXTo`/`FadeTo`/`TranslateTo`→their `*Async` forms.
+
+Not bundled into the CI-configuration change on purpose. Migrating to the async
+variants changes behaviour at every call site — several are inside `async void`
+handlers that `check-async-void.py` guards, so the guards need re-checking as
+the awaits move. That is its own change with its own review, not a line in a
+workflow commit.
+
+Worth doing before the next MAUI major, where deprecated becomes removed.
+
+**Done when:** MAUI builds warning-clean and its CI step carries
+`-p:TreatWarningsAsErrors=true` like the other three heads.
 
 ---
 

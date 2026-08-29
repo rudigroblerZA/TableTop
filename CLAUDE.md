@@ -120,8 +120,10 @@ silently.
 (`SupportedFamilies`), and `HeadFamilyCoverageTests` / `check-head-family-coverage.py`
 check that declaration against the live registry — the enforcement is against
 each head's own stated claim, not a hardcoded expectation, because a head is
-allowed to support fewer families than the catalogue has (Console and MAUI
-both currently do).
+allowed to support fewer families than the catalogue has. None currently
+does: all four heads declare all six families. The mechanism still matters —
+it is what makes a future gap a failing test rather than a mode that
+silently does nothing.
 
 **Shared ViewModels live in `TableTop.Presentation`**, plain `net10.0` with
 no platform SDK dependency — that's what makes them unit-testable without

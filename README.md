@@ -19,7 +19,7 @@ TableTop/
 │   ├── TableTop.Hosting/      ← Controllers, events, hints, persistence
 │   └── TableTop.Presentation/ ← ViewModels shared by WinUI + MAUI + Android (plain net10.0)
 ├── tests/
-│   ├── TableTop.Tests/        ← 961 tests — engine only, no UI required, any OS
+│   ├── TableTop.Tests/        ← 964 tests — engine only, no UI required, any OS
 │   └── TableTop.UiTests/      ← ViewModel tests     (Windows — references WinUI)
 ├── ui/
 │   ├── TableTop.Console/      ← Terminal UI         (any OS, no extra installs)
@@ -177,7 +177,7 @@ and WinUI apps use the player repository; add players through their setup screen
 ## Versioning
 
 `VersionPrefix` in `Directory.Build.props` is the single place to bump; every
-project inherits it. Currently **1.35.1**. The public API of Core, Games and
+project inherits it. Currently **1.35.2**. The public API of Core, Games and
 Hosting is stable, so a breaking change to it needs a major bump;
 `AssemblyVersion` tracks the major only (1.0.0.0 across the whole 1.x line), so
 assemblies built against 1.0.0 keep binding without a rebuild.
@@ -218,11 +218,12 @@ Two code-quality checks run in CI alongside the build:
   packages and committed secrets, reporting to the repo's Security tab.
   Report-only for now (`exit-code: "0"`) until the current findings are
   triaged; see the job's comment in `ci.yml` for turning it into a real gate.
-- **SonarCloud** (`sonarcloud` job) — static analysis, code smells,
+- **SonarCloud** (the `Scanner Begin`/`Scanner End` steps inside
+  `build-and-test` — not a job of its own) — static analysis, code smells,
   duplication, PR decoration. Needs a SonarCloud project and a `SONAR_TOKEN`
-  repository secret that this repo cannot provision itself; the job is
-  `continue-on-error: true` until both exist — see its comment in `ci.yml`
-  for the two setup steps.
+  repository secret that this repo cannot provision itself; both steps are
+  `continue-on-error: true` until those exist — see their comments in
+  `ci.yml` for the two setup steps.
 
 Before opening a pull request, the three things that fail loudest if skipped:
 the engine suite (`dotnet test TableTop.Engine.slnx`), the API snapshot if you
@@ -239,7 +240,7 @@ accumulated a lot of stale project history alongside what was actually
 current:
 
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** — how the system is put together,
-  right now: the four-assembly engine, the three heads, content and
+  right now: the four-assembly engine, the four heads, content and
   controller dispatch, the shared ViewModel layer, and an honest account of
   what "verified" means in an environment without the WinUI or MAUI SDK.
 - **[BACKLOG.md](BACKLOG.md)** — genuinely open items only, plus the table
