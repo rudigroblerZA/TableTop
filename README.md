@@ -19,7 +19,7 @@ TableTop/
 │   ├── TableTop.Hosting/      ← Controllers, events, hints, persistence
 │   └── TableTop.Presentation/ ← ViewModels shared by WinUI + MAUI + Android (plain net10.0)
 ├── tests/
-│   ├── TableTop.Tests/        ← 937 tests — engine only, no UI required, any OS
+│   ├── TableTop.Tests/        ← 961 tests — engine only, no UI required, any OS
 │   └── TableTop.UiTests/      ← ViewModel tests     (Windows — references WinUI)
 ├── ui/
 │   ├── TableTop.Console/      ← Terminal UI         (any OS, no extra installs)
@@ -40,7 +40,7 @@ dotnet test  TableTop.Engine.slnx
 dotnet run --project ui/TableTop.Console
 ```
 
-Six static checks run in CI and need only **Python 3.12+** and the standard
+Seven static checks run in CI and need only **Python 3.12+** and the standard
 library — no pip install. Worth running before a push, since they catch faults
 that produce no exception and no build error:
 
@@ -51,6 +51,7 @@ python3 scripts/check-xaml-bindings.py             # bindings that resolve to no
 python3 scripts/check-shared-usings.py             # shared type used without importing its namespace
 python3 scripts/check-mvvm-method-parity.py        # MAUI page calling a VM method that isn't there
 python3 scripts/check-head-family-coverage.py      # a head's declared game support drifted from its test copy
+python3 scripts/check-async-void.py                # an async void handler with no try/catch (MAUI + native Android)
 ```
 
 **On Windows, use `python` — not `python3`.** Install with
@@ -62,7 +63,7 @@ Python installed, `python` resolves to it but `python3` still hits the stub, so
 a `python3` command fails in a way that reads like a broken script rather than
 a naming mismatch. `py scripts/check-maui-xaml.py` works regardless.
 
-A seventh script, `scripts/check-ui-compiles.py`, additionally needs the .NET
+An eighth script, `scripts/check-ui-compiles.py`, additionally needs the .NET
 SDK and both UI workloads; it compiles the heads rather than reading them.
 
 ### Dev container
@@ -176,7 +177,7 @@ and WinUI apps use the player repository; add players through their setup screen
 ## Versioning
 
 `VersionPrefix` in `Directory.Build.props` is the single place to bump; every
-project inherits it. Currently **1.31.0**. The public API of Core, Games and
+project inherits it. Currently **1.35.1**. The public API of Core, Games and
 Hosting is stable, so a breaking change to it needs a major bump;
 `AssemblyVersion` tracks the major only (1.0.0.0 across the whole 1.x line), so
 assemblies built against 1.0.0 keep binding without a rebuild.

@@ -479,9 +479,10 @@ async work to block on, a different shape rather than a template to copy.
   count was wrong: writing the proposed gate *before* fixing anything found
   **eight**, not the six counted by reading. `SafeNavigation
   .SafePopToRootAsync` owns the shared guard once rather than five pasted
-  try/catch blocks, and `scripts/check-maui-async-void.py` — the seventh
-  gate — keeps it closed. MINOR: two new capabilities, no public-surface
-  removals.
+  try/catch blocks, and `scripts/check-async-void.py` — the seventh gate —
+  keeps it closed. (It was `check-maui-async-void.py` and scanned MAUI alone
+  until backlog N.4 widened it to the native Android head too.) MINOR: two
+  new capabilities, no public-surface removals.
 - **1.29.1** SonarCloud code-smell cleanups, no behaviour change:
   `TeamPlayerManager.ApplyScore`'s nested `if` merged into one condition
   (S1066); an unused private `WrapText` helper and an unused `players`
@@ -669,6 +670,68 @@ async work to block on, a different shape rather than a template to copy.
   bumps 1.25.0, 1.27.0 and 1.32.0. Verified by reading the diff and the
   `check-*.py` gates; not exercised on a TV device or emulator, the same
   honest gap every graphical head here carries.
+- **1.35.1** closed backlog items N.1–N.5 and X.1, and restored `BACKLOG.md`
+  — deleted in `6861545` while three docs still linked to it.
+
+  The headline is **N.1: resume was dead on WinUI and MAUI.**
+  `SavedSessionLookup` falls back to `new ControllerFactory()` when handed no
+  factory, that fallback has null persistence, and
+  `LoadSavedSessionAsync` returns null unconditionally in that case — so
+  `CanResume` was permanently false and the Continue button never rendered.
+  Both heads *were* writing sessions correctly through the container's
+  factory; only the read side was severed, and silently. The class's own XML
+  docs describe this exact defect as the reason its `IControllerFactory`
+  parameter exists; the parameter landed and two of three call sites were
+  never updated. WinUI now reaches the factory through `Navigator.Services`;
+  MAUI takes it as a **required** ctor parameter on `GameSelectionViewModel`,
+  so it is compile-enforced rather than optional-and-forgettable.
+
+  Fixing it exposed a second defect behind the first: WinUI's `ResumeCommand`
+  is an `AsyncRelayCommand`, whose requery is explicit by design, and
+  `LookForSavedSessionAsync` raised `PropertyChanged` for `CanResume` (driving
+  `Visibility`) but never `CanExecuteChanged`. The lookup fix alone would have
+  produced a Continue button that appears and stays greyed out. Two
+  independent failures stacked behind one silent fallback — which is the
+  argument for the still-open X.2: retiring the
+  `?? new ControllerFactory()` idiom from all seven shared-ViewModel sites,
+  where an optional parameter turns a compile error into a behaviour change.
+
+  **N.2/N.3 were both tests that existed but did not run.** Every
+  `SavedSessionLookup` test used the parameterless constructor — one is named
+  `RefreshAsync_WithNoPersistenceConfigured_LeavesNothingToResume` — so the
+  suite pinned the broken configuration, and a docstring claiming the found
+  path "genuinely can't be" exercised outlived the limitation it described.
+  Separately, eight composition-root tests sat behind `#if HAS_MICROSOFT_DI`,
+  a symbol nothing ever defined, leaving `AddTableTopHosting` — the root all
+  four heads boot through — at 0% coverage while the suite reported green.
+  Both fixed: 937 → 961 tests, `SessionResumer` 12.5% → 100%,
+  `SavedSessionLookup` → 100%, `AddTableTopHosting` 0% → 44.4%, total
+  91.7% → 92.0% line and 70.5% → 71.5% branch. That total is also the first
+  real coverage figure this repo has committed, closing the
+  "doesn't exist here" note below.
+
+  **N.4** widened `check-maui-async-void.py` to both Android-producing heads
+  and renamed it `check-async-void.py`. The native head shipped in 1.32.0
+  with an `async void` handler no gate looked at — hand-guarded, which is
+  exactly the state MAUI was in when item 27 found eight misses by script
+  after six by reading. `SAFE_DELEGATES` is per-head now, since
+  `SafePopToRootAsync` is a MAUI type and a same-named Android helper would
+  not be the same method. The widened gate was **proved to fail** on an
+  injected unguarded handler before being trusted.
+
+  **X.1** pointed MAUI's five specialised game pages at the container's
+  factory via a new `Services/AppServices.cs`, rather than each falling
+  through to the same `?? new ControllerFactory()` default. Inert today —
+  none of those five families consume persistence — so this closes the
+  structural gap, not a live bug. **N.5** tagged `v1.35.0`, which had reached
+  `main` untagged.
+
+  PATCH: fixes, tests and tooling only. No new user-facing capability and no
+  public-surface movement — `PublicApiSurfaceTests` stayed green throughout,
+  and `GameSelectionViewModel` lives in the MAUI head, which
+  `api/*.api.txt` does not track. Verified with a real SDK: full engine suite,
+  both graphical heads built, all eight gates. Not exercised on device — no
+  head was launched, so the resume button was never observed rendering.
 
 ## What genuinely doesn't exist here
 
@@ -681,6 +744,9 @@ async work to block on, a different shape rather than a template to copy.
   without a Windows machine and a physical controller. Keyboard bindings
   exist on three of the four gameplay screens (Millionaire deliberately
   excluded — see `BACKLOG.md`) as the tractable substitute.
-- **A committed, real coverage percentage.** Static reach analysis exists as
-  an approximation; the actual number needs one command
-  (`scripts/measure-coverage.ps1`) on a machine with NuGet access.
+- ~~**A committed, real coverage percentage.**~~ Closed in 1.35.1: measured on
+  a machine with a real SDK at **92.0% line / 71.5% branch** across the four
+  engine assemblies. Per-assembly figures and the worst-covered types are in
+  `BACKLOG.md` item L.1, which also proposes turning them into a CI floor.
+  Reproduce with `scripts/measure-coverage.ps1`, or
+  `dotnet test --collect:"XPlat Code Coverage" --settings coverage.runsettings`.
