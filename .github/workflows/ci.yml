@@ -77,8 +77,14 @@ jobs:
       # four handlers and applied it by hand, so eight others never got it —
       # and two of the eight were missed even by a careful manual count, which
       # is why this is a script and not a review habit.
-      - name: Check MAUI async void handlers are guarded
-        run: python3 scripts/check-maui-async-void.py
+      #
+      # Covers BOTH Android-producing heads as of backlog N.4. It was
+      # check-maui-async-void.py and scanned MAUI alone, so the native head —
+      # the one where this crash actually happens — shipped in 1.32.0 with a
+      # handler no gate looked at. Hand-guarded, which is precisely the state
+      # MAUI was in when item 27 found eight misses.
+      - name: Check async void handlers are guarded (MAUI + native Android)
+        run: python3 scripts/check-async-void.py
 
       # Backlog K.4. Five directories literally named "{Base,Modes,Data}" and
       # similar were committed — brace expansion run under sh, which doesn't
