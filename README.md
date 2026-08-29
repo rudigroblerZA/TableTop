@@ -102,6 +102,16 @@ trimming-vs-AOT constraint documented in `TableTop.Maui.csproj` (backlog item
 23): card types are reached reflectively by `System.Text.Json`, so the linker
 must not trim (`PublishTrimmed=false`), and AOT requires trimming.
 
+**Android TV.** Both the native head and the MAUI Android APK support Android
+TV: each manifest declares `leanback` and `touchscreen` as not required and
+carries a `LEANBACK_LAUNCHER` entry plus a home-row banner
+(`drawable/banner.xml`), so the same APK installs on phones, tablets and TV
+boxes and shows up on the TV launcher. The native head additionally applies a
+TV-only overscan inset, a visible D-pad focus highlight on its buttons, and an
+explicit initial focus per screen; MAUI's AppCompat views are D-pad focusable
+without extra work. Neither has been run on a real TV device — see
+`ARCHITECTURE.md`'s 1.35.0 note.
+
 ### MAUI (iOS / Android / macOS / Windows)
 
 The `Microsoft.Maui.Sdk could not be found` error means the workload is not installed:

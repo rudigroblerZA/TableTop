@@ -644,6 +644,31 @@ async work to block on, a different shape rather than a template to copy.
   what is and isn't gated. MINOR: new public surface in Hosting
   (`api/TableTop.Hosting.api.txt` regenerated in the same commit), same rule as
   item 29's optional-parameter addition in 1.30.0.
+- **1.35.0** added Android TV support to both Android-producing heads —
+  `TableTop.Android` (native) and `TableTop.Maui`'s Android APK. Each
+  `AndroidManifest.xml` now declares `android.software.leanback` and
+  `android.hardware.touchscreen` as **not required** (the pair Google Play
+  gates TV listing on, and the reason the same APK still installs unchanged on
+  phones and tablets) plus an `android:banner` pointing at a new 320x180
+  `drawable/banner.xml` — the app-icon hexagon re-centred for 16:9. Each
+  `MainActivity` gained a second `[IntentFilter]` carrying the
+  `LEANBACK_LAUNCHER` category alongside the `MainLauncher`-generated
+  `MAIN`/`LAUNCHER` one, so the app appears on the TV home row without
+  gaining a duplicate icon on touch launchers. The native head, which draws
+  its own view trees, also does the 10-foot work the platform can't infer:
+  `MainActivity` detects a leanback device via
+  `PackageManager.HasSystemFeature(FeatureLeanback)` and, only then, insets
+  the whole UI by ~27dp against TV overscan, gives the top-bar Back button the
+  brass-flip `button_background` (a bare button draws no focus state), and
+  calls `RequestFocus()` on each screen's view as it is shown so the D-pad
+  has a starting point; `button_background.xml` / `button_text.xml` gained a
+  `state_focused` arm (brass fill, parchment ring, ink text) mirroring
+  `state_pressed`. The MAUI head needs none of that — its AppCompat views are
+  D-pad focusable out of the box. MINOR: new user-facing capability, no
+  change to Core/Games/Hosting's public surface — same class as the UI-only
+  bumps 1.25.0, 1.27.0 and 1.32.0. Verified by reading the diff and the
+  `check-*.py` gates; not exercised on a TV device or emulator, the same
+  honest gap every graphical head here carries.
 
 ## What genuinely doesn't exist here
 

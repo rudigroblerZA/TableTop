@@ -6,9 +6,23 @@
 		or hardware. It deliberately requests NO permissions.
 	-->
 	<uses-sdk android:minSdkVersion="24" android:targetSdkVersion="36" />
+
+	<!--
+		Android TV support. `leanback` not required and `touchscreen` not
+		required is the pair Google Play insists on before it will surface an
+		app on TV devices; declaring both non-required keeps the same APK
+		installable on phones and tablets unchanged. The LEANBACK_LAUNCHER
+		intent filter that puts the app on the TV home row lives on
+		MainActivity (see its [IntentFilter]); the `android:banner` below is the
+		320x180 art that row shows.
+	-->
+	<uses-feature android:name="android.software.leanback" android:required="false" />
+	<uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+
 	<application
 		android:allowBackup="true"
 		android:icon="@drawable/appicon"
+		android:banner="@drawable/banner"
 		android:label="TableTop"
 		android:supportsRtl="true"
 		android:theme="@style/TableTop.Theme" />

@@ -12,6 +12,7 @@
 		android:allowBackup="true"
 		android:icon="@mipmap/appicon"
 		android:roundIcon="@mipmap/appicon_round"
+		android:banner="@drawable/banner"
 		android:label="TableTop"
 		android:supportsRtl="true"
 		android:theme="@style/Maui.SplashTheme" />
@@ -20,4 +21,15 @@
 	     and is the floor .NET 9/10 MAUI supports;
 	     target the current platform the build compiles against. -->
 	<uses-sdk android:minSdkVersion="24" />
+
+	<!--
+		Android TV. `leanback` and `touchscreen` both declared not-required is
+		what Google Play checks before listing an app on TV devices, and keeps
+		this same APK installable on phones and tablets unchanged. The
+		LEANBACK_LAUNCHER intent filter that adds the app to the TV home row is
+		on MainActivity (its [IntentFilter]); `android:banner` above is the art
+		that row shows.
+	-->
+	<uses-feature android:name="android.software.leanback" android:required="false" />
+	<uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 </manifest>
