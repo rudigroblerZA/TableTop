@@ -120,12 +120,20 @@ public sealed class SavedSessionLookupTests
         lookup.CanResume.Should().BeFalse("a resumable session must not survive the save being deleted");
     }
 
-    // ── Degradation — unchanged, and still worth pinning ─────────────────────
+    // ── Degradation — a plain factory, now named rather than defaulted ───────
+    //
+    // These used `new SavedSessionLookup()`. Backlog X.2 removed that default,
+    // so they say `PlainControllerFactory()` instead. The behaviour asserted is
+    // identical; what changed is that choosing a persistence-less factory is
+    // now a visible decision at the call site rather than what you get by
+    // omission. That distinction is the entire fix — these five tests passing
+    // while WinUI and MAUI could not resume is what it looks like when it is
+    // missing.
 
     [Fact]
     public void InitialState_HasNothingToResume()
     {
-        var lookup = new SavedSessionLookup();
+        var lookup = new SavedSessionLookup(TestFactory.PlainControllerFactory());
 
         lookup.CanResume.Should().BeFalse();
         lookup.Resumable.Should().BeNull();
@@ -138,7 +146,7 @@ public sealed class SavedSessionLookupTests
         // Kept deliberately: this documents what a caller that forgets to pass
         // a factory actually gets. It is no longer the only case covered, which
         // is what made it misleading rather than wrong.
-        var lookup = new SavedSessionLookup();
+        var lookup = new SavedSessionLookup(TestFactory.PlainControllerFactory());
 
         await lookup.RefreshAsync();
 
@@ -149,7 +157,7 @@ public sealed class SavedSessionLookupTests
     [Fact]
     public async Task RefreshAsync_NeverThrows()
     {
-        var lookup = new SavedSessionLookup();
+        var lookup = new SavedSessionLookup(TestFactory.PlainControllerFactory());
 
         var act = async () => await lookup.RefreshAsync();
 
@@ -159,7 +167,7 @@ public sealed class SavedSessionLookupTests
     [Fact]
     public async Task RefreshAsync_CanBeCalledRepeatedly_WithoutAccumulatingState()
     {
-        var lookup = new SavedSessionLookup();
+        var lookup = new SavedSessionLookup(TestFactory.PlainControllerFactory());
 
         await lookup.RefreshAsync();
         await lookup.RefreshAsync();
@@ -169,9 +177,20 @@ public sealed class SavedSessionLookupTests
     }
 
     [Fact]
+    public void Constructor_RejectsANullFactory()
+    {
+        // The guarantee X.2 buys: passing nothing is a compile error, and
+        // passing null explicitly fails immediately rather than degrading into
+        // a lookup that silently reports "no saved session" forever.
+        var act = () => new SavedSessionLookup(null!);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
     public void ResumeText_IsEmpty_WhenThereIsNothingToResume()
     {
-        var lookup = new SavedSessionLookup();
+        var lookup = new SavedSessionLookup(TestFactory.PlainControllerFactory());
         lookup.ResumeText.Should().Be(string.Empty);
     }
 

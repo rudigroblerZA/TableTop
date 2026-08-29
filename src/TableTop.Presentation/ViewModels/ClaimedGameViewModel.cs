@@ -133,15 +133,30 @@ public sealed class ClaimedGameViewModel : ViewModelBase, IDisposable
     /// through <see cref="IControllerFactory"/> rather than constructing
     /// <c>ClaimedController</c> directly.
     /// </summary>
+    /// <param name="navigator">Used to leave the screen.</param>
+    /// <param name="mode">The mode to play.</param>
+    /// <param name="players">The players at the table.</param>
+    /// <param name="controllerFactory">
+    /// The host's factory. <b>Required</b> as of backlog X.2 — this was an
+    /// optional parameter defaulting to <c>new ControllerFactory()</c>, which
+    /// silently substituted a factory carrying none of the persistence,
+    /// diagnostics or DI registration the host had configured. That default
+    /// turned a forgotten argument into a behaviour change rather than a
+    /// compile error, and it is how resume shipped broken on two heads (N.1).
+    /// Pass <c>new ControllerFactory()</c> explicitly if plain defaults really
+    /// are what you want.
+    /// </param>
     public static async Task<ClaimedGameViewModel> CreateAsync(
         INavigator navigator,
         IGameMode mode,
         IReadOnlyList<IPlayer> players,
-        IControllerFactory? controllerFactory = null)
+        IControllerFactory controllerFactory)
     {
+        ArgumentNullException.ThrowIfNull(controllerFactory);
+
         try
         {
-            var controller = await (controllerFactory ?? new ControllerFactory()).CreateAsync(mode, players);
+            var controller = await controllerFactory.CreateAsync(mode, players);
             if (controller is not IClaimedController cc)
             {
                 controller.Dispose();

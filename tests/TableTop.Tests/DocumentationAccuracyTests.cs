@@ -139,6 +139,75 @@ public sealed class DocumentationAccuracyTests
         return method.IsDefined(typeof(FactAttribute), inherit: false) ? 1 : 0;
     }
 
+    /// <summary>
+    /// The README's quoted version went stale at 1.31.0 and stayed there for
+    /// four releases (backlog X.5) — it read "Currently **1.31.0**" while
+    /// <c>Directory.Build.props</c> said 1.35.0.
+    ///
+    /// <para>
+    /// This is exactly the kind of fact this suite exists for and was not
+    /// covering: a number typed into prose that is derivable from the tree.
+    /// The rest of the Versioning section is genuine prose and stays unchecked.
+    /// </para>
+    /// </summary>
+    [Fact]
+    public void Readme_quoted_version_matches_the_build_props()
+    {
+        var root = FindRepositoryRoot();
+        var readme = File.ReadAllText(Path.Combine(root, "README.md"));
+        var props = File.ReadAllText(Path.Combine(root, "Directory.Build.props"));
+
+        var actual = Regex.Match(props, @"<VersionPrefix>(?<v>[^<]+)</VersionPrefix>");
+        actual.Success.Should().BeTrue("Directory.Build.props should carry a VersionPrefix");
+
+        var quoted = Regex.Match(readme, @"Currently \*\*(?<v>[\d]+\.[\d]+\.[\d]+)\*\*");
+        quoted.Success.Should().BeTrue(
+            "README.md's Versioning section should carry a 'Currently **N.N.N**' line — " +
+            "if the wording changed, update this test's pattern in the same commit");
+
+        quoted.Groups["v"].Value.Should().Be(actual.Groups["v"].Value,
+            "README's quoted version is stale — bump it in the same commit as VersionPrefix");
+    }
+
+    /// <summary>
+    /// The README described "six static checks" and listed six while seven
+    /// Python gates ran in CI — <c>check-async-void.py</c> (then
+    /// <c>check-maui-async-void.py</c>) was missing entirely, so the one gate
+    /// guarding against a process-terminating Android crash was invisible to
+    /// anyone reading the docs (backlog X.5).
+    ///
+    /// <para>
+    /// Checks presence, not the count or the ordering: the count appears in
+    /// prose that may legitimately be reworded, and a gate documented in a
+    /// sentence rather than the code block is still documented.
+    /// <c>check-ui-compiles.py</c> is deliberately included — it is called out
+    /// separately in the README because it needs the SDK and both workloads,
+    /// but it is still named.
+    /// </para>
+    /// </summary>
+    [Fact]
+    public void Readme_names_every_static_gate_script()
+    {
+        var root = FindRepositoryRoot();
+        var readme = File.ReadAllText(Path.Combine(root, "README.md"));
+
+        var scripts = Directory
+            .EnumerateFiles(Path.Combine(root, "scripts"), "check-*.py")
+            .Select(Path.GetFileName)
+            .Where(n => n is not null)
+            .Select(n => n!)
+            .OrderBy(n => n, StringComparer.Ordinal)
+            .ToList();
+
+        scripts.Should().NotBeEmpty("the gate scripts should be discoverable in scripts/");
+
+        var missing = scripts.Where(s => !readme.Contains(s, StringComparison.Ordinal)).ToList();
+
+        missing.Should().BeEmpty(
+            "README.md should name every scripts/check-*.py gate, so a reader can run what CI runs. " +
+            $"Missing: {string.Join(", ", missing)}");
+    }
+
     [Fact]
     public void Readme_lists_every_project_in_the_solution()
     {

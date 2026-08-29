@@ -37,7 +37,7 @@ public sealed class CardTurnGameViewModelTests
     {
         var (a, b) = Players();
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
 
         vm.HasLoadError.Should().BeFalse();
         vm.CardTitle.Should().NotBeEmpty();
@@ -52,7 +52,7 @@ public sealed class CardTurnGameViewModelTests
         var (a, b) = Players();
         var settings = new FakeAppSettings { EnableTimer = true, TimerSeconds = 30 };
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new WouldYouRatherMode(), [a, b], settings);
+            new FakeNavigator(), new WouldYouRatherMode(), [a, b], settings, TestFactory.PlainControllerFactory());
 
         vm.TimerEnabled.Should().BeTrue();
         vm.SecondsRemaining.Should().Be(30);
@@ -64,7 +64,7 @@ public sealed class CardTurnGameViewModelTests
     {
         var (a, b) = Players();
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
 
         vm.Complete();
 
@@ -77,7 +77,7 @@ public sealed class CardTurnGameViewModelTests
     {
         var (a, b) = Players();
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
         vm.Complete();
 
         vm.UndoLastTurn();
@@ -93,7 +93,7 @@ public sealed class CardTurnGameViewModelTests
         // not assumed, before writing this against it.
         var (a, b) = Players();
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new EstimationStationMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new EstimationStationMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
 
         var found = false;
         for (var i = 0; i < 20 && !vm.IsGameOver; i++)
@@ -129,7 +129,7 @@ public sealed class CardTurnGameViewModelTests
         // and the restriction lived only on the C# bank behind it.
         var (a, b) = Couple();
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new BetweenTheTwoOfYouMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new BetweenTheTwoOfYouMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
 
         for (var i = 0; i < 100 && !vm.IsGameOver; i++)
         {
@@ -149,7 +149,7 @@ public sealed class CardTurnGameViewModelTests
         // are all CoupleOnlyRestriction-gated.
         var (a, b) = Couple();
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new BetweenTheTwoOfYouMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new BetweenTheTwoOfYouMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
 
         for (var i = 0; i < 40 && !vm.IsGameOver; i++)
         {
@@ -169,7 +169,7 @@ public sealed class CardTurnGameViewModelTests
     {
         var (a, b) = Players();
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
 
         bool? isGameOverInsideHandler = null;
         string? summaryFromEvent = null;
@@ -188,7 +188,7 @@ public sealed class CardTurnGameViewModelTests
     {
         var (a, b) = Players();
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
         for (var i = 0; i < 50 && !vm.IsGameOver; i++) vm.Complete();
 
         vm.CompleteCommand.CanExecute(null).Should().BeFalse();
@@ -200,7 +200,7 @@ public sealed class CardTurnGameViewModelTests
     {
         var (a, b) = Players();
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
         vm.SaveCommand.CanExecute(null).Should().BeTrue("saving must be available while the game is live");
         for (var i = 0; i < 50 && !vm.IsGameOver; i++) vm.Complete();
 
@@ -213,9 +213,9 @@ public sealed class CardTurnGameViewModelTests
     {
         var (a, b) = Players();
         var flowAware = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new ReadingComprehensionMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new ReadingComprehensionMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
         var notFlowAware = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
 
         flowAware.SupportsFlow.Should().BeTrue();
         flowAware.LevelUpCommand.CanExecute(null).Should().BeTrue();
@@ -234,7 +234,7 @@ public sealed class CardTurnGameViewModelTests
         // mode, before trusting the command does anything at all.
         var (a, b) = Players();
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new ReadingComprehensionMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new ReadingComprehensionMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
 
         var before = vm.CardDifficulty;
         vm.LevelUp();
@@ -249,7 +249,7 @@ public sealed class CardTurnGameViewModelTests
     {
         var (a, b) = Players();
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new NotCardTurnMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new NotCardTurnMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
 
         vm.HasLoadError.Should().BeTrue();
         vm.IsPlaying.Should().BeFalse();
@@ -264,7 +264,7 @@ public sealed class CardTurnGameViewModelTests
         // plain method it wraps, must both be safe no-ops.
         var (a, b) = Players();
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new NotCardTurnMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new NotCardTurnMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
 
         var act = () => { vm.CompleteCommand.Execute(null); vm.Complete(); vm.Skip(); vm.FlipCard(); vm.UndoLastTurn(); };
 
@@ -276,7 +276,7 @@ public sealed class CardTurnGameViewModelTests
     {
         var (a, b) = Players();
         var vm = await CardTurnGameViewModel.CreateAsync(
-            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings());
+            new FakeNavigator(), new WouldYouRatherMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
 
         var act = () => vm.Dispose();
 

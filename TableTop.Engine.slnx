@@ -1,8 +1,15 @@
 <Solution>
   <!--
-    TableTop Engine solution — engine + tests only. No UI dependencies.
+    TableTop Engine solution — engine + tests + Console. No UI *workload*
+    dependencies: Console is plain net10.0 and builds anywhere the SDK does,
+    unlike WinUI/MAUI/Android which need their own SDK or workload.
     Builds and tests on any OS with the .NET 10 SDK.
     Format: SLNX (XML solution) — no GUIDs, no config boilerplate.
+
+    Console was missing here until backlog X.4, while README and CLAUDE.md both
+    described this solution as "engine + tests + console". Nothing compiled it:
+    CI names individual projects rather than building the solution, so the one
+    head that needs no workload at all was the only one with no build coverage.
   -->
 
   <!-- Solution-level files -->
@@ -23,5 +30,11 @@
   <!-- Tests -->
   <Folder Name="/Tests/">
     <Project Path="tests/TableTop.Tests/TableTop.Tests.csproj" />
+  </Folder>
+
+  <!-- UI — Console only. Needs no workload, so it belongs in the solution
+       that is meant to build anywhere. -->
+  <Folder Name="/UI/">
+    <Project Path="ui/TableTop.Console/TableTop.Console.csproj" />
   </Folder>
 </Solution>
