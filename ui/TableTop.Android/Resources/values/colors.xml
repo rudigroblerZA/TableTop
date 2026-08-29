@@ -10,4 +10,10 @@
     <color name="hint_gentle">#C49E4C</color>
     <color name="hint_moderate">#F59E0B</color>
     <color name="hint_strong">#EF4444</color>
+
+    <!-- Card-style screens: a panel that sits slightly raised off the baize,
+         and dimmed variants of walnut/brass for disabled buttons. -->
+    <color name="panel">#1E4C3D</color>
+    <color name="walnut_dim">#3A2A1F</color>
+    <color name="brass_dim">#8A7350</color>
 </resources>

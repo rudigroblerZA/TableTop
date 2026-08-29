@@ -20,6 +20,6 @@ public sealed class MessageScreen(string title, string message) : Screen
 
         var back = Ui.Button(context, "Back").OnClick(() => Navigator.GoBack());
         column.AddView(back);
-        return column;
+        return Ui.Scroll(context, column);
     }
 }

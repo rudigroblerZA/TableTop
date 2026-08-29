@@ -2,6 +2,7 @@ using System.Windows.Input;
 using Android.Content;
 using Android.Views;
 using Android.Widget;
+using TableTop.Droid;
 using AndroidColor = Android.Graphics.Color;
 
 namespace TableTop.Droid.Infrastructure;
@@ -47,14 +48,45 @@ public static class Ui
         return l;
     }
 
-    /// <summary>Wraps a view in a vertical scroller that fills the screen.</summary>
+    /// <summary>
+    /// Wraps <paramref name="content"/> in the raised card panel (see <see cref="Card"/>)
+    /// with a margin around it so the baize shows at the edges, then in a vertical
+    /// scroller that fills the screen.
+    /// </summary>
     public static ScrollView Scroll(Context c, View content)
     {
+        var card = Card(c, content);
+
+        var outer = new LinearLayout(c) { Orientation = Orientation.Vertical };
+        outer.LayoutParameters = new ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+        outer.AddView(card, new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
+        {
+            LeftMargin = Dp(c, 12),
+            TopMargin = Dp(c, 12),
+            RightMargin = Dp(c, 12),
+            BottomMargin = Dp(c, 12),
+        });
+
         var s = new ScrollView(c);
         s.LayoutParameters = new ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
-        s.AddView(content);
+        s.AddView(outer);
         return s;
+    }
+
+    /// <summary>The rounded, brass-framed panel every screen's content sits in,
+    /// raised slightly off the baize with a drop shadow.</summary>
+    public static FrameLayout Card(Context c, View content)
+    {
+        var card = new FrameLayout(c);
+        card.SetBackgroundResource(Resource.Drawable.card_background);
+        card.Elevation = Dp(c, 4);
+        card.LayoutParameters = new ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+        card.AddView(content);
+        return card;
     }
 
     /// <summary>A text view. <paramref name="size"/> is in SP.</summary>
@@ -76,10 +108,16 @@ public static class Ui
         return t;
     }
 
-    /// <summary>A push button.</summary>
+    /// <summary>A push button: brass-bordered walnut fill, rounded corners, brass press-flip.</summary>
     public static Button Button(Context c, string text)
     {
         var b = new Android.Widget.Button(c) { Text = text };
+        b.SetAllCaps(false);
+        b.StateListAnimator = null;
+        b.SetBackgroundResource(Resource.Drawable.button_background);
+        b.SetTextColor(c.Resources!.GetColorStateList(Resource.Color.button_text, c.Theme));
+        var pad = Dp(c, 12);
+        b.SetPadding(pad, pad, pad, pad);
         b.LayoutParameters = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent)
         {
