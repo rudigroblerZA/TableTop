@@ -159,7 +159,7 @@ public sealed class DayOneGameViewModelTests : IDisposable
         if (File.Exists(path)) File.Delete(path);
         try
         {
-            var vm = await DayOneGameViewModel.CreateAsync(new FakeNavigator(), new DayOneMode(), [Alice()]);
+            var vm = await DayOneGameViewModel.CreateAsync(new FakeNavigator(), new DayOneMode(), [Alice()], TestFactory.PlainControllerFactory());
 
             vm.HasLoadError.Should().BeFalse();
             vm.HasCard.Should().BeTrue();
@@ -174,7 +174,7 @@ public sealed class DayOneGameViewModelTests : IDisposable
     [Fact]
     public async Task CreateAsync_WithAnUnsupportedMode_SetsLoadErrorInsteadOfThrowing()
     {
-        var vm = await DayOneGameViewModel.CreateAsync(new FakeNavigator(), new NotDayOneMode(), [Alice()]);
+        var vm = await DayOneGameViewModel.CreateAsync(new FakeNavigator(), new NotDayOneMode(), [Alice()], TestFactory.PlainControllerFactory());
 
         vm.HasLoadError.Should().BeTrue();
     }

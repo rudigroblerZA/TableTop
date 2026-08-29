@@ -22,28 +22,37 @@ namespace TableTop.Presentation.Infrastructure;
 /// </summary>
 public sealed class SavedSessionLookup
 {
-    private readonly IControllerFactory? _controllerFactory;
+    private readonly IControllerFactory _controllerFactory;
 
     /// <summary>
     /// Creates a lookup.
     /// </summary>
     /// <param name="controllerFactory">
-    /// Optional factory. Defaults to a plain <c>ControllerFactory</c> — what
-    /// this class built inline before, which meant it ignored whatever
-    /// persistence the host had configured and could therefore only ever
-    /// report "no saved session".
+    /// The host's factory. <b>Required</b> as of backlog X.2.
+    ///
+    /// <para>
+    /// This was optional, defaulting to a plain <c>ControllerFactory</c> — what
+    /// this class built inline before that. A plain factory has no persistence,
+    /// and <c>LoadSavedSessionAsync</c> returns null unconditionally in that
+    /// case, so the default could only ever report "no saved session". WinUI
+    /// and MAUI both took it and shipped unable to resume a session they were
+    /// writing correctly (N.1). An optional parameter here does not degrade —
+    /// it disables the class.
+    /// </para>
     ///
     /// <para>
     /// Worth recording: that was previously written up in this project's own
     /// backlog as the "session found" path being <i>structurally
     /// untestable</i>. It never was — it was this bypass, misdiagnosed as an
-    /// inherent limitation. With a factory injected, the path is ordinary to
-    /// test and, more importantly, actually works in a head that configures
-    /// persistence.
+    /// inherent limitation.
     /// </para>
     /// </param>
-    public SavedSessionLookup(IControllerFactory? controllerFactory = null) =>
+    /// <exception cref="ArgumentNullException"><paramref name="controllerFactory"/> is null.</exception>
+    public SavedSessionLookup(IControllerFactory controllerFactory)
+    {
+        ArgumentNullException.ThrowIfNull(controllerFactory);
         _controllerFactory = controllerFactory;
+    }
 
     /// <summary>The resolved session, or null if there is nothing to resume.</summary>
     public ResumableSession? Resumable { get; private set; }
@@ -64,7 +73,7 @@ public sealed class SavedSessionLookup
     {
         try
         {
-            var snapshot = await (_controllerFactory ?? new ControllerFactory()).LoadSavedSessionAsync();
+            var snapshot = await _controllerFactory.LoadSavedSessionAsync();
             Resumable = SessionResumer.TryResolve(
                 snapshot, ArchetypeRegistry.Default().AllModes, currentRoster: null, out _);
         }
