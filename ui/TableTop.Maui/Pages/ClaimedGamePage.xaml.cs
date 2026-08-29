@@ -29,7 +29,9 @@ public partial class ClaimedGamePage : ContentPage, IAsyncInitializablePage
     /// <inheritdoc />
     public async Task InitializeAsync()
     {
-        _vm = await ClaimedGameViewModel.CreateAsync(new Services.MauiNavigator(this), _gameMode, _players);
+        _vm = await ClaimedGameViewModel.CreateAsync(
+            new Services.MauiNavigator(this), _gameMode, _players,
+            controllerFactory: Services.AppServices.ControllerFactory);
         BindingContext = _vm;
     }
 

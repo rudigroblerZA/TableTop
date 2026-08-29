@@ -16,7 +16,16 @@ public sealed class IntroViewModel : ViewModelBase
 
     // Was a duplicate of MAUI's resume lookup, near byte-for-byte. One
     // implementation now, in TableTop.Presentation.
-    private readonly SavedSessionLookup _savedSession = new();
+    //
+    // Constructed WITH the container's IControllerFactory, which is the whole
+    // point of that parameter. Built parameterless, SavedSessionLookup falls
+    // back to `new ControllerFactory()` — persistence null — and
+    // LoadSavedSessionAsync returns null unconditionally in that case, so
+    // CanResume was permanently false and the Continue button never rendered.
+    // Sessions were still being written to WinUIAppPaths.DataDirectory by
+    // GameViewModelFactory, which does resolve the container's factory; only
+    // the read side was severed, and it failed silently.
+    private readonly SavedSessionLookup _savedSession;
 
     /// <summary>Command that begins the play flow.</summary>
     public ICommand PlayCommand { get; }
@@ -27,7 +36,14 @@ public sealed class IntroViewModel : ViewModelBase
     public ICommand RoasterCommand { get; }
 
     /// <summary>Continues the saved session. Hidden when there isn't one.</summary>
-    public ICommand ResumeCommand { get; }
+    public ICommand ResumeCommand => _resumeCommand;
+
+    // Held at its concrete type so LookForSavedSessionAsync can requery it.
+    // AsyncRelayCommand documents that "requery is explicit — no ambient
+    // CommandManager on any target", and the resume lookup is precisely the
+    // case that needs it: CanExecute is evaluated once when the binding is
+    // set, which is before the async lookup has resolved anything.
+    private readonly AsyncRelayCommand _resumeCommand;
 
     /// <summary>True when there is a session worth offering.</summary>
     public bool CanResume => _savedSession.CanResume;
@@ -39,8 +55,16 @@ public sealed class IntroViewModel : ViewModelBase
     public IntroViewModel(Navigator navigator)
     {
         _navigator = navigator;
+
+        // Navigator.Services is WinUI's composition-root handle, already
+        // threaded through every ViewModel — so the factory is reachable here
+        // without adding a parameter to this constructor's only call site.
+        // Must be assigned before LookForSavedSessionAsync below.
+        _savedSession = new SavedSessionLookup(
+            navigator.Services.GetRequiredService<Hosting.Abstractions.IControllerFactory>());
+
         PlayCommand = new RelayCommand(Launch);
-        ResumeCommand = new AsyncRelayCommand(ResumeAsync, () => CanResume);
+        _resumeCommand = new AsyncRelayCommand(ResumeAsync, () => CanResume);
         _ = LookForSavedSessionAsync();
         SettingsCommand = new RelayCommand(() => _navigator.Navigate(new SettingsViewModel(_navigator, WinUIAppSettings.Instance)));
 
@@ -67,6 +91,13 @@ public sealed class IntroViewModel : ViewModelBase
         await _savedSession.RefreshAsync();
         OnPropertyChanged(nameof(CanResume));
         OnPropertyChanged(nameof(ResumeText));
+
+        // Visibility binds to CanResume and updates on the notification above,
+        // but the button's enabled state comes from ICommand.CanExecute, which
+        // WinUI only re-reads on CanExecuteChanged. Without this the button
+        // becomes visible and stays greyed out — a defect that was invisible
+        // while the lookup could never find a session in the first place.
+        _resumeCommand.RaiseCanExecuteChanged();
     }
 
     /// <summary>
