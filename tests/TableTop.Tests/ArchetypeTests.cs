@@ -1,8 +1,10 @@
+using Microsoft.Extensions.DependencyInjection;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Games;
 using TableTop.Games.Couples;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Controllers;
+using TableTop.Hosting.Extensions;
 using TableTop.Hosting.Persistence;
 
 namespace TableTop.Tests;
@@ -511,11 +513,11 @@ public sealed class ArchitectureTests
     }
 
     // ── Composition root (enhancement 1.3) ───────────────────────────────────
-    // These tests require the Microsoft.Extensions.DependencyInjection package.
-    // Add it to TableTop.Tests.csproj to run them:
-    //   <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-
-#if HAS_MICROSOFT_DI
+    // These were wrapped in `#if HAS_MICROSOFT_DI` with a note saying to add
+    // the package to run them. Nothing ever defined that symbol, so all eight
+    // silently never compiled — and AddTableTopHosting, which every one of the
+    // four heads boots through, sat at 0% coverage (72/72 lines missed) while
+    // the suite reported green. The package is now a real PackageReference.
 
     [Fact]
     public void AddTableTopHosting_RegistersIControllerFactory()
@@ -592,8 +594,6 @@ public sealed class ArchitectureTests
         services.AddTableTopHosting();
         return services.BuildServiceProvider();
     }
-
-#endif
 
     [Fact]
     public async Task ControllerFactory_CreatesCardTurnController_ForGenericMode()

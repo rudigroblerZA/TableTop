@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Hosting;
+using TableTop.Hosting.Abstractions;
 using TableTop.Presentation.Infrastructure;
 
 namespace TableTop.Maui.ViewModels;
@@ -9,7 +10,16 @@ public sealed class GameSelectionViewModel : BindableObject
 {
     // Was a duplicate of WinUI's IntroViewModel resume lookup, near
     // byte-for-byte. One implementation now, in TableTop.Presentation.
-    private readonly SavedSessionLookup _savedSession = new();
+    //
+    // Constructed WITH the container's IControllerFactory, which is the whole
+    // point of that parameter. Built parameterless, SavedSessionLookup falls
+    // back to `new ControllerFactory()` — persistence null — and
+    // LoadSavedSessionAsync returns null unconditionally in that case, so
+    // CanResume was permanently false and the Continue button never rendered.
+    // Sessions were still being written to FileSystem.AppDataDirectory by the
+    // gameplay path, which does resolve the container's factory; only the read
+    // side was severed, and it failed silently.
+    private readonly SavedSessionLookup _savedSession;
     private readonly IAppSettings _settings;
 
     /// <summary>True when there is a saved session worth offering.</summary>
@@ -122,9 +132,17 @@ public sealed class GameSelectionViewModel : BindableObject
         set => SelectedGameMode = value?.Mode;
     }
 
-    public GameSelectionViewModel(IAppSettings settings)
+    /// <param name="settings">The player's settings, for the age-rating floor.</param>
+    /// <param name="controllerFactory">
+    /// The app's factory, carrying the persistence MauiProgram configured.
+    /// Required, not optional: the resume lookup is unable to find anything
+    /// without it, and a silently-empty result is indistinguishable from
+    /// "no saved session".
+    /// </param>
+    public GameSelectionViewModel(IAppSettings settings, IControllerFactory controllerFactory)
     {
         _settings = settings;
+        _savedSession = new SavedSessionLookup(controllerFactory);
         Archetypes = new ObservableCollection<Archetype>(BuildFilteredArchetypes());
         _settings.Changed += OnSettingsChanged;
     }
