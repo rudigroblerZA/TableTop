@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Matches button_background.xml's states: dark ink text reads on the pressed
-     brass fill, dimmed parchment on disabled, plain parchment otherwise. -->
+     or D-pad-focused brass fill, dimmed parchment on disabled, plain parchment
+     otherwise. -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:color="@color/ink" android:state_pressed="true" />
+    <item android:color="@color/ink" android:state_focused="true" />
     <item android:color="@color/brass_dim" android:state_enabled="false" />
     <item android:color="@color/parchment" />
 </selector>

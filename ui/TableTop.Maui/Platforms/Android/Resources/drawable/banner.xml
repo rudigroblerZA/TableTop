@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Android TV home-row banner (xhdpi 320x180). The brass hexagon-on-baize
+    mark from the app icon, re-centred for the wide 16:9 frame the TV launcher
+    draws. Graphic-only, matching the textless icon.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+    <path
+        android:fillColor="#174034"
+        android:pathData="M0,0h320v180h-320z" />
+    <path
+        android:fillColor="#E3C67F"
+        android:pathData="M160,39L205,64.5L205,115.5L160,141L115,115.5L115,64.5Z" />
+    <path
+        android:fillColor="#174034"
+        android:pathData="M160,61L185,75.5L185,104.5L160,119L135,104.5L135,75.5Z" />
+</vector>

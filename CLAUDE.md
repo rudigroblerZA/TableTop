@@ -8,8 +8,11 @@ A fully UI-agnostic card game engine for couples and party games (101 modes,
 3,721 cards as of the last README update — `DocumentationAccuracyTests`
 keeps that figure honest, so trust README.md's count over any other doc's if
 they ever disagree). All content is compiled in: no content files, no
-runtime deck loading. .NET 10 / C# 14. Four engine assemblies plus three UI
-heads (Console, WinUI, MAUI) sharing one ViewModel layer.
+runtime deck loading. .NET 10 / C# 14. Four engine assemblies plus four UI
+heads (Console, WinUI, MAUI, and native Android) sharing one ViewModel layer.
+The two Android-producing heads (native `TableTop.Android` and MAUI's Android
+APK) both support Android TV — leanback launcher entry, TV banner, and (native
+head only) D-pad focus handling.
 
 For anything beyond this file, read in this order:
 - **[README.md](README.md)** — setup, workload installs, versioning/branching rules.
