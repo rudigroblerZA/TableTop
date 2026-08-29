@@ -29,7 +29,9 @@ public partial class HerdGamePage : ContentPage, IAsyncInitializablePage
     /// <inheritdoc />
     public async Task InitializeAsync()
     {
-        _vm = await HerdGameViewModel.CreateAsync(new Services.MauiNavigator(this), _gameMode, _players);
+        _vm = await HerdGameViewModel.CreateAsync(
+            new Services.MauiNavigator(this), _gameMode, _players,
+            controllerFactory: Services.AppServices.ControllerFactory);
         BindingContext = _vm;
     }
 

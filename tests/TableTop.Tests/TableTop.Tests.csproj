@@ -18,6 +18,14 @@
     </PackageReference>
     <PackageReference Include="FluentAssertions" />
     <PackageReference Include="Moq" />
+    <!--
+      The concrete container, not just the abstractions Core references.
+      Without it the composition-root tests in ArchetypeTests were behind an
+      `#if HAS_MICROSOFT_DI` that nothing ever defined, so eight tests covering
+      AddTableTopHosting — the root all four heads boot through — never
+      compiled, and the extension method measured 0% coverage.
+    -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
 
   <ItemGroup>

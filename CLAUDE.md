@@ -69,7 +69,7 @@ python3 scripts/check-xaml-bindings.py         # bindings resolving to nothing (
 python3 scripts/check-shared-usings.py         # shared type used without importing its namespace
 python3 scripts/check-mvvm-method-parity.py    # MAUI page calling a method its shared VM doesn't expose
 python3 scripts/check-head-family-coverage.py  # a head's declared game support drifted from its test copy
-python3 scripts/check-maui-async-void.py       # an async void MAUI handler with no try/catch
+python3 scripts/check-async-void.py             # an async void handler with no try/catch (MAUI + native Android)
 python3 scripts/check-ui-compiles.py           # needs the .NET SDK + both UI workloads
 ```
 

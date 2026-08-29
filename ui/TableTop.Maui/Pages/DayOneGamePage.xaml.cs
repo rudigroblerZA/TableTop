@@ -29,7 +29,9 @@ public partial class DayOneGamePage : ContentPage, IAsyncInitializablePage
     /// <inheritdoc />
     public async Task InitializeAsync()
     {
-        _vm = await DayOneGameViewModel.CreateAsync(new Services.MauiNavigator(this), _gameMode, _players);
+        _vm = await DayOneGameViewModel.CreateAsync(
+            new Services.MauiNavigator(this), _gameMode, _players,
+            controllerFactory: Services.AppServices.ControllerFactory);
         BindingContext = _vm;
     }
 
