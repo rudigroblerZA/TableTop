@@ -49,9 +49,12 @@ So: the tree is green. Every item below is something green does not catch.
 > 70.5% → **71.5%** branch; the async-void gate now covers both
 > Android-producing heads and was proved to fail before being trusted.
 >
-> Two things need a human: `v1.35.0` is tagged locally but **not pushed**
-> (N.5), and none of this is committed — it wants a branch off `develop` per
-> the GitFlow rules in README.
+> **A second pass on 2026-08-30** closed X.2-X.5 and L.1-L.4, and partly
+> closed X.6. Suite 937 → **964**. What is left is X.6a/b/c (MAUI deprecations,
+> two of which want someone who can run the app) and S.1-S.3.
+>
+> Two things need a human: tags `v1.35.0`/`v1.35.1` are local and **not
+> pushed**, and `develop` is ahead of `origin`.
 
 ### N.1 — Resume is dead on WinUI and MAUI — **FIXED**
 
@@ -426,29 +429,61 @@ and a test that pins two numbers in a 700-line document invites the belief that
 the whole file is checked. The honest fix there is that README is the enforced
 copy, which ARCHITECTURE.md now says out loud at the point it repeats them.
 
-### X.6 — MAUI's 96 CS0618 warnings block its warnings-as-errors
+### X.6 — MAUI deprecations — **PARTLY FIXED**, and the original count was wrong
 
-The one head still without `TreatWarningsAsErrors`, and the reason X.4 stopped
-short of four out of four. All 96 are .NET 10 MAUI deprecations, concentrated in
-a handful of APIs: `DisplayAlert`→`DisplayAlertAsync`, `Frame`→`Border`, and
-`ScaleXTo`/`FadeTo`/`TranslateTo`→their `*Async` forms.
+**Correction first.** This item said "96 CS0618 warnings". That was measured by
+grepping the build for `warning CS0618` — the C# compiler's share only. Turning
+`TreatWarningsAsErrors` on to test the theory surfaced a second warning source
+the normal build output had buried: the **XAML compiler**. The real figure was
+**518**, not 96:
 
-Not bundled into the CI-configuration change on purpose. Migrating to the async
-variants changes behaviour at every call site — several are inside `async void`
-handlers that `check-async-void.py` guards, so the guards need re-checking as
-the awaits move. That is its own change with its own review, not a line in a
-workflow commit.
+| Code | Count | What |
+|---|---|---|
+| XC0022 | 492 | binding could be compiled if `x:DataType` were specified |
+| XC0618 | 18 | `UseSafeArea` deprecated, on 9 pages |
+| CS0618 | 8 | `Frame` |
 
-Worth doing before the next MAUI major, where deprecated becomes removed.
+Worth recording how that got past me: I trusted a grep for one warning prefix
+instead of counting every `warning` line. The number in a backlog item is only
+as good as the command that produced it.
 
-**Done when:** MAUI builds warning-clean and its CI step carries
-`-p:TreatWarningsAsErrors=true` like the other three heads.
+**Done: the 22 deprecated async-API call sites.** `DisplayAlert` →
+`DisplayAlertAsync` (18), `ScaleXTo`/`FadeTo`/`TranslateTo` → their `*Async`
+forms (4), across `GameplayPage`, `GameSelectionPage`, `PlayerSetupPage`,
+`SettingsPage` and `SafeNavigation`. Pure renames — both forms already return
+`Task` — so the `async void` guards `check-async-void.py` covers were unaffected
+(re-run to confirm). **CS0618: 96 → 8.** Both MAUI targets build.
+
+**Not done, and split out by risk rather than deferred as one lump:**
+
+- **X.6a — `Frame` → `Border` (8 CS0618).** Only `GameplayPage`'s `x:Name`d
+  frames warn, but `Frame` appears ~28 times across 10 XAML files plus the
+  shared `CardStyle`/`PlayingCardStyle` styles that target it. `Border` is not
+  a drop-in: `CornerRadius`/`BorderColor`/`HasShadow` become
+  `StrokeShape`/`Stroke`/`StrokeThickness` with a `RoundRectangle`. This is a
+  **visual** change across every screen, and nothing here can verify it — no
+  device, and MAUI UI is not screenshot-testable in this repo. Doing it blind
+  is exactly the unverifiable change the docs warn against.
+- **X.6b — `UseSafeArea` (18 XC0618).** One attribute on 9 pages. The
+  replacement is MAUI 10's new safe-area handling; I could not confirm the
+  correct form (the Microsoft Learn connector needs authorising in this
+  session), and guessing at a layout API is how you ship a UI that renders
+  under the notch.
+- **X.6c — compiled bindings (492 XC0022).** Adding `x:DataType` to every
+  binding scope. Mechanical but wide, and it is a *performance* advisory, not a
+  deprecation — nothing breaks at the next MAUI major. Genuinely valuable
+  though: compiled bindings surface binding errors at build time, which is the
+  same class of bug `check-xaml-bindings.py` exists to catch by hand.
+
+**Done when:** all three land and MAUI's CI step carries
+`-p:TreatWarningsAsErrors=true` like the other three heads. X.6a and X.6b want
+someone who can run the app; X.6c does not.
 
 ---
 
 ## Later
 
-### L.1 — Coverage floors, now that there is a real number
+### L.1 — Coverage floors, now that there is a real number — **FIXED**
 
 First real measurement (this pass, `coverage.runsettings`, 937 tests):
 
@@ -488,11 +523,35 @@ wraps **every** card-turn controller in it, so it is on the hot path for most of
 the catalogue, and it is the type whose locking semantics were corrected as
 recently as 1.34.0.
 
-**Done when:** a floor is enforced in CI. Recommend starting at the measured
-numbers minus a point (90% line / 69% branch) so it ratchets rather than blocks,
-and raising it deliberately.
+**Resolved.** New `scripts/check-coverage.py` parses the Cobertura report CI
+already produces and fails below a floor. Wired into `build-and-test` right
+after the existing summary step — which had been *printing* coverage all along
+while nothing failed when a number went down.
 
-### L.2 — Extend static gates to the fourth head
+Floors are ~1 point under measured, per assembly as well as total:
+
+| | measured | floor |
+|---|---|---|
+| **Total** | 91.9 / 70.8 | 90.0 / 69.0 |
+| Core | 87.0 / 76.0 | 86.0 / 75.0 |
+| Games | 93.0 / 90.2 | 92.0 / 89.0 |
+| Hosting | 88.5 / 68.7 | 87.0 / 67.0 |
+| Presentation | 89.7 / 61.9 | 88.0 / 60.0 |
+
+Per-assembly floors are the ones that matter: `Games` is ~60% of the tree at
+93%, so it can absorb a sharp fall in `Hosting` or `Presentation` — where the
+logic that breaks actually lives — while the total barely moves.
+
+Two design calls worth stating. A **missing report fails** rather than passing
+quietly, since "no data" is how a gate silently switches itself off. And the
+step is deliberately **not** `if: always()`, unlike the reporting steps above
+it: a failed test run produces partial coverage, and failing this too would
+bury the real cause under a second, misleading error.
+
+Verified in both directions — passes at current numbers, exits 1 against an
+impossible floor, exits 1 on a missing report.
+
+### L.2 — Extend static gates to the fourth head — **FIXED**
 
 Beyond N.4, the gates predate the native Android head and mostly scope to
 MAUI/WinUI:
@@ -510,9 +569,27 @@ Lower urgency than N.4 because Android is compiled in CI and C#-level mistakes
 fail that build. N.4 is different: `async void` guarding is a *runtime* property
 no compiler checks.
 
-**Done when:** `check-mvvm-method-parity.py` covers Android screens.
+**Resolved.** `check-mvvm-method-parity.py` now scans both heads via a `HEADS`
+table — MAUI's `Pages/*.xaml.cs` and the native head's `Screens/*.cs` — matching
+`_vm.Method()` and Android's `Vm.Method()` (a protected property on
+`GameScreenBase<T>`). Now covers 9 files per head.
 
-### L.3 — `ControllerFactory` still repeats the capability chain
+Proved by injecting a `Vm.CompleteTypo()` into `CardTurnGameScreen`: correct
+file:line diagnostic and exit 1, exit 0 once reverted.
+
+**Found a latent bug while widening it.** `vm_type_for` iterated a `set` and
+returned the first match — and Python randomises string hashing per process, so
+for any file mentioning two shared ViewModels the answer genuinely varied
+between runs. No file trips it today, which is why it never showed. It now
+picks the earliest occurrence, tie-breaking on the longer name. A gate that can
+answer differently on a re-run is worse than no gate: it fails intermittently
+and teaches people to re-run it.
+
+`check-shared-usings.py` already covered Android (`SEARCH_ROOTS = ["ui"]`), and
+`check-ui-compiles.py`'s scope is fine — CI compiles Android separately. No
+change needed to either.
+
+### L.3 — `ControllerFactory` still repeats the capability chain — **FIXED**
 
 `ControllerFamilies.TryFor` is documented as the single source of truth, and
 `ModeManifestExtensions.GetManifest` correctly derives from it.
@@ -527,11 +604,24 @@ Not urgent: they agree today, and the parity tests pass. But "adding a capabilit
 interface means touching both, in the same order" is a standing invariant a human
 holds, and the manifest already showed the fix works.
 
-**Done when:** `CreateAsync` dispatches on `ControllerFamilies.TryFor(mode)` and
-the duplicate chain is gone, or the coupling is made explicit enough that a
-reordering fails a test.
+**Resolved.** `ControllerFactory.CreateAsync` now switches on
+`ControllerFamilies.TryFor(mode)` instead of re-testing the seven capability
+interfaces in a hand-maintained order. All three dispatch sites finally agree by
+construction rather than by comment: `TryFor` decides, `ModeManifestExtensions`
+already followed it, and the factory does now too.
 
-### L.4 — `CardTurnController` headroom
+The within-family choice moved to a private `ProgressionFor(mode)`.
+`IFlowAwareMode` and `IDiceProgressionMode` select a *progression strategy*, not
+a controller type — which is exactly why `TryFor` folds all three into
+`CardTurn` — so keeping that decision separate is the point rather than an
+oversight. Adding a progression flavour is now a one-method edit; adding a
+controller shape is still a new family plus an arm.
+
+No public-surface change (`ProgressionFor` is private; `api/*.api.txt`
+unchanged). 964 tests pass, including the family-parity suite that guards this
+exact invariant.
+
+### L.4 — `CardTurnController` headroom — **CLOSED, no change**
 
 664 raw lines against a 700 backstop. `ControllerSizeGuardTests` calls the
 headroom "deliberately thin — a few lines, not a few hundred". It is 36. The
@@ -540,8 +630,30 @@ already live in `Controllers/Services/`. The next feature touching the turn loop
 will trip this, and it will trip mid-feature, which is the worst time to be
 designing an extraction.
 
-**Done when:** either a tenth service is extracted, or the item is consciously
-closed as "the ceiling is correct and the next author will handle it."
+**Closed — consciously, without extracting.** Taking the second option the item
+offered, because the first would have made the code worse.
+
+The framing was slightly off. 664/700 *raw* is the backstop; the metric the
+guard itself calls "the one that matters" is **code** lines, and that reads
+**346/390 — 44 lines of headroom**, not 36. Comments and blank lines don't cost
+budget, which is the whole reason the guard counts two ways.
+
+More to the point, I read every member looking for a responsibility still
+sitting inline. There isn't one. What's left is the turn loop and thin
+delegations to the nine coordinators already extracted — `LevelUp`/`SpeedUp`/
+`JumpTo` forward to `FlowCoordinator`, `SaveAsync` to `PersistenceCoordinator`,
+`UndoLastTurn` to `UndoCoordinator`, `HandleSkipPolicy` to `SkipPolicy` — plus
+`Start`/`AdvanceTurn`/`EmitCard`/`OnTurnCompleted`/`OnGameEnded`, which *are*
+the turn loop and belong here. The nearest candidate, `BuildScores`, is ~18
+lines of result formatting; giving it a file to buy 18 lines would be a service
+that exists to move lines rather than to own a concept, which is the failure
+mode the nine real extractions avoided.
+
+So the ceiling stays where it is and no tenth service is invented to satisfy a
+number. The guard is doing its job: it keeps score, and the score is currently
+fine. Reopen this when a feature actually trips it — at which point there will
+be a real new responsibility to name, which is a better basis for a boundary
+than a line count.
 
 ---
 

@@ -63,14 +63,26 @@ Python installed, `python` resolves to it but `python3` still hits the stub, so
 a `python3` command fails in a way that reads like a broken script rather than
 a naming mismatch. `py scripts/check-maui-xaml.py` works regardless.
 
-An eighth script, `scripts/check-ui-compiles.py`, additionally needs the .NET
-SDK and both UI workloads; it compiles the heads rather than reading them.
+Two further scripts need more than Python, so they aren't in the list above:
+
+- `scripts/check-ui-compiles.py` needs the .NET SDK and both UI workloads; it
+  compiles the heads rather than reading them.
+- `scripts/check-coverage.py` needs a Cobertura report to read, so it runs in
+  CI after the test step. It enforces per-assembly and total coverage floors —
+  CI collected and printed coverage for a long time without anything failing
+  when a number went down. Run it locally with:
+
+  ```bash
+  dotnet test tests/TableTop.Tests --collect:"XPlat Code Coverage" \
+      --settings coverage.runsettings --results-directory /tmp/cov
+  python3 scripts/check-coverage.py /tmp/cov
+  ```
 
 ### Dev container
 
 `.devcontainer/devcontainer.json` gives you .NET 10, Python 3.12, a JDK and
 Trivy pre-installed — the same toolchain the `xaml`, `build-and-test`, `lint`
-and `trivy` CI jobs use, so the Quick Start commands and the six checks above
+and `trivy` CI jobs use, so the Quick Start commands and the seven checks above
 all just work, with no host setup and no Windows `python`/`python3` alias trap
 (see above). Open the repo in VS Code with the Dev Containers extension, or
 in a GitHub Codespace, and it builds itself on first open.
@@ -177,7 +189,7 @@ and WinUI apps use the player repository; add players through their setup screen
 ## Versioning
 
 `VersionPrefix` in `Directory.Build.props` is the single place to bump; every
-project inherits it. Currently **1.35.2**. The public API of Core, Games and
+project inherits it. Currently **1.35.3**. The public API of Core, Games and
 Hosting is stable, so a breaking change to it needs a major bump;
 `AssemblyVersion` tracks the major only (1.0.0.0 across the whole 1.x line), so
 assemblies built against 1.0.0 keep binding without a rebuild.

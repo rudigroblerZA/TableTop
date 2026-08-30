@@ -256,6 +256,22 @@ jobs:
             -reporttypes:"TextSummary;Html"
           cat coverage-report/Summary.txt
 
+      # Backlog L.1. CI has collected Cobertura and printed this summary all
+      # along — but printing is not enforcing. Nothing failed when a number went
+      # down, so it was an artifact to download rather than a gate.
+      #
+      # Floors sit ~1 point under the measured values, on purpose: this should
+      # catch a real regression, not fail because a refactor moved twenty lines
+      # between files. Per-assembly floors matter more than the total, because
+      # Games is ~60% of the tree at 93% and can mask a sharp fall in Hosting or
+      # Presentation while the total barely moves.
+      #
+      # NOT `if: always()` — unlike the reporting steps above. A failed test run
+      # produces partial coverage, and failing this too would bury the real
+      # cause under a second, misleading error.
+      - name: Enforce coverage floors
+        run: python3 scripts/check-coverage.py tests/TableTop.Tests/TestResults
+
       - name: Upload coverage summary
         uses: actions/upload-artifact@v4
         if: always()

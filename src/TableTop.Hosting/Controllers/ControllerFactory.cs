@@ -69,52 +69,58 @@ public sealed class ControllerFactory : IControllerFactory
         // — an honest scope boundary rather than a forced, misleading fit.
         // monogamyWinningTokenCount gets the same treatment in the other
         // direction: only the Monogamy arm reads it.
-        return mode switch
+        // Dispatch on ControllerFamilies.TryFor rather than re-testing the
+        // capability interfaces here (backlog L.3).
+        //
+        // This used to be its own if/else chain over the same seven interfaces,
+        // in an order that had to be kept identical to TryFor's by hand — both
+        // files said so in comments, and it was wrong once for real: Monogamy
+        // and Quiz were transposed while a comment claimed they could not
+        // disagree. Nothing caught it, because no mode in the catalogue
+        // implements two capability interfaces, so every input the parity test
+        // could actually be given produced the same answer either way.
+        //
+        // ModeManifestExtensions.GetManifest was moved onto TryFor for exactly
+        // this reason and the divergence it had became structurally impossible.
+        // This is the last of the three. The casts are safe by construction:
+        // the family was decided by these very interfaces.
+        return ControllerFamilies.TryFor(mode) switch
         {
             // ── Monogamy — mode supplies its own deck + win condition ─────────
-            IMonogamyDeckProvider monogamy => Task.FromResult<IGameController>(
+            ControllerFamily.Monogamy => Task.FromResult<IGameController>(
                 new MonogamyController(
                     players,
-                    monogamy.GetDeck(),
-                    winningTokenCount: monogamyWinningTokenCount ?? monogamy.WinningTokenCount)),
+                    ((IMonogamyDeckProvider)mode).GetDeck(),
+                    winningTokenCount: monogamyWinningTokenCount
+                        ?? ((IMonogamyDeckProvider)mode).WinningTokenCount)),
 
             // ── Millionaire family — mode supplies its own question bank ──────
-            IQuestionBankProvider quiz => Task.FromResult<IGameController>(
-                new MillionaireController(players, quiz.GetQuestionBank())),
+            ControllerFamily.Quiz => Task.FromResult<IGameController>(
+                new MillionaireController(players, ((IQuestionBankProvider)mode).GetQuestionBank())),
 
             // ── Herd — everyone answers at once; no single active player ──────
-            IHerdDeckProvider herd => Task.FromResult<IGameController>(
-                new HerdController(players, herd.GetHerdDeck())),
+            ControllerFamily.SimultaneousAnswer => Task.FromResult<IGameController>(
+                new HerdController(players, ((IHerdDeckProvider)mode).GetHerdDeck())),
 
             // ── Claimed! — mode supplies its own territory-challenge deck ─────
-            IClaimedDeckProvider claimed => Task.FromResult<IGameController>(
+            ControllerFamily.AreaControl => Task.FromResult<IGameController>(
                 new ClaimedController(
                     players,
-                    claimed.GetClaimedDeck(),
-                    winningTerritoryCount: claimed.WinningTerritoryCount)),
+                    ((IClaimedDeckProvider)mode).GetClaimedDeck(),
+                    winningTerritoryCount: ((IClaimedDeckProvider)mode).WinningTerritoryCount)),
 
             // ── Day One — mode supplies a strictly-ordered daily campaign deck ─
-            IDailyDeckProvider daily => Task.FromResult<IGameController>(
-                new DayOneController(daily.GetDailyDeck(), players, mode.Name)),
+            ControllerFamily.DailyCampaign => Task.FromResult<IGameController>(
+                new DayOneController(((IDailyDeckProvider)mode).GetDailyDeck(), players, mode.Name)),
 
-            // ── Flow-aware card-turn modes (opt in with IFlowAwareMode) ───────
-            IFlowAwareMode and IGameModeDefinition flowDef =>
+            // ── Card-turn — one controller type, three progression strategies ─
+            // IFlowAwareMode and IDiceProgressionMode change the strategy, not
+            // the controller, which is why TryFor folds all three into CardTurn
+            // and the choice between them lives here rather than up there.
+            ControllerFamily.CardTurn =>
                 CreateCardTurnAsync(
-                    flowDef, players, mode.Name, maxRounds,
-                    new FlowAwareProgressionStrategy(), gameplayOptions, resumeFrom, ct),
-
-            // ── Dice-driven category selection (opt in with IDiceProgressionMode) ─
-            IDiceProgressionMode dice and IGameModeDefinition diceDef =>
-                CreateCardTurnAsync(
-                    diceDef, players, mode.Name, maxRounds,
-                    new DiceCategoryProgressionStrategy(dice.CategoriesInOrder, dice.CategoryForTotal),
-                    gameplayOptions, resumeFrom, ct),
-
-            // ── All other IGameModeDefinition modes ───────────────────────────
-            IGameModeDefinition def =>
-                CreateCardTurnAsync(
-                    def, players, mode.Name, maxRounds,
-                    new DifficultyProgressionStrategy(), gameplayOptions, resumeFrom, ct),
+                    (IGameModeDefinition)mode, players, mode.Name, maxRounds,
+                    ProgressionFor(mode), gameplayOptions, resumeFrom, ct),
 
             _ => throw new NotSupportedException(
                 $"No controller registered for mode '{mode.Name}' " +
@@ -122,6 +128,26 @@ public sealed class ControllerFactory : IControllerFactory
                 $"IQuestionBankProvider, IMonogamyDeckProvider, IDailyDeckProvider, IClaimedDeckProvider, IHerdDeckProvider, IFlowAwareMode, or IDiceProgressionMode on the mode.")
         };
     }
+
+    /// <summary>
+    /// Which progression strategy a card-turn mode drives its deck with.
+    ///
+    /// <para>
+    /// Separate from family dispatch on purpose: every arm here produces the
+    /// same <c>CardTurnController</c>, so this is a *within-family* choice and
+    /// does not belong in <see cref="ControllerFamilies.TryFor"/>. Adding a
+    /// third progression flavour means editing this method only; adding a new
+    /// controller shape still means a new family and an arm above.
+    /// </para>
+    /// </summary>
+    private static Core.Abstractions.Progression.IProgressionStrategy ProgressionFor(IGameMode mode) =>
+        mode switch
+        {
+            IFlowAwareMode => new FlowAwareProgressionStrategy(),
+            IDiceProgressionMode dice =>
+                new DiceCategoryProgressionStrategy(dice.CategoriesInOrder, dice.CategoryForTotal),
+            _ => new DifficultyProgressionStrategy(),
+        };
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
