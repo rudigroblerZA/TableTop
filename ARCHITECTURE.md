@@ -741,6 +741,12 @@ async work to block on, a different shape rather than a template to copy.
 - **1.35.2** closed backlog X.1-X.5 and opened X.6. CI and documentation
   hardening, plus the structural fix behind 1.35.1's headline bug.
 
+  **There is no `v1.35.2` tag.** This version existed only on `develop`; 1.35.3
+  followed before a release was cut, so the work below ships as part of
+  `v1.35.3`. Recorded here rather than folded into the 1.35.3 entry, because
+  what changed when is the useful history — and because a reader looking for
+  the missing tag deserves an answer other than silence.
+
   **X.2 retired the `?? new ControllerFactory()` idiom.** Seven places in
   `TableTop.Presentation` took an optional `IControllerFactory` and silently
   substituted one carrying no persistence, no diagnostics sink and no DI
