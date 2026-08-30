@@ -96,7 +96,7 @@ public partial class GameSelectionPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Couldn't open settings", ex.Message, "OK");
+            await DisplayAlertAsync("Couldn't open settings", ex.Message, "OK");
         }
         finally { _navigating = false; }
     }
@@ -141,7 +141,7 @@ public partial class GameSelectionPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Couldn't resume", ex.Message, "OK");
+            await DisplayAlertAsync("Couldn't resume", ex.Message, "OK");
         }
         finally { _navigating = false; }
     }
@@ -154,7 +154,7 @@ public partial class GameSelectionPage : ContentPage
         {
             if (_vm.SelectedGameMode is null)
             {
-                await DisplayAlert("Select Game", "Please choose a game to play.", "OK");
+                await DisplayAlertAsync("Select Game", "Please choose a game to play.", "OK");
                 return;
             }
 
@@ -163,7 +163,7 @@ public partial class GameSelectionPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Couldn't start the game", ex.Message, "OK");
+            await DisplayAlertAsync("Couldn't start the game", ex.Message, "OK");
         }
         finally { _navigating = false; }
     }

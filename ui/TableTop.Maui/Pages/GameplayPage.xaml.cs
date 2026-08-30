@@ -56,7 +56,7 @@ public partial class GameplayPage : ContentPage, IAsyncInitializablePage
         {
             if (_closing) return;
             _closing = true;
-            await DisplayAlert("Game over", summary, "OK");
+            await DisplayAlertAsync("Game over", summary, "OK");
             await Navigation.PopToRootAsync();
         };
     }
@@ -86,9 +86,9 @@ public partial class GameplayPage : ContentPage, IAsyncInitializablePage
         _animating = true;
         try
         {
-            await CardFrame.ScaleXTo(0.02, 130);
+            await CardFrame.ScaleXToAsync(0.02, 130);
             _vm.FlipCard();
-            await CardFrame.ScaleXTo(1.0, 130);
+            await CardFrame.ScaleXToAsync(1.0, 130);
         }
         catch { _vm.FlipCard(); }   // animation unavailable → still flip
         finally { _animating = false; }
@@ -104,8 +104,8 @@ public partial class GameplayPage : ContentPage, IAsyncInitializablePage
             CardFrame.Opacity = 0;
             CardFrame.TranslationY = 26;
             await Task.WhenAll(
-                CardFrame.FadeTo(1, 200),
-                CardFrame.TranslateTo(0, 0, 200));
+                CardFrame.FadeToAsync(1, 200),
+                CardFrame.TranslateToAsync(0, 0, 200));
         }
         catch { CardFrame.Opacity = 1; CardFrame.TranslationY = 0; }
     }
@@ -120,7 +120,7 @@ public partial class GameplayPage : ContentPage, IAsyncInitializablePage
         // process on Android; surface it instead.
         try
         {
-            bool confirm = await DisplayAlert("End Game", "Are you sure you want to end this game?", "Yes", "No");
+            bool confirm = await DisplayAlertAsync("End Game", "Are you sure you want to end this game?", "Yes", "No");
             if (!confirm) return;
 
             // The engine fires GameEnded → the GameOver handler above shows the
@@ -134,7 +134,7 @@ public partial class GameplayPage : ContentPage, IAsyncInitializablePage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Couldn't end the game", ex.Message, "OK");
+            await DisplayAlertAsync("Couldn't end the game", ex.Message, "OK");
         }
     }
 }

@@ -38,7 +38,7 @@ internal static class SafeNavigation
         }
         catch (Exception ex)
         {
-            await page.DisplayAlert("Couldn't leave the game", ex.Message, "OK");
+            await page.DisplayAlertAsync("Couldn't leave the game", ex.Message, "OK");
         }
     }
 }

@@ -68,7 +68,7 @@ public partial class PlayerSetupPage : ContentPage
         {
             _vm.SaveRosterAsDefault();
             var n = _vm.Players.Count;
-            await DisplayAlert(
+            await DisplayAlertAsync(
                 "Roster saved",
                 n == 0 ? "Saved roster cleared."
                        : $"Saved {n} player{(n == 1 ? "" : "s")} for next time.",
@@ -76,7 +76,7 @@ public partial class PlayerSetupPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Couldn't save the roster", ex.Message, "OK");
+            await DisplayAlertAsync("Couldn't save the roster", ex.Message, "OK");
         }
     }
 
@@ -95,7 +95,7 @@ public partial class PlayerSetupPage : ContentPage
             if (!_vm.CanStartGame)
             {
                 var need = _vm.MinimumPlayers;
-                await DisplayAlert("Need Players",
+                await DisplayAlertAsync("Need Players",
                     need == 1 ? "Please add a player." : $"Please add at least {need} players.", "OK");
                 return;
             }
@@ -124,7 +124,7 @@ public partial class PlayerSetupPage : ContentPage
             var suitability = TableSuitability.Check(_vm.Mode, players);
             if (!suitability.Suits)
             {
-                await DisplayAlert("Not quite the right table", suitability.Explanation, "OK");
+                await DisplayAlertAsync("Not quite the right table", suitability.Explanation, "OK");
                 return;
             }
 
@@ -159,7 +159,7 @@ public partial class PlayerSetupPage : ContentPage
 
             if (next is null)
             {
-                await DisplayAlert(
+                await DisplayAlertAsync(
                     "Not available here yet",
                     $"'{_vm.Mode.Name}' needs a {family} screen, which this app doesn't have yet.",
                     "OK");
@@ -177,7 +177,7 @@ public partial class PlayerSetupPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Couldn't start the game", ex.Message, "OK");
+            await DisplayAlertAsync("Couldn't start the game", ex.Message, "OK");
         }
     }
 }
