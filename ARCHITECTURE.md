@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.35.3**, August 2026. This replaces the accumulated
+Current as of **1.35.4**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -841,6 +841,52 @@ async work to block on, a different shape rather than a template to copy.
 
   PATCH: fixes, tests, CI and documentation. No public-surface movement —
   `api/*.api.txt` unchanged. 964 tests; coverage 91.9% line / 70.8% branch.
+
+- **1.35.4** closed backlog X.6b, the `UseSafeArea` half of the MAUI
+  deprecations, and found a live Android regression behind it.
+
+  **The blocker on X.6b was documentation access, not risk.** The item was
+  deferred because the .NET 10 replacement for the iOS-specific
+  `ios:Page.UseSafeArea` could not be confirmed, and guessing at a layout API
+  is how you ship a UI that renders under the notch. The Microsoft Learn
+  documentation gives an exact, first-party migration — `ContentPage`'s new
+  `SafeAreaEdges` property, with `ios:Page.UseSafeArea="True"` mapping to
+  `SafeAreaEdges="Container"` verbatim. That is a documented equivalence, not
+  an inference, so the change no longer needs a device to justify it.
+
+  Nine pages carried the attribute. Each drops two lines — the attribute and
+  the `xmlns:ios` declaration, which nothing else in the head used — for one.
+  `SafeAreaEdges` is a first-class `ContentPage` property, so the replacement
+  is cross-platform where the thing it replaces was iOS-only. XC0618: 18 -> 0.
+
+  **The deprecation was hiding a real Android bug.** .NET 10 changed
+  `ContentPage`'s Android default from container-safe to `None` (edge-to-edge);
+  .NET 9 behaved like `Container`. Because the old attribute was iOS-only,
+  nothing protected Android, so every one of these pages had silently started
+  rendering under the status and navigation bars on Android — a head this
+  project ships as a first-class target, including to Android TV. `Container`
+  is exactly the value Microsoft names for restoring .NET 9 behaviour, so the
+  same one-line change that clears the deprecation also closes the regression.
+  This is the second time in three releases that a warning turned out to be
+  reporting a live defect rather than housekeeping.
+
+  `RoasterPage` is included even though it never carried the deprecated
+  attribute: it is the tenth `ContentPage` in the head, and under the new
+  default it renders edge-to-edge like the other nine did. Leaving it out would
+  have made the set inconsistent for no reason other than that no warning
+  pointed at it.
+
+  **Not verified by a build or on a device.** This pass ran without `dotnet`,
+  so the check is static: all ten files parse as XML, and the seven runnable
+  `scripts/check-*.py` gates pass. `check-maui-xaml.py` is a denylist keyed on
+  tag and carries no `ContentPage` rules, so it confirms nothing about
+  `SafeAreaEdges` — that property is trusted from the API documentation, not
+  from the gate. Safe-area behaviour has still never been observed on hardware.
+  X.6a (`Frame` -> `Border`) and X.6c (compiled bindings) remain open, so
+  MAUI's CI step still cannot carry `TreatWarningsAsErrors`.
+
+  PATCH: a fix in one head. No public-surface movement — `api/*.api.txt`
+  unchanged, and no engine assembly was touched.
 
 ## What genuinely doesn't exist here
 

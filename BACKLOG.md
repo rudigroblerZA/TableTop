@@ -50,8 +50,12 @@ So: the tree is green. Every item below is something green does not catch.
 > Android-producing heads and was proved to fail before being trusted.
 >
 > **A second pass on 2026-08-30** closed X.2-X.5 and L.1-L.4, and partly
-> closed X.6. Suite 937 → **964**. What is left is X.6a/b/c (MAUI deprecations,
-> two of which want someone who can run the app) and S.1-S.3.
+> closed X.6. Suite 937 → **964**.
+>
+> **A third pass on 2026-08-30** (1.35.4) closed **X.6b** — the documentation
+> that item was blocked on turned out to be reachable, and the migration it
+> describes is exact. What is left is **X.6a** (`Frame` → `Border`, wants a
+> device), **X.6c** (compiled bindings, does not) and S.1-S.3.
 >
 > Two things need a human: tags `v1.35.0`/`v1.35.1` are local and **not
 > pushed**, and `develop` is ahead of `origin`.
@@ -429,7 +433,7 @@ and a test that pins two numbers in a 700-line document invites the belief that
 the whole file is checked. The honest fix there is that README is the enforced
 copy, which ARCHITECTURE.md now says out loud at the point it repeats them.
 
-### X.6 — MAUI deprecations — **PARTLY FIXED**, and the original count was wrong
+### X.6 — MAUI deprecations — **PARTLY FIXED** (a and c open), and the original count was wrong
 
 **Correction first.** This item said "96 CS0618 warnings". That was measured by
 grepping the build for `warning CS0618` — the C# compiler's share only. Turning
@@ -464,11 +468,39 @@ forms (4), across `GameplayPage`, `GameSelectionPage`, `PlayerSetupPage`,
   **visual** change across every screen, and nothing here can verify it — no
   device, and MAUI UI is not screenshot-testable in this repo. Doing it blind
   is exactly the unverifiable change the docs warn against.
-- **X.6b — `UseSafeArea` (18 XC0618).** One attribute on 9 pages. The
-  replacement is MAUI 10's new safe-area handling; I could not confirm the
-  correct form (the Microsoft Learn connector needs authorising in this
-  session), and guessing at a layout API is how you ship a UI that renders
-  under the notch.
+- **X.6b — `UseSafeArea` (18 XC0618) — FIXED 2026-08-30.** The blocker was
+  documentation access, not risk, and the documentation was reachable this
+  pass. Microsoft Learn's safe-area page carries an explicit migration table:
+  `ios:Page.UseSafeArea="True"` becomes `SafeAreaEdges="Container"` on
+  `ContentPage`. That is a stated first-party equivalence, not an inference,
+  which is what made this safe to do without a device.
+
+  Applied to all 9 pages. Each loses two lines (the attribute and the
+  `xmlns:ios` declaration — nothing else in the head used that namespace) and
+  gains one. `SafeAreaEdges` is a plain `ContentPage` property, so the
+  replacement is cross-platform where the thing it replaced was iOS-only.
+
+  **It was hiding a live Android bug.** .NET 10 changed `ContentPage`'s Android
+  default from container-safe to `None` (edge-to-edge); .NET 9 behaved like
+  `Container`. The old attribute was iOS-only, so nothing was protecting
+  Android — every one of these pages had silently begun rendering under the
+  status and navigation bars on a head this project ships as a first-class
+  target. `Container` is precisely the value Microsoft names for restoring
+  .NET 9 behaviour, so one change clears the deprecation and the regression
+  together. Worth noting as a pattern: this is the second time in three
+  releases that a "deprecation warning" turned out to be reporting a defect.
+
+  `RoasterPage` was swept in as well. It never carried the deprecated
+  attribute, so no warning pointed at it — but it is the tenth `ContentPage`
+  in the head and hits the same new Android default. It now carries
+  `SafeAreaEdges="Container"` like the other nine.
+
+  **Evidence:** all ten files parse as XML; the seven runnable
+  `scripts/check-*.py` gates pass. No `dotnet` in this environment, so no
+  build and no XC0618 recount. Note that `check-maui-xaml.py` proves nothing
+  here — it is a denylist keyed on tag name and has no `ContentPage` rules, so
+  `SafeAreaEdges` is trusted from the API docs, not from the gate. Safe-area
+  behaviour has still never been observed on hardware.
 - **X.6c — compiled bindings (492 XC0022).** Adding `x:DataType` to every
   binding scope. Mechanical but wide, and it is a *performance* advisory, not a
   deprecation — nothing breaks at the next MAUI major. Genuinely valuable
@@ -476,8 +508,10 @@ forms (4), across `GameplayPage`, `GameSelectionPage`, `PlayerSetupPage`,
   same class of bug `check-xaml-bindings.py` exists to catch by hand.
 
 **Done when:** all three land and MAUI's CI step carries
-`-p:TreatWarningsAsErrors=true` like the other three heads. X.6a and X.6b want
-someone who can run the app; X.6c does not.
+`-p:TreatWarningsAsErrors=true` like the other three heads. X.6b is done.
+X.6a still wants someone who can run the app — it is a genuine visual change
+with no documented one-to-one mapping, which is exactly what X.6b turned out
+*not* to be. X.6c never needed a device.
 
 ---
 
