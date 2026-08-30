@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.35.2**, August 2026. This replaces the accumulated
+Current as of **1.35.3**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -790,6 +790,51 @@ async work to block on, a different shape rather than a template to copy.
   breaking for `TableTop.Presentation` consumers — that assembly is not tracked
   by the API snapshots and every consumer is an in-tree `ProjectReference`, the
   same reasoning `Directory.Build.props` applies to removals. 964 tests.
+
+- **1.35.3** closed X.2-X.5 and L.1-L.4, and partly closed X.6.
+
+  **L.3 finished a three-year-old consolidation.** `ControllerFactory.CreateAsync`
+  now switches on `ControllerFamilies.TryFor(mode)` rather than re-testing the
+  seven capability interfaces in a hand-maintained order. All three dispatch
+  sites finally agree *by construction* rather than by comment — that ordering
+  was wrong once for real, with Monogamy and Quiz transposed while a comment
+  claimed they could not disagree, and nothing caught it because no mode in the
+  catalogue implements two capability interfaces. The within-family choice moved
+  to a private `ProgressionFor`: `IFlowAwareMode` and `IDiceProgressionMode`
+  select a progression *strategy*, not a controller type, which is precisely why
+  `TryFor` folds all three into `CardTurn`.
+
+  **L.1 turned coverage from a printout into a gate.** CI had collected
+  Cobertura and printed a `reportgenerator` summary for a long time, and nothing
+  failed when a number went down. `scripts/check-coverage.py` enforces total and
+  per-assembly floors set ~1 point under measured. Per-assembly is the half that
+  matters: `Games` is ~60% of the tree at 93% and can absorb a sharp fall in
+  `Hosting` or `Presentation` — where the logic that breaks lives — while the
+  total barely moves.
+
+  **L.2** widened `check-mvvm-method-parity.py` to the native Android head
+  (`Vm.Method()` alongside MAUI's `_vm.Method()`), and found a latent defect in
+  it while doing so: `vm_type_for` iterated a `set`, and Python randomises
+  string hashing per process, so for a file naming two shared ViewModels the
+  answer genuinely varied between runs. **L.4** was closed *without* extracting
+  a tenth service — 346/390 code lines, and every remaining member is either the
+  turn loop itself or a thin delegation to one of the nine coordinators already
+  extracted. Inventing a service to satisfy a line count is the failure mode
+  those nine avoided.
+
+  **X.6 was partly done, and its own premise was wrong.** The item claimed 96
+  CS0618 warnings; that came from grepping the build for one warning prefix, and
+  the real figure was **518** once the XAML compiler's share was counted (492
+  XC0022 compiled-binding advisories, 18 XC0618 `UseSafeArea`, 8 CS0618
+  `Frame`). The 22 deprecated async-API call sites are migrated —
+  `DisplayAlert`/`ScaleXTo`/`FadeTo`/`TranslateTo` to their `*Async` forms,
+  pure renames, CS0618 down to 8. The rest is split by risk: `Frame`→`Border`
+  is a visual change across 10 XAML files and shared styles that nothing here
+  can verify, and the `UseSafeArea` replacement could not be confirmed against
+  documentation. Both wait for someone who can run the app.
+
+  PATCH: fixes, tests, CI and documentation. No public-surface movement —
+  `api/*.api.txt` unchanged. 964 tests; coverage 91.9% line / 70.8% branch.
 
 ## What genuinely doesn't exist here
 
