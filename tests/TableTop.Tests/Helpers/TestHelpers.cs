@@ -5,6 +5,7 @@ using TableTop.Core.Abstractions.Rules;
 using TableTop.Core.Domain.Progression;
 using TableTop.Core.Domain.Rules;
 using TableTop.Core.Domain.Scoring;
+using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Controllers;
 using TableTop.Hosting.Persistence;
 
@@ -44,6 +45,24 @@ public sealed class InlineModeDef : IGameMode, IGameModeDefinition
 /// </summary>
 public static class TestFactory
 {
+    /// <summary>
+    /// A plain <see cref="ControllerFactory"/> with no persistence — the
+    /// defaults a ViewModel test almost always wants.
+    ///
+    /// <para>
+    /// Exists because backlog X.2 made <c>IControllerFactory</c> a required
+    /// argument on every shared-ViewModel <c>CreateAsync</c>. It used to
+    /// default to exactly this value, which read as convenience and was
+    /// actually a trap: a head that forgot the argument lost its configured
+    /// persistence silently, and that is how resume shipped broken on WinUI
+    /// and MAUI. Tests genuinely do want the plain factory — they just have to
+    /// say so now, which is the whole point of the change. Naming it here
+    /// keeps that explicit without repeating <c>new ControllerFactory()</c> at
+    /// thirty call sites.
+    /// </para>
+    /// </summary>
+    public static IControllerFactory PlainControllerFactory() => new ControllerFactory();
+
     /// <summary>Creates N Easy standard cards for filler use in tests.</summary>
     public static IReadOnlyList<ICard> MakeCards(int n, Difficulty difficulty = Difficulty.Easy) =>
         Enumerable.Range(1, n)

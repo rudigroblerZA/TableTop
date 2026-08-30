@@ -311,11 +311,28 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
     /// failure as <see cref="LoadError"/> rather than an exception — MAUI's
     /// behaviour, which WinUI's constructor lacked entirely.
     /// </summary>
+    /// <param name="navigator">Used to leave the screen.</param>
+    /// <param name="mode">The mode to play.</param>
+    /// <param name="players">The players at the table.</param>
+    /// <param name="settings">Timer, shuffle, difficulty range and card-count preferences.</param>
+    /// <param name="controllerFactory">
+    /// The host's factory. <b>Required</b> as of backlog X.2 — this was an
+    /// optional parameter defaulting to <c>new ControllerFactory()</c>, which
+    /// silently substituted a factory carrying none of the persistence,
+    /// diagnostics or DI registration the host had configured. That default
+    /// turned a forgotten argument into a behaviour change rather than a
+    /// compile error, and it is how resume shipped broken on two heads (N.1).
+    /// Pass <c>new ControllerFactory()</c> explicitly if plain defaults really
+    /// are what you want.
+    /// </param>
+    /// <param name="resumeFrom">A snapshot to continue from, or null to start fresh.</param>
     public static async Task<CardTurnGameViewModel> CreateAsync(
         INavigator navigator, IGameMode mode, IReadOnlyList<IPlayer> players, IAppSettings settings,
-        TableTop.Hosting.Persistence.SessionSnapshot? resumeFrom = null,
-        IControllerFactory? controllerFactory = null)
+        IControllerFactory controllerFactory,
+        TableTop.Hosting.Persistence.SessionSnapshot? resumeFrom = null)
     {
+        ArgumentNullException.ThrowIfNull(controllerFactory);
+
         try
         {
             var gameplayOptions = new GameplayOptions
@@ -326,7 +343,7 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
                 CardsPerPlayer = settings.CardsPerPlayer > 0 ? settings.CardsPerPlayer : null,
             };
 
-            var controller = await (controllerFactory ?? new ControllerFactory()).CreateAsync(
+            var controller = await controllerFactory.CreateAsync(
                 mode, players, maxRounds: 10, gameplayOptions: gameplayOptions, resumeFrom: resumeFrom);
 
             if (controller is not ICardTurnController ctc)

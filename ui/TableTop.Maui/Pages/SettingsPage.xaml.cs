@@ -55,7 +55,7 @@ public partial class SettingsPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Couldn't open the roster builder", ex.Message, "OK");
+            await DisplayAlertAsync("Couldn't open the roster builder", ex.Message, "OK");
         }
         finally { _navigating = false; }
     }
@@ -66,7 +66,7 @@ public partial class SettingsPage : ContentPage
         // process on Android; surface it instead.
         try
         {
-            bool confirmed = await DisplayAlert(
+            bool confirmed = await DisplayAlertAsync(
                 "Reset Settings",
                 "This will reset all settings to their defaults. Are you sure?",
                 "Reset",
@@ -78,11 +78,11 @@ public partial class SettingsPage : ContentPage
             _vm.ResetToDefaults();
             ApplyTheme();
 
-            await DisplayAlert("Done", "Settings have been reset to defaults.", "OK");
+            await DisplayAlertAsync("Done", "Settings have been reset to defaults.", "OK");
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Couldn't reset settings", ex.Message, "OK");
+            await DisplayAlertAsync("Couldn't reset settings", ex.Message, "OK");
         }
     }
 }

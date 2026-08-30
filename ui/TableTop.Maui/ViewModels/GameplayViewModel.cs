@@ -299,7 +299,7 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
         // CreateAsync itself catches a controller-build failure into
         // LoadError, so this factory needs no try/catch of its own.
         var inner = await CardTurnGameViewModel.CreateAsync(
-            navigator, gameMode, players.AsReadOnly(), settings, resumeFrom, controllerFactory);
+            navigator, gameMode, players.AsReadOnly(), settings, controllerFactory, resumeFrom);
 
         return new GameplayViewModel(theme, categoryColours, settings, inner);
     }

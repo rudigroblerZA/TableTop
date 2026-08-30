@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.34.0**, August 2026. This replaces the accumulated
+Current as of **1.35.3**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -17,7 +17,7 @@ Core ← Games ← Hosting ← Presentation
 
 Four engine assemblies, four heads. `Core` defines the abstractions (cards,
 players, scoring, progression, rules) and has no dependency on anything else
-in the solution. `Games` is 99 modes and their decks. `Hosting` is the runtime
+in the solution. `Games` is 101 modes and their decks. `Hosting` is the runtime
 — controllers, the archetype registry, persistence, `ControllerFactory`.
 `Presentation` is shared ViewModels: plain `net10.0`, no platform SDK
 dependency, which is what makes it directly unit-testable without WinUI, MAUI
@@ -32,7 +32,10 @@ MAUI need their respective SDKs, which this environment does not have — see
 
 ## Content
 
-**99 modes, 3,657 cards, all compiled in.** Every mode builds its deck from an
+**101 modes, 3,721 cards, all compiled in.** (README carries the same pair and
+is the enforced copy — `DocumentationAccuracyTests` fails when it drifts.
+Nothing enforces this line, which is why it sat two releases behind at 99 /
+3,657 until backlog X.5. Trust README's numbers over these if they disagree.) Every mode builds its deck from an
 in-code card bank, called directly. There is no file lookup, no fallback and no
 diagnostic on the path — a mode's deck is a static list in the assembly.
 
@@ -107,10 +110,12 @@ Most modes run through `CardTurnController`, dispatched by
 and is how each head decides which screen to open. Heads declare the families
 they render as data (`SupportedFamilies`), and `HeadFamilyCoverageTests`
 compares that against the live registry — so a mode no head can play is a
-failing test rather than something a player discovers. Heads currently render
-fewer families than exist: MAUI has no AreaControl or SimultaneousAnswer
-screen, Console has neither plus no Monogamy or DailyCampaign. Those are
-declared gaps, not silent ones.
+failing test rather than something a player discovers. **All four heads now
+render all six families** — this paragraph previously said MAUI had no
+AreaControl or SimultaneousAnswer screen and Console lacked four, which was
+true when written and had been false for several releases by the time backlog
+X.5 caught it. A head is still *allowed* to declare fewer; the point of the
+mechanism is that the gap would be a failing test rather than a silent one.
 
 `HerdController` is the first shape with **no active player** — every other
 controller asks "whose turn is it?"; this one asks "what did all of you say?".
@@ -732,6 +737,110 @@ async work to block on, a different shape rather than a template to copy.
   `api/*.api.txt` does not track. Verified with a real SDK: full engine suite,
   both graphical heads built, all eight gates. Not exercised on device — no
   head was launched, so the resume button was never observed rendering.
+
+- **1.35.2** closed backlog X.1-X.5 and opened X.6. CI and documentation
+  hardening, plus the structural fix behind 1.35.1's headline bug.
+
+  **There is no `v1.35.2` tag.** This version existed only on `develop`; 1.35.3
+  followed before a release was cut, so the work below ships as part of
+  `v1.35.3`. Recorded here rather than folded into the 1.35.3 entry, because
+  what changed when is the useful history — and because a reader looking for
+  the missing tag deserves an answer other than silence.
+
+  **X.2 retired the `?? new ControllerFactory()` idiom.** Seven places in
+  `TableTop.Presentation` took an optional `IControllerFactory` and silently
+  substituted one carrying no persistence, no diagnostics sink and no DI
+  registration. That default is what made 1.35.1's resume bug a behaviour
+  change rather than a compile error, and it stacked a second defect behind the
+  first. The parameter is now required everywhere, with
+  `ArgumentNullException.ThrowIfNull` behind it. Two signatures needed
+  reordering, since a required parameter cannot follow an optional one:
+  `controllerFactory` moved ahead of `resumeFrom` on `CardTurnGameViewModel`
+  and ahead of `winningTokenCount` on `MonogamyGameViewModel`. Roughly thirty
+  test call sites now pass `TestFactory.PlainControllerFactory()` — a named
+  helper, because tests genuinely do want plain defaults and the point is that
+  they say so.
+
+  **The CI work turned up a gap nobody had recorded: `TableTop.Console` was
+  never compiled by CI.** `build-and-test` names individual projects rather
+  than building the solution, and Console was not in `TableTop.Engine.slnx` at
+  all — while README and CLAUDE.md both described that solution as "engine +
+  tests + console". A restore compiles nothing. The one head needing no
+  workload was the only one with no build coverage. Console is now in the
+  solution and has its own CI step.
+
+  Alongside it, the staged `TreatWarningsAsErrors` rollout the workflow had
+  promised since the UI jobs were added is done per head — WinUI, native
+  Android and Console all measured at zero warnings first. MAUI stays off with
+  96 CS0618 deprecations, tracked as X.6 rather than bundled in: migrating to
+  the `*Async` variants changes behaviour at every call site, several inside
+  `async void` handlers whose guards would need re-checking. The `lint` job now
+  covers all four engine assemblies rather than two — Games and Presentation
+  were unchecked, Presentation being the shared ViewModel layer three heads
+  consume. And the WinUI UI-test steps actually run: item 23 declared them
+  "re-enabled" and changed only the comment, leaving them commented for four
+  further releases.
+
+  **X.5 found more drift than it had catalogued**, all in `ARCHITECTURE.md` —
+  a version header two releases behind, mode/card counts of 99/3,657 against
+  the real 101/3,721, and a claim that MAUI and Console rendered fewer
+  `ControllerFamily` values than the catalogue, which had been false for
+  several releases and read as a deliberate architectural limitation. Two new
+  `DocumentationAccuracyTests` pin the mechanical half — README's quoted
+  version against `VersionPrefix`, and every `scripts/check-*.py` being named
+  in README. The prose stays unenforceable on purpose; README is the enforced
+  copy, which this document now says at the point it repeats those numbers.
+
+  PATCH: fixes, tests, CI and documentation. No new user-facing capability and
+  no movement in `api/*.api.txt`. The required-parameter change *is* source-
+  breaking for `TableTop.Presentation` consumers — that assembly is not tracked
+  by the API snapshots and every consumer is an in-tree `ProjectReference`, the
+  same reasoning `Directory.Build.props` applies to removals. 964 tests.
+
+- **1.35.3** closed X.2-X.5 and L.1-L.4, and partly closed X.6.
+
+  **L.3 finished a three-year-old consolidation.** `ControllerFactory.CreateAsync`
+  now switches on `ControllerFamilies.TryFor(mode)` rather than re-testing the
+  seven capability interfaces in a hand-maintained order. All three dispatch
+  sites finally agree *by construction* rather than by comment — that ordering
+  was wrong once for real, with Monogamy and Quiz transposed while a comment
+  claimed they could not disagree, and nothing caught it because no mode in the
+  catalogue implements two capability interfaces. The within-family choice moved
+  to a private `ProgressionFor`: `IFlowAwareMode` and `IDiceProgressionMode`
+  select a progression *strategy*, not a controller type, which is precisely why
+  `TryFor` folds all three into `CardTurn`.
+
+  **L.1 turned coverage from a printout into a gate.** CI had collected
+  Cobertura and printed a `reportgenerator` summary for a long time, and nothing
+  failed when a number went down. `scripts/check-coverage.py` enforces total and
+  per-assembly floors set ~1 point under measured. Per-assembly is the half that
+  matters: `Games` is ~60% of the tree at 93% and can absorb a sharp fall in
+  `Hosting` or `Presentation` — where the logic that breaks lives — while the
+  total barely moves.
+
+  **L.2** widened `check-mvvm-method-parity.py` to the native Android head
+  (`Vm.Method()` alongside MAUI's `_vm.Method()`), and found a latent defect in
+  it while doing so: `vm_type_for` iterated a `set`, and Python randomises
+  string hashing per process, so for a file naming two shared ViewModels the
+  answer genuinely varied between runs. **L.4** was closed *without* extracting
+  a tenth service — 346/390 code lines, and every remaining member is either the
+  turn loop itself or a thin delegation to one of the nine coordinators already
+  extracted. Inventing a service to satisfy a line count is the failure mode
+  those nine avoided.
+
+  **X.6 was partly done, and its own premise was wrong.** The item claimed 96
+  CS0618 warnings; that came from grepping the build for one warning prefix, and
+  the real figure was **518** once the XAML compiler's share was counted (492
+  XC0022 compiled-binding advisories, 18 XC0618 `UseSafeArea`, 8 CS0618
+  `Frame`). The 22 deprecated async-API call sites are migrated —
+  `DisplayAlert`/`ScaleXTo`/`FadeTo`/`TranslateTo` to their `*Async` forms,
+  pure renames, CS0618 down to 8. The rest is split by risk: `Frame`→`Border`
+  is a visual change across 10 XAML files and shared styles that nothing here
+  can verify, and the `UseSafeArea` replacement could not be confirmed against
+  documentation. Both wait for someone who can run the app.
+
+  PATCH: fixes, tests, CI and documentation. No public-surface movement —
+  `api/*.api.txt` unchanged. 964 tests; coverage 91.9% line / 70.8% branch.
 
 ## What genuinely doesn't exist here
 

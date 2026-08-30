@@ -273,11 +273,11 @@ public sealed class MonogamyGameViewModelTests
     public async Task Create_WithAModeThatProvidesNoDeck_SetsLoadErrorInsteadOfThrowing()
     {
         var badMode = new NoDeckMode();
-        var act = () => MonogamyGameViewModel.CreateAsync(new FakeNavigator(), badMode, [Male(), Female()]);
+        var act = () => MonogamyGameViewModel.CreateAsync(new FakeNavigator(), badMode, [Male(), Female()], TestFactory.PlainControllerFactory());
 
         await act.Should().NotThrowAsync("a bad mode must surface as LoadError, matching MAUI's original behaviour");
 
-        var vm = await MonogamyGameViewModel.CreateAsync(new FakeNavigator(), badMode, [Male(), Female()]);
+        var vm = await MonogamyGameViewModel.CreateAsync(new FakeNavigator(), badMode, [Male(), Female()], TestFactory.PlainControllerFactory());
         vm.HasLoadError.Should().BeTrue();
         vm.IsPlaying.Should().BeFalse();
     }
@@ -285,7 +285,7 @@ public sealed class MonogamyGameViewModelTests
     [Fact]
     public async Task Create_WithALoadError_CommandsAreAllDisabled_NotThrowing()
     {
-        var vm = await MonogamyGameViewModel.CreateAsync(new FakeNavigator(), new NoDeckMode(), [Male(), Female()]);
+        var vm = await MonogamyGameViewModel.CreateAsync(new FakeNavigator(), new NoDeckMode(), [Male(), Female()], TestFactory.PlainControllerFactory());
 
         vm.CompleteCommand.CanExecute(null).Should().BeFalse();
         var act = () => vm.CompleteCommand.Execute(null);

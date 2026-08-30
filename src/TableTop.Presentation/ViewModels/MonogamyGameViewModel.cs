@@ -186,16 +186,32 @@ public sealed class MonogamyGameViewModel : ViewModelBase, IDisposable
     /// instead of this method silently overriding it with its own literal 10.
     /// </para>
     /// </summary>
+    /// <param name="navigator">Used to leave the screen.</param>
+    /// <param name="mode">The mode to play.</param>
+    /// <param name="players">The players at the table.</param>
+    /// <param name="controllerFactory">
+    /// The host's factory. <b>Required</b> as of backlog X.2 — this was an
+    /// optional parameter defaulting to <c>new ControllerFactory()</c>, which
+    /// silently substituted a factory carrying none of the persistence,
+    /// diagnostics or DI registration the host had configured. That default
+    /// turned a forgotten argument into a behaviour change rather than a
+    /// compile error, and it is how resume shipped broken on two heads (N.1).
+    /// Pass <c>new ControllerFactory()</c> explicitly if plain defaults really
+    /// are what you want.
+    /// </param>
+    /// <param name="winningTokenCount">Overrides the mode's own token target, or null to use it.</param>
     public static async Task<MonogamyGameViewModel> CreateAsync(
         INavigator navigator,
         IGameMode mode,
         IReadOnlyList<IPlayer> players,
-        int? winningTokenCount = null,
-        IControllerFactory? controllerFactory = null)
+        IControllerFactory controllerFactory,
+        int? winningTokenCount = null)
     {
+        ArgumentNullException.ThrowIfNull(controllerFactory);
+
         try
         {
-            var controller = await (controllerFactory ?? new ControllerFactory())
+            var controller = await controllerFactory
                 .CreateAsync(mode, players, monogamyWinningTokenCount: winningTokenCount);
             if (controller is not IMonogamyController mc)
             {

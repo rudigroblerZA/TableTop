@@ -71,6 +71,7 @@ python3 scripts/check-mvvm-method-parity.py    # MAUI page calling a method its 
 python3 scripts/check-head-family-coverage.py  # a head's declared game support drifted from its test copy
 python3 scripts/check-async-void.py             # an async void handler with no try/catch (MAUI + native Android)
 python3 scripts/check-ui-compiles.py           # needs the .NET SDK + both UI workloads
+python3 scripts/check-coverage.py <dir>        # coverage floors; needs a Cobertura report (CI runs it)
 ```
 
 WinUI and MAUI need their own SDK/workload to build — see README.md's
@@ -120,8 +121,10 @@ silently.
 (`SupportedFamilies`), and `HeadFamilyCoverageTests` / `check-head-family-coverage.py`
 check that declaration against the live registry — the enforcement is against
 each head's own stated claim, not a hardcoded expectation, because a head is
-allowed to support fewer families than the catalogue has (Console and MAUI
-both currently do).
+allowed to support fewer families than the catalogue has. None currently
+does: all four heads declare all six families. The mechanism still matters —
+it is what makes a future gap a failing test rather than a mode that
+silently does nothing.
 
 **Shared ViewModels live in `TableTop.Presentation`**, plain `net10.0` with
 no platform SDK dependency — that's what makes them unit-testable without

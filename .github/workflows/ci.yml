@@ -204,6 +204,21 @@ jobs:
         run: dotnet build src/TableTop.Hosting/TableTop.Hosting.csproj
              --no-restore -c Release
 
+      # Backlog X.4. Console is a shipping head and nothing in CI compiled it.
+      # The comment on the UI-heads job below said "CI compiled the engine and
+      # Console only", which was false in both directions: these steps name
+      # individual projects rather than building the solution, and Console was
+      # not in TableTop.Engine.slnx at all (it is now — README and CLAUDE.md
+      # already claimed it was). A restore of the solution does not compile it.
+      #
+      # Warnings-as-errors from the start: Console builds clean today, so this
+      # never has the "fails for reasons unrelated to your change" problem the
+      # graphical heads had.
+      - name: Build Console
+        run: dotnet build ui/TableTop.Console/TableTop.Console.csproj
+             --no-restore -c Release
+             -p:TreatWarningsAsErrors=true
+
       # ── Tests ─────────────────────────────────────────────────────────────────
 
       - name: Run tests
@@ -241,6 +256,22 @@ jobs:
             -reporttypes:"TextSummary;Html"
           cat coverage-report/Summary.txt
 
+      # Backlog L.1. CI has collected Cobertura and printed this summary all
+      # along — but printing is not enforcing. Nothing failed when a number went
+      # down, so it was an artifact to download rather than a gate.
+      #
+      # Floors sit ~1 point under the measured values, on purpose: this should
+      # catch a real regression, not fail because a refactor moved twenty lines
+      # between files. Per-assembly floors matter more than the total, because
+      # Games is ~60% of the tree at 93% and can mask a sharp fall in Hosting or
+      # Presentation while the total barely moves.
+      #
+      # NOT `if: always()` — unlike the reporting steps above. A failed test run
+      # produces partial coverage, and failing this too would bury the real
+      # cause under a second, misleading error.
+      - name: Enforce coverage floors
+        run: python3 scripts/check-coverage.py tests/TableTop.Tests/TestResults
+
       - name: Upload coverage summary
         uses: actions/upload-artifact@v4
         if: always()
@@ -267,11 +298,22 @@ jobs:
   # These jobs are slower and need a Windows runner and the MAUI workload. That
   # cost is the point: these heads are the product.
   #
-  # NOTE: TreatWarningsAsErrors is deliberately NOT set here yet. The engine has
-  # been building warning-clean for a while; these three have never been built
-  # in CI at all, so turning warnings into errors on day one would fail for
-  # reasons unrelated to any given change. Turn it on per-head once each is
-  # green — that's a small follow-up, not a reason to delay the jobs.
+  # TreatWarningsAsErrors: the staged rollout this note used to promise
+  # ("turn it on per-head once each is green") is now done, per head, under
+  # backlog X.4. Each was measured with --no-incremental before being switched
+  # on, so none of these turned on against an unknown starting point:
+  #
+  #   WinUI            0 warnings  → on
+  #   Android (native) 0 warnings  → on
+  #   Console          0 warnings  → on (in build-and-test, above)
+  #   MAUI            96 warnings  → OFF, see below
+  #
+  # MAUI is the one exception and stays off deliberately. All 96 are CS0618
+  # against .NET 10 MAUI deprecations — DisplayAlert→DisplayAlertAsync,
+  # Frame→Border, ScaleXTo/FadeTo/TranslateTo→*Async. Clearing them means
+  # migrating to async variants across the head, which changes behaviour at
+  # every call site and is its own change with its own review; bundling it into
+  # a CI-configuration commit would be the wrong trade. Tracked as backlog X.6.
 
   build-windows-heads:
     name: Build WinUI
@@ -291,27 +333,34 @@ jobs:
       # an explicit platform is required or the build cannot pick one.
       - name: Build WinUI
         run: dotnet build ui/TableTop.WinUI/TableTop.WinUI.csproj -c Release -p:Platform=x64
+             -p:TreatWarningsAsErrors=true
 
       # Backlog G.4. The only tests that touch a ViewModel. They reference
       # TableTop.WinUI, so they run here rather than in the cross-platform job.
       #
-      # Re-enabled under backlog item 23. These were commented out because the
-      # test host could not start at all — a FileNotFoundException on
-      # Microsoft.TestPlatform.CoreUtilities before a single test ran. That is
-      # fixed (backlog item 2: CopyLocalLockFileAssemblies on the UiTests
-      # project), and the suite now runs and passes, so the reason for
-      # disabling it is gone.
-      # - name: Run UI tests
-      #   run: dotnet test tests/TableTop.UiTests/TableTop.UiTests.csproj -c Release -p:Platform=x64
-      #        --logger "trx;LogFileName=ui-test-results.trx"
-      #        --results-directory tests/TableTop.UiTests/TestResults
+      # These were commented out because the test host could not start at all —
+      # a FileNotFoundException on Microsoft.TestPlatform.CoreUtilities before a
+      # single test ran. That was fixed by CopyLocalLockFileAssemblies on the
+      # UiTests project, and item 23 declared them "re-enabled" — but only the
+      # comment changed; the steps stayed commented for four more releases.
+      # Actually enabled under backlog X.3, after running them green twice
+      # locally on this job's exact configuration (Release, x64): 2/2 in 361ms.
+      #
+      # Worth knowing before reading a failure: those two [Fact]s are
+      # assembly-wide reflection sweeps over every ViewModel, so one red test
+      # can mean any of dozens of members. The assertion messages carry the
+      # detail, not the test name.
+      - name: Run UI tests
+        run: dotnet test tests/TableTop.UiTests/TableTop.UiTests.csproj -c Release -p:Platform=x64
+             --logger "trx;LogFileName=ui-test-results.trx"
+             --results-directory tests/TableTop.UiTests/TestResults
 
-      # - name: Upload UI test results
-      #   uses: actions/upload-artifact@v4
-      #   if: always()
-      #   with:
-      #     name: ui-test-results
-      #     path: tests/TableTop.UiTests/TestResults/*.trx
+      - name: Upload UI test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-test-results
+          path: tests/TableTop.UiTests/TestResults/*.trx
 
       # Packaging, still being worked out — left commented deliberately rather
       # than enabled, unlike the steps above. Kept through the item 23 merge
@@ -377,6 +426,7 @@ jobs:
 
       - name: Build Android (Release)
         run: dotnet build ui/TableTop.Android/TableTop.Android.csproj -c Release -f net10.0-android
+             -p:TreatWarningsAsErrors=true
 
   lint:
     name: Code Quality
@@ -397,14 +447,32 @@ jobs:
 
       # Check that the engine assemblies produce zero XML doc warnings.
       # Missing <summary> tags surface as CS1591 — caught here, not locally.
+      #
+      # All FOUR assemblies as of backlog X.4. This covered Core and Hosting
+      # only, so an undocumented public member could land in Games or
+      # Presentation unchecked — Presentation being the shared ViewModel layer
+      # three heads consume, where it costs the most. Both were measured clean
+      # before being added here, so this turns on with no fixes attached.
       - name: Check XML documentation completeness (Core)
         run: dotnet build src/TableTop.Core/TableTop.Core.csproj
              --no-restore -c Release
              /p:TreatWarningsAsErrors=true
              /p:GenerateDocumentationFile=true
 
+      - name: Check XML documentation completeness (Games)
+        run: dotnet build src/TableTop.Games/TableTop.Games.csproj
+             --no-restore -c Release
+             /p:TreatWarningsAsErrors=true
+             /p:GenerateDocumentationFile=true
+
       - name: Check XML documentation completeness (Hosting)
         run: dotnet build src/TableTop.Hosting/TableTop.Hosting.csproj
+             --no-restore -c Release
+             /p:TreatWarningsAsErrors=true
+             /p:GenerateDocumentationFile=true
+
+      - name: Check XML documentation completeness (Presentation)
+        run: dotnet build src/TableTop.Presentation/TableTop.Presentation.csproj
              --no-restore -c Release
              /p:TreatWarningsAsErrors=true
              /p:GenerateDocumentationFile=true

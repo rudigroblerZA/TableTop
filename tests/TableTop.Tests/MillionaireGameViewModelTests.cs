@@ -268,7 +268,7 @@ public sealed class MillionaireGameViewModelTests
     public async Task CreateAsync_WithAMillionaireMode_BuildsARealController()
     {
         var vm = await MillionaireGameViewModel.CreateAsync(
-            new FakeNavigator(), new MillionaireMode(), [Alice()]);
+            new FakeNavigator(), new MillionaireMode(), [Alice()], TestFactory.PlainControllerFactory());
 
         vm.HasLoadError.Should().BeFalse();
         vm.QuestionText.Should().NotBeEmpty();
@@ -279,7 +279,7 @@ public sealed class MillionaireGameViewModelTests
     public async Task CreateAsync_WithAnUnsupportedMode_SetsLoadErrorInsteadOfThrowing()
     {
         var vm = await MillionaireGameViewModel.CreateAsync(
-            new FakeNavigator(), new NotMillionaireMode(), [Alice()]);
+            new FakeNavigator(), new NotMillionaireMode(), [Alice()], TestFactory.PlainControllerFactory());
 
         vm.HasLoadError.Should().BeTrue();
         vm.IsPlaying.Should().BeFalse();
