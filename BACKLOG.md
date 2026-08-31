@@ -64,11 +64,14 @@ So: the tree is green. Every item below is something green does not catch.
 > Two things need a human: tags `v1.35.0`/`v1.35.1` are local and **not
 > pushed**, and `develop` is ahead of `origin`.
 
-### N.6 — Three heads cannot play Big Five
+### N.6 — Three heads cannot play the trait-assessment modes
 
 `ControllerFamily.TraitProfile` shipped in 1.36.0 with a Console renderer only.
-WinUI, MAUI and native Android declare six of seven families, so `BigFiveMode`
-is the one mode in the catalogue they cannot open.
+WinUI, MAUI and native Android declare six of seven families, so the
+trait-assessment modes are the ones they cannot open. **1.37.0 made that two:**
+`BigFiveMode` and `LoveLanguagesMode`. The cost of not having this screen now
+grows with every mode built on the layer, which is the argument for doing it
+before a third arrives.
 
 **This is a stated gap, not a silent one**, which is the whole reason
 `SupportedFamilies` exists. All three heads already route unknown families to a
@@ -77,11 +80,13 @@ doesn't have yet" rather than crashing or falling through to a card-turn screen
 — the failure backlog item 4 was written after, when MAUI's router silently
 mishandled Herd and Claimed! and Console had no default arm at all.
 
-`ControllerFamilyTests.GraphicalHeads_PlayEveryModeExceptBigFive` asserts the
-gap **by name**. A head that gains the screen fails that test until its mirror
-array is updated, and `TheOnlyUnsupportedFamilyAnywhere_IsTraitProfile` fails if
-a *second* unsupported family ever appears rather than letting it hide behind
-this one.
+`ControllerFamilyTests.GraphicalHeads_PlayEveryModeExceptTheTraitProfileOnes`
+asserts the gap **by name**. A head that gains the screen fails that test until
+its mirror array is updated, and `TheOnlyUnsupportedFamilyAnywhere_IsTraitProfile`
+fails if a *second* unsupported family ever appears rather than letting it hide
+behind this one. This worked in practice rather than in theory: adding Love
+Languages failed the by-name test immediately, which is exactly the prompt to
+come back here and widen the item.
 
 **What a screen needs.** Less than the family count suggests — the shape is
 close to Herd's, which all three already render: one prompt, everyone answers,

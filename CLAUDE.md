@@ -4,8 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A fully UI-agnostic card game engine for couples and party games (102 modes,
-3,771 cards as of the last README update — `DocumentationAccuracyTests`
+A fully UI-agnostic card game engine for couples and party games (103 modes,
+3,811 cards as of the last README update — `DocumentationAccuracyTests`
 keeps that figure honest, so trust README.md's count over any other doc's if
 they ever disagree). All content is compiled in: no content files, no
 runtime deck loading. .NET 10 / C# 14. Four engine assemblies plus four UI
@@ -123,7 +123,8 @@ check that declaration against the live registry — the enforcement is against
 each head's own stated claim, not a hardcoded expectation, because a head is
 allowed to support fewer families than the catalogue has. **One head now does:**
 1.36.0 added `ControllerFamily.TraitProfile` with a Console renderer only, so
-WinUI, MAUI and native Android declare six of seven and cannot play Big Five.
+WinUI, MAUI and native Android declare six of seven and cannot play the
+trait-assessment modes (Big Five, and Love Languages from 1.37.0).
 That gap is asserted by name in `ControllerFamilyTests` rather than papered
 over — which is the mechanism working as intended: a future gap is a failing
 test rather than a mode that silently does nothing.

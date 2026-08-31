@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.36.0**, August 2026. This replaces the accumulated
+Current as of **1.37.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -32,7 +32,7 @@ MAUI need their respective SDKs, which this environment does not have — see
 
 ## Content
 
-**102 modes, 3,771 cards, all compiled in.** (README carries the same pair and
+**103 modes, 3,811 cards, all compiled in.** (README carries the same pair and
 is the enforced copy — `DocumentationAccuracyTests` fails when it drifts.
 Nothing enforces this line, which is why it sat two releases behind at 99 /
 3,657 until backlog X.5. Trust README's numbers over these if they disagree.) Every mode builds its deck from an
@@ -969,6 +969,59 @@ async work to block on, a different shape rather than a template to copy.
   additions themselves are unverified until someone runs
   `TABLETOP_UPDATE_API=1 dotnet test`. `PublicApiSurfaceTests` is what will say
   so, precisely, and the fix is one command.
+
+- **1.37.0** added **Love Languages** to the couples archetype — the second mode
+  on the trait-analysis layer, and the one that shows whether the layer was
+  worth building.
+
+  **It is content and nothing else.** Same scoring, same `TraitProfileController`,
+  same Console renderer, same `ControllerFamily`. A different `TraitScale` and a
+  different item bank. No engine change of any kind was needed, which is the
+  claim 1.36.0 made about the layer being instrument-agnostic, now tested by a
+  second instrument rather than asserted.
+
+  **What differs is what the output is for.** Big Five reports five independent
+  levels; this reports an *order*. Two people can both score 70 on Physical
+  Touch and the interesting fact is still whether it is each of their highest.
+  `TraitProfile.Strongest` is what a results screen leads with here, and
+  `TraitProfileComparison.GreatestDivergence` is the conversation the couple came
+  for — the language one leans on hardest and the other reads least. Both already
+  existed; neither needed changing.
+
+  **Likert, where the well-known version is forced-choice.** The popular
+  questionnaire makes you pick between two statements thirty times, producing
+  ipsative scores: they are ranks, they sum to a constant, and scoring high on
+  one necessarily costs another. Two reasons that is the wrong fit here. It
+  cannot express "all five matter to me a lot", which is a real and common
+  answer. And ipsative scores are unsafe to compare between people, which is
+  exactly what this mode does at the end. Agreeing independently with each
+  statement keeps the comparison honest and still yields a clear ranking.
+
+  **Balance matters more here than in Big Five**, and for a sharper reason. There
+  a tilted dimension shifts a level. Here, a player who agrees warmly with an
+  all-positive bank scores high on all five — which is not a flattering result,
+  it is *no result*, because the ranking that is the mode's entire output becomes
+  arbitrary. Four forward and four reverse per language, forty items,
+  `IsBalanced` computed from the bank.
+
+  **Items are original.** The five categories are the widely-used popular ones
+  and are named descriptively; the statements are written for this repo and none
+  is taken from any published questionnaire. This is not that assessment and is
+  not affiliated with it — the same standard `BigFiveItemBank` records, and it
+  matters because this content is compiled in and shipped.
+
+  **The head-gap test did its job.** `GraphicalHeads_PlayEveryModeExceptBigFive`
+  asserted a single-element set and failed the moment a second trait-assessment
+  mode was registered. That is the alarm working: 1.36.0 chose to assert the gap
+  by name precisely so a second unsupported mode could not hide behind the first.
+  It is now `GraphicalHeads_PlayEveryModeExceptTheTraitProfileOnes` over a named
+  list, and backlog N.6 grew from one mode to two. The three graphical heads
+  still degrade to a "needs a TraitProfile screen" message.
+
+  MINOR: a new mode, no engine change. `api/*.api.txt` gains three types in
+  `TableTop.Games` and nothing elsewhere — the layer itself did not move, which
+  is the mechanical evidence for the paragraph above. Snapshots hand-computed
+  again; the round-trip check on the unmodified file passed first.
 
 ## What genuinely doesn't exist here
 

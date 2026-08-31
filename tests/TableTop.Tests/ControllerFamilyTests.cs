@@ -301,7 +301,7 @@ public sealed class HeadFamilyCoverageTests
 
     /// <summary>
     /// The three graphical heads have no <see cref="ControllerFamily.TraitProfile"/>
-    /// screen, so Big Five is the one mode they cannot play.
+    /// screen, so the trait-assessment modes are the ones they cannot play.
     ///
     /// <para>
     /// <b>This is the mechanism working, not a regression.</b> These three tests
@@ -323,13 +323,26 @@ public sealed class HeadFamilyCoverageTests
     /// a mode that silently does nothing".
     /// </para>
     /// </summary>
-    private const string TraitProfileModeName = "Big Five";
+    /// <summary>
+    /// Every mode on the <see cref="ControllerFamily.TraitProfile"/> family. The
+    /// graphical heads have no screen for it, so this is exactly the set of
+    /// modes they cannot play.
+    ///
+    /// <para>
+    /// Adding Love Languages in 1.37.0 is what this list is for: the test
+    /// asserted a single-element set and failed the moment a second
+    /// trait-assessment mode was registered, which is the alarm working rather
+    /// than an inconvenience. Widening it is a deliberate edit, and a reviewer
+    /// sees the head gap grow in the diff.
+    /// </para>
+    /// </summary>
+    private static readonly string[] TraitProfileModeNames = ["Big Five", "Love Languages"];
 
     [Theory]
     [InlineData("MAUI")]
     [InlineData("WinUI")]
     [InlineData("Android")]
-    public void GraphicalHeads_PlayEveryModeExceptBigFive(string head)
+    public void GraphicalHeads_PlayEveryModeExceptTheTraitProfileOnes(string head)
     {
         var supported = head switch
         {
@@ -341,11 +354,12 @@ public sealed class HeadFamilyCoverageTests
 
         ControllerFamilies.UnsupportedIn(AllModes(), supported)
             .Select(m => m.Name)
-            .Should().BeEquivalentTo(new[] { TraitProfileModeName },
-                $"{head} has no TraitProfile screen yet, so Big Five is its only gap. " +
-                "If a screen was added, declare the family in the head, update its " +
-                "mirror array above, and change this test — do not let a head claim " +
-                "a family its router cannot actually render.");
+            .Should().BeEquivalentTo(TraitProfileModeNames,
+                $"{head} has no TraitProfile screen yet, so the trait-assessment modes " +
+                "are its only gap. If a screen was added, declare the family in the head, " +
+                "update its mirror array above, and delete this test — do not let a head " +
+                "claim a family its router cannot actually render. If a new " +
+                "trait-assessment mode was added, add it to TraitProfileModeNames.");
     }
 
     [Fact]
