@@ -59,7 +59,8 @@ So: the tree is green. Every item below is something green does not catch.
 > **1.36.0** added the trait-analysis layer and Big Five, **1.37.0** added Love
 > Languages on top of it, and **1.38.0** closed **N.6** by giving the three
 > graphical heads a `TraitProfile` screen (see `ARCHITECTURE.md`). What is left
-> is **X.6c** and S.2-S.3.
+> is **N.7** (CI's WinUI job hangs — found while watching CI on 2026-08-31, and
+> the reason no run completes), **X.6c** and S.2-S.3.
 >
 > **A fourth pass on 2026-08-31** closed **X.6a** (`Frame` → `Border`, grounded
 > in Microsoft's published migration table the way X.6b was) and settled **S.1**
@@ -70,6 +71,61 @@ So: the tree is green. Every item below is something green does not catch.
 >
 > Two things need a human: tags `v1.35.0`/`v1.35.1` are local and **not
 > pushed**, and `develop` is ahead of `origin`.
+
+### N.7 — CI's WinUI job never finishes: "Run UI tests" hangs
+
+**No CI run on this repository has completed since 2026-08-30.** The `Build
+WinUI` job reaches its last step and stays there until the run is cancelled —
+the two `develop` runs on 2026-08-30 (`33299660962`, `33303279916`) each sat for
+roughly six hours before being cancelled, and every run since has the same job
+stuck `in_progress`.
+
+**It is not the build.** Reading the job's steps rather than its status makes
+that clear:
+
+| step | outcome |
+|---|---|
+| Checkout, Setup .NET 10 | success |
+| **Build WinUI** | **success, ~90s** |
+| **Run UI tests** | **`in_progress`, indefinitely** |
+| Upload UI test results | never reached |
+
+So WinUI compiles fine. `dotnet test tests/TableTop.UiTests` is what hangs
+(`.github/workflows/ci.yml:353`).
+
+**The timeline points at one change.** The last CI run to complete was
+`33271411188` on 2026-08-29. The first to hang was 2026-08-30 07:37 — the merge
+that brought in 1.35.2, whose own `ARCHITECTURE.md` entry records: *"the WinUI
+UI-test steps actually run: item 23 declared them 're-enabled' and changed only
+the comment, leaving them commented for four further releases."* X.3 genuinely
+enabled a step that had never actually executed in CI, and it does not
+terminate. The step was reported as fixed; what it did was surface a hang.
+
+**Where to look.** `ViewModelBindingTests` has two facts, both of which
+reflect over every ViewModel type, construct each one, and then — in
+`Every_settable_property_raises_PropertyChanged` — **set every public settable
+property on it**. That is a lot of behaviour to invoke blind: a setter that
+starts a timer, blocks on I/O, or waits on a task would hang the run and look
+exactly like this. Constructing rather than setting is the cheaper suspect to
+rule out first.
+
+**Consequences while it stands.** No PR can ever report all-green, so "CI is
+green" cannot currently be a merge criterion — the two PRs merged today
+(#41, #42) both went in with this job still running. And the WinUI head's UI
+tests are providing no signal at all despite appearing to run.
+
+**Evidence:** job `99496277158` of run `33394673779` (2026-08-31, commit
+`2fc41c3`) shows the step breakdown above. Run `33271411188` (2026-08-29,
+success) versus `33299660962` (2026-08-30, cancelled at ~6h) brackets the
+change. Not reproduced locally — `TableTop.UiTests` is Windows-only and needs
+the Windows App SDK, neither of which this environment has.
+
+**Done when:** the WinUI job completes. A timeout on the step would stop runs
+hanging for six hours, but it is a mitigation and not the fix — the tests need
+to either terminate or be honestly disabled with the reason recorded, and this
+repo's rules say never quarantine a test to get green.
+
+---
 
 ### N.6 — Three heads cannot play the trait-assessment modes — **FIXED**
 
