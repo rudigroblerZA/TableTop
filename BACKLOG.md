@@ -921,6 +921,42 @@ done.** X.6c is blocked on promoting 11 nested ViewModel classes to top-level
 types — see above; that is the next piece of work here, and unlike the other
 two it genuinely wants a machine that can build MAUI.
 
+### X.7 — MAUI's Android manifest sets no `targetSdkVersion`, so it ships as 28
+
+`ui/TableTop.Maui/Platforms/Android/AndroidManifest.xml` declares only
+`<uses-sdk android:minSdkVersion="24" />`. The comment beside it says the intent
+was to "target the current platform the build compiles against" — that is not
+what happens. The Android build says so directly:
+
+```
+warning XA1006: The TargetFrameworkVersion (Android API level 36) is higher
+than the targetSdkVersion (28). Please increase the `android:targetSdkVersion`
+in the AndroidManifest.xml so that the API levels match.
+```
+
+**The two Android heads disagree.** The native head's manifest
+(`ui/TableTop.Android/Properties/AndroidManifest.xml`) sets
+`android:targetSdkVersion="36"` explicitly. Only MAUI's is unset, so the same
+app built two ways targets two different API levels.
+
+**Why it is worth more than a warning line.** `targetSdkVersion` is not
+cosmetic: Google Play gates app updates on it, and 28 (Android 9, 2018) is far
+below the current floor for publishing. It also opts the app out of every
+runtime behaviour change from API 29 onward, which is a silent behaviour
+difference between the two heads, not just a metadata mismatch.
+
+**Not a drive-by edit, which is why it is its own item.** Setting it to 36 opts
+in to all of those behaviour changes at once. The change is one attribute; the
+verification is a real run.
+
+**Done when:** MAUI's manifest names a `targetSdkVersion` matching the native
+head, the app has been launched on an emulator at that level and the roster and
+gameplay screens still work, and XA1006 is gone from the build.
+
+**Found** 2026-08-31 during a local full build of `develop` at `f3ce380`, in the
+warning inventory that the 552 XC0022 advisories (X.6c) had been burying. Not
+verified by a device run — no emulator was started.
+
 ---
 
 ## Later

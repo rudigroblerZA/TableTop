@@ -45,7 +45,7 @@ namespace TableTop.Maui.ViewModels;
 /// bindings did need renaming, because the shared class exposes flattened
 /// strings instead of the raw domain objects MAUI bound sub-properties of
 /// directly: <c>CurrentPlayer.DisplayName</c> → <c>PlayerName</c>,
-/// <c>CurrentCard.Title</c> → <c>CardTitle</c>. <see cref="GameplayPage.xaml"/>
+/// <c>CurrentCard.Title</c> → <c>CardTitle</c>. <c>GameplayPage.xaml</c>
 /// reflects both.
 /// </para>
 /// </summary>
@@ -269,7 +269,7 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
     /// <c>CardTurnGameViewModel.CreateAsync(...).GetAwaiter().GetResult()</c>
     /// — backlog item 20. A MAUI page constructor cannot itself be async and
     /// <c>Navigation.PushAsync</c> never awaits construction, so the async
-    /// build has moved to this factory; <see cref="GameplayPage"/> now has a
+    /// build has moved to this factory; <see cref="Pages.GameplayPage"/> now has a
     /// two-phase construct-then-<see cref="Pages.IAsyncInitializablePage.InitializeAsync"/>
     /// shape instead of doing this work in its own constructor.
     /// </para>
