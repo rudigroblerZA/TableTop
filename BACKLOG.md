@@ -222,9 +222,50 @@ same class of claim, and its absence is what let one property cost a day of CI.
 
 **Done when:** the WinUI job completes *and* the tests run to a result.
 
-**Still open:** which property. The next run answers it by name — a failing
-assertion reading `SomeViewModel.SomeProperty did not return within 5s`. That
-is a normal red test with a normal message, which is the point.
+---
+
+**Second update: that fix was wrong, and the run said so twice.**
+
+Run `33398280045` (`6c8796c`) hung again for the full five minutes, and the
+build log carried the explanation before the test even started:
+
+```
+warning xUnit1031: Test methods should not use blocking task operations,
+as they can cause deadlocks. Use an async test method and await instead.
+  ViewModelBindingTests.cs(190,30)   <- set.Wait(SetterDeadline)
+  ViewModelBindingTests.cs(203,29)   <- set.Result
+```
+
+Two independent mistakes, both now fixed:
+
+1. **The mechanism was wrong.** `Task.Wait(timeout)` inside a test the framework
+   is already scheduling is what xUnit1031 exists to forbid. The test is now
+   `async Task` and the deadline is `await Task.WhenAny(work, Task.Delay(...))`.
+   No blocking wait remains.
+
+2. **The guard was in the wrong place, which is the substantive finding.** It
+   wrapped only `p.SetValue`. But `TryMakeDistinctValue` calls `p.GetValue`
+   *first*, to pick a value distinct from the current one — so a blocking
+   **getter** never reached the guard at all. Both accessors are now on the
+   deadline.
+
+**The getter is the more likely culprit on the evidence.** Take the two tests
+apart:
+
+| | constructs every VM | reads `ICommand` props | reads *every settable* prop | writes |
+|---|---|---|---|---|
+| `Every_command_property_is_non_null_after_construction` — **passes** | ✅ | ✅ | ❌ | ❌ |
+| `Every_settable_property_raises_PropertyChanged` — **hangs** | ✅ | — | ✅ | ✅ |
+
+Construction is shared and does not hang. Reading every settable property is the
+surface only the hanging test touches, and it is the step that ran *before* the
+guard that failed to fire.
+
+**Done when:** the WinUI job completes *and* the tests run to a result.
+
+**Still open:** which accessor, on which property. The next run names it — the
+failure text distinguishes GETTER from SETTER, so it also confirms or refutes
+the table above.
 
 ---
 
