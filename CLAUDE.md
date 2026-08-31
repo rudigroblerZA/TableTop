@@ -4,8 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A fully UI-agnostic card game engine for couples and party games (101 modes,
-3,721 cards as of the last README update — `DocumentationAccuracyTests`
+A fully UI-agnostic card game engine for couples and party games (102 modes,
+3,771 cards as of the last README update — `DocumentationAccuracyTests`
 keeps that figure honest, so trust README.md's count over any other doc's if
 they ever disagree). All content is compiled in: no content files, no
 runtime deck loading. .NET 10 / C# 14. Four engine assemblies plus four UI
@@ -95,10 +95,10 @@ ever reachable from `Core`, `Games`, or `Hosting`.
 **`IControllerFactory` is the sole controller-creation boundary.** A mode
 implements one or more capability interfaces (`IGameModeDefinition`,
 `IQuestionBankProvider`, `IMonogamyDeckProvider`, `IDailyDeckProvider`,
-`IClaimedDeckProvider`, `IHerdDeckProvider`); `ControllerFactory.CreateAsync`
-dispatches on those to build the right controller
-(`CardTurnController`/`MillionaireController`/`MonogamyController`/
-`DayOneController`/`ClaimedController`/`HerdController`). Every UI head must
+`IClaimedDeckProvider`, `IHerdDeckProvider`, `ITraitAssessmentProvider`);
+`ControllerFactory.CreateAsync` dispatches on those to build the right
+controller (`CardTurnController`/`MillionaireController`/`MonogamyController`/
+`DayOneController`/`ClaimedController`/`HerdController`/`TraitProfileController`). Every UI head must
 go through it — constructing a controller with `new` anywhere outside
 `ControllerFactory` was a recurring bug class here (see BACKLOG item 29):
 it silently drops whatever persistence override, diagnostics sink, or DI
@@ -108,7 +108,7 @@ dispatch arm — not a UI-side workaround.
 
 **The same capability-interface set gets tested in more than one place, and
 history shows they drift.** `ControllerFactory.CreateAsync`,
-`ControllerFamilies.TryFor` (which of six `ControllerFamily` values a mode
+`ControllerFamilies.TryFor` (which of seven `ControllerFamily` values a mode
 produces — drives which screen a head opens) and `ModeManifestExtensions`
 (per-mode card-count summaries) all switch on the same interfaces.
 `ControllerFamilies.TryFor` is the intended single source of truth now —
@@ -121,10 +121,12 @@ silently.
 (`SupportedFamilies`), and `HeadFamilyCoverageTests` / `check-head-family-coverage.py`
 check that declaration against the live registry — the enforcement is against
 each head's own stated claim, not a hardcoded expectation, because a head is
-allowed to support fewer families than the catalogue has. None currently
-does: all four heads declare all six families. The mechanism still matters —
-it is what makes a future gap a failing test rather than a mode that
-silently does nothing.
+allowed to support fewer families than the catalogue has. **One head now does:**
+1.36.0 added `ControllerFamily.TraitProfile` with a Console renderer only, so
+WinUI, MAUI and native Android declare six of seven and cannot play Big Five.
+That gap is asserted by name in `ControllerFamilyTests` rather than papered
+over — which is the mechanism working as intended: a future gap is a failing
+test rather than a mode that silently does nothing.
 
 **Shared ViewModels live in `TableTop.Presentation`**, plain `net10.0` with
 no platform SDK dependency — that's what makes them unit-testable without

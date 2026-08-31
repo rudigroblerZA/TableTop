@@ -34,6 +34,7 @@ public sealed class ControllerFamilyTests
         IHerdController => ControllerFamily.SimultaneousAnswer,
         IClaimedController => ControllerFamily.AreaControl,
         IDayOneController => ControllerFamily.DailyCampaign,
+        ITraitProfileController => ControllerFamily.TraitProfile,
         ICardTurnController => ControllerFamily.CardTurn,
         _ => throw new InvalidOperationException(
             $"Unmapped controller type {controller.GetType().Name} — ControllerFamily needs a new member."),
@@ -250,6 +251,7 @@ public sealed class HeadFamilyCoverageTests
         ControllerFamily.DailyCampaign,
         ControllerFamily.AreaControl,
         ControllerFamily.SimultaneousAnswer,
+        ControllerFamily.TraitProfile,
     ];
 
     /// <summary>
@@ -297,40 +299,79 @@ public sealed class HeadFamilyCoverageTests
         AllModes().Should().OnlyContain(m => ControllerFamilies.All.Contains(ControllerFamilies.For(m)));
     }
 
-    [Fact]
-    public void Maui_CanNowPlayEveryModeInTheCatalogue()
+    /// <summary>
+    /// The three graphical heads have no <see cref="ControllerFamily.TraitProfile"/>
+    /// screen, so Big Five is the one mode they cannot play.
+    ///
+    /// <para>
+    /// <b>This is the mechanism working, not a regression.</b> These three tests
+    /// asserted an empty set from backlog item 4 until Big Five landed, and it
+    /// would have been easy to keep them green by declaring the family in each
+    /// head and letting its router fall through — which is exactly the failure
+    /// item 4 was written after, when MAUI's router fell through to its
+    /// card-turn page for Herd and Claimed! and Console's switch had no default
+    /// arm at all. Four modes silently did nothing, two of them for several
+    /// versions.
+    /// </para>
+    ///
+    /// <para>
+    /// Asserting the gap by name is the honest alternative: a head that gains
+    /// the screen fails this test and must say so, and a <i>second</i>
+    /// unsupported mode appearing fails it too rather than hiding behind the
+    /// first. <c>ControllerFamily</c>'s own docs describe this as the point of
+    /// declaring families — "what makes a future gap a failing test rather than
+    /// a mode that silently does nothing".
+    /// </para>
+    /// </summary>
+    private const string TraitProfileModeName = "Big Five";
+
+    [Theory]
+    [InlineData("MAUI")]
+    [InlineData("WinUI")]
+    [InlineData("Android")]
+    public void GraphicalHeads_PlayEveryModeExceptBigFive(string head)
     {
-        // Used to document a real gap: MAUI had no AreaControl or
-        // SimultaneousAnswer page, so this asserted UnsupportedIn was
-        // non-empty. Backlog item 4 closed it with real screens for both
-        // families — the honest statement now is that nothing is left
-        // unsupported, not a gap left standing for nostalgia.
-        ControllerFamilies.UnsupportedIn(AllModes(), MauiSupported).Should().BeEmpty();
+        var supported = head switch
+        {
+            "MAUI" => MauiSupported,
+            "WinUI" => WinUiSupported,
+            "Android" => AndroidSupported,
+            _ => throw new ArgumentOutOfRangeException(nameof(head), head, "unknown head"),
+        };
+
+        ControllerFamilies.UnsupportedIn(AllModes(), supported)
+            .Select(m => m.Name)
+            .Should().BeEquivalentTo(new[] { TraitProfileModeName },
+                $"{head} has no TraitProfile screen yet, so Big Five is its only gap. " +
+                "If a screen was added, declare the family in the head, update its " +
+                "mirror array above, and change this test — do not let a head claim " +
+                "a family its router cannot actually render.");
     }
 
     [Fact]
-    public void WinUi_CanNowPlayEveryModeInTheCatalogue()
-    {
-        // Same closure as the MAUI test above — backlog item 4.
-        ControllerFamilies.UnsupportedIn(AllModes(), WinUiSupported).Should().BeEmpty();
-    }
-
-    [Fact]
-    public void Android_CanNowPlayEveryModeInTheCatalogue()
-    {
-        // The native .NET for Android head shipped at full parity with WinUI —
-        // a screen for all six families (its own README / ARCHITECTURE entry).
-        ControllerFamilies.UnsupportedIn(AllModes(), AndroidSupported).Should().BeEmpty();
-    }
-
-    [Fact]
-    public void Console_CanNowPlayEveryModeInTheCatalogue()
+    public void Console_CanPlayEveryModeInTheCatalogue()
     {
         // Console was "deliberately the thinnest head" until backlog item 4
-        // gave it real renderers for Monogamy, Day One, Claimed! and Herd —
-        // it now declares, and actually supports, every family the other two
-        // heads do.
+        // gave it real renderers for Monogamy, Day One, Claimed! and Herd. It
+        // is now the head with the *most* coverage: it shipped the
+        // TraitProfile renderer with the family, so it is the only one that can
+        // play Big Five.
         ControllerFamilies.UnsupportedIn(AllModes(), ConsoleSupported).Should().BeEmpty();
+    }
+
+    [Fact]
+    public void TheOnlyUnsupportedFamilyAnywhere_IsTraitProfile()
+    {
+        // Guards the claim the test above makes by name. If a future mode
+        // introduces a second family the graphical heads lack, this fails
+        // and names it, rather than being absorbed into the Big Five gap.
+        var families = AllModes()
+            .Select(ControllerFamilies.TryFor)
+            .Where(f => f is not null && !MauiSupported.Contains(f.Value))
+            .Select(f => f!.Value)
+            .Distinct();
+
+        families.Should().BeEquivalentTo(new[] { ControllerFamily.TraitProfile });
     }
 
     // REMOVED: NoHeadSilentlyDropsAFamilyItClaimsToSupport
