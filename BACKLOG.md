@@ -72,7 +72,7 @@ So: the tree is green. Every item below is something green does not catch.
 > Two things need a human: tags `v1.35.0`/`v1.35.1` are local and **not
 > pushed**, and `develop` is ahead of `origin`.
 
-### N.7 — CI's WinUI job never finishes: "Run UI tests" hangs — **CONTAINED, not root-caused**
+### N.7 — CI's WinUI job never finishes: "Run UI tests" hangs — **CONTAINED; narrowed to one test**
 
 **No CI run on this repository has completed since 2026-08-30.** The `Build
 WinUI` job reaches its last step and stays there until the run is cancelled —
@@ -171,9 +171,60 @@ environment at all. The change is a workflow edit validated by parsing the YAML
 and checking the folded `run` command; whether `--blame-hang` names a test or
 names nothing is the finding the next run will produce.
 
-**Still open:** the root cause. The next red run's `Sequence*.xml` is the thing
-to read, and it should decide between "a specific test hangs" and "the host
-never starts or never exits".
+---
+
+**Update, same day: the diagnostics fired, and they disproved the hypothesis
+above.**
+
+Run `33396522236` (commit `4e5eccf`) is the first carrying `--blame-hang`. It
+worked exactly as intended: `Run UI tests` **failed after 5m41s** instead of
+hanging, the artefacts uploaded, and the job finished in 8 minutes rather than
+six hours. Everything else in that run was green — Build & Test, MAUI (both
+targets), Android, XAML Checks, Code Quality.
+
+**The hang is inside a test body, not the host.** The prediction recorded above
+— host startup, discovery or shutdown, on the strength of the tests passing in
+361ms locally — was **wrong**, and the log says so plainly:
+
+```
+13:24:08  A total of 1 test files matched the specified pattern.
+13:29:16  The active test run was aborted. Reason: Test host process crashed
+          Data collector 'Blame' message: The specified inactivity time of
+          5 minutes has elapsed.
+          The test running when the crash occurred:
+          TableTop.UiTests.ViewModelBindingTests.Every_settable_property_raises_PropertyChanged
+```
+
+Discovery completed in seconds. The host then sat for five minutes inside one
+named test. Note which of the two it is: `Every_command_property_is_non_null_after_construction`
+constructs the same ViewModels and does not hang, so **construction is fine and
+the fault is in setting a property**.
+
+Reading did not find it. Every public settable property with a non-trivial
+setter across `TableTop.Presentation` and `TableTop.WinUI` was enumerated — 17
+of them — and all are cheap and synchronous: `SetField` plus `OnPropertyChanged`,
+or an assignment onto the stubbed `IAppSettings`. None does I/O, waits, or
+starts anything. So the culprit is not visible in the setter bodies, which is
+precisely why it needs to name itself.
+
+**So the test now names it.** `Every_settable_property_raises_PropertyChanged`
+sets each property on a worker with a 5-second deadline (three orders of
+magnitude above the healthy 361ms whole-suite time). A setter that does not
+return is recorded as a normal test failure carrying the offending
+`Type.Property`, and that VM is abandoned rather than producing downstream noise
+from a half-mutated instance. The notification list is now lock-guarded, since
+the handler can fire from the worker.
+
+**This is an assertion the test should always have had, not scaffolding.** A
+property setter that blocks freezes the UI thread in the real app. The test
+already asserted that a setter must notify; that it must also *return* is the
+same class of claim, and its absence is what let one property cost a day of CI.
+
+**Done when:** the WinUI job completes *and* the tests run to a result.
+
+**Still open:** which property. The next run answers it by name — a failing
+assertion reading `SomeViewModel.SomeProperty did not return within 5s`. That
+is a normal red test with a normal message, which is the point.
 
 ---
 

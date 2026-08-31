@@ -85,6 +85,16 @@ public sealed class ViewModelBindingTests
     /// </summary>
     private static readonly Dictionary<string, string?> ViewToViewModelOverrides = new(StringComparer.Ordinal);
 
+    /// <summary>
+    /// How long a single property setter gets before it is reported as blocking.
+    ///
+    /// Generous by three orders of magnitude: the whole suite ran 2/2 in 361ms
+    /// on the CI job's own configuration, so no healthy setter comes near this.
+    /// It exists to convert an unbounded hang into a named failure — see the
+    /// comment at the call site and backlog N.7.
+    /// </summary>
+    private static readonly TimeSpan SetterDeadline = TimeSpan.FromSeconds(5);
+
     private static readonly Regex Binding = new(
         @"\{(?:x:Bind|Binding)\s+(?:Path\s*=\s*)?(?<path>[A-Za-z_][\w\.]*)(?<rest>[^}]*)",
         RegexOptions.Compiled);
@@ -138,21 +148,73 @@ public sealed class ViewModelBindingTests
             if (!TryConstruct(vmType, out var vm, out _)) continue;
 
             var raised = new List<string>();
-            ((INotifyPropertyChanged)vm!).PropertyChanged += (_, e) => raised.Add(e.PropertyName ?? "");
+            var gate = new object();
 
-            foreach (var p in vmType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                    .Where(p => p.CanRead && p.CanWrite && p.SetMethod!.IsPublic))
+            // The handler can now be raised from the worker thread below, so the
+            // list needs a lock. It is a plain List guarded by a monitor rather
+            // than a concurrent collection because every read is a membership
+            // test on a handful of names.
+            void OnChanged(object? _, PropertyChangedEventArgs e)
             {
-                if (!TryMakeDistinctValue(p, vm, out var candidate)) continue;
+                lock (gate) raised.Add(e.PropertyName ?? "");
+            }
 
-                raised.Clear();
-                try { p.SetValue(vm, candidate); }
-                catch (TargetInvocationException) { continue; }   // guard clauses are legitimate
+            var notifier = (INotifyPropertyChanged)vm!;
+            notifier.PropertyChanged += OnChanged;
 
-                exercised++;
-                if (!raised.Contains(p.Name))
-                    failures.Add($"{vmType.Name}.{p.Name} changed without raising PropertyChanged — " +
-                                 $"the UI keeps showing the old value");
+            try
+            {
+                foreach (var p in vmType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                        .Where(p => p.CanRead && p.CanWrite && p.SetMethod!.IsPublic))
+                {
+                    if (!TryMakeDistinctValue(p, vm, out var candidate)) continue;
+
+                    lock (gate) raised.Clear();
+
+                    // The set runs on a worker with a deadline. That is a real
+                    // assertion, not scaffolding: a property setter that blocks
+                    // freezes the UI thread in the app, so a setter that will not
+                    // return is a defect this test should name.
+                    //
+                    // It is also what backlog N.7 cost. One setter here hung the
+                    // WinUI job indefinitely — six-hour runs, cancelled, and the
+                    // job never said which property was responsible because a
+                    // hung test reports nothing at all. --blame-hang in CI could
+                    // narrow it to this test; only this can narrow it to a name.
+                    var set = Task.Run(() =>
+                    {
+                        try { p.SetValue(vm, candidate); return (Exception?)null; }
+                        catch (TargetInvocationException ex) { return ex; }   // guard clauses are legitimate
+                    });
+
+                    if (!set.Wait(SetterDeadline))
+                    {
+                        failures.Add($"{vmType.Name}.{p.Name} did not return within " +
+                                     $"{SetterDeadline.TotalSeconds:0}s — a setter that blocks freezes the UI " +
+                                     "thread, and an unbounded one hangs CI (backlog N.7)");
+
+                        // The VM is mid-mutation and the worker may still raise
+                        // PropertyChanged, so nothing further about this instance
+                        // can be trusted. Stop with it rather than reporting
+                        // downstream noise caused by the first fault.
+                        break;
+                    }
+
+                    if (set.Result is not null) continue;   // the setter threw a guard clause
+
+                    exercised++;
+
+                    bool notified;
+                    lock (gate) notified = raised.Contains(p.Name);
+
+                    if (!notified)
+                        failures.Add($"{vmType.Name}.{p.Name} changed without raising PropertyChanged — " +
+                                     $"the UI keeps showing the old value");
+                }
+            }
+            finally
+            {
+                notifier.PropertyChanged -= OnChanged;
             }
         }
 
