@@ -42,6 +42,7 @@ public static class GameViewModelFactory
         ControllerFamily.DailyCampaign,
         ControllerFamily.AreaControl,
         ControllerFamily.SimultaneousAnswer,
+        ControllerFamily.TraitProfile,
     ];
 
     /// <summary>Creates the ViewModel that will drive <paramref name="mode"/>.</summary>
@@ -87,6 +88,7 @@ public static class GameViewModelFactory
             IDayOneController dc => new DayOneGameViewModel(navigator, dc),
             IClaimedController cc => new ClaimedGameViewModel(navigator, cc),
             IHerdController hc => new HerdGameViewModel(navigator, hc),
+            ITraitProfileController tp => new TraitProfileGameViewModel(navigator, tp),
             _ => Fallback(navigator, mode, controller),
         };
     }

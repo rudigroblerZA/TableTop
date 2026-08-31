@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.37.0**, August 2026. This replaces the accumulated
+Current as of **1.38.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -1022,6 +1022,65 @@ async work to block on, a different shape rather than a template to copy.
   `TableTop.Games` and nothing elsewhere — the layer itself did not move, which
   is the mechanical evidence for the paragraph above. Snapshots hand-computed
   again; the round-trip check on the unmodified file passed first.
+
+- **1.38.0** gave WinUI, MAUI and native Android a `TraitProfile` screen,
+  closing backlog N.6. All four heads play every mode again.
+
+  **The shared ViewModel came first, and that was the whole point of the item.**
+  `TraitProfileGameViewModel` lives in `TableTop.Presentation`, so the three
+  graphical heads render the same state machine rather than reimplementing it —
+  the same consolidation backlog item 1 did for card-turn, where MAUI and WinUI
+  had 733 and 404 lines driving one controller. Each head here is a view over
+  that ViewModel: a WinUI `UserControl`, a MAUI `ContentPage`, and an Android
+  code-built view tree.
+
+  **It carries the re-entrancy discipline `HerdGameViewModel` documents**, for
+  the same reason. `SubmitResponses` raises `ItemRecorded` and then advances
+  *inside the same call*, so `ItemReady` or `AssessmentCompleted` fires before
+  `Submit` returns. `OnItemReady` owns the current-statement properties and the
+  response entries; `OnAssessmentCompleted` owns the results; neither reads or
+  clears what the other writes, so their order within one call does not matter.
+  The entries are rebuilt rather than cleared on each statement, so a stale
+  answer cannot survive into the next one — asserted directly, because it is
+  invisible otherwise.
+
+  **`ParameterRelayCommand` is new, and its parameter is `object` on purpose.**
+  A Likert row is five buttons per player differing only in the value they send;
+  five commands per entry would work and would be indefensible. The parameter is
+  loosely typed because **XAML passes `CommandParameter="3"` as a string on both
+  WinUI and MAUI** — a `RelayCommand<int>` compiles, binds, and then silently
+  never executes. The Android head passes a real `int` from code. One lenient
+  conversion, in one place, is what makes a single command work from all three.
+
+  **A new gate: `check-xaml-resources.py`.** Writing the MAUI page reached for
+  `SecondaryButtonStyle`, which has never existed — the style is
+  `QuietButtonStyle`. That is not a compile error on either XAML head; it is a
+  crash when the page is navigated to, reaching the player rather than the
+  developer. Nothing caught it: the XAML parses, every binding resolves, and all
+  seven other gates pass. It was found by grepping the resource dictionary by
+  hand. The gate checks every `{StaticResource}` / `{DynamicResource}` against
+  the `x:Key`s defined in the same head, as a closed set — both heads resolve
+  entirely within themselves today, which is what makes that sound rather than
+  noisy. It was **proved to fail on the real bug before being trusted**, the
+  standard N.4 set.
+
+  **The head-gap test was deleted, as the backlog item said it should be.**
+  `EveryHead_CanPlayEveryModeInTheCatalogue` is restored — now a Theory over all
+  four mirrors rather than four near-identical Facts — alongside
+  `EveryHead_DeclaresEveryFamilyTheCatalogueProduces`, which reads the same
+  invariant from the families end so it still fails for a family whose only mode
+  was removed. `check-head-family-coverage.py` caught the three stale mirrors
+  the moment the heads were updated, which is exactly what it exists for.
+
+  MINOR: new capability on three heads, no engine change. `api/*.api.txt` is
+  untouched — `TableTop.Presentation` is not snapshotted, and Core, Games and
+  Hosting were not modified at all.
+
+  **Unverified to an unusual degree, and worth saying plainly.** This pass had
+  no `dotnet`, and three of the four heads cannot be built in this environment
+  even with one. The ViewModel is covered by real tests and the gates pass, but
+  **no XAML was compiled and no screen has been rendered**. `check-ui-compiles.py`
+  is the gate that would say otherwise and it needs both UI workloads.
 
 ## What genuinely doesn't exist here
 

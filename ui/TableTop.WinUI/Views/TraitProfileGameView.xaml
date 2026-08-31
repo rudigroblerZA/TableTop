@@ -1,0 +1,158 @@
+<UserControl x:Class="TableTop.WinUI.Views.TraitProfileGameView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Same plain board-game felt register as HerdGameView. The two screens
+         are structurally the same shape — everyone answers one prompt at once —
+         and the differences are the response row (five fixed buttons rather
+         than a text box) and the ending (profiles rather than a scoreboard). -->
+    <Grid Background="{StaticResource BaizeBrush}">
+
+        <Border Visibility="{Binding HasLoadError, Converter={StaticResource BoolToVis}}"
+                Background="#33F87171" BorderBrush="#F87171" BorderThickness="1"
+                CornerRadius="8" Padding="16,12" VerticalAlignment="Top" Margin="0,0,0,12">
+            <TextBlock Text="{Binding LoadError}" TextWrapping="Wrap"
+                       Foreground="#FCA5A5" FontSize="14"/>
+        </Border>
+
+        <Grid Padding="28,24">
+            <ScrollViewer Visibility="{Binding IsPlaying, Converter={StaticResource BoolToVis}}">
+                <StackPanel Spacing="16" MaxWidth="760">
+
+                    <TextBlock Style="{StaticResource PipTextStyle}">
+                        <Run Text="{Binding ProgressLabel}"/> <Run Text=" · "/> <Run Text="{Binding Category}"/>
+                    </TextBlock>
+
+                    <ProgressBar Value="{Binding Progress}" Minimum="0" Maximum="1" Height="4"/>
+
+                    <!-- The statement everyone answers at once -->
+                    <Border Background="{StaticResource CardFaceBrush}" CornerRadius="16" Padding="26,24">
+                        <TextBlock Text="{Binding Statement}" Style="{StaticResource CardTitleStyle}"
+                                   TextWrapping="Wrap"/>
+                    </Border>
+
+                    <TextBlock Text="1 strongly disagree  ·  5 strongly agree"
+                               Style="{StaticResource PipTextStyle}"/>
+
+                    <!-- One five-button row per player — a shared device passed around -->
+                    <Border Style="{StaticResource PanelStyle}">
+                        <ItemsControl ItemsSource="{Binding PlayerResponses}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding PlayerName}"
+                                                   VerticalAlignment="Center"
+                                                   FontFamily="{StaticResource DisplayFont}" FontWeight="Bold"
+                                                   Foreground="{StaticResource TextBrush}"/>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                                            <Button Content="1" Width="46" Command="{Binding PickCommand}" CommandParameter="1"/>
+                                            <Button Content="2" Width="46" Command="{Binding PickCommand}" CommandParameter="2"/>
+                                            <Button Content="3" Width="46" Command="{Binding PickCommand}" CommandParameter="3"/>
+                                            <Button Content="4" Width="46" Command="{Binding PickCommand}" CommandParameter="4"/>
+                                            <Button Content="5" Width="46" Command="{Binding PickCommand}" CommandParameter="5"/>
+                                            <TextBlock Text="{Binding SelectedValue}"
+                                                       Visibility="{Binding HasAnswered, Converter={StaticResource BoolToVis}}"
+                                                       VerticalAlignment="Center" Margin="10,0,0,0"
+                                                       FontFamily="{StaticResource BodyFont}"
+                                                       Foreground="{StaticResource GoldBrightBrush}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Button Content="Next" Command="{Binding SubmitCommand}" Padding="26,12"
+                                Style="{StaticResource BrassButtonStyle}">
+                            <Button.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="Enter"/>
+                            </Button.KeyboardAccelerators>
+                        </Button>
+                        <Button Content="Skip" Command="{Binding SkipCommand}"
+                                Style="{StaticResource QuietButtonStyle}"/>
+                    </StackPanel>
+
+                    <Button Content="Quit" Command="{Binding BackCommand}"
+                            Style="{StaticResource QuietButtonStyle}" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Results: a profile per player, then how they read against each other -->
+            <ScrollViewer Visibility="{Binding IsComplete, Converter={StaticResource BoolToVis}}">
+                <StackPanel Spacing="16" MaxWidth="760">
+
+                    <TextBlock Text="Results" FontSize="25" Style="{StaticResource CardTitleStyle}"/>
+                    <TextBlock Text="{Binding Summary}" Style="{StaticResource CardBodyStyle}"/>
+
+                    <ItemsControl ItemsSource="{Binding Profiles}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource PanelStyle}" Margin="0,0,0,12">
+                                    <StackPanel Spacing="10">
+                                        <TextBlock Text="{Binding PlayerName}" FontSize="19"
+                                                   Style="{StaticResource CardTitleStyle}"/>
+                                        <TextBlock Visibility="{Binding HasTopTrait, Converter={StaticResource BoolToVis}}"
+                                                   FontFamily="{StaticResource BodyFont}" FontStyle="Italic"
+                                                   Foreground="{StaticResource GoldBrightBrush}">
+                                            <Run Text="Strongest:"/> <Run Text="{Binding TopTrait}"/>
+                                        </TextBlock>
+
+                                        <ItemsControl ItemsSource="{Binding Scores}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Margin="0,0,0,8">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="170"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="{Binding TraitName}"
+                                                                   VerticalAlignment="Center" TextWrapping="Wrap"
+                                                                   FontFamily="{StaticResource DisplayFont}"
+                                                                   Foreground="{StaticResource TextBrush}"/>
+                                                        <ProgressBar Grid.Column="1" Value="{Binding Normalized}"
+                                                                     Minimum="0" Maximum="100"
+                                                                     VerticalAlignment="Center" Height="8"/>
+                                                        <TextBlock Grid.Column="2" VerticalAlignment="Center"
+                                                                   Margin="12,0,0,0"
+                                                                   FontFamily="{StaticResource BodyFont}" FontSize="13"
+                                                                   Foreground="{StaticResource GoldBrightBrush}">
+                                                            <Run Text="{Binding Rounded}"/> <Run Text=" · "/> <Run Text="{Binding BandLabel}"/>
+                                                        </TextBlock>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Border Style="{StaticResource PanelStyle}"
+                            Visibility="{Binding HasComparison, Converter={StaticResource BoolToVis}}">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="TOGETHER" Style="{StaticResource PipTextStyle}"/>
+                            <TextBlock Text="{Binding ComparisonSummary}" TextWrapping="Wrap"
+                                       FontFamily="{StaticResource BodyFont}" FontSize="15"
+                                       Foreground="{StaticResource TextBrush}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Not decoration: a number out of 100 beside a personality
+                         trait reads as a percentile to almost everyone. -->
+                    <TextBlock Text="{Binding ResultsCaveat}" TextWrapping="Wrap"
+                               Style="{StaticResource PipTextStyle}"/>
+
+                    <Button Content="Back to games" Command="{Binding BackCommand}"
+                            Padding="26,12" Style="{StaticResource BrassButtonStyle}"
+                            HorizontalAlignment="Left"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -56,15 +56,16 @@ So: the tree is green. Every item below is something green does not catch.
 > that item was blocked on turned out to be reachable, and the migration it
 > describes is exact.
 >
-> **1.36.0** added the trait-analysis layer and Big Five (see `ARCHITECTURE.md`).
-> It opens **N.6** below: three heads have no `TraitProfile` screen. What is left
-> is **N.6**, **X.6a** (`Frame` → `Border`, wants a device), **X.6c** (compiled
-> bindings, does not) and S.1-S.3.
+> **1.36.0** added the trait-analysis layer and Big Five, **1.37.0** added Love
+> Languages on top of it, and **1.38.0** closed **N.6** by giving the three
+> graphical heads a `TraitProfile` screen (see `ARCHITECTURE.md`). What is left
+> is **X.6a** (`Frame` → `Border`, wants a device), **X.6c** (compiled bindings,
+> does not) and S.1-S.3.
 >
 > Two things need a human: tags `v1.35.0`/`v1.35.1` are local and **not
 > pushed**, and `develop` is ahead of `origin`.
 
-### N.6 — Three heads cannot play the trait-assessment modes
+### N.6 — Three heads cannot play the trait-assessment modes — **FIXED**
 
 `ControllerFamily.TraitProfile` shipped in 1.36.0 with a Console renderer only.
 WinUI, MAUI and native Android declare six of seven families, so the
@@ -103,8 +104,35 @@ graphical head — no `dotnet` in the pass that added this, and three of the fou
 heads cannot be built here at all.
 
 **Done when:** the three heads declare `TraitProfile`, their mirror arrays in
-`ControllerFamilyTests` match, and `GraphicalHeads_PlayEveryModeExceptBigFive`
-is deleted rather than edited to expect a smaller gap.
+`ControllerFamilyTests` match, and the by-name gap test is deleted rather than
+edited to expect a smaller gap.
+
+**Resolved in 1.38.0, in that order.** `TraitProfileGameViewModel` landed in
+`TableTop.Presentation` first, so the three heads are views over one state
+machine rather than three implementations of it — which is what the note above
+predicted would make this cheap. WinUI got a `UserControl` and a `ViewLocator`
+entry, MAUI a `ContentPage` on the `IAsyncInitializablePage` two-phase pattern,
+and native Android a code-built screen. The by-name test is gone;
+`EveryHead_CanPlayEveryModeInTheCatalogue` replaces it as a Theory over all four
+mirrors, joined by `EveryHead_DeclaresEveryFamilyTheCatalogueProduces` reading
+the same invariant from the families end.
+
+Two things fell out of doing it:
+
+- **`ParameterRelayCommand`**, because a Likert row is five buttons per player
+  differing only in the value they send. Its parameter is `object` rather than a
+  generic `T` because XAML passes `CommandParameter="3"` as a **string** on both
+  WinUI and MAUI — a `RelayCommand<int>` binds and then silently never executes.
+- **`check-xaml-resources.py`**, after this work reached for a
+  `SecondaryButtonStyle` that has never existed. A missing resource key is a
+  navigation-time crash on both XAML heads and no gate caught it. Proved to fail
+  on the real bug before being trusted.
+
+**Still not exercised on a device.** No `dotnet` in the pass that did it, and
+three of the four heads cannot be built here regardless. The ViewModel has real
+tests; no XAML was compiled and no screen has been rendered. That is the same
+standing caveat S.3 carries for Android TV, and `check-ui-compiles.py` is the
+gate that would close it.
 
 ---
 

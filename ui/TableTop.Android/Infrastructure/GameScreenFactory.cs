@@ -36,6 +36,7 @@ public static class GameScreenFactory
         ControllerFamily.DailyCampaign,
         ControllerFamily.AreaControl,
         ControllerFamily.SimultaneousAnswer,
+        ControllerFamily.TraitProfile,
     ];
 
     /// <summary>Creates the screen that will drive <paramref name="mode"/> for these players.</summary>
@@ -76,6 +77,7 @@ public static class GameScreenFactory
             IDayOneController dc => new DayOneGameScreen(new DayOneGameViewModel(navigator, dc)),
             IClaimedController cc => new ClaimedGameScreen(new ClaimedGameViewModel(navigator, cc)),
             IHerdController hc => new HerdGameScreen(new HerdGameViewModel(navigator, hc)),
+            ITraitProfileController tp => new TraitProfileGameScreen(new TraitProfileGameViewModel(navigator, tp)),
             _ => Fallback(mode, controller),
         };
     }

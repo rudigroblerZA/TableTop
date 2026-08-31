@@ -240,6 +240,7 @@ public sealed class HeadFamilyCoverageTests
         ControllerFamily.DailyCampaign,
         ControllerFamily.AreaControl,
         ControllerFamily.SimultaneousAnswer,
+        ControllerFamily.TraitProfile,
     ];
 
     /// <summary>Mirrors <c>ConsoleGameLauncher.SupportedFamilies</c>.</summary>
@@ -272,6 +273,7 @@ public sealed class HeadFamilyCoverageTests
         ControllerFamily.DailyCampaign,
         ControllerFamily.AreaControl,
         ControllerFamily.SimultaneousAnswer,
+        ControllerFamily.TraitProfile,
     ];
 
     /// <summary>
@@ -291,6 +293,7 @@ public sealed class HeadFamilyCoverageTests
         ControllerFamily.DailyCampaign,
         ControllerFamily.AreaControl,
         ControllerFamily.SimultaneousAnswer,
+        ControllerFamily.TraitProfile,
     ];
 
     [Fact]
@@ -300,92 +303,65 @@ public sealed class HeadFamilyCoverageTests
     }
 
     /// <summary>
-    /// The three graphical heads have no <see cref="ControllerFamily.TraitProfile"/>
-    /// screen, so the trait-assessment modes are the ones they cannot play.
+    /// Every head can play every mode in the catalogue.
     ///
     /// <para>
-    /// <b>This is the mechanism working, not a regression.</b> These three tests
-    /// asserted an empty set from backlog item 4 until Big Five landed, and it
-    /// would have been easy to keep them green by declaring the family in each
-    /// head and letting its router fall through — which is exactly the failure
-    /// item 4 was written after, when MAUI's router fell through to its
-    /// card-turn page for Herd and Claimed! and Console's switch had no default
-    /// arm at all. Four modes silently did nothing, two of them for several
-    /// versions.
+    /// <b>This assertion was deleted and restored once, on purpose.</b> 1.36.0
+    /// added <see cref="ControllerFamily.TraitProfile"/> with a Console renderer
+    /// only. Rather than let three heads declare a family their routers could
+    /// not render — the exact failure backlog item 4 was written after, when
+    /// MAUI fell through to its card-turn page for Herd and Claimed! and four
+    /// modes silently did nothing — the gap was asserted by name instead.
+    /// Adding Love Languages in 1.37.0 failed that by-name test immediately,
+    /// which is what a real alarm does. 1.38.0 built the three screens, so the
+    /// honest statement is once again that nothing is left unsupported.
     /// </para>
     ///
     /// <para>
-    /// Asserting the gap by name is the honest alternative: a head that gains
-    /// the screen fails this test and must say so, and a <i>second</i>
-    /// unsupported mode appearing fails it too rather than hiding behind the
-    /// first. <c>ControllerFamily</c>'s own docs describe this as the point of
-    /// declaring families — "what makes a future gap a failing test rather than
-    /// a mode that silently does nothing".
+    /// A Theory over the four mirrors rather than four near-identical Facts: a
+    /// fifth head, or a fifth family, should cost one line here.
     /// </para>
     /// </summary>
-    /// <summary>
-    /// Every mode on the <see cref="ControllerFamily.TraitProfile"/> family. The
-    /// graphical heads have no screen for it, so this is exactly the set of
-    /// modes they cannot play.
-    ///
-    /// <para>
-    /// Adding Love Languages in 1.37.0 is what this list is for: the test
-    /// asserted a single-element set and failed the moment a second
-    /// trait-assessment mode was registered, which is the alarm working rather
-    /// than an inconvenience. Widening it is a deliberate edit, and a reviewer
-    /// sees the head gap grow in the diff.
-    /// </para>
-    /// </summary>
-    private static readonly string[] TraitProfileModeNames = ["Big Five", "Love Languages"];
-
     [Theory]
     [InlineData("MAUI")]
     [InlineData("WinUI")]
     [InlineData("Android")]
-    public void GraphicalHeads_PlayEveryModeExceptTheTraitProfileOnes(string head)
+    [InlineData("Console")]
+    public void EveryHead_CanPlayEveryModeInTheCatalogue(string head)
     {
         var supported = head switch
         {
             "MAUI" => MauiSupported,
             "WinUI" => WinUiSupported,
             "Android" => AndroidSupported,
+            "Console" => ConsoleSupported,
             _ => throw new ArgumentOutOfRangeException(nameof(head), head, "unknown head"),
         };
 
         ControllerFamilies.UnsupportedIn(AllModes(), supported)
             .Select(m => m.Name)
-            .Should().BeEquivalentTo(TraitProfileModeNames,
-                $"{head} has no TraitProfile screen yet, so the trait-assessment modes " +
-                "are its only gap. If a screen was added, declare the family in the head, " +
-                "update its mirror array above, and delete this test — do not let a head " +
-                "claim a family its router cannot actually render. If a new " +
-                "trait-assessment mode was added, add it to TraitProfileModeNames.");
+            .Should().BeEmpty(
+                $"{head} declares every family the catalogue produces. If a new family " +
+                "is added without a screen here, assert the gap by name rather than " +
+                "declaring the family — a head must never claim a family its router " +
+                "cannot actually render.");
     }
 
     [Fact]
-    public void Console_CanPlayEveryModeInTheCatalogue()
+    public void EveryHead_DeclaresEveryFamilyTheCatalogueProduces()
     {
-        // Console was "deliberately the thinnest head" until backlog item 4
-        // gave it real renderers for Monogamy, Day One, Claimed! and Herd. It
-        // is now the head with the *most* coverage: it shipped the
-        // TraitProfile renderer with the family, so it is the only one that can
-        // play Big Five.
-        ControllerFamilies.UnsupportedIn(AllModes(), ConsoleSupported).Should().BeEmpty();
-    }
-
-    [Fact]
-    public void TheOnlyUnsupportedFamilyAnywhere_IsTraitProfile()
-    {
-        // Guards the claim the test above makes by name. If a future mode
-        // introduces a second family the graphical heads lack, this fails
-        // and names it, rather than being absorbed into the Big Five gap.
-        var families = AllModes()
+        // The same invariant read from the other end. The Theory above is driven
+        // by the modes that exist; this is driven by the families they resolve
+        // to, so it still fails for a family whose only mode was removed.
+        var produced = AllModes()
             .Select(ControllerFamilies.TryFor)
-            .Where(f => f is not null && !MauiSupported.Contains(f.Value))
+            .Where(f => f is not null)
             .Select(f => f!.Value)
-            .Distinct();
+            .Distinct()
+            .ToList();
 
-        families.Should().BeEquivalentTo(new[] { ControllerFamily.TraitProfile });
+        foreach (var mirror in new[] { MauiSupported, WinUiSupported, AndroidSupported, ConsoleSupported })
+            produced.Should().BeSubsetOf(mirror);
     }
 
     // REMOVED: NoHeadSilentlyDropsAFamilyItClaimsToSupport

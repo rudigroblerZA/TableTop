@@ -69,6 +69,7 @@ python3 scripts/check-xaml-bindings.py         # bindings resolving to nothing (
 python3 scripts/check-shared-usings.py         # shared type used without importing its namespace
 python3 scripts/check-mvvm-method-parity.py    # MAUI page calling a method its shared VM doesn't expose
 python3 scripts/check-head-family-coverage.py  # a head's declared game support drifted from its test copy
+python3 scripts/check-xaml-resources.py        # a {StaticResource} key that isn't defined anywhere
 python3 scripts/check-async-void.py             # an async void handler with no try/catch (MAUI + native Android)
 python3 scripts/check-ui-compiles.py           # needs the .NET SDK + both UI workloads
 python3 scripts/check-coverage.py <dir>        # coverage floors; needs a Cobertura report (CI runs it)
@@ -121,13 +122,15 @@ silently.
 (`SupportedFamilies`), and `HeadFamilyCoverageTests` / `check-head-family-coverage.py`
 check that declaration against the live registry — the enforcement is against
 each head's own stated claim, not a hardcoded expectation, because a head is
-allowed to support fewer families than the catalogue has. **One head now does:**
-1.36.0 added `ControllerFamily.TraitProfile` with a Console renderer only, so
-WinUI, MAUI and native Android declare six of seven and cannot play the
-trait-assessment modes (Big Five, and Love Languages from 1.37.0).
-That gap is asserted by name in `ControllerFamilyTests` rather than papered
-over — which is the mechanism working as intended: a future gap is a failing
-test rather than a mode that silently does nothing.
+allowed to support fewer families than the catalogue has. None currently does:
+all four heads declare all seven families again as of 1.38.0. It is worth
+knowing that this was briefly untrue on purpose — 1.36.0 shipped
+`ControllerFamily.TraitProfile` with a Console renderer only, and the three
+graphical heads' gap was asserted **by name** rather than papered over by
+declaring a family their routers could not render. That by-name test then
+failed the moment a second trait-assessment mode was added, which is the
+mechanism working: a gap is a failing test, not a mode that silently does
+nothing.
 
 **Shared ViewModels live in `TableTop.Presentation`**, plain `net10.0` with
 no platform SDK dependency — that's what makes them unit-testable without
