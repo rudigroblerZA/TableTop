@@ -320,6 +320,13 @@ jobs:
     runs-on: windows-latest
     needs: xaml
 
+    # Backlog N.7. Without this the job inherits GitHub's 6-hour default, and
+    # that is exactly what it spent: the UI-test step hangs, and two runs on
+    # 2026-08-30 sat for ~6h before being cancelled. No run on this repository
+    # completed between then and 2026-08-31 because of it. 30 minutes is roughly
+    # 20x the job's healthy duration (build ~90s, tests 361ms locally).
+    timeout-minutes: 30
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -350,17 +357,50 @@ jobs:
       # assembly-wide reflection sweeps over every ViewModel, so one red test
       # can mean any of dozens of members. The assertion messages carry the
       # detail, not the test name.
+      # --blame-hang is backlog N.7's instrumentation, and it is the point of
+      # this step's current shape.
+      #
+      # The step hangs on this runner and does not hang locally: the comment
+      # above records 2/2 in 361ms on this job's exact configuration, and that
+      # is the whole diagnostic problem. Two Facts that finish in a third of a
+      # second cannot plausibly be looping, so the fault is in the host — most
+      # likely discovery or shutdown of a test host that references a WinUI app
+      # assembly on a runner with no interactive desktop session. That was not
+      # provable from the logs, because a hung step produces none.
+      #
+      # --blame-hang fixes precisely that: after the timeout the host is killed
+      # and a sequence file is written naming the test that was executing —
+      # or naming none, which is itself the answer, because it would place the
+      # hang outside the test bodies entirely. The dump gives thread stacks.
+      # 5 minutes is ~800x the healthy run time, so a real regression in the
+      # tests would still fail on its own assertion long before this trips.
+      #
+      # This is containment and diagnosis, NOT a root-cause fix: the job now
+      # ends red with evidence instead of stalling for six hours, and the next
+      # run produces the artifact that identifies the cause. It deliberately
+      # does not skip, disable or quarantine either test — both still run and
+      # both still have to pass.
       - name: Run UI tests
         run: dotnet test tests/TableTop.UiTests/TableTop.UiTests.csproj -c Release -p:Platform=x64
              --logger "trx;LogFileName=ui-test-results.trx"
              --results-directory tests/TableTop.UiTests/TestResults
+             --blame-hang
+             --blame-hang-timeout 5m
+             --blame-hang-dump-type full
 
+      # if: always() so the blame artefacts survive the failure they exist to
+      # explain — without it a hang uploads nothing, which is how this went
+      # undiagnosed for a day.
       - name: Upload UI test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: ui-test-results
-          path: tests/TableTop.UiTests/TestResults/*.trx
+          path: |
+            tests/TableTop.UiTests/TestResults/*.trx
+            tests/TableTop.UiTests/TestResults/**/*.dmp
+            tests/TableTop.UiTests/TestResults/**/Sequence*.xml
+          if-no-files-found: warn
 
       # Packaging, still being worked out — left commented deliberately rather
       # than enabled, unlike the steps above. Kept through the item 23 merge

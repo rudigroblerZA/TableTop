@@ -59,8 +59,8 @@ So: the tree is green. Every item below is something green does not catch.
 > **1.36.0** added the trait-analysis layer and Big Five, **1.37.0** added Love
 > Languages on top of it, and **1.38.0** closed **N.6** by giving the three
 > graphical heads a `TraitProfile` screen (see `ARCHITECTURE.md`). What is left
-> is **N.7** (CI's WinUI job hangs — found while watching CI on 2026-08-31, and
-> the reason no run completes), **X.6c** and S.2-S.3.
+> is **N.7** (CI's WinUI job hangs — now contained with a timeout and
+> `--blame-hang` diagnostics, but not yet root-caused), **X.6c** and S.2-S.3.
 >
 > **A fourth pass on 2026-08-31** closed **X.6a** (`Frame` → `Border`, grounded
 > in Microsoft's published migration table the way X.6b was) and settled **S.1**
@@ -72,7 +72,7 @@ So: the tree is green. Every item below is something green does not catch.
 > Two things need a human: tags `v1.35.0`/`v1.35.1` are local and **not
 > pushed**, and `develop` is ahead of `origin`.
 
-### N.7 — CI's WinUI job never finishes: "Run UI tests" hangs
+### N.7 — CI's WinUI job never finishes: "Run UI tests" hangs — **CONTAINED, not root-caused**
 
 **No CI run on this repository has completed since 2026-08-30.** The `Build
 WinUI` job reaches its last step and stays there until the run is cancelled —
@@ -120,10 +120,60 @@ success) versus `33299660962` (2026-08-30, cancelled at ~6h) brackets the
 change. Not reproduced locally — `TableTop.UiTests` is Windows-only and needs
 the Windows App SDK, neither of which this environment has.
 
-**Done when:** the WinUI job completes. A timeout on the step would stop runs
-hanging for six hours, but it is a mitigation and not the fix — the tests need
-to either terminate or be honestly disabled with the reason recorded, and this
-repo's rules say never quarantine a test to get green.
+**Done when:** the WinUI job completes *and* the tests actually run to a result.
+
+---
+
+**Done 2026-08-31 — containment and instrumentation. The root cause is still
+unknown, and that is stated rather than glossed.**
+
+**The decisive evidence is already in the workflow's own comment:** the step's
+history records these tests running *"green twice locally on this job's exact
+configuration (Release, x64): 2/2 in 361ms"*. Two `[Fact]`s that finish in a
+third of a second cannot plausibly be looping. Combined with the step
+breakdown — `Build WinUI` succeeds in ~90s, `Run UI tests` never returns — the
+fault is almost certainly in the **test host**, not the test bodies: discovery
+or shutdown of a host that references a WinUI *app* assembly on a runner with
+no interactive desktop session. Reading the ViewModels supports that; the two
+plausible in-code culprits were checked and cleared:
+
+- No `.Result`, `.Wait()` or `GetAwaiter().GetResult()` anywhere in
+  `TableTop.Presentation` or `TableTop.WinUI`, so no blocking-async deadlock
+  under xUnit's synchronisation context.
+- `CardTurnGameViewModel`'s timer loop is not reachable: it starts only from
+  `StartTimerAsync`, gated on `TimerEnabled`, which is get-only and false under
+  the stubbed constructor arguments `TryConstruct` supplies.
+
+**What changed (`.github/workflows/ci.yml`):**
+
+1. **`timeout-minutes: 30` on the job.** It was inheriting GitHub's 6-hour
+   default, which is exactly what the 2026-08-30 runs spent. ~20x the healthy
+   duration.
+2. **`--blame-hang --blame-hang-timeout 5m --blame-hang-dump-type full`.** This
+   is the diagnosis, and it is why the job can now answer the question it has
+   been refusing to. On hang the host is killed and a sequence file is written
+   naming the test that was executing — **or naming none, which is itself the
+   answer**, because it places the hang outside the test bodies. The dump
+   carries thread stacks. 5m is ~800x the healthy run, so a genuine regression
+   in the tests still fails on its own assertion long before this trips.
+3. **The artefact upload now captures the dumps and sequence files**, not just
+   the `.trx`, and keeps `if: always()`. Without that a hang uploaded nothing —
+   which is how this went a full day undiagnosed.
+
+**Explicitly NOT done, and deliberately so:** neither test is skipped, disabled
+or quarantined. Both still run and both still have to pass. The job now ends
+**red with evidence** rather than stalling invisibly, which is a different thing
+from being green.
+
+**Not verified:** this could not be reproduced here — `TableTop.UiTests` is
+Windows-only and needs the Windows App SDK, and there is no `dotnet` in this
+environment at all. The change is a workflow edit validated by parsing the YAML
+and checking the folded `run` command; whether `--blame-hang` names a test or
+names nothing is the finding the next run will produce.
+
+**Still open:** the root cause. The next red run's `Sequence*.xml` is the thing
+to read, and it should decide between "a specific test hangs" and "the host
+never starts or never exits".
 
 ---
 
