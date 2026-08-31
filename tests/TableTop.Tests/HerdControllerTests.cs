@@ -275,10 +275,10 @@ public sealed class HerdModeTests
     }
 
     [Fact]
-    public void FactoryDispatchesToHerdController()
+    public async Task FactoryDispatchesToHerdController()
     {
         var players = new[] { (IPlayer)Player.Create("A"), Player.Create("B"), Player.Create("C") };
-        var controller = new ControllerFactory().CreateAsync(new HerdMode(), players).GetAwaiter().GetResult();
+        var controller = await new ControllerFactory().CreateAsync(new HerdMode(), players);
 
         controller.Should().BeAssignableTo<IHerdController>();
         controller.Dispose();
@@ -306,11 +306,11 @@ public sealed class HerdModeTests
     }
 
     [Fact]
-    public void FirstPrompt_IsAnActualQuestion()
+    public async Task FirstPrompt_IsAnActualQuestion()
     {
         var players = new[] { (IPlayer)Player.Create("A"), Player.Create("B"), Player.Create("C") };
-        var controller = (IHerdController)new ControllerFactory()
-            .CreateAsync(new HerdMode(), players).GetAwaiter().GetResult();
+        var controller = (IHerdController)(await new ControllerFactory()
+            .CreateAsync(new HerdMode(), players));
 
         HerdPromptReadyEvent? prompt = null;
         controller.PromptReady += (_, e) => prompt = e;

@@ -7,6 +7,25 @@
     Title="Add Players"
     Background="{StaticResource BaizeBrush}">
 
+    <!--
+        LAYOUT: a ScrollView over the form, with the Start button pinned in a
+        second Grid row. This page used to be a bare VerticalStackLayout, so on
+        a phone the player list and the Start button ran off the bottom with
+        nothing able to scroll.
+
+        The Players list below is BindableLayout on a plain stack, NOT a
+        CollectionView: a CollectionView nested in a ScrollView has no bounded
+        height to measure against and renders at zero height on Android — the
+        same trap documented on ClaimedGamePage and MonogamyGamePage. A party
+        roster is small enough that virtualisation buys nothing.
+
+        The saved-roster CollectionView stays as it is: it scrolls on the
+        horizontal axis and carries an explicit HeightRequest, so it has a
+        bounded height to measure against.
+    -->
+    <Grid RowDefinitions="*,Auto">
+
+    <ScrollView Grid.Row="0">
     <VerticalStackLayout Padding="16" Spacing="16">
 
         <!-- Game Mode Info -->
@@ -166,8 +185,8 @@
                 Padding="8,4" />
         </Grid>
 
-        <CollectionView ItemsSource="{Binding Players}">
-            <CollectionView.ItemTemplate>
+        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Players}">
+            <BindableLayout.ItemTemplate>
                 <DataTemplate>
                     <Border Style="{StaticResource CardStyle}">
                         <HorizontalStackLayout Spacing="12">
@@ -213,17 +232,24 @@
                         </HorizontalStackLayout>
                     </Border>
                 </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+            </BindableLayout.ItemTemplate>
+        </VerticalStackLayout>
 
-        <!-- Start Game Button -->
+    </VerticalStackLayout>
+    </ScrollView>
+
+        <!-- Start Game is pinned outside the ScrollView so a thumb can always
+             reach it however long the roster grows, matching GameSelectionPage.
+             It carries its own horizontal margin because the scrolled stack's
+             Padding no longer applies to it. -->
         <Button
+            Grid.Row="1"
             x:Name="StartGameButton"
             Text="Start Game →"
             Style="{StaticResource PrimaryButtonStyle}"
             Clicked="OnStartGameClicked"
-            Margin="0,24,0,0" />
+            Margin="16,12,16,16" />
 
-    </VerticalStackLayout>
+    </Grid>
 
 </ContentPage>

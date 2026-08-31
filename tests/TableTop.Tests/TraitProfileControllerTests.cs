@@ -263,12 +263,12 @@ public sealed class TraitProfileControllerTests
     // ── Dispatch ─────────────────────────────────────────────────────────────
 
     [Fact]
-    public void BigFiveResolvesToTheTraitProfileFamily_AndTheFactoryBuildsThatController()
+    public async Task BigFiveResolvesToTheTraitProfileFamily_AndTheFactoryBuildsThatController()
     {
         var mode = new BigFiveMode();
         ControllerFamilies.For(mode).Should().Be(ControllerFamily.TraitProfile);
 
-        var controller = new ControllerFactory().CreateAsync(mode, Players()).GetAwaiter().GetResult();
+        var controller = await new ControllerFactory().CreateAsync(mode, Players());
         try { controller.Should().BeOfType<TraitProfileController>(); }
         finally { controller.Dispose(); }
     }

@@ -83,7 +83,7 @@ public sealed class ControllerThreadingTests
     }
 
     [Fact]
-    public void Timer_driven_outcomes_marshalled_to_the_owner_thread_stay_consistent()
+    public async Task Timer_driven_outcomes_marshalled_to_the_owner_thread_stay_consistent()
     {
         // The documented contract: a host receiving timer callbacks off-thread
         // marshals them back. This is that host — a single-threaded pump — under
@@ -126,7 +126,13 @@ public sealed class ControllerThreadingTests
                 });
         })).ToArray();
 
-        Task.WaitAll(producers, TimeSpan.FromSeconds(30)).Should().BeTrue("producers should finish");
+        // WhenAny against a delay rather than Task.WaitAll(timeout): same bounded
+        // wait, same "false means it did not finish in time" assertion, but it
+        // does not block a pool thread (xUnit1031). Awaiting the producers alone
+        // would hang the run instead of failing this assertion.
+        var allProducers = Task.WhenAll(producers);
+        (await Task.WhenAny(allProducers, Task.Delay(TimeSpan.FromSeconds(30))) == allProducers)
+            .Should().BeTrue("producers should finish");
         work.CompleteAdding();
         owner.Join(TimeSpan.FromSeconds(30)).Should().BeTrue("the pump should drain and exit");
 
@@ -148,7 +154,7 @@ public sealed class ControllerThreadingTests
     }
 
     [Fact]
-    public void Disposing_from_a_foreign_thread_does_not_deadlock()
+    public async Task Disposing_from_a_foreign_thread_does_not_deadlock()
     {
         // Dispose unsubscribes from game events and nulls the event fields. It is
         // the one operation a host is likely to perform from a different thread
@@ -157,7 +163,9 @@ public sealed class ControllerThreadingTests
 
         var disposer = Task.Run(() => controller.Dispose());
 
-        disposer.Wait(TimeSpan.FromSeconds(5)).Should().BeTrue(
+        // Bounded wait via WhenAny, not disposer.Wait(timeout): a plain await
+        // would hang forever on the very deadlock this test exists to catch.
+        (await Task.WhenAny(disposer, Task.Delay(TimeSpan.FromSeconds(5))) == disposer).Should().BeTrue(
             "Dispose must not block when called off the owner thread — a UI closing a page does exactly this");
     }
 }

@@ -295,13 +295,13 @@ public sealed class RivalsModeTests
     }
 
     [Fact]
-    public void RealSession_AlternatesTeams_ThroughTheActualControllerFactory()
+    public async Task RealSession_AlternatesTeams_ThroughTheActualControllerFactory()
     {
         // The end-to-end proof that ITeamMode actually selects the team
         // manager — players deliberately entered one team at a time.
         var players = new IPlayer[] { P("Amy", "Red"), P("Cara", "Red"), P("Ben", "Blue"), P("Dan", "Blue") };
-        var controller = (ICardTurnController)new ControllerFactory()
-            .CreateAsync(new RivalsMode(), players).GetAwaiter().GetResult();
+        var controller = (ICardTurnController)(await new ControllerFactory()
+            .CreateAsync(new RivalsMode(), players));
 
         var order = new List<string>();
         controller.CardReady += (_, e) => order.Add(e.PlayerName);
@@ -412,7 +412,7 @@ public sealed class PlayerSetupTeamAssignmentTests
     }
 
     [Fact]
-    public void FullPath_FromSetupToSession_AlternatesByTeam()
+    public async Task FullPath_FromSetupToSession_AlternatesByTeam()
     {
         // The end-to-end proof that the setup path actually feeds the engine's
         // team support — not just that each half works alone.
@@ -420,8 +420,8 @@ public sealed class PlayerSetupTeamAssignmentTests
         vm.AssignTeams();
         var players = vm.BuildPlayers();
 
-        var controller = (ICardTurnController)new ControllerFactory()
-            .CreateAsync(new RivalsMode(), players).GetAwaiter().GetResult();
+        var controller = (ICardTurnController)(await new ControllerFactory()
+            .CreateAsync(new RivalsMode(), players));
 
         var order = new List<string>();
         controller.CardReady += (_, e) => order.Add(e.PlayerName);
