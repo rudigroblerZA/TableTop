@@ -97,11 +97,11 @@ public sealed class RollWithItModeTests
     }
 
     [Fact]
-    public void FullPlaythrough_ReachesMultipleCategories_ThroughTheRealFactory()
+    public async Task FullPlaythrough_ReachesMultipleCategories_ThroughTheRealFactory()
     {
         var players = new[] { (TableTop.Core.Abstractions.Players.IPlayer)Player.Create("Alice"), Player.Create("Bob") };
         var controller = (TableTop.Hosting.Abstractions.ICardTurnController)
-            new ControllerFactory().CreateAsync(new RollWithItMode(), players).GetAwaiter().GetResult();
+            (await new ControllerFactory().CreateAsync(new RollWithItMode(), players));
 
         var categoriesSeen = new HashSet<string>();
         controller.CardReady += (_, e) => categoriesSeen.Add(e.Category);

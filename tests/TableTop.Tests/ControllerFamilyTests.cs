@@ -41,7 +41,7 @@ public sealed class ControllerFamilyTests
     };
 
     [Fact]
-    public void DeclaredFamily_MatchesWhatTheFactoryActuallyBuilds_ForEveryMode()
+    public async Task DeclaredFamily_MatchesWhatTheFactoryActuallyBuilds_ForEveryMode()
     {
         // The load-bearing test. ControllerFamilies.For and ControllerFactory
         // dispatch on the same capability interfaces in the same order; if they
@@ -50,7 +50,7 @@ public sealed class ControllerFamilyTests
 
         foreach (var mode in AllModes())
         {
-            var controller = new ControllerFactory().CreateAsync(mode, Players()).GetAwaiter().GetResult();
+            var controller = await new ControllerFactory().CreateAsync(mode, Players());
             try
             {
                 var declared = ControllerFamilies.For(mode);
@@ -141,12 +141,12 @@ public sealed class ControllerFamilyTests
     }
 
     [Fact]
-    public void AModeWithTwoCapabilities_ResolvesTheSameWayInAllThreePlaces()
+    public async Task AModeWithTwoCapabilities_ResolvesTheSameWayInAllThreePlaces()
     {
         var mode = new TwoCapabilityMode();
 
         var declared = ControllerFamilies.For(mode);
-        var controller = new ControllerFactory().CreateAsync(mode, Players()).GetAwaiter().GetResult();
+        var controller = await new ControllerFactory().CreateAsync(mode, Players());
 
         try
         {
