@@ -141,16 +141,25 @@ public sealed class ViewModelBindingTests
     /// Every settable property must notify — and must return.
     ///
     /// <para>
-    /// <b>Both accessors are on a deadline, and the read is the one that
-    /// matters (backlog N.7).</b> This test hung CI indefinitely. The first
-    /// attempt at a fix guarded only the write, and the run hung again for
-    /// exactly as long: <see cref="TryMakeDistinctValue"/> calls
-    /// <c>p.GetValue</c> to pick a distinct candidate, so a blocking
-    /// <i>getter</i> never reached the guard. Note which test hangs —
+    /// <b>Every call this test makes into product code is on a deadline
+    /// (backlog N.7).</b> This test hung CI indefinitely, and two rounds of
+    /// guessing narrowed it the slow way. Guarding only the write left
+    /// the run hanging for exactly as long, because
+    /// <see cref="TryMakeDistinctValue"/> calls <c>p.GetValue</c> first, to
+    /// pick a distinct candidate. Guarding both accessors then produced the
+    /// same five-minute hang with <i>neither</i> deadline firing — which
+    /// clears both accessors and puts the fault in the type sweep or in
+    /// construction. Those are now on the deadline as well, so whatever
+    /// blocks has to name itself.
+    /// </para>
+    ///
+    /// <para>
+    /// One inference to avoid repeating: that
     /// <see cref="Every_command_property_is_non_null_after_construction"/>
-    /// constructs the same ViewModels and reads only <c>ICommand</c>
-    /// properties, and it passes. Reading every settable property is the
-    /// surface only this test touches.
+    /// "passes, so construction is fine". A hung run prints no per-test
+    /// results, and xUnit does not order the facts in a class, so the aborted
+    /// runs never showed that test running at all. Blame names the test in
+    /// flight; it certifies nothing about any other.
     /// </para>
     ///
     /// <para>
@@ -166,11 +175,40 @@ public sealed class ViewModelBindingTests
         var failures = new List<string>();
         var exercised = 0;
 
-        foreach (var vmType in ViewModelTypes())
+        // The reflection sweep itself is on the deadline, because it is one of
+        // the two places left that could hang once both accessors were cleared.
+        var discovered = await WithDeadline(() => ViewModelTypes().ToList());
+
+        discovered.Completed.Should().BeTrue(
+            $"reflecting over the ViewModel types must return within {PropertyDeadline.TotalSeconds:0}s — " +
+            "loading every type in a WinUI assembly is not obviously cheap, and an unbounded sweep " +
+            "hangs CI (backlog N.7)");
+
+        foreach (var vmType in discovered.Value)
         {
             if (!typeof(INotifyPropertyChanged).IsAssignableFrom(vmType)) continue;
-            if (!TryConstruct(vmType, out var vm, out _)) continue;
 
+            // Construction is on the deadline too. It is shared with
+            // Every_command_property_is_non_null_after_construction, which was
+            // once read as proof that constructing is safe — but nothing in the
+            // aborted run shows that test ever ran, so it proves nothing. See
+            // backlog N.7.
+            var built = await WithDeadline(() =>
+            {
+                var ok = TryConstruct(vmType, out var instance, out _);
+                return (Ok: ok, Instance: instance);
+            });
+
+            if (!built.Completed)
+            {
+                failures.Add($"{vmType.Name} — the CONSTRUCTOR did not return within " +
+                             $"{PropertyDeadline.TotalSeconds:0}s (backlog N.7)");
+                continue;
+            }
+
+            if (!built.Value.Ok) continue;
+
+            var vm = built.Value.Instance;
             var raised = new List<string>();
             var gate = new object();
 
@@ -241,12 +279,15 @@ public sealed class ViewModelBindingTests
             }
         }
 
-        exercised.Should().BeGreaterThan(0,
-            "no settable property was exercised, so this test proved nothing");
-
+        // Failures first, deliberately. When a constructor or an accessor blows
+        // its deadline nothing gets exercised, and asserting the count first
+        // would replace the message naming the culprit with "proved nothing".
         failures.Should().BeEmpty(
             "a bound property must notify and must return — assign through SetField, and do no " +
-            $"blocking work in an accessor. {string.Join("\n  ", failures)}");
+            $"blocking work in an accessor or a constructor. {string.Join("\n  ", failures)}");
+
+        exercised.Should().BeGreaterThan(0,
+            "no settable property was exercised, so this test proved nothing");
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
