@@ -112,6 +112,15 @@ public static class ModeManifestExtensions
                 ControllerFamily.DailyCampaign =>
                     ((IDailyDeckProvider)mode).GetDailyDeck(),
 
+                // Trait-assessment modes supply an item bank. Added with the
+                // family rather than after it: the Claimed! arm below was missed
+                // when IClaimedDeckProvider landed, and the mode reported 0 cards
+                // for a full version — silently dropped from every capped
+                // SurpriseMe query, and from README's enforced card count.
+                ControllerFamily.TraitProfile =>
+                    ((ITraitAssessmentProvider)mode).GetItemBank()
+                        .Cast<TableTop.Core.Abstractions.Cards.ICard>().ToList(),
+
                 // GetCards([]) is safe for all BaseGameModeDefinition subclasses —
                 // the players list is only used for restriction pre-filtering,
                 // which we skip here to get the full unrestricted catalogue.

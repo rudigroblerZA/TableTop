@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.35.4**, August 2026. This replaces the accumulated
+Current as of **1.36.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -32,7 +32,7 @@ MAUI need their respective SDKs, which this environment does not have — see
 
 ## Content
 
-**101 modes, 3,721 cards, all compiled in.** (README carries the same pair and
+**102 modes, 3,771 cards, all compiled in.** (README carries the same pair and
 is the enforced copy — `DocumentationAccuracyTests` fails when it drifts.
 Nothing enforces this line, which is why it sat two releases behind at 99 /
 3,657 until backlog X.5. Trust README's numbers over these if they disagree.) Every mode builds its deck from an
@@ -887,6 +887,88 @@ async work to block on, a different shape rather than a template to copy.
 
   PATCH: a fix in one head. No public-surface movement — `api/*.api.txt`
   unchanged, and no engine assembly was touched.
+
+- **1.36.0** added a trait-analysis layer and **Big Five**, the first mode that
+  ends without a winner.
+
+  **What "expand scoring" actually required.** `IScoringStrategy` returns an
+  `int`: a card produces a scalar delta and the engine adds it to a running
+  total. A trait assessment needs a *vector* — one running total per dimension
+  from a single response — and it needs the range each total could have fallen
+  between, because the answer a player wants is "where did I land", not "how
+  many points". Neither bolts onto a scalar contract without every existing
+  strategy growing members that mean nothing for it, so `ITraitScoringStrategy`
+  is a sibling of `IScoringStrategy` rather than an extension of it, and
+  `ControllerFamily.TraitProfile` is a seventh family rather than a card-turn
+  mode with an unusual strategy.
+
+  **The layer is instrument-agnostic; Big Five is content.** Traits are
+  string-keyed against a `TraitScale` rather than an enum, so a mode can define
+  its own dimensions without the engine growing a member per instrument — the
+  same reasoning that keeps every deck in this repo compiled-in content rather
+  than an engine concept. The five OCEAN dimensions and the fifty items live in
+  `TableTop.Games`, where the rest of the content is.
+
+  **The scoring, because it is the part a mistake hides in.** An item's weight
+  carries keying in its *sign* and loading in its *magnitude*. Reverse-keying
+  reflects the response across the scale (`Minimum + Maximum - r`) rather than
+  negating it, so forward and reverse items contribute on the same 1-5 range and
+  the totals simply add up; negation would put them on different ranges and
+  require a correction elsewhere. Bounds are reported per item and per trait, so
+  a heavily-loaded item widens the denominator as much as the numerator — without
+  that, `TraitScore.Normalize` clamps and the symptom is a dimension pinned at
+  100 rather than an obvious fault.
+
+  **The item bank is five-forward/five-reverse per dimension, and that is a
+  correctness property.** A player who agrees with every statement scores exactly
+  50 on all five dimensions instead of 100 on all five. Acquiescence bias is the
+  easiest way to make a personality result meaningless, and an all-positive bank
+  measures nothing but how agreeable the player feels toward the quiz.
+  `BigFiveItemBank.IsBalanced` computes this from the bank so a future item that
+  tilts a dimension fails a test rather than shifting everyone's score quietly.
+
+  **Skips are absences, not neutral answers.** A player left out of a
+  `SubmitResponses` call contributes nothing to that item *and* does not widen
+  their denominator. Recording a skip as `Neutral` would be easier and wrong:
+  neutral is a stated opinion that pulls a dimension toward its midpoint, a skip
+  is missing data. Someone who skips forty of fifty items should show ten items'
+  worth of a real profile, not fifty items' worth of a flattened one.
+
+  **Results are not percentiles, and the code says so where it is computed.** A
+  real inventory reports position against a normed population; this reports
+  position on the range these fifty items can produce. The distinction lives on
+  `TraitScore.Normalized` and `TraitBand` rather than in a disclaimer, because
+  "you scored 82 on Openness" reads as a percentile to nearly everyone. The
+  fifth dimension is keyed `Neuroticism` — anything else makes the output
+  unidentifiable to someone who knows the model — and displayed as
+  "Sensitivity", because the word is not worth the damage at a party.
+
+  **Only Console can play it, and that is stated rather than hidden.** Console
+  shipped a renderer with the family. WinUI, MAUI and native Android declare six
+  of seven families, so Big Five is the one mode they cannot open; all three
+  already degrade to a "needs a *TraitProfile* screen" message rather than
+  crashing, which is the fallback backlog item 4 installed. It would have been
+  easy to keep the three head-coverage tests green by declaring the family in
+  each head and letting its router fall through — that is precisely the failure
+  item 4 was written after, when four modes silently did nothing. The tests now
+  assert the gap **by name**, so a head that gains the screen fails until it says
+  so, and a *second* unsupported mode fails rather than hiding behind the first.
+
+  Adding a capability interface still means matching arms in
+  `ControllerFamilies.TryFor` and `ControllerFactory`, plus the manifest arm
+  derived from the first. All three were added in matching positions, and the
+  registry-wide parity tests caught the two places that would otherwise have
+  drifted: `ModeManifestTests`'s own family switch (which would have expected 0
+  cards against an actual 50) and `ControllerFamilyTests.FamilyOfController`.
+
+  MINOR: new capability and a new mode. `api/*.api.txt` gains 24 types across the
+  three engine assemblies and loses nothing. **The snapshots were computed by
+  hand** — this pass had no `dotnet` — by mirroring `PublicApiSurfaceTests`'s
+  reflection format; re-emitting the three unmodified files reproduced them
+  byte-for-byte first, which is the evidence the format was understood, but the
+  additions themselves are unverified until someone runs
+  `TABLETOP_UPDATE_API=1 dotnet test`. `PublicApiSurfaceTests` is what will say
+  so, precisely, and the fix is one command.
 
 ## What genuinely doesn't exist here
 

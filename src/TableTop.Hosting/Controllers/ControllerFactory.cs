@@ -24,6 +24,7 @@ namespace TableTop.Hosting.Controllers;
 /// <item><see cref="IHerdDeckProvider"/> → <see cref="HerdController"/></item>
 /// <item><see cref="IClaimedDeckProvider"/> → <see cref="ClaimedController"/></item>
 /// <item><see cref="IDailyDeckProvider"/> → <see cref="DayOneController"/></item>
+/// <item><see cref="ITraitAssessmentProvider"/> → <see cref="TraitProfileController"/></item>
 /// <item><see cref="IFlowAwareMode"/> + <see cref="IGameModeDefinition"/> → <see cref="CardTurnController"/> with <c>FlowAwareProgressionStrategy</c></item>
 /// <item><see cref="IDiceProgressionMode"/> + <see cref="IGameModeDefinition"/> → <see cref="CardTurnController"/> with <c>DiceCategoryProgressionStrategy</c></item>
 /// <item><see cref="IGameModeDefinition"/> → <see cref="CardTurnController"/> with <c>DifficultyProgressionStrategy</c></item>
@@ -113,6 +114,15 @@ public sealed class ControllerFactory : IControllerFactory
             ControllerFamily.DailyCampaign => Task.FromResult<IGameController>(
                 new DayOneController(((IDailyDeckProvider)mode).GetDailyDeck(), players, mode.Name)),
 
+            // ── Big Five — mode supplies its own scale and item bank ─────────
+            // Position matches ControllerFamilies.TryFor arm for arm; see the
+            // note above on why that ordering is maintained by hand.
+            ControllerFamily.TraitProfile => Task.FromResult<IGameController>(
+                new TraitProfileController(
+                    players,
+                    ((ITraitAssessmentProvider)mode).GetTraitScale(),
+                    ((ITraitAssessmentProvider)mode).GetItemBank())),
+
             // ── Card-turn — one controller type, three progression strategies ─
             // IFlowAwareMode and IDiceProgressionMode change the strategy, not
             // the controller, which is why TryFor folds all three into CardTurn
@@ -125,7 +135,7 @@ public sealed class ControllerFactory : IControllerFactory
             _ => throw new NotSupportedException(
                 $"No controller registered for mode '{mode.Name}' " +
                 $"(type: {mode.GetType().Name}). Implement IGameModeDefinition, " +
-                $"IQuestionBankProvider, IMonogamyDeckProvider, IDailyDeckProvider, IClaimedDeckProvider, IHerdDeckProvider, IFlowAwareMode, or IDiceProgressionMode on the mode.")
+                $"IQuestionBankProvider, IMonogamyDeckProvider, IDailyDeckProvider, IClaimedDeckProvider, IHerdDeckProvider, ITraitAssessmentProvider, IFlowAwareMode, or IDiceProgressionMode on the mode.")
         };
     }
 

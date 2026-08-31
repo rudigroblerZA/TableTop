@@ -43,6 +43,20 @@ public enum ControllerFamily
 
     /// <summary>Everyone answers at once; scoring turns on agreement (Herd).</summary>
     SimultaneousAnswer = 5,
+
+    /// <summary>
+    /// Everyone answers the same statements; the session ends in a profile per
+    /// player rather than a winner (Big Five).
+    ///
+    /// <para>
+    /// The first family whose controller produces no score at all. That is
+    /// exactly why it is a family and not a card-turn mode with an unusual
+    /// scoring strategy: <c>IScoringStrategy</c> returns an <c>int</c>, and a
+    /// trait assessment needs one running total per dimension plus the bounds
+    /// each one could have fallen between.
+    /// </para>
+    /// </summary>
+    TraitProfile = 6,
 }
 
 /// <summary>
@@ -99,6 +113,7 @@ public static class ControllerFamilies
             IHerdDeckProvider => ControllerFamily.SimultaneousAnswer,
             IClaimedDeckProvider => ControllerFamily.AreaControl,
             IDailyDeckProvider => ControllerFamily.DailyCampaign,
+            ITraitAssessmentProvider => ControllerFamily.TraitProfile,
 
             // Everything the factory can still build a card-turn controller for.
             // IFlowAwareMode and IDiceProgressionMode change the progression
@@ -124,7 +139,8 @@ public static class ControllerFamilies
         TryFor(mode) ?? throw new NotSupportedException(
             $"No controller family for mode '{mode.Name}' (type: {mode.GetType().Name}). " +
             "Implement IGameModeDefinition, IQuestionBankProvider, IMonogamyDeckProvider, " +
-            "IDailyDeckProvider, IClaimedDeckProvider or IHerdDeckProvider on the mode.");
+            "IDailyDeckProvider, IClaimedDeckProvider, IHerdDeckProvider or " +
+            "ITraitAssessmentProvider on the mode.");
 
     /// <summary>Every family a mode in the catalogue can currently produce.</summary>
     public static IReadOnlyList<ControllerFamily> All { get; } =

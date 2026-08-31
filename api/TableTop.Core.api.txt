@@ -1,3 +1,74 @@
+abstract interface TableTop.Core.Abstractions.Analysis.ITraitItemCard
+    IReadOnlyDictionary<String, Double> TraitWeights { get; }
+abstract interface TableTop.Core.Abstractions.Analysis.ITraitScoringStrategy
+    String Name { get; }
+    TraitContribution Contribute(ITraitItemCard item, String traitKey, LikertResponse response)
+sealed enum TableTop.Core.Abstractions.Analysis.LikertResponse
+    Agree = 4
+    Disagree = 2
+    Neutral = 3
+    StronglyAgree = 5
+    StronglyDisagree = 1
+sealed enum TableTop.Core.Abstractions.Analysis.TraitBand
+    Average = 2
+    High = 3
+    Low = 1
+    VeryHigh = 4
+    VeryLow = 0
+sealed class TableTop.Core.Abstractions.Analysis.TraitContribution
+    .ctor(Double value, Double minimum, Double maximum)
+    Double Maximum { get; }
+    Double Minimum { get; }
+    Double Value { get; }
+sealed class TableTop.Core.Abstractions.Analysis.TraitDefinition
+    .ctor(String key, String name, String lowLabel, String highLabel, String description)
+    String Description { get; }
+    String HighLabel { get; }
+    String Key { get; }
+    String LowLabel { get; }
+    String Name { get; }
+sealed class TableTop.Core.Abstractions.Analysis.TraitDivergence
+    .ctor(TraitDefinition trait, TraitScore left, TraitScore right)
+    Boolean IsMeaningful { get; }
+    Double Difference { get; }
+    TraitDefinition Trait { get; }
+    TraitScore Left { get; }
+    TraitScore Right { get; }
+sealed class TableTop.Core.Abstractions.Analysis.TraitProfile
+    .ctor(String playerName, TraitScale scale, IEnumerable<TraitScore> scores, Int32 answeredItems)
+    IReadOnlyList<TraitScore> Scores { get; }
+    IReadOnlyList<TraitScore> Strongest(Int32 count = default)
+    Int32 AnsweredItems { get; }
+    String PlayerName { get; }
+    TraitScale Scale { get; }
+    TraitScore Find(String traitKey)
+sealed class TableTop.Core.Abstractions.Analysis.TraitProfileComparison
+    .ctor(TraitProfile left, TraitProfile right, IEnumerable<TraitDivergence> divergences)
+    Double Similarity { get; }
+    IReadOnlyList<TraitDivergence> Divergences { get; }
+    Int32 ComparedDimensions { get; }
+    TraitDivergence ClosestAlignment { get; }
+    TraitDivergence GreatestDivergence { get; }
+    TraitProfile Left { get; }
+    TraitProfile Right { get; }
+sealed class TableTop.Core.Abstractions.Analysis.TraitScale
+    .ctor(String name, IEnumerable<TraitDefinition> traits)
+    Boolean Contains(String key)
+    IReadOnlyList<TraitDefinition> Traits { get; }
+    String Name { get; }
+    TraitDefinition Find(String key)
+sealed class TableTop.Core.Abstractions.Analysis.TraitScore
+    .ctor(TraitDefinition trait, Double raw, Double minimum, Double maximum, Int32 itemCount)
+    Boolean HasData { get; }
+    Double Maximum { get; }
+    Double Minimum { get; }
+    Double Normalize(Double raw, Double minimum, Double maximum)
+    Double Normalized { get; }
+    Double Raw { get; }
+    Int32 ItemCount { get; }
+    TraitBand Band { get; }
+    TraitBand BandFor(Double normalized)
+    TraitDefinition Trait { get; }
 sealed enum TableTop.Core.Abstractions.Cards.AnswerLabel
     A = 0
     B = 1
@@ -241,6 +312,7 @@ sealed enum TableTop.Core.Abstractions.Game.ControllerFamily
     Monogamy = 2
     Quiz = 1
     SimultaneousAnswer = 5
+    TraitProfile = 6
 sealed class TableTop.Core.Abstractions.Game.GameEndedEventArgs
     .ctor()
     IReadOnlyList<IPlayer> FinalStandings { get; set; }
@@ -342,6 +414,9 @@ abstract interface TableTop.Core.Abstractions.Game.ITableShapeMode
 abstract interface TableTop.Core.Abstractions.Game.ITeamMode
     Int32 MinimumPlayersForTeams { get; }
     Int32 PreferredTeamCount { get; }
+abstract interface TableTop.Core.Abstractions.Game.ITraitAssessmentProvider
+    IReadOnlyList<TraitItemCard> GetItemBank()
+    TraitScale GetTraitScale()
 sealed class TableTop.Core.Abstractions.Game.ModeManifest
     .ctor()
     Boolean Equals(ModeManifest other)
@@ -560,6 +635,30 @@ sealed class TableTop.Core.Abstractions.SharedRandomSource
     Int32 Next(Int32 minValue, Int32 maxValue)
     SharedRandomSource Instance
     Void NextBytes(Span<Byte> buffer)
+sealed class TableTop.Core.Domain.Analysis.TraitItemCard
+    .ctor(Guid id, String statement, IReadOnlyDictionary<String, Double> traitWeights, String category, Difficulty difficulty = default, String title = default, IEnumerable<String> tags = default, IRestriction restriction = default)
+    IReadOnlyDictionary<String, Double> TraitWeights { get; }
+    TraitItemCard Single(String statement, String traitKey, Boolean reverseKeyed = default, String category = default)
+sealed class TableTop.Core.Domain.Analysis.TraitProfileBuilder
+    .ctor(TraitScale scale, ITraitScoringStrategy scoring = default)
+    IReadOnlyList<String> Players { get; }
+    IReadOnlyList<TraitProfile> BuildAll()
+    Int32 AnsweredCount(String playerName)
+    TraitProfile Build(String playerName)
+    TraitScale Scale { get; }
+    Void Clear()
+    Void Record(String playerName, ITraitItemCard item, LikertResponse response)
+static class TableTop.Core.Domain.Analysis.TraitProfileComparer
+    IReadOnlyList<TraitProfileComparison> CompareAll(IEnumerable<TraitProfile> profiles)
+    TraitProfileComparison Compare(TraitProfile left, TraitProfile right)
+    TraitProfileComparison MostAlike(IEnumerable<TraitProfile> profiles)
+    TraitProfileComparison MostDifferent(IEnumerable<TraitProfile> profiles)
+sealed class TableTop.Core.Domain.Analysis.WeightedLikertScoring
+    .ctor()
+    Int32 Maximum
+    Int32 Minimum
+    String Name { get; }
+    TraitContribution Contribute(ITraitItemCard item, String traitKey, LikertResponse response)
 sealed class TableTop.Core.Domain.Cards.AttributeDirectedTextResolver
     .ctor(String attributeKey, String defaultText, IDictionary<String, String> variants)
     String Resolve(IPlayer player)
