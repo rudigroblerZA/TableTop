@@ -57,6 +57,19 @@ public static class ServiceCollectionExtensions
     /// <param name="rosterFilePath">
     /// Optional custom path for the JSON saved-roster file (backlog item 28).
     /// Same default and the same reasoning as <paramref name="sessionFilePath"/>.
+    ///
+    /// <para>
+    /// <b>Only Console passes this today.</b> The graphical heads leave it null
+    /// and never resolve <see cref="IRosterRepository"/> at all — they persist
+    /// rosters through <c>TableTop.Presentation</c>'s <c>IRosterStore</c>
+    /// instead, a separation backlog S.1 settled as deliberate. The
+    /// registration below is lazy, so nothing is constructed and the default
+    /// path is never touched in those heads; it is dead weight rather than a
+    /// bug. It would stop being dead the moment a graphical head resolved
+    /// <see cref="IRosterRepository"/> — and it would then be writing to
+    /// <c>AppContext.BaseDirectory</c>, which an installed app cannot write to.
+    /// A head that starts using it must pass a real path here.
+    /// </para>
     /// </param>
     public static IServiceCollection AddTableTopHosting(
         this IServiceCollection services,

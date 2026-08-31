@@ -59,8 +59,14 @@ So: the tree is green. Every item below is something green does not catch.
 > **1.36.0** added the trait-analysis layer and Big Five, **1.37.0** added Love
 > Languages on top of it, and **1.38.0** closed **N.6** by giving the three
 > graphical heads a `TraitProfile` screen (see `ARCHITECTURE.md`). What is left
-> is **X.6a** (`Frame` → `Border`, wants a device), **X.6c** (compiled bindings,
-> does not) and S.1-S.3.
+> is **X.6c** and S.2-S.3.
+>
+> **A fourth pass on 2026-08-31** closed **X.6a** (`Frame` → `Border`, grounded
+> in Microsoft's published migration table the way X.6b was) and settled **S.1**
+> (two roster models, kept deliberately). It also found that **X.6c is blocked**
+> on a structural problem the item did not know about — 11 of 16 `DataTemplate`
+> scopes bind nested types XAML cannot name — so what is genuinely left is X.6c's
+> prerequisite refactor, plus S.2-S.3, both of which need hardware.
 >
 > Two things need a human: tags `v1.35.0`/`v1.35.1` are local and **not
 > pushed**, and `develop` is ahead of `origin`.
@@ -536,14 +542,42 @@ forms (4), across `GameplayPage`, `GameSelectionPage`, `PlayerSetupPage`,
 
 **Not done, and split out by risk rather than deferred as one lump:**
 
-- **X.6a — `Frame` → `Border` (8 CS0618).** Only `GameplayPage`'s `x:Name`d
-  frames warn, but `Frame` appears ~28 times across 10 XAML files plus the
-  shared `CardStyle`/`PlayingCardStyle` styles that target it. `Border` is not
-  a drop-in: `CornerRadius`/`BorderColor`/`HasShadow` become
-  `StrokeShape`/`Stroke`/`StrokeThickness` with a `RoundRectangle`. This is a
-  **visual** change across every screen, and nothing here can verify it — no
-  device, and MAUI UI is not screenshot-testable in this repo. Doing it blind
-  is exactly the unverifiable change the docs warn against.
+- **X.6a — `Frame` → `Border` (8 CS0618) — FIXED 2026-08-31.** 35 elements
+  across 11 XAML files, plus the shared `CardStyle`/`PlayingCardStyle` that
+  targeted `Frame`.
+
+  This item called the change unverifiable, and it was right to be wary — but
+  the same thing that unblocked X.6b applies: Microsoft publishes the mapping.
+  "What's new in .NET MAUI 9 → Deprecated APIs → Frame" states it directly:
+  `Frame.BorderColor` becomes `Border.Stroke`, `Frame.CornerRadius` becomes part
+  of `Border.StrokeShape`, and it warns that padding may need restating.
+
+  **That padding warning is the whole risk, and an audit retired it.** `Frame`
+  carries an implicit default padding; `Border` does not. Every one of the 35
+  elements was checked: each either sets `Padding` explicitly or takes a style
+  that does, so nothing depended on the implicit default. Three further defaults
+  were confirmed from the API docs rather than assumed — `Border.Stroke` is
+  `null` (so the two elements that set no `BorderColor` gain no stroke),
+  `StrokeShape` is `Rectangle`, `StrokeThickness` is 1.0.
+
+  Two elements carried `HasShadow="True"` (Claimed's pending card, Monogamy's
+  active card). `Border` has no `HasShadow`, and dropping it would have silently
+  flattened both. They now carry an explicit `Shadow` — the exact values
+  `PlayingCardStyle` already uses for card stock, reused rather than invented.
+  `HasShadow="False"` simply went, being `Border`'s default.
+
+  Two happy findings: the MAUI head **already contained hand-written `Border`s**
+  using `Stroke`/`StrokeShape` (PlayerSetupPage, GameplayPage), so the result
+  matches an idiom the file already had; and `check-maui-xaml.py` independently
+  verifies the direction, since it knows `Border` has no
+  `BorderColor`/`CornerRadius`/`HasShadow` and `Frame` has no `Stroke*`.
+
+  **Evidence:** all eight gates pass, every MAUI XAML file parses, and no
+  `Frame` remains. `x:Name="CardFrame"` is kept — it is a name, and the
+  code-behind animations on it (`ScaleXToAsync`, `FadeToAsync`,
+  `TranslateToAsync`, `Opacity`, `TranslationY`) are all `VisualElement`
+  members that carry over unchanged. Still no build and no device: the visual
+  result has not been seen.
 - **X.6b — `UseSafeArea` (18 XC0618) — FIXED 2026-08-30.** The blocker was
   documentation access, not risk, and the documentation was reachable this
   pass. Microsoft Learn's safe-area page carries an explicit migration table:
@@ -577,17 +611,50 @@ forms (4), across `GameplayPage`, `GameSelectionPage`, `PlayerSetupPage`,
   here — it is a denylist keyed on tag name and has no `ContentPage` rules, so
   `SafeAreaEdges` is trusted from the API docs, not from the gate. Safe-area
   behaviour has still never been observed on hardware.
-- **X.6c — compiled bindings (492 XC0022).** Adding `x:DataType` to every
-  binding scope. Mechanical but wide, and it is a *performance* advisory, not a
-  deprecation — nothing breaks at the next MAUI major. Genuinely valuable
-  though: compiled bindings surface binding errors at build time, which is the
-  same class of bug `check-xaml-bindings.py` exists to catch by hand.
+- **X.6c — compiled bindings (492 XC0022) — BLOCKED, and this item's premise
+  was wrong.** It said "mechanical but wide". It is neither: it is blocked on a
+  structural problem that has to be fixed first.
+
+  **XAML cannot name a nested type.** There is no `Outer+Inner` syntax XamlC
+  accepts, and **11 of the 16 `DataTemplate` scopes in this head bind to nested
+  classes**:
+
+  | ViewModel | nested item type | template |
+  |---|---|---|
+  | `ClaimedGameViewModel` | `TerritoryOption` | ClaimedGamePage |
+  | `HerdGameViewModel` | `PlayerAnswerEntry` | HerdGamePage |
+  | `MillionaireGameViewModel` | `AnswerOption`, `LifelineOption` | MillionaireGamePage ×2 |
+  | `MonogamyGameViewModel` | `ZoneOption` | MonogamyGamePage |
+  | `PlayerSetupViewModel` | `SavedRosterOption`, `PlayerEntry` | PlayerSetupPage ×2 |
+  | `TraitProfileGameViewModel` | `PlayerResponseEntry`, `PlayerProfileView`, `TraitScoreView` | TraitProfileGamePage ×3 |
+
+  Only `GameSelectionViewModel` (`Archetype`, `GameModeItem`) and
+  `RoasterViewModel` (`RoasterTemplate`, `SavedPlayer`, `SavedRoster`) expose
+  top-level item types.
+
+  **And it is not partially doable per page.** A `DataTemplate` without its own
+  `x:DataType` inherits the enclosing scope's, so annotating a page root makes
+  every un-annotated template inside it resolve its bindings against the *page's*
+  ViewModel. That is not a silent empty binding — with compiled bindings it is a
+  **build error**. So a page can be annotated only when all of its templates can
+  be, which rules out 8 of the 11 pages.
+
+  **The prerequisite is a real refactor:** promote those 11 nested classes to
+  top-level types in `TableTop.Presentation.ViewModels`. That changes the shared
+  layer's public shape for all four heads and touches their tests. It is a
+  sound change — arguably better design regardless — but it is its own item, and
+  it wants a machine that can build MAUI, because the failure mode of getting a
+  single binding path wrong flips from "renders empty" to "does not compile".
+
+  **Not attempted in the pass that found this.** No `dotnet`, so an unverifiable
+  public refactor of the shared ViewModel layer whose failure mode is a broken
+  build is exactly the trade the rest of this backlog refuses to make.
 
 **Done when:** all three land and MAUI's CI step carries
-`-p:TreatWarningsAsErrors=true` like the other three heads. X.6b is done.
-X.6a still wants someone who can run the app — it is a genuine visual change
-with no documented one-to-one mapping, which is exactly what X.6b turned out
-*not* to be. X.6c never needed a device.
+`-p:TreatWarningsAsErrors=true` like the other three heads. **X.6a and X.6b are
+done.** X.6c is blocked on promoting 11 nested ViewModel classes to top-level
+types — see above; that is the next piece of work here, and unlike the other
+two it genuinely wants a machine that can build MAUI.
 
 ---
 
@@ -769,7 +836,7 @@ than a line count.
 
 ## Someday
 
-### S.1 — Two roster models answering one question
+### S.1 — Two roster models answering one question — **DECIDED: keep both**
 
 `IRosterRepository` / `RosterProfile` / `JsonRosterRepository` in
 `TableTop.Hosting` (async, JSON file, used only by Console) and `IRosterStore` /
@@ -793,6 +860,52 @@ moment someone resolves `IRosterRepository` from a graphical head.
 **Decide first:** one model or two? If two, document the split as intentional in
 `IRosterStore`'s docs. If one, `SavedRoster` (richer — carries teams) is the
 better base.
+
+**Answer: two, deliberately. Documented in `IRosterStore`'s doc comment, with a
+cross-reference from `RosterProfile` so a reader arriving at either half finds
+the reasoning.**
+
+**This item's own framing was wrong, which is why the answer went the other
+way.** `SavedRoster` is not "richer". Neither shape is a superset:
+
+| | `SavedPlayer` (Presentation) | `PlayerProfile` (Hosting) |
+|---|---|---|
+| `Team` | ✅ | ❌ |
+| stable `Id` | ❌ | ✅ |
+| `IsParent` / `IsMarried` | ❌ | ✅ |
+| `SchemaVersion` | ❌ | ✅ |
+| `Gender` / `Age` | nullable | non-null, defaulted |
+
+Picking either as "the base" silently drops fields the other half depends on;
+merging them produces a union type where every consumer ignores half of it.
+
+Three further reasons, all found while deciding:
+
+- **The nullability split is semantic, not sloppy.** `SavedPlayer` allows null
+  `Gender`/`Age` because it models setup input *part-way through being entered*.
+  `PlayerProfile` defaults them because it models a *durable profile*. Same
+  words, different lifecycle stage.
+- **The dependency direction rules out the cheap merge.** Console deliberately
+  does not reference `TableTop.Presentation` (item 28), and `Presentation` sits
+  above `Hosting`. A shared type in `Hosting` drags `Team` — a presentation
+  concept — into the engine; a shared type in `Presentation` forces Console onto
+  the ViewModel layer.
+- **Sync versus async is load-bearing.** `IRosterStore` is synchronous because
+  per-head key-value storage is; `IRosterRepository` is asynchronous because it
+  is file I/O. Unifying makes one of them lie.
+
+**The accepted cost is stated rather than explained away:** a roster saved in
+Console is invisible to the graphical heads and vice versa, even on one machine.
+
+**The side effect is now flagged where it can bite.** `AddTableTopHosting`'s
+`rosterFilePath` registration is lazy and never resolved by a graphical head, so
+it stays dead weight rather than a bug — but its doc now says plainly that a head
+which *starts* resolving `IRosterRepository` would be writing to
+`AppContext.BaseDirectory`, which an installed app cannot write to, and must pass
+a real path.
+
+**Done when:** ✅ decided and documented. Reopen only if a head needs to read the
+other's rosters, which is the one requirement that would force convergence.
 
 ### S.2 — Xbox controller support
 

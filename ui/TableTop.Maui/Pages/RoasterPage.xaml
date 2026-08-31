@@ -30,10 +30,10 @@
                             SelectionChanged="OnTemplateSelectionChanged">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame Style="{StaticResource CardStyle}" Padding="12" Margin="0,4">
-                            <Frame.GestureRecognizers>
+                        <Border Style="{StaticResource CardStyle}" Padding="12" Margin="0,4">
+                            <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnTemplateTapped" />
-                            </Frame.GestureRecognizers>
+                            </Border.GestureRecognizers>
                             <VerticalStackLayout Spacing="2">
                                 <Label Text="{Binding Name}"
                                        FontFamily="{StaticResource DisplayFont}"
@@ -46,7 +46,7 @@
                                        FontSize="10"
                                        TextColor="{StaticResource PrimaryColor}" />
                             </VerticalStackLayout>
-                        </Frame>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
@@ -160,7 +160,7 @@
                 </CollectionView.EmptyView>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame Style="{StaticResource CardStyle}" Padding="12" Margin="0,4">
+                        <Border Style="{StaticResource CardStyle}" Padding="12" Margin="0,4">
                             <Grid ColumnDefinitions="*,Auto">
                                 <VerticalStackLayout Grid.Column="0" Spacing="2">
                                     <Label Text="{Binding Name}"
@@ -179,7 +179,7 @@
                                         VerticalOptions="Start"
                                         Padding="4,0" />
                             </Grid>
-                        </Frame>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>

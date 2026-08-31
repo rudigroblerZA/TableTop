@@ -13,19 +13,17 @@
 
             <VerticalStackLayout IsVisible="{Binding IsPlaying}" Spacing="14">
                 <Label Text="{Binding PlayerName}" FontFamily="{StaticResource DisplayFont}" TextColor="{StaticResource QuizGoldBrightColor}" FontSize="18" FontAttributes="Bold" />
-                <Frame BackgroundColor="{StaticResource PlateColor}" BorderColor="{StaticResource QuizGoldColor}"
-                       CornerRadius="10" Padding="16,10" HasShadow="False" HorizontalOptions="Center">
+                <Border BackgroundColor="{StaticResource PlateColor}" Stroke="{StaticResource QuizGoldColor}" StrokeShape="RoundRectangle 10" Padding="16,10" HorizontalOptions="Center">
                     <Label Text="{Binding PrizeText}" FontFamily="{StaticResource DisplayFont}"
                            TextColor="{StaticResource QuizGoldBrightColor}" FontSize="20" FontAttributes="Bold" />
-                </Frame>
+                </Border>
                 <Label Text="{Binding GuaranteedText}" Style="{StaticResource PipLabelStyle}" TextColor="{StaticResource PlateEdgeColor}" HorizontalTextAlignment="Center" />
 
-                <Frame BackgroundColor="{StaticResource PlateColor}" BorderColor="{StaticResource PlateEdgeColor}"
-                       CornerRadius="12" Padding="20" HasShadow="False">
+                <Border BackgroundColor="{StaticResource PlateColor}" Stroke="{StaticResource PlateEdgeColor}" StrokeShape="RoundRectangle 12" Padding="20">
                     <Label Text="{Binding QuestionText}" FontFamily="{StaticResource BodyFont}"
                            TextColor="{StaticResource TextPrimary}" FontSize="17" LineHeight="1.5"
                            HorizontalTextAlignment="Center" />
-                </Frame>
+                </Border>
 
                 <CollectionView x:Name="AnswersList" ItemsSource="{Binding Answers}">
                     <CollectionView.ItemTemplate>

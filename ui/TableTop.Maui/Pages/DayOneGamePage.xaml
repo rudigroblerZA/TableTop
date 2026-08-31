@@ -15,21 +15,21 @@
 
             <!-- Today's card -->
             <VerticalStackLayout IsVisible="{Binding HasCard}" Spacing="14">
-                <Frame BackgroundColor="#1A2530" BorderColor="#334155" CornerRadius="12" Padding="18">
+                <Border BackgroundColor="#1A2530" Stroke="#334155" StrokeShape="RoundRectangle 12" Padding="18">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="{Binding CardTitle}" TextColor="#93C5FD" FontSize="17" FontAttributes="Bold" />
                         <Label Text="{Binding CardText}" TextColor="White" FontSize="16" LineHeight="1.5" />
                     </VerticalStackLayout>
-                </Frame>
+                </Border>
                 <Button x:Name="CompleteButton" Text="Mark today complete" Clicked="OnCompleteClicked"
                         Style="{StaticResource PrimaryButtonStyle}" />
             </VerticalStackLayout>
 
             <!-- Caught up / complete -->
             <VerticalStackLayout IsVisible="{Binding IsDone}" Spacing="14">
-                <Frame BackgroundColor="#1A2530" BorderColor="#334155" CornerRadius="12" Padding="18">
+                <Border BackgroundColor="#1A2530" Stroke="#334155" StrokeShape="RoundRectangle 12" Padding="18">
                     <Label Text="{Binding StatusText}" TextColor="White" FontSize="16" LineHeight="1.5" />
-                </Frame>
+                </Border>
                 <Button x:Name="DoneButton" Text="Back to games" Clicked="OnDoneClicked"
                         Style="{StaticResource PrimaryButtonStyle}" />
             </VerticalStackLayout>
