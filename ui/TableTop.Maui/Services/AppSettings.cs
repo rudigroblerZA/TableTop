@@ -1,14 +1,16 @@
 using TableTop.Presentation.Infrastructure;
 namespace TableTop.Maui.Services;
 
-/// <summary>
-/// A remembered player from a previous session: display name plus an optional
-/// gender ("male"/"female"/"other") and age. Gender/age are null when the
-/// player didn't specify them.
-/// </summary>
-// SavedPlayer now lives in TableTop.Presentation.Infrastructure — it was
-// declared identically in both heads, free to drift apart with nothing to
-// catch it. One declaration now, referenced via the using above.
+// SavedPlayer — a remembered player from a previous session: display name plus
+// an optional gender ("male"/"female"/"other") and age, both null when the
+// player didn't specify them — now lives in
+// TableTop.Presentation.Infrastructure. It was declared identically in both
+// heads, free to drift apart with nothing to catch it. One declaration now,
+// referenced via the using above.
+//
+// Plain comment, not `///`: the type it documented is gone from this file, so
+// as an XML doc comment it was attached to nothing and the compiler discarded
+// it (CS1587).
 
 /// <summary>
 /// Persists and exposes all user settings via the MAUI Preferences API.
