@@ -15,7 +15,7 @@
                    Style="{StaticResource SubheaderLabelStyle}"
                    Margin="0,8,0,4"/>
 
-            <Frame Style="{StaticResource CardStyle}" Padding="0">
+            <Border Style="{StaticResource CardStyle}" Padding="0">
                 <VerticalStackLayout>
 
                     <!-- Theme -->
@@ -47,14 +47,14 @@
                     </VerticalStackLayout>
 
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- ══ GAMEPLAY ══════════════════════════════════════════════════ -->
             <Label Text="Gameplay"
                    Style="{StaticResource SubheaderLabelStyle}"
                    Margin="0,16,0,4"/>
 
-            <Frame Style="{StaticResource CardStyle}" Padding="0">
+            <Border Style="{StaticResource CardStyle}" Padding="0">
                 <VerticalStackLayout>
 
                     <!-- Shuffle cards -->
@@ -149,14 +149,14 @@
                     </HorizontalStackLayout>
 
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- ══ TIMER ══════════════════════════════════════════════════════ -->
             <Label Text="Timer"
                    Style="{StaticResource SubheaderLabelStyle}"
                    Margin="0,16,0,4"/>
 
-            <Frame Style="{StaticResource CardStyle}" Padding="0">
+            <Border Style="{StaticResource CardStyle}" Padding="0">
                 <VerticalStackLayout>
 
                     <!-- Enable timer -->
@@ -190,14 +190,14 @@
                     </VerticalStackLayout>
 
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- ══ DISPLAY ════════════════════════════════════════════════════ -->
             <Label Text="Display"
                    Style="{StaticResource SubheaderLabelStyle}"
                    Margin="0,16,0,4"/>
 
-            <Frame Style="{StaticResource CardStyle}" Padding="0">
+            <Border Style="{StaticResource CardStyle}" Padding="0">
                 <VerticalStackLayout>
 
                     <!-- Show card count -->
@@ -247,7 +247,7 @@
                     </HorizontalStackLayout>
 
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- ══ ROASTER ════════════════════════════════════════════════════ -->
             <Button Text="Roaster"

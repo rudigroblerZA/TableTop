@@ -27,10 +27,10 @@
                 <ProgressBar Progress="{Binding Progress}" />
 
                 <!-- The statement everyone answers at once -->
-                <Frame Style="{StaticResource PlayingCardStyle}">
+                <Border Style="{StaticResource PlayingCardStyle}">
                     <Label Text="{Binding Statement}" FontFamily="{StaticResource DisplayFont}"
                            TextColor="{StaticResource CardInkColor}" FontSize="19" FontAttributes="Bold" />
-                </Frame>
+                </Border>
 
                 <Label Text="1 strongly disagree  ·  5 strongly agree"
                        Style="{StaticResource PipLabelStyle}" />
@@ -38,7 +38,7 @@
                 <!-- One five-button row per player. BindableLayout, not
                      CollectionView, same nested-scrolling reason as
                      HerdGamePage's answer sheet. -->
-                <Frame Style="{StaticResource CardStyle}">
+                <Border Style="{StaticResource CardStyle}">
                     <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding PlayerResponses}">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate>
@@ -61,7 +61,7 @@
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
                     </VerticalStackLayout>
-                </Frame>
+                </Border>
 
                 <HorizontalStackLayout Spacing="10">
                     <Button x:Name="NextButton" Text="Next" Clicked="OnNextClicked"
@@ -85,7 +85,7 @@
                 <VerticalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding Profiles}">
                     <BindableLayout.ItemTemplate>
                         <DataTemplate>
-                            <Frame Style="{StaticResource CardStyle}">
+                            <Border Style="{StaticResource CardStyle}">
                                 <VerticalStackLayout Spacing="10">
                                     <Label Text="{Binding PlayerName}" FontFamily="{StaticResource DisplayFont}"
                                            FontSize="18" FontAttributes="Bold"
@@ -124,18 +124,18 @@
                                         </BindableLayout.ItemTemplate>
                                     </VerticalStackLayout>
                                 </VerticalStackLayout>
-                            </Frame>
+                            </Border>
                         </DataTemplate>
                     </BindableLayout.ItemTemplate>
                 </VerticalStackLayout>
 
-                <Frame Style="{StaticResource CardStyle}" IsVisible="{Binding HasComparison}">
+                <Border Style="{StaticResource CardStyle}" IsVisible="{Binding HasComparison}">
                     <VerticalStackLayout Spacing="8">
                         <Label Text="TOGETHER" Style="{StaticResource PipLabelStyle}" />
                         <Label Text="{Binding ComparisonSummary}" FontFamily="{StaticResource BodyFont}"
                                TextColor="{StaticResource TextPrimary}" FontSize="15" />
                     </VerticalStackLayout>
-                </Frame>
+                </Border>
 
                 <!-- Not decoration: a number out of 100 beside a personality
                      trait reads as a percentile to almost everyone. -->

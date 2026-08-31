@@ -21,9 +21,7 @@
             <VerticalStackLayout IsVisible="{Binding IsPlaying}" Spacing="12">
 
             <!-- Current Player -->
-            <Frame Style="{StaticResource CardStyle}"
-                   BackgroundColor="{Binding Theme.PanelBackground}"
-                   BorderColor="{Binding Theme.PanelBorder}">
+            <Border Style="{StaticResource CardStyle}" BackgroundColor="{Binding Theme.PanelBackground}" Stroke="{Binding Theme.PanelBorder}">
                 <HorizontalStackLayout Spacing="12">
                     <Label Text="🎮" FontSize="24" VerticalOptions="Center"/>
                     <VerticalStackLayout VerticalOptions="Center">
@@ -35,12 +33,10 @@
                                TextColor="{Binding Theme.Accent}"/>
                     </VerticalStackLayout>
                 </HorizontalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- Live scoreboard (engine-driven) -->
-            <Frame Style="{StaticResource CardStyle}" IsVisible="{Binding HasScores}" Padding="12,8"
-                   BackgroundColor="{Binding Theme.PanelBackground}"
-                   BorderColor="{Binding Theme.PanelBorder}">
+            <Border Style="{StaticResource CardStyle}" IsVisible="{Binding HasScores}" Padding="12,8" BackgroundColor="{Binding Theme.PanelBackground}" Stroke="{Binding Theme.PanelBorder}">
                 <HorizontalStackLayout Spacing="8">
                     <Label Text="🏆" FontSize="16" VerticalOptions="Center"/>
                     <Label Text="{Binding ScoresText}"
@@ -49,7 +45,7 @@
                            TextColor="{Binding Theme.Accent}"
                            VerticalOptions="Center"/>
                 </HorizontalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- Last event flash ("Alice +2", "Bob skipped (-1)") -->
             <Label Text="{Binding FlashText}"
@@ -70,10 +66,7 @@
             </VerticalStackLayout>
 
             <!-- Timer (conditional on TimerEnabled) -->
-            <Frame Style="{StaticResource CardStyle}"
-                   IsVisible="{Binding TimerEnabled}"
-                   BorderColor="{Binding Theme.PanelBorder}"
-                   Background="{Binding Theme.PageBackground}">
+            <Border Style="{StaticResource CardStyle}" IsVisible="{Binding TimerEnabled}" Stroke="{Binding Theme.PanelBorder}" Background="{Binding Theme.PageBackground}">
                 <HorizontalStackLayout HorizontalOptions="Center" Spacing="8">
                     <Label Text="⏱" FontSize="20" VerticalOptions="Center"/>
                     <Label Text="{Binding TimerDisplay}"
@@ -81,26 +74,23 @@
                            TextColor="{Binding Theme.Accent}"
                            VerticalOptions="Center"/>
                 </HorizontalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- The playing card: cream stock + coloured strip, answer face
                  warms via trigger. Flip/deal animations live in code-behind. -->
             <!-- BackgroundColor is bound, not driven by DataTriggers: MAUI does
                  not support bindings inside Setter.Value, so a themed flip has
                  to be resolved in the view model. See CardFaceColor. -->
-            <Frame x:Name="CardFrame" Style="{StaticResource PlayingCardStyle}"
-                   BackgroundColor="{Binding CardFaceColor}">
+            <Border x:Name="CardFrame" Style="{StaticResource PlayingCardStyle}" BackgroundColor="{Binding CardFaceColor}">
                 <Grid>
                 <VerticalStackLayout Spacing="0">
 
                     <!-- Category strip — difficulty-coloured, ANSWER-amber when flipped -->
-                    <Frame BackgroundColor="{Binding StripColor}"
-                           CornerRadius="0" Padding="14,10" Margin="0" HasShadow="False"
-                           IsVisible="{Binding HasStrip}">
+                    <Border BackgroundColor="{Binding StripColor}" Padding="14,10" Margin="0" IsVisible="{Binding HasStrip}">
                         <Label Text="{Binding StripText}"
                                FontSize="13" FontAttributes="Bold"
                                TextColor="{Binding StripTextColor}" CharacterSpacing="1.2"/>
-                    </Frame>
+                    </Border>
 
                     <VerticalStackLayout Spacing="10" Padding="18,14,18,18">
                         <!-- Card title — ink on stock -->
@@ -136,14 +126,10 @@
                         </Border.StrokeShape>
                     </Border>
                 </Grid>
-            </Frame>
+            </Border>
 
             <!-- Hint strip (only visible when engine has a suggestion) -->
-            <Frame BackgroundColor="{Binding HintColor}"
-                   Padding="12,8"
-                   CornerRadius="8"
-                   IsVisible="{Binding HasHint}"
-                   Opacity="0.92">
+            <Border BackgroundColor="{Binding HintColor}" Padding="12,8" StrokeShape="RoundRectangle 8" IsVisible="{Binding HasHint}" Opacity="0.92">
                 <HorizontalStackLayout Spacing="8">
                     <Label Text="Hint:"
                            FontSize="13"
@@ -157,7 +143,7 @@
                            HorizontalOptions="FillAndExpand"
                            VerticalOptions="Center"/>
                 </HorizontalStackLayout>
-            </Frame>
+            </Border>
 
             <!-- Flip (answer-bearing cards): question up, tap to reveal -->
             <Button Text="{Binding FlipButtonText}"

@@ -23,6 +23,55 @@ public sealed class SavedRoster
 /// file — the same split <see cref="IAppSettings"/> already draws, and for
 /// the same reason: only the shape (and the ViewModel that builds it) is
 /// worth sharing.
+///
+/// <para>
+/// <b>This is deliberately not the only roster model in the repo, and that is a
+/// decision rather than an accident (backlog S.1, settled 1.39.0).</b>
+/// <c>TableTop.Hosting.Persistence.IRosterRepository</c> / <c>RosterProfile</c>
+/// persists the same idea — "a named group of players" — in a different
+/// vocabulary, and Console uses that one. Four reasons the two stay separate:
+/// </para>
+///
+/// <list type="number">
+///   <item>
+///     <b>Neither is a superset.</b> <see cref="SavedPlayer"/> carries
+///     <c>Team</c>, which <c>PlayerProfile</c> has no concept of;
+///     <c>PlayerProfile</c> carries a stable <c>Id</c>, <c>IsParent</c>,
+///     <c>IsMarried</c> and a <c>SchemaVersion</c>, which this shape has no use
+///     for. Merging produces a union type where every consumer ignores half the
+///     fields. (An earlier note claimed <c>SavedRoster</c> was simply "richer"
+///     and the better base — it is not; it is richer in one direction only.)
+///   </item>
+///   <item>
+///     <b>The nullability difference is semantic.</b> <c>Gender</c> and
+///     <c>Age</c> are nullable here because this shape models <i>setup input
+///     part-way through being entered</i>; they are non-null with defaults on
+///     <c>PlayerProfile</c> because that shape models a <i>durable profile</i>.
+///     Same words, different lifecycle stage.
+///   </item>
+///   <item>
+///     <b>The dependency direction forbids the cheap merge.</b> Console
+///     deliberately does not reference <c>TableTop.Presentation</c> (backlog
+///     item 28), and <c>Presentation</c> sits above <c>Hosting</c>. One shared
+///     type in <c>Hosting</c> drags <c>Team</c> — a presentation concept — into
+///     the engine; one shared type here forces Console to depend on the
+///     ViewModel layer. Neither is acceptable.
+///   </item>
+///   <item>
+///     <b>Sync versus async is not cosmetic.</b> This interface is synchronous
+///     because per-head key-value storage is; <c>IRosterRepository</c> is
+///     asynchronous because it is file I/O. Unifying makes one of them lie
+///     about what it does.
+///   </item>
+/// </list>
+///
+/// <para>
+/// <b>The accepted cost:</b> a roster saved in Console is invisible to the
+/// graphical heads and vice versa, even on the same machine. That is a real
+/// limitation and is accepted rather than explained away — the two flows do not
+/// share a storage location today, and making them would mean picking one of
+/// the two shapes above, which is the trade this note exists to refuse.
+/// </para>
 /// </summary>
 public interface IRosterStore
 {

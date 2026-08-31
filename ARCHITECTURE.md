@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.38.0**, August 2026. This replaces the accumulated
+Current as of **1.39.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -1081,6 +1081,76 @@ async work to block on, a different shape rather than a template to copy.
   even with one. The ViewModel is covered by real tests and the gates pass, but
   **no XAML was compiled and no screen has been rendered**. `check-ui-compiles.py`
   is the gate that would say otherwise and it needs both UI workloads.
+
+- **1.39.0** closed backlog **X.6a** and settled **S.1**, and established that
+  **X.6c is blocked** on something its own description did not know about.
+
+  **X.6a — `Frame` → `Border`, 35 elements across 11 files.** The item called
+  this unverifiable and was right to be wary; what changed is the same thing
+  that unblocked X.6b — Microsoft publishes the mapping. "What's new in .NET
+  MAUI 9 → Deprecated APIs → Frame" states it: `BorderColor` → `Stroke`,
+  `CornerRadius` → part of `StrokeShape`, and a warning that padding may need
+  restating.
+
+  That padding warning is the entire risk, because `Frame` carries an implicit
+  default padding and `Border` does not. An audit of all 35 elements retired it:
+  every one sets `Padding` explicitly or takes a style that does. Three further
+  defaults were read from the API docs rather than assumed — `Border.Stroke` is
+  `null` (so the two elements with no `BorderColor` gain no stroke),
+  `StrokeShape` is `Rectangle`, `StrokeThickness` is 1.0.
+
+  Two elements carried `HasShadow="True"`. `Border` has no `HasShadow`, so
+  dropping it would have silently flattened Claimed's pending card and
+  Monogamy's active card; both now carry an explicit `Shadow` using the values
+  `PlayingCardStyle` already defines for card stock — reused, not invented.
+  Two things made the result trustworthy beyond the docs: the head **already
+  contained hand-written `Border`s** using `Stroke`/`StrokeShape`, so the output
+  matches an idiom the files already had, and `check-maui-xaml.py` verifies the
+  direction independently, knowing that `Border` has no
+  `BorderColor`/`CornerRadius`/`HasShadow` and `Frame` has no `Stroke*`.
+
+  **X.6c — blocked, and the item's premise was wrong.** It said "mechanical but
+  wide". XAML has no syntax for a nested type, and **11 of the 16 `DataTemplate`
+  scopes bind to nested classes** (`HerdGameViewModel.PlayerAnswerEntry`,
+  `MillionaireGameViewModel.AnswerOption`, `TraitProfileGameViewModel`'s three,
+  and so on). Worse, it does not decompose per page: a template without its own
+  `x:DataType` inherits the enclosing scope's, so annotating a page root makes
+  every un-annotated template inside resolve against the *page's* ViewModel —
+  and with compiled bindings that is a **build error**, not an empty binding. So
+  a page can be annotated only when all its templates can be, which rules out 8
+  of 11. The prerequisite is promoting those 11 nested classes to top-level
+  types, which changes the shared layer's shape for all four heads. Not
+  attempted here: an unverifiable public refactor whose failure mode is a broken
+  build is precisely the trade this repo's verification discipline refuses.
+
+  **S.1 — two roster models, kept deliberately.** The item said to pick
+  `SavedRoster` if converging, being "richer — carries teams". It is richer in
+  one direction only, and that is why the answer went the other way: `SavedPlayer`
+  has `Team`; `PlayerProfile` has a stable `Id`, `IsParent`, `IsMarried` and
+  schema versioning. Neither is a superset, so a merge is a union type half of
+  whose fields every consumer ignores.
+
+  Three further reasons emerged while deciding. The nullability difference is
+  semantic — `SavedPlayer` allows null `Gender`/`Age` because it models setup
+  input mid-entry, `PlayerProfile` defaults them because it models a durable
+  profile. The dependency direction forbids the cheap merge: Console does not
+  reference `TableTop.Presentation` (item 28) and `Presentation` sits above
+  `Hosting`, so one shared type either drags `Team` into the engine or drags
+  Console onto the ViewModel layer. And sync-versus-async is load-bearing rather
+  than cosmetic. The decision, the table and the accepted cost — a roster saved
+  in Console is invisible to the graphical heads — now live on `IRosterStore`'s
+  doc comment, with a cross-reference from `RosterProfile` so a reader arriving
+  at either half finds it. `AddTableTopHosting`'s dead `rosterFilePath`
+  registration stays lazy and unresolved, but its doc now names the hazard for
+  the head that eventually resolves it.
+
+  MINOR: no behaviour change intended. `api/*.api.txt` is untouched — the only
+  Hosting edit is a doc comment, which the reflection snapshot does not see.
+
+  **The `Frame` → `Border` result has not been seen.** No `dotnet` in this pass,
+  and MAUI UI is not screenshot-testable here. Every gate passes and every file
+  parses, but this is a change to how ten screens are drawn and nobody has
+  looked at them.
 
 ## What genuinely doesn't exist here
 

@@ -85,6 +85,17 @@ public sealed class ViewModelBindingTests
     /// </summary>
     private static readonly Dictionary<string, string?> ViewToViewModelOverrides = new(StringComparer.Ordinal);
 
+    /// <summary>
+    /// How long a single property access — read or write — gets before it is
+    /// reported as blocking.
+    ///
+    /// Generous by three orders of magnitude: the whole suite ran 2/2 in 361ms
+    /// on the CI job's own configuration, so no healthy accessor comes near it.
+    /// It exists to convert an unbounded hang into a named failure — see
+    /// <see cref="WithDeadline{T}"/> and backlog N.7.
+    /// </summary>
+    private static readonly TimeSpan PropertyDeadline = TimeSpan.FromSeconds(5);
+
     private static readonly Regex Binding = new(
         @"\{(?:x:Bind|Binding)\s+(?:Path\s*=\s*)?(?<path>[A-Za-z_][\w\.]*)(?<rest>[^}]*)",
         RegexOptions.Compiled);
@@ -126,8 +137,31 @@ public sealed class ViewModelBindingTests
 
     // ── Change notification ───────────────────────────────────────────────────
 
+    /// <summary>
+    /// Every settable property must notify — and must return.
+    ///
+    /// <para>
+    /// <b>Both accessors are on a deadline, and the read is the one that
+    /// matters (backlog N.7).</b> This test hung CI indefinitely. The first
+    /// attempt at a fix guarded only the write, and the run hung again for
+    /// exactly as long: <see cref="TryMakeDistinctValue"/> calls
+    /// <c>p.GetValue</c> to pick a distinct candidate, so a blocking
+    /// <i>getter</i> never reached the guard. Note which test hangs —
+    /// <see cref="Every_command_property_is_non_null_after_construction"/>
+    /// constructs the same ViewModels and reads only <c>ICommand</c>
+    /// properties, and it passes. Reading every settable property is the
+    /// surface only this test touches.
+    /// </para>
+    ///
+    /// <para>
+    /// This is an assertion the test should always have carried rather than
+    /// scaffolding: an accessor that blocks freezes the UI thread in the app.
+    /// It already asserted that a setter must notify; that both accessors must
+    /// <i>return</i> is the same class of claim.
+    /// </para>
+    /// </summary>
     [Fact]
-    public void Every_settable_property_raises_PropertyChanged()
+    public async Task Every_settable_property_raises_PropertyChanged()
     {
         var failures = new List<string>();
         var exercised = 0;
@@ -138,21 +172,72 @@ public sealed class ViewModelBindingTests
             if (!TryConstruct(vmType, out var vm, out _)) continue;
 
             var raised = new List<string>();
-            ((INotifyPropertyChanged)vm!).PropertyChanged += (_, e) => raised.Add(e.PropertyName ?? "");
+            var gate = new object();
 
-            foreach (var p in vmType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                    .Where(p => p.CanRead && p.CanWrite && p.SetMethod!.IsPublic))
+            // The handler can be raised from the worker threads below, so the
+            // list needs a lock. A plain List under a monitor rather than a
+            // concurrent collection: every read is a membership test on a
+            // handful of names.
+            void OnChanged(object? _, PropertyChangedEventArgs e)
             {
-                if (!TryMakeDistinctValue(p, vm, out var candidate)) continue;
+                lock (gate) raised.Add(e.PropertyName ?? "");
+            }
 
-                raised.Clear();
-                try { p.SetValue(vm, candidate); }
-                catch (TargetInvocationException) { continue; }   // guard clauses are legitimate
+            var notifier = (INotifyPropertyChanged)vm!;
+            notifier.PropertyChanged += OnChanged;
 
-                exercised++;
-                if (!raised.Contains(p.Name))
-                    failures.Add($"{vmType.Name}.{p.Name} changed without raising PropertyChanged — " +
-                                 $"the UI keeps showing the old value");
+            try
+            {
+                foreach (var p in vmType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                        .Where(p => p.CanRead && p.CanWrite && p.SetMethod!.IsPublic))
+                {
+                    var read = await WithDeadline(() =>
+                    {
+                        var usable = TryMakeDistinctValue(p, vm, out var value);
+                        return (Usable: usable, Candidate: value);
+                    });
+
+                    if (!read.Completed)
+                    {
+                        failures.Add($"{vmType.Name}.{p.Name} — the GETTER did not return within " +
+                                     $"{PropertyDeadline.TotalSeconds:0}s. A blocking accessor freezes the " +
+                                     "UI thread, and an unbounded one hangs CI (backlog N.7)");
+                        break;   // this instance is unusable; anything further is noise
+                    }
+
+                    if (!read.Value.Usable) continue;
+
+                    lock (gate) raised.Clear();
+
+                    var written = await WithDeadline(() =>
+                    {
+                        try { p.SetValue(vm, read.Value.Candidate); return (Exception?)null; }
+                        catch (TargetInvocationException ex) { return ex; }   // guard clauses are legitimate
+                    });
+
+                    if (!written.Completed)
+                    {
+                        failures.Add($"{vmType.Name}.{p.Name} — the SETTER did not return within " +
+                                     $"{PropertyDeadline.TotalSeconds:0}s. A blocking accessor freezes the " +
+                                     "UI thread, and an unbounded one hangs CI (backlog N.7)");
+                        break;   // the instance is mid-mutation; stop trusting it
+                    }
+
+                    if (written.Value is not null) continue;   // the setter threw a guard clause
+
+                    exercised++;
+
+                    bool notified;
+                    lock (gate) notified = raised.Contains(p.Name);
+
+                    if (!notified)
+                        failures.Add($"{vmType.Name}.{p.Name} changed without raising PropertyChanged — " +
+                                     $"the UI keeps showing the old value");
+                }
+            }
+            finally
+            {
+                notifier.PropertyChanged -= OnChanged;
             }
         }
 
@@ -160,8 +245,8 @@ public sealed class ViewModelBindingTests
             "no settable property was exercised, so this test proved nothing");
 
         failures.Should().BeEmpty(
-            "a bound property that doesn't notify leaves the UI stale — assign through SetField. " +
-            $"{string.Join("\n  ", failures)}");
+            "a bound property must notify and must return — assign through SetField, and do no " +
+            $"blocking work in an accessor. {string.Join("\n  ", failures)}");
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
@@ -285,6 +370,36 @@ public sealed class ViewModelBindingTests
         else return false;
 
         return !Equals(value, current);
+    }
+
+    /// <summary>
+    /// Runs <paramref name="work"/> on a worker and gives it
+    /// <see cref="PropertyDeadline"/> to finish.
+    ///
+    /// <para>
+    /// <b>Awaited, never waited on.</b> The first attempt used
+    /// <c>Task.Wait(timeout)</c> and was wrong twice over: xUnit's own analyser
+    /// rejected it — xUnit1031, <i>"test methods should not use blocking task
+    /// operations, as they can cause deadlocks"</i> — and it did not work, the
+    /// run hanging for the full five minutes exactly as before. Blocking inside
+    /// a test the framework is already scheduling is precisely what that rule
+    /// exists to stop.
+    /// </para>
+    /// </summary>
+    /// <returns>
+    /// <c>Completed</c> false when the deadline expired. The worker is not
+    /// cancelled — it cannot be, since reflection into arbitrary user code is
+    /// not interruptible — but it is a thread-pool thread, so it does not keep
+    /// the host alive and the run still terminates.
+    /// </returns>
+    private static async Task<(bool Completed, T Value)> WithDeadline<T>(Func<T> work)
+    {
+        var task = Task.Run(work);
+        var finished = await Task.WhenAny(task, Task.Delay(PropertyDeadline)).ConfigureAwait(false);
+
+        return finished == task
+            ? (true, await task.ConfigureAwait(false))
+            : (false, default!);
     }
 
     private static string FindRepositoryRoot()

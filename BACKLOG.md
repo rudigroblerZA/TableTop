@@ -59,11 +59,215 @@ So: the tree is green. Every item below is something green does not catch.
 > **1.36.0** added the trait-analysis layer and Big Five, **1.37.0** added Love
 > Languages on top of it, and **1.38.0** closed **N.6** by giving the three
 > graphical heads a `TraitProfile` screen (see `ARCHITECTURE.md`). What is left
-> is **X.6a** (`Frame` → `Border`, wants a device), **X.6c** (compiled bindings,
-> does not) and S.1-S.3.
+> is **N.7** (CI's WinUI job hangs — now contained with a timeout and
+> `--blame-hang` diagnostics, but not yet root-caused), **X.6c** and S.2-S.3.
+>
+> **A fourth pass on 2026-08-31** closed **X.6a** (`Frame` → `Border`, grounded
+> in Microsoft's published migration table the way X.6b was) and settled **S.1**
+> (two roster models, kept deliberately). It also found that **X.6c is blocked**
+> on a structural problem the item did not know about — 11 of 16 `DataTemplate`
+> scopes bind nested types XAML cannot name — so what is genuinely left is X.6c's
+> prerequisite refactor, plus S.2-S.3, both of which need hardware.
 >
 > Two things need a human: tags `v1.35.0`/`v1.35.1` are local and **not
 > pushed**, and `develop` is ahead of `origin`.
+
+### N.7 — CI's WinUI job never finishes: "Run UI tests" hangs — **CONTAINED; narrowed to one test**
+
+**No CI run on this repository has completed since 2026-08-30.** The `Build
+WinUI` job reaches its last step and stays there until the run is cancelled —
+the two `develop` runs on 2026-08-30 (`33299660962`, `33303279916`) each sat for
+roughly six hours before being cancelled, and every run since has the same job
+stuck `in_progress`.
+
+**It is not the build.** Reading the job's steps rather than its status makes
+that clear:
+
+| step | outcome |
+|---|---|
+| Checkout, Setup .NET 10 | success |
+| **Build WinUI** | **success, ~90s** |
+| **Run UI tests** | **`in_progress`, indefinitely** |
+| Upload UI test results | never reached |
+
+So WinUI compiles fine. `dotnet test tests/TableTop.UiTests` is what hangs
+(`.github/workflows/ci.yml:353`).
+
+**The timeline points at one change.** The last CI run to complete was
+`33271411188` on 2026-08-29. The first to hang was 2026-08-30 07:37 — the merge
+that brought in 1.35.2, whose own `ARCHITECTURE.md` entry records: *"the WinUI
+UI-test steps actually run: item 23 declared them 're-enabled' and changed only
+the comment, leaving them commented for four further releases."* X.3 genuinely
+enabled a step that had never actually executed in CI, and it does not
+terminate. The step was reported as fixed; what it did was surface a hang.
+
+**Where to look.** `ViewModelBindingTests` has two facts, both of which
+reflect over every ViewModel type, construct each one, and then — in
+`Every_settable_property_raises_PropertyChanged` — **set every public settable
+property on it**. That is a lot of behaviour to invoke blind: a setter that
+starts a timer, blocks on I/O, or waits on a task would hang the run and look
+exactly like this. Constructing rather than setting is the cheaper suspect to
+rule out first.
+
+**Consequences while it stands.** No PR can ever report all-green, so "CI is
+green" cannot currently be a merge criterion — the two PRs merged today
+(#41, #42) both went in with this job still running. And the WinUI head's UI
+tests are providing no signal at all despite appearing to run.
+
+**Evidence:** job `99496277158` of run `33394673779` (2026-08-31, commit
+`2fc41c3`) shows the step breakdown above. Run `33271411188` (2026-08-29,
+success) versus `33299660962` (2026-08-30, cancelled at ~6h) brackets the
+change. Not reproduced locally — `TableTop.UiTests` is Windows-only and needs
+the Windows App SDK, neither of which this environment has.
+
+**Done when:** the WinUI job completes *and* the tests actually run to a result.
+
+---
+
+**Done 2026-08-31 — containment and instrumentation. The root cause is still
+unknown, and that is stated rather than glossed.**
+
+**The decisive evidence is already in the workflow's own comment:** the step's
+history records these tests running *"green twice locally on this job's exact
+configuration (Release, x64): 2/2 in 361ms"*. Two `[Fact]`s that finish in a
+third of a second cannot plausibly be looping. Combined with the step
+breakdown — `Build WinUI` succeeds in ~90s, `Run UI tests` never returns — the
+fault is almost certainly in the **test host**, not the test bodies: discovery
+or shutdown of a host that references a WinUI *app* assembly on a runner with
+no interactive desktop session. Reading the ViewModels supports that; the two
+plausible in-code culprits were checked and cleared:
+
+- No `.Result`, `.Wait()` or `GetAwaiter().GetResult()` anywhere in
+  `TableTop.Presentation` or `TableTop.WinUI`, so no blocking-async deadlock
+  under xUnit's synchronisation context.
+- `CardTurnGameViewModel`'s timer loop is not reachable: it starts only from
+  `StartTimerAsync`, gated on `TimerEnabled`, which is get-only and false under
+  the stubbed constructor arguments `TryConstruct` supplies.
+
+**What changed (`.github/workflows/ci.yml`):**
+
+1. **`timeout-minutes: 30` on the job.** It was inheriting GitHub's 6-hour
+   default, which is exactly what the 2026-08-30 runs spent. ~20x the healthy
+   duration.
+2. **`--blame-hang --blame-hang-timeout 5m --blame-hang-dump-type full`.** This
+   is the diagnosis, and it is why the job can now answer the question it has
+   been refusing to. On hang the host is killed and a sequence file is written
+   naming the test that was executing — **or naming none, which is itself the
+   answer**, because it places the hang outside the test bodies. The dump
+   carries thread stacks. 5m is ~800x the healthy run, so a genuine regression
+   in the tests still fails on its own assertion long before this trips.
+3. **The artefact upload now captures the dumps and sequence files**, not just
+   the `.trx`, and keeps `if: always()`. Without that a hang uploaded nothing —
+   which is how this went a full day undiagnosed.
+
+**Explicitly NOT done, and deliberately so:** neither test is skipped, disabled
+or quarantined. Both still run and both still have to pass. The job now ends
+**red with evidence** rather than stalling invisibly, which is a different thing
+from being green.
+
+**Not verified:** this could not be reproduced here — `TableTop.UiTests` is
+Windows-only and needs the Windows App SDK, and there is no `dotnet` in this
+environment at all. The change is a workflow edit validated by parsing the YAML
+and checking the folded `run` command; whether `--blame-hang` names a test or
+names nothing is the finding the next run will produce.
+
+---
+
+**Update, same day: the diagnostics fired, and they disproved the hypothesis
+above.**
+
+Run `33396522236` (commit `4e5eccf`) is the first carrying `--blame-hang`. It
+worked exactly as intended: `Run UI tests` **failed after 5m41s** instead of
+hanging, the artefacts uploaded, and the job finished in 8 minutes rather than
+six hours. Everything else in that run was green — Build & Test, MAUI (both
+targets), Android, XAML Checks, Code Quality.
+
+**The hang is inside a test body, not the host.** The prediction recorded above
+— host startup, discovery or shutdown, on the strength of the tests passing in
+361ms locally — was **wrong**, and the log says so plainly:
+
+```
+13:24:08  A total of 1 test files matched the specified pattern.
+13:29:16  The active test run was aborted. Reason: Test host process crashed
+          Data collector 'Blame' message: The specified inactivity time of
+          5 minutes has elapsed.
+          The test running when the crash occurred:
+          TableTop.UiTests.ViewModelBindingTests.Every_settable_property_raises_PropertyChanged
+```
+
+Discovery completed in seconds. The host then sat for five minutes inside one
+named test. Note which of the two it is: `Every_command_property_is_non_null_after_construction`
+constructs the same ViewModels and does not hang, so **construction is fine and
+the fault is in setting a property**.
+
+Reading did not find it. Every public settable property with a non-trivial
+setter across `TableTop.Presentation` and `TableTop.WinUI` was enumerated — 17
+of them — and all are cheap and synchronous: `SetField` plus `OnPropertyChanged`,
+or an assignment onto the stubbed `IAppSettings`. None does I/O, waits, or
+starts anything. So the culprit is not visible in the setter bodies, which is
+precisely why it needs to name itself.
+
+**So the test now names it.** `Every_settable_property_raises_PropertyChanged`
+sets each property on a worker with a 5-second deadline (three orders of
+magnitude above the healthy 361ms whole-suite time). A setter that does not
+return is recorded as a normal test failure carrying the offending
+`Type.Property`, and that VM is abandoned rather than producing downstream noise
+from a half-mutated instance. The notification list is now lock-guarded, since
+the handler can fire from the worker.
+
+**This is an assertion the test should always have had, not scaffolding.** A
+property setter that blocks freezes the UI thread in the real app. The test
+already asserted that a setter must notify; that it must also *return* is the
+same class of claim, and its absence is what let one property cost a day of CI.
+
+**Done when:** the WinUI job completes *and* the tests run to a result.
+
+---
+
+**Second update: that fix was wrong, and the run said so twice.**
+
+Run `33398280045` (`6c8796c`) hung again for the full five minutes, and the
+build log carried the explanation before the test even started:
+
+```
+warning xUnit1031: Test methods should not use blocking task operations,
+as they can cause deadlocks. Use an async test method and await instead.
+  ViewModelBindingTests.cs(190,30)   <- set.Wait(SetterDeadline)
+  ViewModelBindingTests.cs(203,29)   <- set.Result
+```
+
+Two independent mistakes, both now fixed:
+
+1. **The mechanism was wrong.** `Task.Wait(timeout)` inside a test the framework
+   is already scheduling is what xUnit1031 exists to forbid. The test is now
+   `async Task` and the deadline is `await Task.WhenAny(work, Task.Delay(...))`.
+   No blocking wait remains.
+
+2. **The guard was in the wrong place, which is the substantive finding.** It
+   wrapped only `p.SetValue`. But `TryMakeDistinctValue` calls `p.GetValue`
+   *first*, to pick a value distinct from the current one — so a blocking
+   **getter** never reached the guard at all. Both accessors are now on the
+   deadline.
+
+**The getter is the more likely culprit on the evidence.** Take the two tests
+apart:
+
+| | constructs every VM | reads `ICommand` props | reads *every settable* prop | writes |
+|---|---|---|---|---|
+| `Every_command_property_is_non_null_after_construction` — **passes** | ✅ | ✅ | ❌ | ❌ |
+| `Every_settable_property_raises_PropertyChanged` — **hangs** | ✅ | — | ✅ | ✅ |
+
+Construction is shared and does not hang. Reading every settable property is the
+surface only the hanging test touches, and it is the step that ran *before* the
+guard that failed to fire.
+
+**Done when:** the WinUI job completes *and* the tests run to a result.
+
+**Still open:** which accessor, on which property. The next run names it — the
+failure text distinguishes GETTER from SETTER, so it also confirms or refutes
+the table above.
+
+---
 
 ### N.6 — Three heads cannot play the trait-assessment modes — **FIXED**
 
@@ -536,14 +740,42 @@ forms (4), across `GameplayPage`, `GameSelectionPage`, `PlayerSetupPage`,
 
 **Not done, and split out by risk rather than deferred as one lump:**
 
-- **X.6a — `Frame` → `Border` (8 CS0618).** Only `GameplayPage`'s `x:Name`d
-  frames warn, but `Frame` appears ~28 times across 10 XAML files plus the
-  shared `CardStyle`/`PlayingCardStyle` styles that target it. `Border` is not
-  a drop-in: `CornerRadius`/`BorderColor`/`HasShadow` become
-  `StrokeShape`/`Stroke`/`StrokeThickness` with a `RoundRectangle`. This is a
-  **visual** change across every screen, and nothing here can verify it — no
-  device, and MAUI UI is not screenshot-testable in this repo. Doing it blind
-  is exactly the unverifiable change the docs warn against.
+- **X.6a — `Frame` → `Border` (8 CS0618) — FIXED 2026-08-31.** 35 elements
+  across 11 XAML files, plus the shared `CardStyle`/`PlayingCardStyle` that
+  targeted `Frame`.
+
+  This item called the change unverifiable, and it was right to be wary — but
+  the same thing that unblocked X.6b applies: Microsoft publishes the mapping.
+  "What's new in .NET MAUI 9 → Deprecated APIs → Frame" states it directly:
+  `Frame.BorderColor` becomes `Border.Stroke`, `Frame.CornerRadius` becomes part
+  of `Border.StrokeShape`, and it warns that padding may need restating.
+
+  **That padding warning is the whole risk, and an audit retired it.** `Frame`
+  carries an implicit default padding; `Border` does not. Every one of the 35
+  elements was checked: each either sets `Padding` explicitly or takes a style
+  that does, so nothing depended on the implicit default. Three further defaults
+  were confirmed from the API docs rather than assumed — `Border.Stroke` is
+  `null` (so the two elements that set no `BorderColor` gain no stroke),
+  `StrokeShape` is `Rectangle`, `StrokeThickness` is 1.0.
+
+  Two elements carried `HasShadow="True"` (Claimed's pending card, Monogamy's
+  active card). `Border` has no `HasShadow`, and dropping it would have silently
+  flattened both. They now carry an explicit `Shadow` — the exact values
+  `PlayingCardStyle` already uses for card stock, reused rather than invented.
+  `HasShadow="False"` simply went, being `Border`'s default.
+
+  Two happy findings: the MAUI head **already contained hand-written `Border`s**
+  using `Stroke`/`StrokeShape` (PlayerSetupPage, GameplayPage), so the result
+  matches an idiom the file already had; and `check-maui-xaml.py` independently
+  verifies the direction, since it knows `Border` has no
+  `BorderColor`/`CornerRadius`/`HasShadow` and `Frame` has no `Stroke*`.
+
+  **Evidence:** all eight gates pass, every MAUI XAML file parses, and no
+  `Frame` remains. `x:Name="CardFrame"` is kept — it is a name, and the
+  code-behind animations on it (`ScaleXToAsync`, `FadeToAsync`,
+  `TranslateToAsync`, `Opacity`, `TranslationY`) are all `VisualElement`
+  members that carry over unchanged. Still no build and no device: the visual
+  result has not been seen.
 - **X.6b — `UseSafeArea` (18 XC0618) — FIXED 2026-08-30.** The blocker was
   documentation access, not risk, and the documentation was reachable this
   pass. Microsoft Learn's safe-area page carries an explicit migration table:
@@ -577,17 +809,50 @@ forms (4), across `GameplayPage`, `GameSelectionPage`, `PlayerSetupPage`,
   here — it is a denylist keyed on tag name and has no `ContentPage` rules, so
   `SafeAreaEdges` is trusted from the API docs, not from the gate. Safe-area
   behaviour has still never been observed on hardware.
-- **X.6c — compiled bindings (492 XC0022).** Adding `x:DataType` to every
-  binding scope. Mechanical but wide, and it is a *performance* advisory, not a
-  deprecation — nothing breaks at the next MAUI major. Genuinely valuable
-  though: compiled bindings surface binding errors at build time, which is the
-  same class of bug `check-xaml-bindings.py` exists to catch by hand.
+- **X.6c — compiled bindings (492 XC0022) — BLOCKED, and this item's premise
+  was wrong.** It said "mechanical but wide". It is neither: it is blocked on a
+  structural problem that has to be fixed first.
+
+  **XAML cannot name a nested type.** There is no `Outer+Inner` syntax XamlC
+  accepts, and **11 of the 16 `DataTemplate` scopes in this head bind to nested
+  classes**:
+
+  | ViewModel | nested item type | template |
+  |---|---|---|
+  | `ClaimedGameViewModel` | `TerritoryOption` | ClaimedGamePage |
+  | `HerdGameViewModel` | `PlayerAnswerEntry` | HerdGamePage |
+  | `MillionaireGameViewModel` | `AnswerOption`, `LifelineOption` | MillionaireGamePage ×2 |
+  | `MonogamyGameViewModel` | `ZoneOption` | MonogamyGamePage |
+  | `PlayerSetupViewModel` | `SavedRosterOption`, `PlayerEntry` | PlayerSetupPage ×2 |
+  | `TraitProfileGameViewModel` | `PlayerResponseEntry`, `PlayerProfileView`, `TraitScoreView` | TraitProfileGamePage ×3 |
+
+  Only `GameSelectionViewModel` (`Archetype`, `GameModeItem`) and
+  `RoasterViewModel` (`RoasterTemplate`, `SavedPlayer`, `SavedRoster`) expose
+  top-level item types.
+
+  **And it is not partially doable per page.** A `DataTemplate` without its own
+  `x:DataType` inherits the enclosing scope's, so annotating a page root makes
+  every un-annotated template inside it resolve its bindings against the *page's*
+  ViewModel. That is not a silent empty binding — with compiled bindings it is a
+  **build error**. So a page can be annotated only when all of its templates can
+  be, which rules out 8 of the 11 pages.
+
+  **The prerequisite is a real refactor:** promote those 11 nested classes to
+  top-level types in `TableTop.Presentation.ViewModels`. That changes the shared
+  layer's public shape for all four heads and touches their tests. It is a
+  sound change — arguably better design regardless — but it is its own item, and
+  it wants a machine that can build MAUI, because the failure mode of getting a
+  single binding path wrong flips from "renders empty" to "does not compile".
+
+  **Not attempted in the pass that found this.** No `dotnet`, so an unverifiable
+  public refactor of the shared ViewModel layer whose failure mode is a broken
+  build is exactly the trade the rest of this backlog refuses to make.
 
 **Done when:** all three land and MAUI's CI step carries
-`-p:TreatWarningsAsErrors=true` like the other three heads. X.6b is done.
-X.6a still wants someone who can run the app — it is a genuine visual change
-with no documented one-to-one mapping, which is exactly what X.6b turned out
-*not* to be. X.6c never needed a device.
+`-p:TreatWarningsAsErrors=true` like the other three heads. **X.6a and X.6b are
+done.** X.6c is blocked on promoting 11 nested ViewModel classes to top-level
+types — see above; that is the next piece of work here, and unlike the other
+two it genuinely wants a machine that can build MAUI.
 
 ---
 
@@ -769,7 +1034,7 @@ than a line count.
 
 ## Someday
 
-### S.1 — Two roster models answering one question
+### S.1 — Two roster models answering one question — **DECIDED: keep both**
 
 `IRosterRepository` / `RosterProfile` / `JsonRosterRepository` in
 `TableTop.Hosting` (async, JSON file, used only by Console) and `IRosterStore` /
@@ -793,6 +1058,52 @@ moment someone resolves `IRosterRepository` from a graphical head.
 **Decide first:** one model or two? If two, document the split as intentional in
 `IRosterStore`'s docs. If one, `SavedRoster` (richer — carries teams) is the
 better base.
+
+**Answer: two, deliberately. Documented in `IRosterStore`'s doc comment, with a
+cross-reference from `RosterProfile` so a reader arriving at either half finds
+the reasoning.**
+
+**This item's own framing was wrong, which is why the answer went the other
+way.** `SavedRoster` is not "richer". Neither shape is a superset:
+
+| | `SavedPlayer` (Presentation) | `PlayerProfile` (Hosting) |
+|---|---|---|
+| `Team` | ✅ | ❌ |
+| stable `Id` | ❌ | ✅ |
+| `IsParent` / `IsMarried` | ❌ | ✅ |
+| `SchemaVersion` | ❌ | ✅ |
+| `Gender` / `Age` | nullable | non-null, defaulted |
+
+Picking either as "the base" silently drops fields the other half depends on;
+merging them produces a union type where every consumer ignores half of it.
+
+Three further reasons, all found while deciding:
+
+- **The nullability split is semantic, not sloppy.** `SavedPlayer` allows null
+  `Gender`/`Age` because it models setup input *part-way through being entered*.
+  `PlayerProfile` defaults them because it models a *durable profile*. Same
+  words, different lifecycle stage.
+- **The dependency direction rules out the cheap merge.** Console deliberately
+  does not reference `TableTop.Presentation` (item 28), and `Presentation` sits
+  above `Hosting`. A shared type in `Hosting` drags `Team` — a presentation
+  concept — into the engine; a shared type in `Presentation` forces Console onto
+  the ViewModel layer.
+- **Sync versus async is load-bearing.** `IRosterStore` is synchronous because
+  per-head key-value storage is; `IRosterRepository` is asynchronous because it
+  is file I/O. Unifying makes one of them lie.
+
+**The accepted cost is stated rather than explained away:** a roster saved in
+Console is invisible to the graphical heads and vice versa, even on one machine.
+
+**The side effect is now flagged where it can bite.** `AddTableTopHosting`'s
+`rosterFilePath` registration is lazy and never resolved by a graphical head, so
+it stays dead weight rather than a bug — but its doc now says plainly that a head
+which *starts* resolving `IRosterRepository` would be writing to
+`AppContext.BaseDirectory`, which an installed app cannot write to, and must pass
+a real path.
+
+**Done when:** ✅ decided and documented. Reopen only if a head needs to read the
+other's rosters, which is the one requirement that would force convergence.
 
 ### S.2 — Xbox controller support
 

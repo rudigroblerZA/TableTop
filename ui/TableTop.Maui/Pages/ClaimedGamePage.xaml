@@ -21,7 +21,7 @@
                      renders at zero height on Android (same trap documented on
                      MonogamyGamePage's zone picker). Five fixed territories
                      need no virtualisation anyway. -->
-                <Frame Style="{StaticResource CardStyle}">
+                <Border Style="{StaticResource CardStyle}">
                     <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Territories}">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate>
@@ -37,12 +37,18 @@
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
                     </VerticalStackLayout>
-                </Frame>
+                </Border>
 
                 <!-- The drawn card, waiting for the table to judge it -->
-                <Frame IsVisible="{Binding HasPendingChallenge}"
-                       BackgroundColor="{StaticResource CardStockColor}"
-                       BorderColor="#8CC49E4C" CornerRadius="16" Padding="20" HasShadow="True">
+                <Border IsVisible="{Binding HasPendingChallenge}" BackgroundColor="{StaticResource CardStockColor}" Stroke="#8CC49E4C" StrokeShape="RoundRectangle 16" Padding="20">
+                    <!-- Was HasShadow="True" on a Frame. Border has no HasShadow;
+                         an explicit Shadow is the documented replacement. These are
+                         the values PlayingCardStyle already uses for card stock —
+                         reused rather than invented, so both card surfaces drop the
+                         same shadow. -->
+                    <Border.Shadow>
+                        <Shadow Brush="#0E2A22" Offset="0,10" Radius="22" Opacity="0.55" />
+                    </Border.Shadow>
                     <VerticalStackLayout Spacing="10">
                         <Label Text="{Binding PendingCardTitle}" FontFamily="{StaticResource DisplayFont}"
                                TextColor="{StaticResource CardInkColor}" FontSize="19" FontAttributes="Bold" />
@@ -53,7 +59,7 @@
                         <Label Text="Raid — a success steals this territory" IsVisible="{Binding IsRaid}"
                                FontFamily="{StaticResource BodyFont}" FontAttributes="Italic" TextColor="#9C6D4F" FontSize="13" />
                     </VerticalStackLayout>
-                </Frame>
+                </Border>
 
                 <HorizontalStackLayout IsVisible="{Binding HasPendingChallenge}" Spacing="8">
                     <Button x:Name="SucceedButton" Text="Succeeded" Clicked="OnSucceedClicked"

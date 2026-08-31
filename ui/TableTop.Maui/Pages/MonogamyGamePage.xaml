@@ -39,9 +39,15 @@
                 </VerticalStackLayout>
 
                 <!-- Active card -->
-                <Frame IsVisible="{Binding HasCard}"
-                       BackgroundColor="{StaticResource CardStockColor}"
-                       BorderColor="#8CD9A166" CornerRadius="16" Padding="20" HasShadow="True">
+                <Border IsVisible="{Binding HasCard}" BackgroundColor="{StaticResource CardStockColor}" Stroke="#8CD9A166" StrokeShape="RoundRectangle 16" Padding="20">
+                    <!-- Was HasShadow="True" on a Frame. Border has no HasShadow;
+                         an explicit Shadow is the documented replacement. These are
+                         the values PlayingCardStyle already uses for card stock —
+                         reused rather than invented, so both card surfaces drop the
+                         same shadow. -->
+                    <Border.Shadow>
+                        <Shadow Brush="#0E2A22" Offset="0,10" Radius="22" Opacity="0.55" />
+                    </Border.Shadow>
                     <VerticalStackLayout Spacing="10">
                         <Label Text="{Binding CardTitle}" FontFamily="{StaticResource DisplayFont}"
                                TextColor="{StaticResource CardInkColor}" FontSize="19" FontAttributes="Bold" />
@@ -50,7 +56,7 @@
                         <Label Text="{Binding TokenText}" FontFamily="{StaticResource UtilityFont}"
                                TextColor="#9C6D4F" FontSize="12" />
                     </VerticalStackLayout>
-                </Frame>
+                </Border>
 
                 <HorizontalStackLayout IsVisible="{Binding HasCard}" Spacing="8">
                     <Button x:Name="CompleteButton" Text="Done" Clicked="OnCompleteClicked"

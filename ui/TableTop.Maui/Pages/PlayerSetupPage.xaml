@@ -10,7 +10,7 @@
     <VerticalStackLayout Padding="16" Spacing="16">
 
         <!-- Game Mode Info -->
-        <Frame Style="{StaticResource CardStyle}">
+        <Border Style="{StaticResource CardStyle}">
             <VerticalStackLayout Spacing="8">
                 <Label
                     Text="{Binding Mode.Name}"
@@ -23,7 +23,7 @@
                     TextColor="{StaticResource TextSecondary}"
                     LineHeight="1.4" />
             </VerticalStackLayout>
-        </Frame>
+        </Border>
 
         <!-- Saved rosters — a shortcut into "Add Players" below, not a
              replacement for it: picking one fills the list from a roster
@@ -169,7 +169,7 @@
         <CollectionView ItemsSource="{Binding Players}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame Style="{StaticResource CardStyle}">
+                    <Border Style="{StaticResource CardStyle}">
                         <HorizontalStackLayout Spacing="12">
                             <!-- Initial badge. WinUI had one; MAUI listed names
                                  with nothing to scan by. PlayerEntry.Initial was
@@ -211,7 +211,7 @@
                                 Padding="0"
                                 CornerRadius="8" />
                         </HorizontalStackLayout>
-                    </Frame>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

@@ -14,8 +14,17 @@ namespace TableTop.Hosting.Persistence;
 /// stable <see cref="PlayerProfile.Id"/>) that Console's own
 /// <c>IPlayerRepository</c> flow already uses. Console reuses its existing
 /// shape rather than taking a dependency on <c>TableTop.Presentation</c>, which
-/// it deliberately does not reference (backlog item 28). Whether the two roster
-/// shapes should converge is a separate, open question.
+/// it deliberately does not reference (backlog item 28).
+/// </para>
+///
+/// <para>
+/// <b>The two shapes stay separate on purpose (backlog S.1, settled 1.39.0).</b>
+/// Neither is a superset — this one has the stable <c>Id</c>, <c>IsParent</c>,
+/// <c>IsMarried</c> and schema versioning; <c>SavedPlayer</c> has <c>Team</c>,
+/// which this one does not model. The full reasoning, including why the
+/// dependency direction rules out a single shared type, is on
+/// <c>IRosterStore</c>'s doc comment, which is where a reader of the other half
+/// will look.
 /// </para>
 /// </summary>
 public sealed class RosterProfile

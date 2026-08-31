@@ -59,18 +59,12 @@
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame Padding="14"
-                           CornerRadius="12"
-                           BorderColor="#73C49E4C"
-                           HasShadow="False"
-                           BackgroundColor="#16382E"
-                           Margin="2"
-                           WidthRequest="104">
-                        <!-- Tap handled explicitly: on Android the Frame eats the
+                    <Border Padding="14" StrokeShape="RoundRectangle 12" Stroke="#73C49E4C" BackgroundColor="#16382E" Margin="2" WidthRequest="104">
+                        <!-- Tap handled explicitly: on Android the Border eats the
                              touch before the CollectionView sees it. -->
-                        <Frame.GestureRecognizers>
+                        <Border.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnArchetypeTapped" />
-                        </Frame.GestureRecognizers>
+                        </Border.GestureRecognizers>
                         <VerticalStackLayout Spacing="4" VerticalOptions="Center">
                             <Label Text="{Binding Emoji}"
                                    FontSize="30"
@@ -82,7 +76,7 @@
                                    TextColor="{StaticResource TextPrimary}"
                                    HorizontalTextAlignment="Center" />
                         </VerticalStackLayout>
-                    </Frame>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
@@ -103,15 +97,10 @@
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame Padding="14,10"
-                           CornerRadius="12"
-                           BorderColor="#73C49E4C"
-                           HasShadow="False"
-                           BackgroundColor="#16382E"
-                           Margin="2">
-                        <Frame.GestureRecognizers>
+                    <Border Padding="14,10" StrokeShape="RoundRectangle 12" Stroke="#73C49E4C" BackgroundColor="#16382E" Margin="2">
+                        <Border.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnSubArchetypeTapped" />
-                        </Frame.GestureRecognizers>
+                        </Border.GestureRecognizers>
                         <Label Text="{Binding Name}"
                                FontFamily="{StaticResource DisplayFont}"
                                FontSize="13"
@@ -119,7 +108,7 @@
                                TextColor="{StaticResource TextPrimary}"
                                VerticalOptions="Center"
                                HorizontalOptions="Center" />
-                    </Frame>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
@@ -137,10 +126,10 @@
                         SelectionChanged="OnGameModeSelectionChanged">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame Style="{StaticResource CardStyle}" Margin="0,4">
-                        <Frame.GestureRecognizers>
+                    <Border Style="{StaticResource CardStyle}" Margin="0,4">
+                        <Border.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnGameModeTapped" />
-                        </Frame.GestureRecognizers>
+                        </Border.GestureRecognizers>
                         <VerticalStackLayout Spacing="4">
                             <Label Text="{Binding Title}"
                                    FontFamily="{StaticResource DisplayFont}"
@@ -153,7 +142,7 @@
                                    TextColor="#A9BDB4"
                                    LineHeight="1.4" />
                         </VerticalStackLayout>
-                    </Frame>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
