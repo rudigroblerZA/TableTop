@@ -269,6 +269,73 @@ the table above.
 
 ---
 
+**Third update: neither accessor is the culprit, and the table above was built
+on an assumption that does not hold.**
+
+Run `33399939538` (`1bab361`), job `99513575807`. Two things to read from it:
+
+- **The async rewrite took.** No `xUnit1031` warning anywhere in the build
+  output, where the previous run carried two.
+- **Neither deadline fired.** The string `did not return within` appears
+  nowhere. Both `p.GetValue` and `p.SetValue` were on a five-second deadline
+  and both returned.
+
+And yet the run hung identically — `14:01:06` discovery complete, `14:06:11`
+aborted, same test named:
+
+```
+A total of 1 test files matched the specified pattern.        14:01:06
+The active test run was aborted. Reason: Test host process crashed
+Data collector 'Blame' message: The specified inactivity time of 5
+minutes has elapsed.
+The test running when the crash occurred:
+TableTop.UiTests.ViewModelBindingTests.Every_settable_property_raises_PropertyChanged
+```
+
+So the fault is **outside both property accessors**. That is a real result: two
+of the four things this test does into product code are now excluded by
+measurement rather than by reading.
+
+**The retraction matters more than the result.** The table in the second update
+rests on "`Every_command_property_is_non_null_after_construction` passes, so
+construction is shared and fine". That is not supported by anything. A run that
+aborts prints no per-test results, and xUnit does not define the order of the
+facts within a class — so for all three hung runs show, the settable test ran
+first and the command test never started. Blame names the test *in flight*; it
+certifies nothing about any other test. Every "construction is proven fine"
+sentence above should be read as an assumption that has now been withdrawn.
+
+**What is left, and what now guards it.** Inside the hanging test, four calls
+reach product or reflection code. Two are cleared. The other two are now on the
+same deadline:
+
+| step | status |
+|---|---|
+| `p.GetValue` (via `TryMakeDistinctValue`) | **cleared** — guarded, did not fire |
+| `p.SetValue` | **cleared** — guarded, did not fire |
+| `ViewModelTypes()` — `GetTypes()` over `TableTop.WinUI` + `TableTop.Presentation` | now guarded |
+| `TryConstruct` — `ctor.Invoke` per ViewModel, `DispatchProxy.Create` per interface parameter | now guarded |
+
+`ViewModelTypes()` is materialised inside `WithDeadline` and asserted; a
+constructor that does not return is recorded as a failure naming the type, and
+that ViewModel is skipped. The two final assertions were also swapped so
+`failures` is checked before `exercised` — with everything timing out, the
+count assertion would otherwise fire first and replace the message naming the
+culprit with "this test proved nothing".
+
+Of the two, construction is the better suspect: it invokes arbitrary
+constructor bodies with stub arguments, where the type sweep is BCL reflection.
+But that is a prediction, and the last two predictions in this item were both
+wrong, so it is written here rather than acted on.
+
+**Still not skipped, disabled or quarantined.** Both facts still run and both
+still have to pass. The job ends red with evidence, which is not the same as
+green.
+
+**Done when:** the WinUI job completes *and* the tests run to a result.
+
+---
+
 ### N.6 — Three heads cannot play the trait-assessment modes — **FIXED**
 
 `ControllerFamily.TraitProfile` shipped in 1.36.0 with a Console renderer only.
