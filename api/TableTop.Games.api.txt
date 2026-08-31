@@ -119,6 +119,28 @@ sealed class TableTop.Games.Couples.InYourShoesMode
     String Description { get; }
     String Name { get; }
     String SkipLabel { get; }
+static class TableTop.Games.Couples.LoveLanguages
+    String GiftsKey
+    String ServiceKey
+    String TimeKey
+    String TouchKey
+    String WordsKey
+    TraitScale Scale { get; }
+static class TableTop.Games.Couples.LoveLanguagesItemBank
+    Boolean IsBalanced { get; }
+    IReadOnlyList<TraitItemCard> All { get; }
+sealed class TableTop.Games.Couples.LoveLanguagesMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<TraitItemCard> GetItemBank()
+    Int32 MinimumPlayers { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+    TraitScale GetTraitScale()
 static class TableTop.Games.Couples.MemoryLaneCardBank
     IReadOnlyList<ICard> All { get; }
 sealed class TableTop.Games.Couples.MemoryLaneMode
@@ -634,6 +656,28 @@ sealed class TableTop.Games.Fun.AllTogetherNowMode
     String Name { get; }
     String SkipLabel { get; }
     TableShape SuitableFor { get; }
+static class TableTop.Games.Fun.BigFiveItemBank
+    Boolean IsBalanced { get; }
+    IReadOnlyList<TraitItemCard> All { get; }
+sealed class TableTop.Games.Fun.BigFiveMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<TraitItemCard> GetItemBank()
+    Int32 MinimumPlayers { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
+    TraitScale GetTraitScale()
+static class TableTop.Games.Fun.BigFiveTraits
+    String AgreeablenessKey
+    String ConscientiousnessKey
+    String ExtraversionKey
+    String NeuroticismKey
+    String OpennessKey
+    TraitScale Scale { get; }
 sealed class TableTop.Games.Fun.ClaimedMode
     .ctor()
     IReadOnlyList<ICard> GetClaimedDeck()

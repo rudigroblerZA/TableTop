@@ -25,6 +25,7 @@ public partial class PlayerSetupPage : ContentPage
         ControllerFamily.DailyCampaign,
         ControllerFamily.AreaControl,
         ControllerFamily.SimultaneousAnswer,
+        ControllerFamily.TraitProfile,
     ];
 
     private readonly PlayerSetupViewModel _vm;
@@ -154,6 +155,7 @@ public partial class PlayerSetupPage : ContentPage
                 ControllerFamily.CardTurn => new GameplayPage(_vm.Mode, players),
                 ControllerFamily.AreaControl => new ClaimedGamePage(_vm.Mode, players),
                 ControllerFamily.SimultaneousAnswer => new HerdGamePage(_vm.Mode, players),
+                ControllerFamily.TraitProfile => new TraitProfileGamePage(_vm.Mode, players),
                 _ => null,
             };
 

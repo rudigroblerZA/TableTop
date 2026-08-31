@@ -26,6 +26,7 @@ public static class ViewLocator
         [typeof(DayOneGameViewModel)] = () => new DayOneGameView(),
         [typeof(ClaimedGameViewModel)] = () => new ClaimedGameView(),
         [typeof(HerdGameViewModel)] = () => new HerdGameView(),
+        [typeof(TraitProfileGameViewModel)] = () => new TraitProfileGameView(),
         [typeof(SettingsViewModel)] = () => new SettingsView(),
         [typeof(RoasterViewModel)] = () => new RoasterView(),
         [typeof(UnsupportedModeViewModel)] = () => new UnsupportedModeView(),

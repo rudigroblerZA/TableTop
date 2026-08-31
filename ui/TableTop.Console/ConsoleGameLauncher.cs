@@ -39,6 +39,7 @@ internal sealed class ConsoleGameLauncher
         ControllerFamily.DailyCampaign,
         ControllerFamily.AreaControl,
         ControllerFamily.SimultaneousAnswer,
+        ControllerFamily.TraitProfile,
     ];
 
     private readonly IPlayerRepository _repository;
@@ -172,6 +173,10 @@ internal sealed class ConsoleGameLauncher
 
             case IHerdController herd:
                 new ConsoleHerdRenderer(herd).RunBlocking();
+                break;
+
+            case ITraitProfileController profile:
+                new ConsoleTraitProfileRenderer(profile).RunBlocking();
                 break;
 
             // Every family the catalogue can produce has a renderer now

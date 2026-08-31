@@ -54,11 +54,87 @@ So: the tree is green. Every item below is something green does not catch.
 >
 > **A third pass on 2026-08-30** (1.35.4) closed **X.6b** — the documentation
 > that item was blocked on turned out to be reachable, and the migration it
-> describes is exact. What is left is **X.6a** (`Frame` → `Border`, wants a
-> device), **X.6c** (compiled bindings, does not) and S.1-S.3.
+> describes is exact.
+>
+> **1.36.0** added the trait-analysis layer and Big Five, **1.37.0** added Love
+> Languages on top of it, and **1.38.0** closed **N.6** by giving the three
+> graphical heads a `TraitProfile` screen (see `ARCHITECTURE.md`). What is left
+> is **X.6a** (`Frame` → `Border`, wants a device), **X.6c** (compiled bindings,
+> does not) and S.1-S.3.
 >
 > Two things need a human: tags `v1.35.0`/`v1.35.1` are local and **not
 > pushed**, and `develop` is ahead of `origin`.
+
+### N.6 — Three heads cannot play the trait-assessment modes — **FIXED**
+
+`ControllerFamily.TraitProfile` shipped in 1.36.0 with a Console renderer only.
+WinUI, MAUI and native Android declare six of seven families, so the
+trait-assessment modes are the ones they cannot open. **1.37.0 made that two:**
+`BigFiveMode` and `LoveLanguagesMode`. The cost of not having this screen now
+grows with every mode built on the layer, which is the argument for doing it
+before a third arrives.
+
+**This is a stated gap, not a silent one**, which is the whole reason
+`SupportedFamilies` exists. All three heads already route unknown families to a
+fallback that says "'Big Five' needs a TraitProfile screen, which this app
+doesn't have yet" rather than crashing or falling through to a card-turn screen
+— the failure backlog item 4 was written after, when MAUI's router silently
+mishandled Herd and Claimed! and Console had no default arm at all.
+
+`ControllerFamilyTests.GraphicalHeads_PlayEveryModeExceptTheTraitProfileOnes`
+asserts the gap **by name**. A head that gains the screen fails that test until
+its mirror array is updated, and `TheOnlyUnsupportedFamilyAnywhere_IsTraitProfile`
+fails if a *second* unsupported family ever appears rather than letting it hide
+behind this one. This worked in practice rather than in theory: adding Love
+Languages failed the by-name test immediately, which is exactly the prompt to
+come back here and widen the item.
+
+**What a screen needs.** Less than the family count suggests — the shape is
+close to Herd's, which all three already render: one prompt, everyone answers,
+submit together. The differences are a fixed five-button response row instead of
+free text, and a results screen that draws five bars per player plus the
+pairwise comparison, where Herd draws a scoreboard. There is no shared
+`TableTop.Presentation` ViewModel for it yet; writing one is the first step, and
+it is what would let WinUI and MAUI share the work rather than doing it twice.
+
+**Evidence:** the four heads' `SupportedFamilies` declarations, their fallback
+arms (`PlayerSetupPage.xaml.cs:157`, `GameViewModels.cs:90`,
+`GameScreenFactory.cs:79`), and the tests named above. Not exercised on any
+graphical head — no `dotnet` in the pass that added this, and three of the four
+heads cannot be built here at all.
+
+**Done when:** the three heads declare `TraitProfile`, their mirror arrays in
+`ControllerFamilyTests` match, and the by-name gap test is deleted rather than
+edited to expect a smaller gap.
+
+**Resolved in 1.38.0, in that order.** `TraitProfileGameViewModel` landed in
+`TableTop.Presentation` first, so the three heads are views over one state
+machine rather than three implementations of it — which is what the note above
+predicted would make this cheap. WinUI got a `UserControl` and a `ViewLocator`
+entry, MAUI a `ContentPage` on the `IAsyncInitializablePage` two-phase pattern,
+and native Android a code-built screen. The by-name test is gone;
+`EveryHead_CanPlayEveryModeInTheCatalogue` replaces it as a Theory over all four
+mirrors, joined by `EveryHead_DeclaresEveryFamilyTheCatalogueProduces` reading
+the same invariant from the families end.
+
+Two things fell out of doing it:
+
+- **`ParameterRelayCommand`**, because a Likert row is five buttons per player
+  differing only in the value they send. Its parameter is `object` rather than a
+  generic `T` because XAML passes `CommandParameter="3"` as a **string** on both
+  WinUI and MAUI — a `RelayCommand<int>` binds and then silently never executes.
+- **`check-xaml-resources.py`**, after this work reached for a
+  `SecondaryButtonStyle` that has never existed. A missing resource key is a
+  navigation-time crash on both XAML heads and no gate caught it. Proved to fail
+  on the real bug before being trusted.
+
+**Still not exercised on a device.** No `dotnet` in the pass that did it, and
+three of the four heads cannot be built here regardless. The ViewModel has real
+tests; no XAML was compiled and no screen has been rendered. That is the same
+standing caveat S.3 carries for Android TV, and `check-ui-compiles.py` is the
+gate that would close it.
+
+---
 
 ### N.1 — Resume is dead on WinUI and MAUI — **FIXED**
 

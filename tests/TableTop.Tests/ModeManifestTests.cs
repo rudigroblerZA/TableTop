@@ -426,6 +426,7 @@ public sealed class ModeManifestTests
                 ControllerFamily.SimultaneousAnswer => ((IHerdDeckProvider)mode).GetHerdDeck().Count,
                 ControllerFamily.AreaControl => ((IClaimedDeckProvider)mode).GetClaimedDeck().Count,
                 ControllerFamily.DailyCampaign => ((IDailyDeckProvider)mode).GetDailyDeck().Count,
+                ControllerFamily.TraitProfile => ((ITraitAssessmentProvider)mode).GetItemBank().Count,
                 ControllerFamily.CardTurn => ((IGameModeDefinition)mode).GetCards([]).Count,
                 _ => 0,
             };

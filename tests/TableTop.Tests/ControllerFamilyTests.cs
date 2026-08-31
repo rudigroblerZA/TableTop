@@ -34,6 +34,7 @@ public sealed class ControllerFamilyTests
         IHerdController => ControllerFamily.SimultaneousAnswer,
         IClaimedController => ControllerFamily.AreaControl,
         IDayOneController => ControllerFamily.DailyCampaign,
+        ITraitProfileController => ControllerFamily.TraitProfile,
         ICardTurnController => ControllerFamily.CardTurn,
         _ => throw new InvalidOperationException(
             $"Unmapped controller type {controller.GetType().Name} — ControllerFamily needs a new member."),
@@ -239,6 +240,7 @@ public sealed class HeadFamilyCoverageTests
         ControllerFamily.DailyCampaign,
         ControllerFamily.AreaControl,
         ControllerFamily.SimultaneousAnswer,
+        ControllerFamily.TraitProfile,
     ];
 
     /// <summary>Mirrors <c>ConsoleGameLauncher.SupportedFamilies</c>.</summary>
@@ -250,6 +252,7 @@ public sealed class HeadFamilyCoverageTests
         ControllerFamily.DailyCampaign,
         ControllerFamily.AreaControl,
         ControllerFamily.SimultaneousAnswer,
+        ControllerFamily.TraitProfile,
     ];
 
     /// <summary>
@@ -270,6 +273,7 @@ public sealed class HeadFamilyCoverageTests
         ControllerFamily.DailyCampaign,
         ControllerFamily.AreaControl,
         ControllerFamily.SimultaneousAnswer,
+        ControllerFamily.TraitProfile,
     ];
 
     /// <summary>
@@ -289,6 +293,7 @@ public sealed class HeadFamilyCoverageTests
         ControllerFamily.DailyCampaign,
         ControllerFamily.AreaControl,
         ControllerFamily.SimultaneousAnswer,
+        ControllerFamily.TraitProfile,
     ];
 
     [Fact]
@@ -297,40 +302,66 @@ public sealed class HeadFamilyCoverageTests
         AllModes().Should().OnlyContain(m => ControllerFamilies.All.Contains(ControllerFamilies.For(m)));
     }
 
-    [Fact]
-    public void Maui_CanNowPlayEveryModeInTheCatalogue()
+    /// <summary>
+    /// Every head can play every mode in the catalogue.
+    ///
+    /// <para>
+    /// <b>This assertion was deleted and restored once, on purpose.</b> 1.36.0
+    /// added <see cref="ControllerFamily.TraitProfile"/> with a Console renderer
+    /// only. Rather than let three heads declare a family their routers could
+    /// not render — the exact failure backlog item 4 was written after, when
+    /// MAUI fell through to its card-turn page for Herd and Claimed! and four
+    /// modes silently did nothing — the gap was asserted by name instead.
+    /// Adding Love Languages in 1.37.0 failed that by-name test immediately,
+    /// which is what a real alarm does. 1.38.0 built the three screens, so the
+    /// honest statement is once again that nothing is left unsupported.
+    /// </para>
+    ///
+    /// <para>
+    /// A Theory over the four mirrors rather than four near-identical Facts: a
+    /// fifth head, or a fifth family, should cost one line here.
+    /// </para>
+    /// </summary>
+    [Theory]
+    [InlineData("MAUI")]
+    [InlineData("WinUI")]
+    [InlineData("Android")]
+    [InlineData("Console")]
+    public void EveryHead_CanPlayEveryModeInTheCatalogue(string head)
     {
-        // Used to document a real gap: MAUI had no AreaControl or
-        // SimultaneousAnswer page, so this asserted UnsupportedIn was
-        // non-empty. Backlog item 4 closed it with real screens for both
-        // families — the honest statement now is that nothing is left
-        // unsupported, not a gap left standing for nostalgia.
-        ControllerFamilies.UnsupportedIn(AllModes(), MauiSupported).Should().BeEmpty();
+        var supported = head switch
+        {
+            "MAUI" => MauiSupported,
+            "WinUI" => WinUiSupported,
+            "Android" => AndroidSupported,
+            "Console" => ConsoleSupported,
+            _ => throw new ArgumentOutOfRangeException(nameof(head), head, "unknown head"),
+        };
+
+        ControllerFamilies.UnsupportedIn(AllModes(), supported)
+            .Select(m => m.Name)
+            .Should().BeEmpty(
+                $"{head} declares every family the catalogue produces. If a new family " +
+                "is added without a screen here, assert the gap by name rather than " +
+                "declaring the family — a head must never claim a family its router " +
+                "cannot actually render.");
     }
 
     [Fact]
-    public void WinUi_CanNowPlayEveryModeInTheCatalogue()
+    public void EveryHead_DeclaresEveryFamilyTheCatalogueProduces()
     {
-        // Same closure as the MAUI test above — backlog item 4.
-        ControllerFamilies.UnsupportedIn(AllModes(), WinUiSupported).Should().BeEmpty();
-    }
+        // The same invariant read from the other end. The Theory above is driven
+        // by the modes that exist; this is driven by the families they resolve
+        // to, so it still fails for a family whose only mode was removed.
+        var produced = AllModes()
+            .Select(ControllerFamilies.TryFor)
+            .Where(f => f is not null)
+            .Select(f => f!.Value)
+            .Distinct()
+            .ToList();
 
-    [Fact]
-    public void Android_CanNowPlayEveryModeInTheCatalogue()
-    {
-        // The native .NET for Android head shipped at full parity with WinUI —
-        // a screen for all six families (its own README / ARCHITECTURE entry).
-        ControllerFamilies.UnsupportedIn(AllModes(), AndroidSupported).Should().BeEmpty();
-    }
-
-    [Fact]
-    public void Console_CanNowPlayEveryModeInTheCatalogue()
-    {
-        // Console was "deliberately the thinnest head" until backlog item 4
-        // gave it real renderers for Monogamy, Day One, Claimed! and Herd —
-        // it now declares, and actually supports, every family the other two
-        // heads do.
-        ControllerFamilies.UnsupportedIn(AllModes(), ConsoleSupported).Should().BeEmpty();
+        foreach (var mirror in new[] { MauiSupported, WinUiSupported, AndroidSupported, ConsoleSupported })
+            produced.Should().BeSubsetOf(mirror);
     }
 
     // REMOVED: NoHeadSilentlyDropsAFamilyItClaimsToSupport

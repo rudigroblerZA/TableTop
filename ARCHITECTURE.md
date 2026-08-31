@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.35.4**, August 2026. This replaces the accumulated
+Current as of **1.38.0**, August 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -32,7 +32,7 @@ MAUI need their respective SDKs, which this environment does not have — see
 
 ## Content
 
-**101 modes, 3,721 cards, all compiled in.** (README carries the same pair and
+**103 modes, 3,811 cards, all compiled in.** (README carries the same pair and
 is the enforced copy — `DocumentationAccuracyTests` fails when it drifts.
 Nothing enforces this line, which is why it sat two releases behind at 99 /
 3,657 until backlog X.5. Trust README's numbers over these if they disagree.) Every mode builds its deck from an
@@ -887,6 +887,200 @@ async work to block on, a different shape rather than a template to copy.
 
   PATCH: a fix in one head. No public-surface movement — `api/*.api.txt`
   unchanged, and no engine assembly was touched.
+
+- **1.36.0** added a trait-analysis layer and **Big Five**, the first mode that
+  ends without a winner.
+
+  **What "expand scoring" actually required.** `IScoringStrategy` returns an
+  `int`: a card produces a scalar delta and the engine adds it to a running
+  total. A trait assessment needs a *vector* — one running total per dimension
+  from a single response — and it needs the range each total could have fallen
+  between, because the answer a player wants is "where did I land", not "how
+  many points". Neither bolts onto a scalar contract without every existing
+  strategy growing members that mean nothing for it, so `ITraitScoringStrategy`
+  is a sibling of `IScoringStrategy` rather than an extension of it, and
+  `ControllerFamily.TraitProfile` is a seventh family rather than a card-turn
+  mode with an unusual strategy.
+
+  **The layer is instrument-agnostic; Big Five is content.** Traits are
+  string-keyed against a `TraitScale` rather than an enum, so a mode can define
+  its own dimensions without the engine growing a member per instrument — the
+  same reasoning that keeps every deck in this repo compiled-in content rather
+  than an engine concept. The five OCEAN dimensions and the fifty items live in
+  `TableTop.Games`, where the rest of the content is.
+
+  **The scoring, because it is the part a mistake hides in.** An item's weight
+  carries keying in its *sign* and loading in its *magnitude*. Reverse-keying
+  reflects the response across the scale (`Minimum + Maximum - r`) rather than
+  negating it, so forward and reverse items contribute on the same 1-5 range and
+  the totals simply add up; negation would put them on different ranges and
+  require a correction elsewhere. Bounds are reported per item and per trait, so
+  a heavily-loaded item widens the denominator as much as the numerator — without
+  that, `TraitScore.Normalize` clamps and the symptom is a dimension pinned at
+  100 rather than an obvious fault.
+
+  **The item bank is five-forward/five-reverse per dimension, and that is a
+  correctness property.** A player who agrees with every statement scores exactly
+  50 on all five dimensions instead of 100 on all five. Acquiescence bias is the
+  easiest way to make a personality result meaningless, and an all-positive bank
+  measures nothing but how agreeable the player feels toward the quiz.
+  `BigFiveItemBank.IsBalanced` computes this from the bank so a future item that
+  tilts a dimension fails a test rather than shifting everyone's score quietly.
+
+  **Skips are absences, not neutral answers.** A player left out of a
+  `SubmitResponses` call contributes nothing to that item *and* does not widen
+  their denominator. Recording a skip as `Neutral` would be easier and wrong:
+  neutral is a stated opinion that pulls a dimension toward its midpoint, a skip
+  is missing data. Someone who skips forty of fifty items should show ten items'
+  worth of a real profile, not fifty items' worth of a flattened one.
+
+  **Results are not percentiles, and the code says so where it is computed.** A
+  real inventory reports position against a normed population; this reports
+  position on the range these fifty items can produce. The distinction lives on
+  `TraitScore.Normalized` and `TraitBand` rather than in a disclaimer, because
+  "you scored 82 on Openness" reads as a percentile to nearly everyone. The
+  fifth dimension is keyed `Neuroticism` — anything else makes the output
+  unidentifiable to someone who knows the model — and displayed as
+  "Sensitivity", because the word is not worth the damage at a party.
+
+  **Only Console can play it, and that is stated rather than hidden.** Console
+  shipped a renderer with the family. WinUI, MAUI and native Android declare six
+  of seven families, so Big Five is the one mode they cannot open; all three
+  already degrade to a "needs a *TraitProfile* screen" message rather than
+  crashing, which is the fallback backlog item 4 installed. It would have been
+  easy to keep the three head-coverage tests green by declaring the family in
+  each head and letting its router fall through — that is precisely the failure
+  item 4 was written after, when four modes silently did nothing. The tests now
+  assert the gap **by name**, so a head that gains the screen fails until it says
+  so, and a *second* unsupported mode fails rather than hiding behind the first.
+
+  Adding a capability interface still means matching arms in
+  `ControllerFamilies.TryFor` and `ControllerFactory`, plus the manifest arm
+  derived from the first. All three were added in matching positions, and the
+  registry-wide parity tests caught the two places that would otherwise have
+  drifted: `ModeManifestTests`'s own family switch (which would have expected 0
+  cards against an actual 50) and `ControllerFamilyTests.FamilyOfController`.
+
+  MINOR: new capability and a new mode. `api/*.api.txt` gains 24 types across the
+  three engine assemblies and loses nothing. **The snapshots were computed by
+  hand** — this pass had no `dotnet` — by mirroring `PublicApiSurfaceTests`'s
+  reflection format; re-emitting the three unmodified files reproduced them
+  byte-for-byte first, which is the evidence the format was understood, but the
+  additions themselves are unverified until someone runs
+  `TABLETOP_UPDATE_API=1 dotnet test`. `PublicApiSurfaceTests` is what will say
+  so, precisely, and the fix is one command.
+
+- **1.37.0** added **Love Languages** to the couples archetype — the second mode
+  on the trait-analysis layer, and the one that shows whether the layer was
+  worth building.
+
+  **It is content and nothing else.** Same scoring, same `TraitProfileController`,
+  same Console renderer, same `ControllerFamily`. A different `TraitScale` and a
+  different item bank. No engine change of any kind was needed, which is the
+  claim 1.36.0 made about the layer being instrument-agnostic, now tested by a
+  second instrument rather than asserted.
+
+  **What differs is what the output is for.** Big Five reports five independent
+  levels; this reports an *order*. Two people can both score 70 on Physical
+  Touch and the interesting fact is still whether it is each of their highest.
+  `TraitProfile.Strongest` is what a results screen leads with here, and
+  `TraitProfileComparison.GreatestDivergence` is the conversation the couple came
+  for — the language one leans on hardest and the other reads least. Both already
+  existed; neither needed changing.
+
+  **Likert, where the well-known version is forced-choice.** The popular
+  questionnaire makes you pick between two statements thirty times, producing
+  ipsative scores: they are ranks, they sum to a constant, and scoring high on
+  one necessarily costs another. Two reasons that is the wrong fit here. It
+  cannot express "all five matter to me a lot", which is a real and common
+  answer. And ipsative scores are unsafe to compare between people, which is
+  exactly what this mode does at the end. Agreeing independently with each
+  statement keeps the comparison honest and still yields a clear ranking.
+
+  **Balance matters more here than in Big Five**, and for a sharper reason. There
+  a tilted dimension shifts a level. Here, a player who agrees warmly with an
+  all-positive bank scores high on all five — which is not a flattering result,
+  it is *no result*, because the ranking that is the mode's entire output becomes
+  arbitrary. Four forward and four reverse per language, forty items,
+  `IsBalanced` computed from the bank.
+
+  **Items are original.** The five categories are the widely-used popular ones
+  and are named descriptively; the statements are written for this repo and none
+  is taken from any published questionnaire. This is not that assessment and is
+  not affiliated with it — the same standard `BigFiveItemBank` records, and it
+  matters because this content is compiled in and shipped.
+
+  **The head-gap test did its job.** `GraphicalHeads_PlayEveryModeExceptBigFive`
+  asserted a single-element set and failed the moment a second trait-assessment
+  mode was registered. That is the alarm working: 1.36.0 chose to assert the gap
+  by name precisely so a second unsupported mode could not hide behind the first.
+  It is now `GraphicalHeads_PlayEveryModeExceptTheTraitProfileOnes` over a named
+  list, and backlog N.6 grew from one mode to two. The three graphical heads
+  still degrade to a "needs a TraitProfile screen" message.
+
+  MINOR: a new mode, no engine change. `api/*.api.txt` gains three types in
+  `TableTop.Games` and nothing elsewhere — the layer itself did not move, which
+  is the mechanical evidence for the paragraph above. Snapshots hand-computed
+  again; the round-trip check on the unmodified file passed first.
+
+- **1.38.0** gave WinUI, MAUI and native Android a `TraitProfile` screen,
+  closing backlog N.6. All four heads play every mode again.
+
+  **The shared ViewModel came first, and that was the whole point of the item.**
+  `TraitProfileGameViewModel` lives in `TableTop.Presentation`, so the three
+  graphical heads render the same state machine rather than reimplementing it —
+  the same consolidation backlog item 1 did for card-turn, where MAUI and WinUI
+  had 733 and 404 lines driving one controller. Each head here is a view over
+  that ViewModel: a WinUI `UserControl`, a MAUI `ContentPage`, and an Android
+  code-built view tree.
+
+  **It carries the re-entrancy discipline `HerdGameViewModel` documents**, for
+  the same reason. `SubmitResponses` raises `ItemRecorded` and then advances
+  *inside the same call*, so `ItemReady` or `AssessmentCompleted` fires before
+  `Submit` returns. `OnItemReady` owns the current-statement properties and the
+  response entries; `OnAssessmentCompleted` owns the results; neither reads or
+  clears what the other writes, so their order within one call does not matter.
+  The entries are rebuilt rather than cleared on each statement, so a stale
+  answer cannot survive into the next one — asserted directly, because it is
+  invisible otherwise.
+
+  **`ParameterRelayCommand` is new, and its parameter is `object` on purpose.**
+  A Likert row is five buttons per player differing only in the value they send;
+  five commands per entry would work and would be indefensible. The parameter is
+  loosely typed because **XAML passes `CommandParameter="3"` as a string on both
+  WinUI and MAUI** — a `RelayCommand<int>` compiles, binds, and then silently
+  never executes. The Android head passes a real `int` from code. One lenient
+  conversion, in one place, is what makes a single command work from all three.
+
+  **A new gate: `check-xaml-resources.py`.** Writing the MAUI page reached for
+  `SecondaryButtonStyle`, which has never existed — the style is
+  `QuietButtonStyle`. That is not a compile error on either XAML head; it is a
+  crash when the page is navigated to, reaching the player rather than the
+  developer. Nothing caught it: the XAML parses, every binding resolves, and all
+  seven other gates pass. It was found by grepping the resource dictionary by
+  hand. The gate checks every `{StaticResource}` / `{DynamicResource}` against
+  the `x:Key`s defined in the same head, as a closed set — both heads resolve
+  entirely within themselves today, which is what makes that sound rather than
+  noisy. It was **proved to fail on the real bug before being trusted**, the
+  standard N.4 set.
+
+  **The head-gap test was deleted, as the backlog item said it should be.**
+  `EveryHead_CanPlayEveryModeInTheCatalogue` is restored — now a Theory over all
+  four mirrors rather than four near-identical Facts — alongside
+  `EveryHead_DeclaresEveryFamilyTheCatalogueProduces`, which reads the same
+  invariant from the families end so it still fails for a family whose only mode
+  was removed. `check-head-family-coverage.py` caught the three stale mirrors
+  the moment the heads were updated, which is exactly what it exists for.
+
+  MINOR: new capability on three heads, no engine change. `api/*.api.txt` is
+  untouched — `TableTop.Presentation` is not snapshotted, and Core, Games and
+  Hosting were not modified at all.
+
+  **Unverified to an unusual degree, and worth saying plainly.** This pass had
+  no `dotnet`, and three of the four heads cannot be built in this environment
+  even with one. The ViewModel is covered by real tests and the gates pass, but
+  **no XAML was compiled and no screen has been rendered**. `check-ui-compiles.py`
+  is the gate that would say otherwise and it needs both UI workloads.
 
 ## What genuinely doesn't exist here
 

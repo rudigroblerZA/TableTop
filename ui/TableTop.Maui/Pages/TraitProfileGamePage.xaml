@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    SafeAreaEdges="Container"
+    x:Class="TableTop.Maui.Pages.TraitProfileGamePage"
+    Title="Profile"
+    Background="{StaticResource BaizeBrush}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="14">
+
+            <Label Text="{Binding LoadError}" TextColor="#F87171" IsVisible="{Binding HasLoadError}" FontSize="15" />
+
+            <!-- ══ ANSWERING ═══════════════════════════════════════════════ -->
+            <VerticalStackLayout IsVisible="{Binding IsPlaying}" Spacing="14">
+
+                <Label Style="{StaticResource PipLabelStyle}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding ProgressLabel}" />
+                            <Span Text="  ·  " />
+                            <Span Text="{Binding Category}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <ProgressBar Progress="{Binding Progress}" />
+
+                <!-- The statement everyone answers at once -->
+                <Frame Style="{StaticResource PlayingCardStyle}">
+                    <Label Text="{Binding Statement}" FontFamily="{StaticResource DisplayFont}"
+                           TextColor="{StaticResource CardInkColor}" FontSize="19" FontAttributes="Bold" />
+                </Frame>
+
+                <Label Text="1 strongly disagree  ·  5 strongly agree"
+                       Style="{StaticResource PipLabelStyle}" />
+
+                <!-- One five-button row per player. BindableLayout, not
+                     CollectionView, same nested-scrolling reason as
+                     HerdGamePage's answer sheet. -->
+                <Frame Style="{StaticResource CardStyle}">
+                    <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding PlayerResponses}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="{Binding PlayerName}"
+                                           FontFamily="{StaticResource DisplayFont}" FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <Grid ColumnDefinitions="*,*,*,*,*,Auto" ColumnSpacing="6">
+                                        <Button Grid.Column="0" Text="1" Command="{Binding PickCommand}" CommandParameter="1" />
+                                        <Button Grid.Column="1" Text="2" Command="{Binding PickCommand}" CommandParameter="2" />
+                                        <Button Grid.Column="2" Text="3" Command="{Binding PickCommand}" CommandParameter="3" />
+                                        <Button Grid.Column="3" Text="4" Command="{Binding PickCommand}" CommandParameter="4" />
+                                        <Button Grid.Column="4" Text="5" Command="{Binding PickCommand}" CommandParameter="5" />
+                                        <Label Grid.Column="5" Text="{Binding SelectedValue}"
+                                               IsVisible="{Binding HasAnswered}" VerticalOptions="Center"
+                                               Margin="8,0,0,0" FontFamily="{StaticResource BodyFont}"
+                                               TextColor="{StaticResource GoldBrightColor}" />
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <HorizontalStackLayout Spacing="10">
+                    <Button x:Name="NextButton" Text="Next" Clicked="OnNextClicked"
+                            Style="{StaticResource PrimaryButtonStyle}" />
+                    <Button Text="Skip" Clicked="OnSkipClicked"
+                            Style="{StaticResource QuietButtonStyle}" />
+                </HorizontalStackLayout>
+
+                <Button Text="Quit" Clicked="OnQuitClicked"
+                        Style="{StaticResource QuietButtonStyle}" HorizontalOptions="Start" />
+            </VerticalStackLayout>
+
+            <!-- ══ RESULTS ═════════════════════════════════════════════════ -->
+            <VerticalStackLayout IsVisible="{Binding IsComplete}" Spacing="14">
+
+                <Label Text="Results" FontFamily="{StaticResource DisplayFont}" FontSize="24"
+                       FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" />
+                <Label Text="{Binding Summary}" FontFamily="{StaticResource BodyFont}"
+                       TextColor="{StaticResource TextPrimary}" FontSize="15" />
+
+                <VerticalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding Profiles}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Style="{StaticResource CardStyle}">
+                                <VerticalStackLayout Spacing="10">
+                                    <Label Text="{Binding PlayerName}" FontFamily="{StaticResource DisplayFont}"
+                                           FontSize="18" FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <Label IsVisible="{Binding HasTopTrait}" FontFamily="{StaticResource BodyFont}"
+                                           FontAttributes="Italic" TextColor="{StaticResource GoldBrightColor}"
+                                           FontSize="14">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="Strongest: " />
+                                                <Span Text="{Binding TopTrait}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+
+                                    <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Scores}">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate>
+                                                <VerticalStackLayout Spacing="2">
+                                                    <Label Text="{Binding TraitName}"
+                                                           FontFamily="{StaticResource DisplayFont}" FontSize="14"
+                                                           TextColor="{StaticResource TextPrimary}" />
+                                                    <ProgressBar Progress="{Binding Fraction}" />
+                                                    <Label FontFamily="{StaticResource BodyFont}" FontSize="12"
+                                                           TextColor="{StaticResource GoldBrightColor}">
+                                                        <Label.FormattedText>
+                                                            <FormattedString>
+                                                                <Span Text="{Binding Rounded}" />
+                                                                <Span Text="  ·  " />
+                                                                <Span Text="{Binding BandLabel}" />
+                                                            </FormattedString>
+                                                        </Label.FormattedText>
+                                                    </Label>
+                                                </VerticalStackLayout>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Frame Style="{StaticResource CardStyle}" IsVisible="{Binding HasComparison}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="TOGETHER" Style="{StaticResource PipLabelStyle}" />
+                        <Label Text="{Binding ComparisonSummary}" FontFamily="{StaticResource BodyFont}"
+                               TextColor="{StaticResource TextPrimary}" FontSize="15" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Not decoration: a number out of 100 beside a personality
+                     trait reads as a percentile to almost everyone. -->
+                <Label Text="{Binding ResultsCaveat}" Style="{StaticResource PipLabelStyle}" />
+
+                <Button Text="Done" Clicked="OnDoneClicked"
+                        Style="{StaticResource PrimaryButtonStyle}" HorizontalOptions="Start" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

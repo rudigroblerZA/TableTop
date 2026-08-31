@@ -4,8 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A fully UI-agnostic card game engine for couples and party games (101 modes,
-3,721 cards as of the last README update — `DocumentationAccuracyTests`
+A fully UI-agnostic card game engine for couples and party games (103 modes,
+3,811 cards as of the last README update — `DocumentationAccuracyTests`
 keeps that figure honest, so trust README.md's count over any other doc's if
 they ever disagree). All content is compiled in: no content files, no
 runtime deck loading. .NET 10 / C# 14. Four engine assemblies plus four UI
@@ -69,6 +69,7 @@ python3 scripts/check-xaml-bindings.py         # bindings resolving to nothing (
 python3 scripts/check-shared-usings.py         # shared type used without importing its namespace
 python3 scripts/check-mvvm-method-parity.py    # MAUI page calling a method its shared VM doesn't expose
 python3 scripts/check-head-family-coverage.py  # a head's declared game support drifted from its test copy
+python3 scripts/check-xaml-resources.py        # a {StaticResource} key that isn't defined anywhere
 python3 scripts/check-async-void.py             # an async void handler with no try/catch (MAUI + native Android)
 python3 scripts/check-ui-compiles.py           # needs the .NET SDK + both UI workloads
 python3 scripts/check-coverage.py <dir>        # coverage floors; needs a Cobertura report (CI runs it)
@@ -95,10 +96,10 @@ ever reachable from `Core`, `Games`, or `Hosting`.
 **`IControllerFactory` is the sole controller-creation boundary.** A mode
 implements one or more capability interfaces (`IGameModeDefinition`,
 `IQuestionBankProvider`, `IMonogamyDeckProvider`, `IDailyDeckProvider`,
-`IClaimedDeckProvider`, `IHerdDeckProvider`); `ControllerFactory.CreateAsync`
-dispatches on those to build the right controller
-(`CardTurnController`/`MillionaireController`/`MonogamyController`/
-`DayOneController`/`ClaimedController`/`HerdController`). Every UI head must
+`IClaimedDeckProvider`, `IHerdDeckProvider`, `ITraitAssessmentProvider`);
+`ControllerFactory.CreateAsync` dispatches on those to build the right
+controller (`CardTurnController`/`MillionaireController`/`MonogamyController`/
+`DayOneController`/`ClaimedController`/`HerdController`/`TraitProfileController`). Every UI head must
 go through it — constructing a controller with `new` anywhere outside
 `ControllerFactory` was a recurring bug class here (see BACKLOG item 29):
 it silently drops whatever persistence override, diagnostics sink, or DI
@@ -108,7 +109,7 @@ dispatch arm — not a UI-side workaround.
 
 **The same capability-interface set gets tested in more than one place, and
 history shows they drift.** `ControllerFactory.CreateAsync`,
-`ControllerFamilies.TryFor` (which of six `ControllerFamily` values a mode
+`ControllerFamilies.TryFor` (which of seven `ControllerFamily` values a mode
 produces — drives which screen a head opens) and `ModeManifestExtensions`
 (per-mode card-count summaries) all switch on the same interfaces.
 `ControllerFamilies.TryFor` is the intended single source of truth now —
@@ -121,10 +122,15 @@ silently.
 (`SupportedFamilies`), and `HeadFamilyCoverageTests` / `check-head-family-coverage.py`
 check that declaration against the live registry — the enforcement is against
 each head's own stated claim, not a hardcoded expectation, because a head is
-allowed to support fewer families than the catalogue has. None currently
-does: all four heads declare all six families. The mechanism still matters —
-it is what makes a future gap a failing test rather than a mode that
-silently does nothing.
+allowed to support fewer families than the catalogue has. None currently does:
+all four heads declare all seven families again as of 1.38.0. It is worth
+knowing that this was briefly untrue on purpose — 1.36.0 shipped
+`ControllerFamily.TraitProfile` with a Console renderer only, and the three
+graphical heads' gap was asserted **by name** rather than papered over by
+declaring a family their routers could not render. That by-name test then
+failed the moment a second trait-assessment mode was added, which is the
+mechanism working: a gap is a failing test, not a mode that silently does
+nothing.
 
 **Shared ViewModels live in `TableTop.Presentation`**, plain `net10.0` with
 no platform SDK dependency — that's what makes them unit-testable without

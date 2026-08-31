@@ -103,6 +103,18 @@ abstract interface TableTop.Hosting.Abstractions.IMonogamyController
     event EventHandler<MonogamyGameEndedEvent> GameEnded
     event EventHandler<MonogamyTimedCardEvent> TimedCardStarted
     event EventHandler<TokensAwardedEvent> TokensAwarded
+abstract interface TableTop.Hosting.Abstractions.ITraitProfileController
+    IReadOnlyList<String> PlayerNames { get; }
+    Int32 ItemNumber { get; }
+    Int32 TotalItems { get; }
+    TraitScale Scale { get; }
+    Void Quit()
+    Void Skip()
+    Void Start()
+    Void SubmitResponses(IReadOnlyDictionary<String, LikertResponse> responses)
+    event EventHandler<TraitAssessmentCompletedEvent> AssessmentCompleted
+    event EventHandler<TraitItemReadyEvent> ItemReady
+    event EventHandler<TraitItemRecordedEvent> ItemRecorded
 sealed class TableTop.Hosting.Abstractions.SystemClock
     .ctor()
     DateTimeOffset UtcNow { get; }
@@ -364,6 +376,21 @@ sealed class TableTop.Hosting.Controllers.ThreadingGuard_TestAccessor
     Boolean Enabled { get; set; }
     Void Assert(String method)
     Void TransferOwnership()
+sealed class TableTop.Hosting.Controllers.TraitProfileController
+    .ctor(IReadOnlyList<IPlayer> players, TraitScale scale, IReadOnlyList<TraitItemCard> items, ITraitScoringStrategy scoring = default)
+    Boolean IsRunning { get; set; }
+    IReadOnlyList<String> PlayerNames { get; }
+    Int32 ItemNumber { get; }
+    Int32 TotalItems { get; }
+    TraitScale Scale { get; }
+    Void Dispose()
+    Void Quit()
+    Void Skip()
+    Void Start()
+    Void SubmitResponses(IReadOnlyDictionary<String, LikertResponse> responses)
+    event EventHandler<TraitAssessmentCompletedEvent> AssessmentCompleted
+    event EventHandler<TraitItemReadyEvent> ItemReady
+    event EventHandler<TraitItemRecordedEvent> ItemRecorded
 sealed class TableTop.Hosting.Diagnostics.LoggerEngineDiagnostics
     .ctor(ILogger logger)
     .ctor(ILogger<LoggerEngineDiagnostics> logger)
@@ -899,6 +926,42 @@ sealed class TableTop.Hosting.Events.TokensAwardedEvent
     String Zone { get; set; }
     TokensAwardedEvent <Clone>$()
     Void Deconstruct(String& PlayerName, Int32& TokensEarned, Int32& TotalTokens, String& Zone)
+sealed class TableTop.Hosting.Events.TraitAssessmentCompletedEvent
+    .ctor(IReadOnlyList<TraitProfile> Profiles, IReadOnlyList<TraitProfileComparison> Comparisons, TraitProfileComparison MostAlike, TraitProfileComparison MostDifferent, Int32 ItemsAnswered)
+    Boolean Equals(Object obj)
+    Boolean Equals(TraitAssessmentCompletedEvent other)
+    IReadOnlyList<TraitProfile> Profiles { get; set; }
+    IReadOnlyList<TraitProfileComparison> Comparisons { get; set; }
+    Int32 GetHashCode()
+    Int32 ItemsAnswered { get; set; }
+    String ToString()
+    TraitAssessmentCompletedEvent <Clone>$()
+    TraitProfileComparison MostAlike { get; set; }
+    TraitProfileComparison MostDifferent { get; set; }
+    Void Deconstruct(IReadOnlyList`1& Profiles, IReadOnlyList`1& Comparisons, TraitProfileComparison& MostAlike, TraitProfileComparison& MostDifferent, Int32& ItemsAnswered)
+sealed class TableTop.Hosting.Events.TraitItemReadyEvent
+    .ctor(Int32 ItemNumber, Int32 TotalItems, String Statement, String Category)
+    Boolean Equals(Object obj)
+    Boolean Equals(TraitItemReadyEvent other)
+    Int32 GetHashCode()
+    Int32 ItemNumber { get; set; }
+    Int32 TotalItems { get; set; }
+    String Category { get; set; }
+    String Statement { get; set; }
+    String ToString()
+    TraitItemReadyEvent <Clone>$()
+    Void Deconstruct(Int32& ItemNumber, Int32& TotalItems, String& Statement, String& Category)
+sealed class TableTop.Hosting.Events.TraitItemRecordedEvent
+    .ctor(Int32 ItemNumber, String Statement, IReadOnlyDictionary<String, LikertResponse> Responses)
+    Boolean Equals(Object obj)
+    Boolean Equals(TraitItemRecordedEvent other)
+    IReadOnlyDictionary<String, LikertResponse> Responses { get; set; }
+    Int32 GetHashCode()
+    Int32 ItemNumber { get; set; }
+    String Statement { get; set; }
+    String ToString()
+    TraitItemRecordedEvent <Clone>$()
+    Void Deconstruct(Int32& ItemNumber, String& Statement, IReadOnlyDictionary`2& Responses)
 sealed class TableTop.Hosting.Events.TurnResultEvent
     .ctor(String PlayerName, CardOutcome Outcome, Int32 ScoreDelta, Int32 Round, IReadOnlyList<ScoreEntry> CurrentScores)
     Boolean Equals(Object obj)
