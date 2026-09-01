@@ -70,7 +70,7 @@ public sealed class ThreadingAndDiagnosticsTests
 #if DEBUG
         threadEx.Should().NotBeNull("wrong-thread call must throw in Debug builds");
         threadEx.Should().BeOfType<InvalidOperationException>();
-        threadEx!.Message.Should().Contain("CardTurnController.RecordOutcome");
+        threadEx.Message.Should().Contain("CardTurnController.RecordOutcome");
         threadEx.Message.Should().Contain("not thread-safe");
 #else
         // Release: the guard is off by default (ThreadingGuard.Enabled), so no

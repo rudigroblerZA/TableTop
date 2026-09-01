@@ -63,7 +63,7 @@ public sealed class SessionResumerTests
             Snapshot(ModeName.ToUpperInvariant(), round: 1), AvailableModes, null, out _);
 
         result.Should().NotBeNull("mode lookup is documented as OrdinalIgnoreCase");
-        result!.Mode.Name.Should().Be(ModeName);
+        result.Mode.Name.Should().Be(ModeName);
     }
 
     // ── The success path ─────────────────────────────────────────────────────
@@ -77,7 +77,7 @@ public sealed class SessionResumerTests
 
         result.Should().NotBeNull();
         reason.Should().BeEmpty("reason is only populated when resolution fails");
-        result!.Mode.Name.Should().Be(ModeName);
+        result.Mode.Name.Should().Be(ModeName);
         result.Players.Should().HaveCount(2);
         result.Snapshot.Should().BeSameAs(snapshot);
         result.Round.Should().Be(7);

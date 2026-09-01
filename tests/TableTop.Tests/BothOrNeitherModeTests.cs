@@ -29,7 +29,7 @@ public sealed class BothOrNeitherModeTests
         var node = ArchetypeRegistry.Default().FindById("couples.intimate");
 
         node.Should().NotBeNull();
-        node!.Modes.Should().Contain(m => m.Name == "Both Or Neither");
+        node.Modes.Should().Contain(m => m.Name == "Both Or Neither");
         node.AgeRating.Should().Be(AgeRating.Adult,
             "explicit content must stay behind the adult gate the node already provides");
     }

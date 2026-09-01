@@ -114,7 +114,7 @@ public sealed class GameEngineTests
         game.RecordOutcome(CardOutcome.Completed);
 
         captured.Should().NotBeNull();
-        captured!.ScoreDelta.Should().Be(10);
+        captured.ScoreDelta.Should().Be(10);
         captured.Outcome.Should().Be(CardOutcome.Completed);
     }
 
@@ -129,7 +129,7 @@ public sealed class GameEngineTests
         game.End();
 
         captured.Should().NotBeNull();
-        captured!.FinalStandings.Should().HaveCount(2);
+        captured.FinalStandings.Should().HaveCount(2);
     }
 
     // ── PlayedCards tracking ──────────────────────────────────────────────────

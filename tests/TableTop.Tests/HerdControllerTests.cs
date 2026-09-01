@@ -215,7 +215,7 @@ public sealed class HerdControllerTests
         controller.Start();
 
         prompt.Should().NotBeNull();
-        prompt!.RoundNumber.Should().Be(1);
+        prompt.RoundNumber.Should().Be(1);
         prompt.TotalRounds.Should().Be(3);
     }
 
@@ -231,7 +231,7 @@ public sealed class HerdControllerTests
         controller.SubmitAnswers(new Dictionary<string, string> { ["A"] = "x", ["B"] = "x", ["C"] = "x", ["D"] = "q" });
 
         ended.Should().NotBeNull();
-        ended!.RoundsPlayed.Should().Be(2);
+        ended.RoundsPlayed.Should().Be(2);
         controller.IsRunning.Should().BeFalse();
     }
 
@@ -271,7 +271,7 @@ public sealed class HerdModeTests
     {
         var node = ArchetypeRegistry.Default().FindById("fun.herd");
         node.Should().NotBeNull();
-        node!.Modes.Should().Contain(m => m.Name == "Herd");
+        node.Modes.Should().Contain(m => m.Name == "Herd");
     }
 
     [Fact]

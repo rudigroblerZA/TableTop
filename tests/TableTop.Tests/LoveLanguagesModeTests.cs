@@ -144,7 +144,7 @@ public sealed class LoveLanguagesModeTests
             builder.Record("P", item, LikertResponse.StronglyAgree);
 
         var profile = builder.Build("P");
-        profile.Scores.Should().OnlyContain(s => s.Normalized == 50d);
+        profile.Scores.Should().OnlyContain(s => Math.Abs(s.Normalized - 50d) < 1e-9);
         profile.AnsweredItems.Should().Be(40);
     }
 
@@ -203,6 +203,6 @@ public sealed class LoveLanguagesModeTests
     {
         var couples = ArchetypeRegistry.Default().FindById("couples");
         couples.Should().NotBeNull();
-        couples!.AllModes.Select(m => m.Name).Should().Contain("Love Languages");
+        couples.AllModes.Select(m => m.Name).Should().Contain("Love Languages");
     }
 }

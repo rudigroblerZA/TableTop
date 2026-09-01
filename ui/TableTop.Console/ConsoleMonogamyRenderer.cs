@@ -1,3 +1,4 @@
+using System.Text;
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
@@ -39,7 +40,7 @@ internal sealed class ConsoleMonogamyRenderer
 
     // ── Event handlers ────────────────────────────────────────────────────────
 
-    private void OnDiceRolled(object? sender, DiceRolledEvent e)
+    private static void OnDiceRolled(object? sender, DiceRolledEvent e)
     {
         ConsoleUi.Clear();
         ConsoleUi.Banner();
@@ -162,17 +163,17 @@ internal sealed class ConsoleMonogamyRenderer
         {
             if (paragraph.Length == 0) { yield return string.Empty; continue; }
 
-            var line = string.Empty;
+            var line = new StringBuilder();
             foreach (var word in paragraph.Split(' '))
             {
-                if ((line + word).Length > width)
+                if (line.Length + word.Length > width)
                 {
-                    if (line.Length > 0) yield return line.TrimEnd();
-                    line = string.Empty;
+                    if (line.Length > 0) yield return line.ToString().TrimEnd();
+                    line.Clear();
                 }
-                line += word + " ";
+                line.Append(word).Append(' ');
             }
-            if (line.Length > 0) yield return line.TrimEnd();
+            if (line.Length > 0) yield return line.ToString().TrimEnd();
         }
     }
 }

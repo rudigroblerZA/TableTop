@@ -229,6 +229,10 @@ internal sealed class ConsoleGameLauncher
                 },
             ]).GetAwaiter().GetResult();
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // Seeding demo rosters is best-effort: an unwritable or locked
+            // profile store must not stop the game from starting.
+        }
     }
 }

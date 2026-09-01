@@ -49,7 +49,7 @@ public sealed class TraitProfileControllerTests
         ctrl.Start();
 
         seen.Should().NotBeNull();
-        seen!.ItemNumber.Should().Be(1);
+        seen.ItemNumber.Should().Be(1);
         seen.TotalItems.Should().Be(3);
         ctrl.IsRunning.Should().BeTrue();
     }
@@ -67,9 +67,9 @@ public sealed class TraitProfileControllerTests
 
         ctrl.IsRunning.Should().BeFalse();
         done.Should().NotBeNull();
-        done!.Profiles.Should().HaveCount(2);
+        done.Profiles.Should().HaveCount(2);
         done.ItemsAnswered.Should().Be(2);
-        done.Profiles.Should().OnlyContain(p => p.Find(T)!.Normalized == 100d);
+        done.Profiles.Should().OnlyContain(p => Math.Abs(p.Find(T)!.Normalized - 100d) < 1e-9);
     }
 
     [Fact]
@@ -241,7 +241,7 @@ public sealed class TraitProfileControllerTests
 
         done!.Comparisons.Should().ContainSingle();
         done.MostAlike.Should().NotBeNull();
-        done.MostAlike!.Similarity.Should().Be(0d, "they answered at opposite ends");
+        done.MostAlike.Similarity.Should().Be(0d, "they answered at opposite ends");
     }
 
     [Fact]

@@ -418,7 +418,7 @@ public sealed class PlayerSetupViewModelTests
         await vm.StartAsync();
 
         received.Should().NotBeNull();
-        received!.Should().ContainSingle().Which.DisplayName.Should().Be("Alice");
+        received.Should().ContainSingle().Which.DisplayName.Should().Be("Alice");
         vm.HasError.Should().BeFalse();
     }
 

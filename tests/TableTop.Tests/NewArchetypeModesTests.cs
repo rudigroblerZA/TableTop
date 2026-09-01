@@ -24,7 +24,7 @@ public sealed class NewArchetypeModesTests
     {
         var node = ArchetypeRegistry.Default().FindById("classroom.estimation");
         node.Should().NotBeNull();
-        node!.Modes.Count(m => m.Name == "Estimation Station").Should().Be(1);
+        node.Modes.Count(m => m.Name == "Estimation Station").Should().Be(1);
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public sealed class NewArchetypeModesTests
     {
         var node = ArchetypeRegistry.Default().FindById("fun.forbidden");
         node.Should().NotBeNull();
-        node!.Modes.Count(m => m.Name == "Forbidden Words").Should().Be(1);
+        node.Modes.Count(m => m.Name == "Forbidden Words").Should().Be(1);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public sealed class NewArchetypeModesTests
     {
         var node = ArchetypeRegistry.Default().FindById("couples.connection.mindmeld");
         node.Should().NotBeNull();
-        node!.Modes.Count(m => m.Name == "Mind Meld").Should().Be(1);
+        node.Modes.Count(m => m.Name == "Mind Meld").Should().Be(1);
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public sealed class NewArchetypeModesTests
     {
         var node = ArchetypeRegistry.Default().FindById("couples.connection.cartographers");
         node.Should().NotBeNull();
-        node!.Modes.Count(m => m.Name == "The Cartographers").Should().Be(1);
+        node.Modes.Count(m => m.Name == "The Cartographers").Should().Be(1);
     }
 
     [Fact]
@@ -240,7 +240,7 @@ public sealed class CreativeBatchModesTests
         {
             var node = reg.FindById(id);
             node.Should().NotBeNull();
-            node!.Modes.Count(m => m.Name == name).Should().Be(1);
+            node.Modes.Count(m => m.Name == name).Should().Be(1);
         }
     }
 
@@ -318,7 +318,7 @@ public sealed class CardFacesTests
             var stripped = StripTags(c.Description);
             var (front, back) = CardFaces.Split(stripped);
             back.Should().NotBeNull();
-            back!.Should().Contain("Answer:");
+            back.Should().Contain("Answer:");
             front.Should().NotContain("Answer:");
             front.Should().Contain("Statement:");
             // The "keep the next line to yourself" hint is obsolete once flipping exists
@@ -385,7 +385,7 @@ public sealed class CardFacesHtmlTests
         var html = "<b>Statement:</b>\n\nOctopuses have three hearts.\n\n<b>Answer:</b> ✅ FACT — and blue blood.";
         var (front, back) = CardFaces.Split(html);
         back.Should().NotBeNull();
-        back!.Should().StartWith("<b>Answer:</b>");
+        back.Should().StartWith("<b>Answer:</b>");
         front.Should().Contain("<b>Statement:</b>");
         front.Should().NotContain("Answer:");
     }
@@ -413,7 +413,7 @@ public sealed class HeatCheckTests
     {
         var node = ArchetypeRegistry.Default().FindById("couples.connection.heatcheck");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.Adult);
+        node.AgeRating.Should().Be(AgeRating.Adult);
         node.Modes.Count(m => m.Name == "Heat Check").Should().Be(1);
     }
 
@@ -544,7 +544,7 @@ public sealed class SlowBurnTests
     {
         var node = ArchetypeRegistry.Default().FindById("couples.connection.slowburn");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.Adult);
+        node.AgeRating.Should().Be(AgeRating.Adult);
     }
 
     [Fact]
@@ -590,7 +590,7 @@ public sealed class AllInTests
     {
         var node = ArchetypeRegistry.Default().FindById("couples.connection.allin");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.Adult);
+        node.AgeRating.Should().Be(AgeRating.Adult);
     }
 
     [Fact]
@@ -642,7 +642,7 @@ public sealed class ModernLoveMillionaireTests
     {
         var node = ArchetypeRegistry.Default().FindById("couples.connection.modernlove");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.Adult);
+        node.AgeRating.Should().Be(AgeRating.Adult);
         node.Modes[0].Should().BeAssignableTo<TableTop.Core.Abstractions.Game.IQuestionBankProvider>();
     }
 
@@ -684,7 +684,7 @@ public sealed class SlangCheckTests
     {
         var node = ArchetypeRegistry.Default().FindById("fun.slang");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.Teen);
+        node.AgeRating.Should().Be(AgeRating.Teen);
         node.Modes[0].Should().BeAssignableTo<TableTop.Core.Abstractions.Game.IQuestionBankProvider>();
     }
 
@@ -763,7 +763,7 @@ public sealed class DayOneControllerTests : IDisposable
         ctrl.Start();
 
         ready.Should().NotBeNull();
-        ready!.DayNumber.Should().Be(1);
+        ready.DayNumber.Should().Be(1);
         ctrl.HasPendingCard.Should().BeTrue();
     }
 
@@ -780,7 +780,7 @@ public sealed class DayOneControllerTests : IDisposable
         ctrl.CompleteToday();   // same instant — no time has passed
 
         caughtUp.Should().NotBeNull();
-        caughtUp!.DayNumber.Should().Be(1);
+        caughtUp.DayNumber.Should().Be(1);
         ctrl.HasPendingCard.Should().BeFalse();
         var diff = (caughtUp.TimeUntilNextUnlock - TimeSpan.FromDays(1)).Duration();
         (diff < TimeSpan.FromSeconds(5)).Should().BeTrue();
@@ -804,7 +804,7 @@ public sealed class DayOneControllerTests : IDisposable
         ctrl.Start();
 
         ready.Should().NotBeNull();
-        ready!.DayNumber.Should().Be(2);
+        ready.DayNumber.Should().Be(2);
     }
 
     [Fact]
@@ -849,7 +849,7 @@ public sealed class DayOneControllerTests : IDisposable
         ctrl.CompleteToday();   // Day 3 — the last one
 
         complete.Should().NotBeNull();
-        complete!.TotalDays.Should().Be(3);
+        complete.TotalDays.Should().Be(3);
     }
 
     [Fact]
@@ -873,7 +873,7 @@ public sealed class DayOneControllerTests : IDisposable
         second.Start();
 
         ready.Should().NotBeNull();
-        ready!.DayNumber.Should().Be(2);
+        ready.DayNumber.Should().Be(2);
     }
 
     [Fact]
@@ -899,7 +899,7 @@ public sealed class DayOneModeTests
     {
         var node = ArchetypeRegistry.Default().FindById("couples.connection.dayone");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.Adult);
+        node.AgeRating.Should().Be(AgeRating.Adult);
         node.Modes[0].Should().BeAssignableTo<TableTop.Core.Abstractions.Game.IDailyDeckProvider>();
     }
 
@@ -916,7 +916,6 @@ public sealed class DayOneModeTests
     [Fact]
     public void RoutesToDayOneController_ViaTheFactory()
     {
-        var deck = TableTop.Games.Couples.DayOneCardBank.All;
         // Capability check mirrors what ControllerFactory pattern-matches on —
         // confirms this mode is unambiguously routed, not accidentally caught
         // by the generic IGameModeDefinition arm.
@@ -1045,7 +1044,7 @@ public sealed class GameplayOptionsTests
         catch (InvalidOperationException ex) { caught = ex; }
 
         caught.Should().NotBeNull();
-        caught!.Message.Should().Contain("excludes every card");
+        caught.Message.Should().Contain("excludes every card");
     }
 
     [Fact]
@@ -1178,7 +1177,7 @@ public sealed class SixtySecondsTests
     {
         var node = ArchetypeRegistry.Default().FindById("fun.sixtyseconds");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.AllAges);
+        node.AgeRating.Should().Be(AgeRating.AllAges);
     }
 
     [Fact]
@@ -1244,7 +1243,7 @@ public sealed class LogicLabTests
     {
         var node = ArchetypeRegistry.Default().FindById("classroom.logiclab");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.AllAges);
+        node.AgeRating.Should().Be(AgeRating.AllAges);
     }
 
     [Fact]
@@ -1300,7 +1299,7 @@ public sealed class SpyVsSpouseTests
     {
         var node = ArchetypeRegistry.Default().FindById("couples.connection.spyvsspouse");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.Adult);
+        node.AgeRating.Should().Be(AgeRating.Adult);
     }
 
     [Fact]
@@ -1364,7 +1363,7 @@ public sealed class InYourShoesTests
     {
         var node = ArchetypeRegistry.Default().FindById("couples.connection.inyourshoes");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.Teen);
+        node.AgeRating.Should().Be(AgeRating.Teen);
     }
 
     [Fact]
@@ -1410,7 +1409,7 @@ public sealed class TheLongGameTests
     {
         var node = ArchetypeRegistry.Default().FindById("couples.connection.longgame");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.Adult);
+        node.AgeRating.Should().Be(AgeRating.Adult);
     }
 
     [Fact]
@@ -1471,7 +1470,7 @@ public sealed class AfterglowTests
     {
         var node = ArchetypeRegistry.Default().FindById("couples.intimate");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.Adult);
+        node.AgeRating.Should().Be(AgeRating.Adult);
         node.Modes.Any(m => m.Name == "Afterglow").Should().BeTrue();
     }
 
@@ -1546,7 +1545,7 @@ public sealed class UndividedTests
     {
         var node = ArchetypeRegistry.Default().FindById("couples.intimate");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.Adult);
+        node.AgeRating.Should().Be(AgeRating.Adult);
         node.Modes.Any(m => m.Name == "Undivided").Should().BeTrue();
         node.Modes.Any(m => m.Name == "Afterglow").Should().BeTrue("it's a variation, both should be present");
     }
@@ -1607,7 +1606,7 @@ public sealed class FamilyPartyGamesTests
         {
             var node = reg.FindById(id);
             node.Should().NotBeNull($"{id} should be registered");
-            node!.AgeRating.Should().Be(AgeRating.AllAges);
+            node.AgeRating.Should().Be(AgeRating.AllAges);
         }
     }
 
@@ -1621,7 +1620,7 @@ public sealed class FamilyPartyGamesTests
             var text = c.Description;
             text.Should().Contain("Your letter:", $"'{c.Title}' must state a letter");
             // Five categories rendered as bullet lines.
-            CardText.StripHtml(text).Split('\n').Count(l => l.TrimStart().StartsWith("•"))
+            CardText.StripHtml(text).Split('\n').Count(l => l.TrimStart().StartsWith('•'))
                 .Should().Be(5, $"'{c.Title}' should list five categories");
             text.Should().Contain("Match someone", $"'{c.Title}' must carry the no-points-for-matching rule");
         }
@@ -1651,7 +1650,7 @@ public sealed class FamilyPartyGamesTests
     {
         foreach (var bank in new[]
         {
-            (IReadOnlyList<TableTop.Core.Abstractions.Cards.ICard>)TableTop.Games.Family.LetterRushCardBank.All,
+            TableTop.Games.Family.LetterRushCardBank.All,
             TableTop.Games.Family.ActItOutCardBank.All,
             TableTop.Games.Family.DrawItCardBank.All,
         })
@@ -1689,7 +1688,7 @@ public sealed class ClassroomGeneralKnowledgeTests
         {
             var node = reg.FindById(id);
             node.Should().NotBeNull($"{id} should be registered");
-            node!.AgeRating.Should().Be(AgeRating.AllAges);
+            node.AgeRating.Should().Be(AgeRating.AllAges);
         }
     }
 
@@ -1705,7 +1704,7 @@ public sealed class ClassroomGeneralKnowledgeTests
                 mc.Should().NotBeNull($"every {id} card must be multiple choice");
                 var opts = new[]
                 {
-                    mc!.Answers[AnswerLabel.A], mc.Answers[AnswerLabel.B],
+                    mc.Answers[AnswerLabel.A], mc.Answers[AnswerLabel.B],
                     mc.Answers[AnswerLabel.C], mc.Answers[AnswerLabel.D],
                 };
                 opts.Should().OnlyContain(o => !string.IsNullOrWhiteSpace(o));
@@ -1752,7 +1751,7 @@ public sealed class BetweenTheTwoOfYouTests
     {
         var node = ArchetypeRegistry.Default().FindById("couples.connection.dynamics");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.Adult);
+        node.AgeRating.Should().Be(AgeRating.Adult);
     }
 
     [Fact]
@@ -2100,7 +2099,7 @@ public sealed class FillInTheBlankGamesTests
         {
             var node = registry.FindById(id);
             node.Should().NotBeNull($"{id} should be registered");
-            node!.AgeRating.Should().Be(rating);
+            node.AgeRating.Should().Be(rating);
         }
     }
 
@@ -2172,7 +2171,7 @@ public sealed class FamilyAtlasModeTests
     {
         var node = ArchetypeRegistry.Default().FindById("fun.family.atlas");
         node.Should().NotBeNull();
-        node!.Modes.Count(m => m.Name == "The Family Atlas").Should().Be(1);
+        node.Modes.Count(m => m.Name == "The Family Atlas").Should().Be(1);
         node.AgeRating.Should().Be(AgeRating.AllAges);
     }
 
@@ -2598,7 +2597,7 @@ public sealed class LastOrdersTests
     {
         var node = ArchetypeRegistry.Default().FindById("fun.lastorders");
         node.Should().NotBeNull();
-        node!.AgeRating.Should().Be(AgeRating.Adult);
+        node.AgeRating.Should().Be(AgeRating.Adult);
     }
 
     [Fact]
@@ -2659,7 +2658,6 @@ public sealed class LastOrdersTests
     public void SoftOption_ScoresIdentically()
     {
         // Flat scoring is the mechanism: no card can be worth more for drinking.
-        var mode = new TableTop.Games.Party.LastOrdersMode();
         var player = TableTop.Core.Domain.Players.Player.Create("P");
         var scores = Deck.Select(c =>
             new FixedScoringStrategy(1).CalculateScore(c, player, CardOutcome.Completed))

@@ -224,7 +224,7 @@ public sealed class FlowProgressionTests : IDisposable
         ctrl.LevelUp(alice.Id);
 
         evt.Should().NotBeNull();
-        evt!.Change.Should().Be("LevelUp");
+        evt.Change.Should().Be("LevelUp");
         evt.NewDifficulty.Should().Be("Medium");
     }
 
@@ -318,7 +318,7 @@ public sealed class FlowProgressionTests : IDisposable
 
         var snap = await repo.LoadAsync();
         snap!.FlowStates.Should().NotBeNull();
-        snap.FlowStates![alice.Id.ToString()].Difficulty.Should().Be("Medium");
+        snap.FlowStates[alice.Id.ToString()].Difficulty.Should().Be("Medium");
         snap.FlowStates[alice.Id.ToString()].Pace.Should().Be("Fast");
     }
 

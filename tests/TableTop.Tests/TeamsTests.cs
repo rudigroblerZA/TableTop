@@ -184,7 +184,7 @@ public sealed class TeamAlternatingPlayerManagerTests
         var next = manager.GetNextPlayer();
 
         next.Should().NotBeNull();
-        Teams.TeamOf(next!).Should().Be("Red");
+        Teams.TeamOf(next).Should().Be("Red");
     }
 
     [Fact]
@@ -230,7 +230,7 @@ public sealed class RivalsModeTests
     {
         var node = ArchetypeRegistry.Default().FindById("fun.rivals");
         node.Should().NotBeNull();
-        node!.Modes.Should().Contain(m => m.Name == "Rivals");
+        node.Modes.Should().Contain(m => m.Name == "Rivals");
     }
 
     [Fact]

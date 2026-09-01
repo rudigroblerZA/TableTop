@@ -529,7 +529,7 @@ public sealed class CardTurnController : ICardTurnController
 
         // ── Regular card ───────────────────────────────────────────────────────
 
-        _specialCards!.IncrementRegularCard();
+        _specialCards.IncrementRegularCard();
 
         var text = card is IPromptCard prompt
             ? prompt.ResolvePrompt(player)
