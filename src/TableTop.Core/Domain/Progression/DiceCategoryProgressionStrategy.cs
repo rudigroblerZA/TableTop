@@ -32,7 +32,6 @@ public sealed class DiceCategoryProgressionStrategy : IProgressionStrategy
     private readonly Random _rng;
     private readonly IReadOnlyCollection<string> _categoriesInOrder;
     private readonly Func<int, string> _totalToCategory;
-    private string? _overrideCategory;
 
     /// <summary>
     /// Builds a strategy over the given categories.
@@ -66,11 +65,7 @@ public sealed class DiceCategoryProgressionStrategy : IProgressionStrategy
     /// <see cref="SelectCandidate"/> call to override which category is drawn
     /// from. Consumed once, then reset to null.
     /// </summary>
-    public string? ChosenCategoryForDoubles
-    {
-        get => _overrideCategory;
-        set => _overrideCategory = value;
-    }
+    public string? ChosenCategoryForDoubles { get; set; }
 
     /// <inheritdoc />
     public string Name => "DiceCategory";
@@ -81,8 +76,8 @@ public sealed class DiceCategoryProgressionStrategy : IProgressionStrategy
         var roll = DiceRoll.Roll(_rng);
         LastRoll = roll;
 
-        var target = _overrideCategory ?? _totalToCategory(roll.Total);
-        _overrideCategory = null;
+        var target = ChosenCategoryForDoubles ?? _totalToCategory(roll.Total);
+        ChosenCategoryForDoubles = null;
 
         var candidate = deck.Peek(c => string.Equals(c.Category, target, StringComparison.OrdinalIgnoreCase))
                      ?? PeekNearestCategory(deck, target)

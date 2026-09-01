@@ -153,7 +153,7 @@ public sealed class GameplayFeaturesTests
 
         var found = mgr.GetTeam(alice.Id);
         found.Should().NotBeNull();
-        found!.Name.Should().Be("A");
+        found.Name.Should().Be("A");
     }
 
     // ── 5.2 Per-card timer / TimeBasedScoringStrategy ─────────────────────────
@@ -310,7 +310,7 @@ public sealed class GameplayFeaturesTests
         var report = SessionReport.Build(turns, [alice, bob], 2, TimeSpan.FromMinutes(5));
 
         report.LongestStreak.Should().NotBeNull();
-        report.LongestStreak!.Player.DisplayName.Should().Be("Alice");
+        report.LongestStreak.Player.DisplayName.Should().Be("Alice");
         report.LongestStreak.Length.Should().Be(3);
     }
 
@@ -330,7 +330,7 @@ public sealed class GameplayFeaturesTests
         var report = SessionReport.Build(turns, [alice], 1, TimeSpan.Zero);
 
         report.HardestCardCleared.Should().NotBeNull();
-        report.HardestCardCleared!.Card.Difficulty.Should().Be(Difficulty.Hard);
+        report.HardestCardCleared.Card.Difficulty.Should().Be(Difficulty.Hard);
     }
 
     [Fact]
@@ -349,7 +349,7 @@ public sealed class GameplayFeaturesTests
         var report = SessionReport.Build(turns, [alice], 3, TimeSpan.Zero);
 
         report.FastestAnswer.Should().NotBeNull();
-        report.FastestAnswer!.Elapsed.Should().Be(TimeSpan.FromSeconds(8));
+        report.FastestAnswer.Elapsed.Should().Be(TimeSpan.FromSeconds(8));
     }
 
     [Fact]
@@ -369,7 +369,7 @@ public sealed class GameplayFeaturesTests
         var report = SessionReport.Build(turns, [alice, bob], 2, TimeSpan.Zero);
 
         report.MostSkips.Should().NotBeNull();
-        report.MostSkips!.Value.Player.DisplayName.Should().Be("Bob");
+        report.MostSkips.Value.Player.DisplayName.Should().Be("Bob");
         report.MostSkips.Value.SkipCount.Should().Be(2);
     }
 
@@ -463,7 +463,7 @@ public sealed class GameplayFeaturesTests
         ctrl.UndoLastTurn();
 
         undoEvent.Should().NotBeNull("TurnUndone event must fire on successful undo");
-        undoEvent!.PlayerName.Should().Be("Alice");
+        undoEvent.PlayerName.Should().Be("Alice");
     }
 
     [Fact]
@@ -517,7 +517,7 @@ public sealed class GameplayFeaturesTests
             ctrl.RecordTimedOutcome(CardOutcome.Completed, elapsed);
 
         endEvent.Should().NotBeNull();
-        endEvent!.Report.Should().NotBeNull();
+        endEvent.Report.Should().NotBeNull();
 
         var timedTurns = endEvent.Report.Turns.Where(t => t.Elapsed.HasValue).ToList();
         timedTurns.Should().NotBeEmpty(
@@ -538,7 +538,7 @@ public sealed class GameplayFeaturesTests
         while (ctrl.IsRunning) ctrl.RecordOutcome(CardOutcome.Completed);
 
         endEvent.Should().NotBeNull();
-        endEvent!.Report.Should().NotBeNull();
+        endEvent.Report.Should().NotBeNull();
         endEvent.Report.TotalTurns.Should().BeGreaterThan(0);
     }
 

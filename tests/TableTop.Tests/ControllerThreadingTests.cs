@@ -77,7 +77,7 @@ public sealed class ControllerThreadingTests
             captured.Should().BeOfType<InvalidOperationException>(
                 "a mutating call from a non-owner thread is exactly what ThreadingGuard exists to catch, " +
                 "and it must be caught through the real controller and not only in the guard's own unit test");
-            captured!.Message.Should().Contain("not thread-safe");
+            captured.Message.Should().Contain("not thread-safe");
         }
         finally { TableTop.Hosting.Controllers.ThreadingGuard_TestAccessor.Enabled = wasEnabled; }
     }

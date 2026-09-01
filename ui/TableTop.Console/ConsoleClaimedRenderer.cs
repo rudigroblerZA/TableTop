@@ -1,3 +1,4 @@
+using System.Text;
 using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Events;
@@ -101,7 +102,7 @@ internal sealed class ConsoleClaimedRenderer
         return null;
     }
 
-    private void RenderChallenge(TerritoryChallengeReadyEvent e)
+    private static void RenderChallenge(TerritoryChallengeReadyEvent e)
     {
         SC.ForegroundColor = CC.Magenta;
         SC.WriteLine($"\n  {(e.DefenderName is null ? "Claiming" : $"Raiding {e.DefenderName}'s")} {e.TerritoryName}");
@@ -116,19 +117,19 @@ internal sealed class ConsoleClaimedRenderer
 
     // ── Outcome events ────────────────────────────────────────────────────────
 
-    private void OnClaimed(object? sender, TerritoryClaimedEvent e)
+    private static void OnClaimed(object? sender, TerritoryClaimedEvent e)
     {
         ConsoleUi.PrintSuccess($"{e.PlayerName} claims {e.TerritoryName}! ({e.HeldTerritories.Count} held)");
         ConsoleUi.PressEnterToContinue();
     }
 
-    private void OnStolen(object? sender, TerritoryStolenEvent e)
+    private static void OnStolen(object? sender, TerritoryStolenEvent e)
     {
         ConsoleUi.PrintSuccess($"{e.AttackerName} raids {e.TerritoryName} from {e.DefenderName}!");
         ConsoleUi.PressEnterToContinue();
     }
 
-    private void OnFailed(object? sender, ChallengeFailedEvent e)
+    private static void OnFailed(object? sender, ChallengeFailedEvent e)
     {
         ConsoleUi.PrintError(e.WasRaid
             ? $"{e.PlayerName}'s raid on {e.TerritoryName} fails."
@@ -136,7 +137,7 @@ internal sealed class ConsoleClaimedRenderer
         ConsoleUi.PressEnterToContinue();
     }
 
-    private void OnGameEnded(object? sender, ClaimedGameEndedEvent e)
+    private static void OnGameEnded(object? sender, ClaimedGameEndedEvent e)
     {
         ConsoleUi.Clear();
         ConsoleUi.Banner();
@@ -162,17 +163,17 @@ internal sealed class ConsoleClaimedRenderer
         {
             if (paragraph.Length == 0) { yield return string.Empty; continue; }
 
-            var line = string.Empty;
+            var line = new StringBuilder();
             foreach (var word in paragraph.Split(' '))
             {
-                if ((line + word).Length > width)
+                if (line.Length + word.Length > width)
                 {
-                    if (line.Length > 0) yield return line.TrimEnd();
-                    line = string.Empty;
+                    if (line.Length > 0) yield return line.ToString().TrimEnd();
+                    line.Clear();
                 }
-                line += word + " ";
+                line.Append(word).Append(' ');
             }
-            if (line.Length > 0) yield return line.TrimEnd();
+            if (line.Length > 0) yield return line.ToString().TrimEnd();
         }
     }
 }

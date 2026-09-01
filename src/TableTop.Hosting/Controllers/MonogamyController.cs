@@ -292,7 +292,7 @@ public sealed class MonogamyController : IMonogamyController
                 TokensByZone: _byZone[p.Id]))
             .ToList().AsReadOnly();
 
-        var winner = standings.First();
+        var winner = standings[0];
 
         GameEnded?.Invoke(this, new MonogamyGameEndedEvent(
             FinalStandings: standings,

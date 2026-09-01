@@ -54,7 +54,7 @@ public sealed class HintEngineTests
         var hint = _engine.GenerateHint(Male(), MakeCtx(outcomes, diffs));
 
         hint.Should().NotBeNull();
-        hint!.SuggestedDifficulty.Should().Be(Difficulty.Easy);
+        hint.SuggestedDifficulty.Should().Be(Difficulty.Easy);
         hint.Urgency.Should().Be(HintUrgency.Strong);
         hint.Reason.Should().Be("Struggling");
     }
@@ -68,7 +68,7 @@ public sealed class HintEngineTests
         var hint = _engine.GenerateHint(Female(), MakeCtx(outcomes));
 
         hint.Should().NotBeNull();
-        hint!.SuggestedDifficulty.Should().Be(Difficulty.Easy);
+        hint.SuggestedDifficulty.Should().Be(Difficulty.Easy);
         hint.Urgency.Should().Be(HintUrgency.Strong);
     }
 
@@ -83,7 +83,7 @@ public sealed class HintEngineTests
         var hint = _engine.GenerateHint(Male(), MakeCtx(outcomes, diffs));
 
         hint.Should().NotBeNull();
-        hint!.SuggestedDifficulty.Should().Be(Difficulty.Extreme);
+        hint.SuggestedDifficulty.Should().Be(Difficulty.Extreme);
         hint.Urgency.Should().Be(HintUrgency.Strong);
         hint.Reason.Should().Be("Excelling");
     }
@@ -113,7 +113,7 @@ public sealed class HintEngineTests
         var hint = _engine.GenerateHint(Female(), MakeCtx(outcomes, diffs));
 
         hint.Should().NotBeNull();
-        hint!.SuggestedDifficulty.Should().Be(Difficulty.Hard);
+        hint.SuggestedDifficulty.Should().Be(Difficulty.Hard);
         hint.Urgency.Should().Be(HintUrgency.Gentle);
     }
 
@@ -127,7 +127,7 @@ public sealed class HintEngineTests
         var hint = _engine.GenerateHint(Male(), MakeCtx(outcomes, skipCount: 3));
 
         hint.Should().NotBeNull();
-        hint!.Reason.Should().Be("HeavySkipping");
+        hint.Reason.Should().Be("HeavySkipping");
         hint.Urgency.Should().Be(HintUrgency.Moderate);
     }
 
@@ -285,7 +285,7 @@ public sealed class HintEngineTests
         var hint = engine.GenerateHint(player, context);
 
         hint.Should().NotBeNull();
-        hint!.NeutralHint.Should().NotBeNullOrEmpty();
+        hint.NeutralHint.Should().NotBeNullOrEmpty();
         hint.SuggestedDifficulty.Should().Be(Difficulty.Easy);
     }
 }
@@ -293,7 +293,7 @@ public sealed class HintEngineTests
 /// <summary>Stub hint engine for testing custom injection.</summary>
 internal sealed class AlwaysStrugglingHintEngine : IHintEngine
 {
-    public NextTurnHint? GenerateHint(IPlayer player, HintContext ctx) =>
+    public NextTurnHint? GenerateHint(IPlayer player, HintContext context) =>
         new(
             SuggestedDifficulty: Difficulty.Easy,
             SuggestedPaceChange: PaceHint.SlowDown,

@@ -81,7 +81,6 @@ public static class TwoTruthsOneWishCardBank
     private static IReadOnlyList<ICard> Build()
     {
         var couplesOnly = new CoupleOnlyRestriction();
-        var couples18 = couplesOnly.And(new AdultOnlyRestriction());
 
         return
         [

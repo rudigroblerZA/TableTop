@@ -19,7 +19,7 @@ public sealed class Math24ModeTests
     {
         var node = ArchetypeRegistry.Default().FindById("classroom.math24");
         node.Should().NotBeNull();
-        node!.Modes.Should().Contain(m => m.Name == "Math 24");
+        node.Modes.Should().Contain(m => m.Name == "Math 24");
     }
 
     [Fact]

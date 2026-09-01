@@ -86,7 +86,7 @@ public sealed class EngineInvariantTests
 
         // The adult card should have been skipped; alice is not adult
         drawn.Should().NotBeNull();
-        drawn!.Title.Should().Be("Easy"); // skipped the adult card
+        drawn.Title.Should().Be("Easy"); // skipped the adult card
     }
 
     // ── Issue 2: non-mutating candidate selection ─────────────────────────────
@@ -197,7 +197,7 @@ public sealed class EngineInvariantTests
         // Round 2: 1 player → 1 turn
         game.AdvanceTurn(); game.RecordOutcome(CardOutcome.Completed);
         endedArgs.Should().NotBeNull("maxRounds=2 reached after 2 complete rounds");
-        endedArgs!.TotalRounds.Should().Be(2);
+        endedArgs.TotalRounds.Should().Be(2);
     }
 
     // ── Issue 5: IPlayerManager accepts any IPlayer ───────────────────────────
@@ -208,10 +208,14 @@ public sealed class EngineInvariantTests
         var mgr = new RoundRobinPlayerManager();
         var stub = new StubPlayer("test-player");
 
-        // Should not throw — any IPlayer is accepted
+        // Should not throw — any IPlayer is accepted. The lambda has to be
+        // INVOKED: assigning it and never calling it meant AddPlayer never ran,
+        // and ActivePlayers is non-null even when no player was ever added, so
+        // the whole test passed without exercising anything.
         var act = () => mgr.AddPlayer(stub);
 
-        Assert.NotNull(mgr.ActivePlayers);
+        act.Should().NotThrow();
+        mgr.ActivePlayers.Should().ContainSingle(p => p.Id == stub.Id);
     }
 
     [Fact]

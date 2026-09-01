@@ -227,7 +227,7 @@ public sealed class MillionaireController : IMillionaireController
 
     private List<MultipleChoiceCard> BuildQuestionPool()
     {
-        var bank = _customBank ?? (IReadOnlyList<MultipleChoiceCard>)MillionaireQuestionBank.All;
+        var bank = _customBank ?? MillionaireQuestionBank.All;
         return bank
             .OrderBy(q => q.Difficulty)
             .ThenBy(_ => Random.Shared.Next())

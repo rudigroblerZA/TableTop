@@ -1,3 +1,4 @@
+using System.Text;
 using CC = System.ConsoleColor;
 using SC = System.Console;
 namespace TableTop.Console;
@@ -354,17 +355,17 @@ internal static class ConsoleUi
                 continue;
             }
 
-            var line = string.Empty;
+            var line = new StringBuilder();
             foreach (var word in paragraph.Split(' '))
             {
-                if (DisplayWidth(line + word) > width)
+                if (DisplayWidth(line.ToString() + word) > width)
                 {
-                    if (line.Length > 0) yield return line.TrimEnd();
-                    line = string.Empty;
+                    if (line.Length > 0) yield return line.ToString().TrimEnd();
+                    line.Clear();
                 }
-                line += word + " ";
+                line.Append(word).Append(' ');
             }
-            if (line.Length > 0) yield return line.TrimEnd();
+            if (line.Length > 0) yield return line.ToString().TrimEnd();
         }
     }
 }

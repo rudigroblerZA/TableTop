@@ -152,7 +152,7 @@ public sealed class MonogamyTests
         ctrl.Start();
 
         evt.Should().NotBeNull();
-        evt!.Die1.Should().BeInRange(1, 6);
+        evt.Die1.Should().BeInRange(1, 6);
         evt.Die2.Should().BeInRange(1, 6);
     }
 
@@ -168,7 +168,7 @@ public sealed class MonogamyTests
         ctrl.Start();
 
         evt.Should().NotBeNull();
-        evt!.CardTitle.Should().NotBeNullOrEmpty();
+        evt.CardTitle.Should().NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -183,7 +183,7 @@ public sealed class MonogamyTests
         ctrl.CompleteCard();
 
         evt.Should().NotBeNull();
-        evt!.TokensEarned.Should().BeGreaterThan(0);
+        evt.TokensEarned.Should().BeGreaterThan(0);
         evt.TotalTokens.Should().Be(evt.TokensEarned);
     }
 
@@ -215,7 +215,7 @@ public sealed class MonogamyTests
         ctrl.NegotiateCard();
 
         evt.Should().NotBeNull();
-        evt!.TokensEarned.Should().Be(2); // 4 / 2
+        evt.TokensEarned.Should().Be(2); // 4 / 2
     }
 
     [Fact]
@@ -232,7 +232,7 @@ public sealed class MonogamyTests
         ctrl.CompleteCard();
 
         ended.Should().NotBeNull();
-        ended!.WinnerName.Should().NotBeNullOrEmpty();
+        ended.WinnerName.Should().NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -267,7 +267,7 @@ public sealed class MonogamyTests
         ctrl.ChooseZone(MonogamyZone.Wild);
 
         cardEvt.Should().NotBeNull();
-        cardEvt!.Zone.Should().Be("Wild");
+        cardEvt.Zone.Should().Be("Wild");
     }
 
     [Fact]
@@ -337,14 +337,4 @@ public sealed class MonogamyTests
         throw new InvalidOperationException("Could not find non-doubles seed");
     }
 
-    /// <summary>Finds a Random seed that produces a doubles roll immediately.</summary>
-    private static Random FindDoublesRng()
-    {
-        for (var seed = 0; seed < 10000; seed++)
-        {
-            var roll = DiceRoll.Roll(new Random(seed));
-            if (roll.IsDouble) return new Random(seed);
-        }
-        throw new InvalidOperationException("Could not find doubles seed");
-    }
 }

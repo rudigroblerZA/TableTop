@@ -126,7 +126,7 @@ public sealed class BigFiveModeTests
 
         profile.AnsweredItems.Should().Be(50);
         profile.Scores.Should().HaveCount(5);
-        profile.Scores.Should().OnlyContain(s => s.Normalized == 50d);
+        profile.Scores.Should().OnlyContain(s => Math.Abs(s.Normalized - 50d) < 1e-9);
         profile.Scores.Should().OnlyContain(s => s.ItemCount == 10);
     }
 
@@ -137,7 +137,7 @@ public sealed class BigFiveModeTests
         foreach (var item in Mode.GetItemBank())
             builder.Record("P", item, LikertResponse.StronglyDisagree);
 
-        builder.Build("P").Scores.Should().OnlyContain(s => s.Normalized == 50d);
+        builder.Build("P").Scores.Should().OnlyContain(s => Math.Abs(s.Normalized - 50d) < 1e-9);
     }
 
     [Fact]
@@ -160,7 +160,7 @@ public sealed class BigFiveModeTests
                 reversed ? LikertResponse.StronglyDisagree : LikertResponse.StronglyAgree);
         }
 
-        builder.Build("P").Scores.Should().OnlyContain(s => s.Normalized == 100d);
+        builder.Build("P").Scores.Should().OnlyContain(s => Math.Abs(s.Normalized - 100d) < 1e-9);
     }
 
     [Fact]

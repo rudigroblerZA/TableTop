@@ -81,7 +81,7 @@ internal sealed class ConsoleHerdRenderer
         ConsoleUi.PressEnterToContinue();
     }
 
-    private void OnGameEnded(object? sender, HerdGameEndedEvent e)
+    private static void OnGameEnded(object? sender, HerdGameEndedEvent e)
     {
         ConsoleUi.Clear();
         ConsoleUi.Banner();

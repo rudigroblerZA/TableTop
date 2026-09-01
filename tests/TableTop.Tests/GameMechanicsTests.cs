@@ -55,7 +55,7 @@ public sealed class GameMechanicsTests : IDisposable
         ctrl.RecordOutcome(CardOutcome.Skipped);
 
         evt.Should().NotBeNull();
-        evt!.IsFree.Should().BeTrue();
+        evt.IsFree.Should().BeTrue();
         evt.Penalty.Should().Be(0);
         evt.SkipCount.Should().Be(1);
     }
@@ -194,7 +194,7 @@ public sealed class GameMechanicsTests : IDisposable
 
         var snap = await repo.LoadAsync();
         snap.Should().NotBeNull();
-        snap!.Players.Should().HaveCount(1);
+        snap.Players.Should().HaveCount(1);
         // 2 resolved + the card face-up at save time: revealed cards are
         // spent for persistence (see PersistenceCoordinator.BuildSnapshot).
         snap.PlayedCardIds.Should().HaveCount(3);
@@ -214,7 +214,7 @@ public sealed class GameMechanicsTests : IDisposable
         await ctrl.SaveAsync();
 
         evt.Should().NotBeNull();
-        Xunit.Assert.True(Math.Abs((evt!.SavedAt - DateTimeOffset.UtcNow).TotalSeconds) < 5);
+        Xunit.Assert.True(Math.Abs((evt.SavedAt - DateTimeOffset.UtcNow).TotalSeconds) < 5);
     }
 
     [Fact]
@@ -231,7 +231,7 @@ public sealed class GameMechanicsTests : IDisposable
     public async Task SessionRepository_LoadAsync_CorruptFile_ReturnsNull()
     {
         var filePath = Path.Combine(_dir, "corrupt.json");
-        File.WriteAllText(filePath, "{ not json }}}");
+        await File.WriteAllTextAsync(filePath, "{ not json }}}");
         var snap = await new JsonSessionRepository(filePath).LoadAsync();
         snap.Should().BeNull();
     }

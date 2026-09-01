@@ -75,7 +75,7 @@ public sealed class JsonPersistenceConcurrencyTests : IDisposable
 
         var loaded = await repo.LoadAsync();
         loaded.Should().NotBeNull();
-        loaded!.ModeName.Should().MatchRegex(@"^Mode\d+$");
+        loaded.ModeName.Should().MatchRegex(@"^Mode\d+$");
     }
 
     [Fact]

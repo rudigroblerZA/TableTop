@@ -1,3 +1,4 @@
+using System.Text;
 using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
 using TableTop.Hosting.Events;
@@ -51,7 +52,7 @@ internal sealed class ConsoleDayOneRenderer
 
     // ── Rendering ─────────────────────────────────────────────────────────────
 
-    private void RenderDay(DayReadyEvent e)
+    private static void RenderDay(DayReadyEvent e)
     {
         ConsoleUi.Clear();
         ConsoleUi.Banner();
@@ -67,7 +68,7 @@ internal sealed class ConsoleDayOneRenderer
         SC.WriteLine();
     }
 
-    private void OnAllCaughtUp(object? sender, AllCaughtUpEvent e)
+    private static void OnAllCaughtUp(object? sender, AllCaughtUpEvent e)
     {
         ConsoleUi.Clear();
         ConsoleUi.Banner();
@@ -78,7 +79,7 @@ internal sealed class ConsoleDayOneRenderer
         ConsoleUi.PressEnterToContinue();
     }
 
-    private void OnCampaignComplete(object? sender, CampaignCompleteEvent e)
+    private static void OnCampaignComplete(object? sender, CampaignCompleteEvent e)
     {
         ConsoleUi.Clear();
         ConsoleUi.Banner();
@@ -99,17 +100,17 @@ internal sealed class ConsoleDayOneRenderer
         {
             if (paragraph.Length == 0) { yield return string.Empty; continue; }
 
-            var line = string.Empty;
+            var line = new StringBuilder();
             foreach (var word in paragraph.Split(' '))
             {
-                if ((line + word).Length > width)
+                if (line.Length + word.Length > width)
                 {
-                    if (line.Length > 0) yield return line.TrimEnd();
-                    line = string.Empty;
+                    if (line.Length > 0) yield return line.ToString().TrimEnd();
+                    line.Clear();
                 }
-                line += word + " ";
+                line.Append(word).Append(' ');
             }
-            if (line.Length > 0) yield return line.TrimEnd();
+            if (line.Length > 0) yield return line.ToString().TrimEnd();
         }
     }
 }

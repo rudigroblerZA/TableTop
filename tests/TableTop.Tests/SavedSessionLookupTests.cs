@@ -46,7 +46,7 @@ public sealed class SavedSessionLookupTests
             "reason SavedSessionLookup takes an IControllerFactory — this is the " +
             "assertion that was missing while WinUI and MAUI shipped unable to resume");
         lookup.Resumable.Should().NotBeNull();
-        lookup.Resumable!.Mode.Name.Should().Be(mode.Name);
+        lookup.Resumable.Mode.Name.Should().Be(mode.Name);
         lookup.Resumable.Round.Should().Be(4);
     }
 
