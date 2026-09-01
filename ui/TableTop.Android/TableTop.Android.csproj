@@ -42,8 +42,11 @@
       built that way is rejected at install time by any armeabi-v7a device with
       IncompatibleCpuAbiException — which includes a large share of the TV boxes
       and streaming sticks this head declares leanback support for.
+
+      android-x86 is deliberately excluded: 32-bit x86 is emulator-only, and no
+      shipping device uses it.
     -->
-    <RuntimeIdentifiers>android-arm;android-arm64;android-x86;android-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>android-arm;android-arm64;android-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <!--
