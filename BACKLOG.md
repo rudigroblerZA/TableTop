@@ -474,18 +474,24 @@ The gap was not a subtle rendering problem, which is what S.3 anticipated; it
 was the app refusing to install.
 
 **Fixed** by setting `RuntimeIdentifiers` explicitly to
-`android-arm;android-arm64;android-x86;android-x64` in **both**
-`TableTop.Maui.csproj` and `TableTop.Android.csproj`. Verified by rebuilding
-and re-reading the packages: both now carry `arm64-v8a`, `armeabi-v7a`, `x86`
-and `x86_64`. `android-x86` is included for 32-bit emulator images, which a TV
-AVD commonly is.
+`android-arm;android-arm64;android-x64` in **both** `TableTop.Maui.csproj` and
+`TableTop.Android.csproj`. Verified by rebuilding and re-reading the packages:
+both now carry `arm64-v8a`, `armeabi-v7a` and `x86_64`.
+
+**`android-x86` was tried and then dropped.** The first fix included all four
+ABIs, which is the pre-.NET-9 default. 32-bit x86 is emulator-only in practice
+— no shipping phone, tablet or TV device uses it — and it cost 27 MB on the
+MAUI package for that. A 32-bit x86 AVD will now refuse to install; use an
+arm64, x86_64 or armeabi-v7a image. Both csprojs record this so the omission
+reads as deliberate rather than as the same oversight repeated one ABI over.
 
 **The two lists must stay identical.** The heads ship the same app to the same
 devices; a difference between them is a device where one installs and the other
 does not. Both csprojs carry a comment saying so.
 
-**Cost:** the fat APK roughly doubles — MAUI Release is now 115.8 MB, the
-native head 80.5 MB. For Play Store distribution this does not reach users,
+**Cost:** the fat APK grows — MAUI Release 88.5 MB and the native head
+60.1 MB, against 115.8 MB and 80.5 MB for the four-ABI build that included
+`android-x86`. For Play Store distribution this does not reach users,
 since Release already builds an `aab` and Play splits per device. It is only
 the sideload/`adb install` path that carries all four.
 

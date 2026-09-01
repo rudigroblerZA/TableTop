@@ -134,13 +134,18 @@
     which nothing caught, because the manifest is what advertises TV support
     and the ABI list is what decides whether it can be installed at all.
 
-    android-x86 is included for 32-bit emulator images, which is what a TV AVD
-    commonly is. Keep this list in step with TableTop.Android.csproj: the two
-    heads ship the same app to the same devices, and a difference between them
-    is a device where one installs and the other does not.
+    android-x86 is deliberately NOT here. 32-bit x86 is emulator-only in
+    practice — no shipping phone, tablet or TV device uses it — and the fourth
+    ABI cost more in package size than an emulator image is worth. A 32-bit x86
+    AVD will refuse to install this package; use an arm64, x86_64 or
+    armeabi-v7a image instead.
+
+    Keep this list in step with TableTop.Android.csproj: the two heads ship the
+    same app to the same devices, and a difference between them is a device
+    where one installs and the other does not.
   -->
   <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-    <RuntimeIdentifiers>android-arm;android-arm64;android-x86;android-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>android-arm;android-arm64;android-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
