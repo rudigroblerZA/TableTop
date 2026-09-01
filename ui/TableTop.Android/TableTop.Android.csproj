@@ -31,6 +31,19 @@
     <ApplicationDisplayVersion>$(VersionPrefix)</ApplicationDisplayVersion>
 
     <AndroidPackageFormats Condition="'$(Configuration)' == 'Release'">aab;apk</AndroidPackageFormats>
+
+    <!--
+      ABIs — identical list and identical reasoning to TableTop.Maui.csproj,
+      and it must stay identical: the two heads ship the same app to the same
+      devices, so a difference here is a device where one installs and the
+      other does not.
+
+      .NET for Android defaults to android-arm64;android-x64 only. A package
+      built that way is rejected at install time by any armeabi-v7a device with
+      IncompatibleCpuAbiException — which includes a large share of the TV boxes
+      and streaming sticks this head declares leanback support for.
+    -->
+    <RuntimeIdentifiers>android-arm;android-arm64;android-x86;android-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <!--

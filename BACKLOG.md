@@ -436,6 +436,63 @@ Both hold: the job completes and both facts run to a green result.
 
 ---
 
+### N.9 — Both Android heads shipped without 32-bit ARM, so TV devices refuse to install — **FIXED**
+
+Reported from a real deployment: installing the MAUI app on an Android TV
+failed with
+
+```
+ADB0020: Mono.AndroidTools.IncompatibleCpuAbiException:
+The package does not support the CPU architecture of this device.
+```
+
+**Confirmed by reading the packages, not inferred.** Every APK either head
+built contained exactly two ABIs:
+
+```
+MAUI Release APK        arm64-v8a, x86_64
+MAUI Debug APK          arm64-v8a, x86_64
+Native Release APK      arm64-v8a, x86_64
+```
+
+No `armeabi-v7a`. Neither csproj set `RuntimeIdentifiers`, so both took the
+.NET for Android default, which is `android-arm64;android-x64` — 32-bit ARM was
+dropped from the defaults. Any `armeabi-v7a` device rejects such a package at
+install time, and that is a large share of TV boxes and older streaming sticks.
+
+**Why nothing caught it.** 1.35.0 added Android TV support and the work was
+about the *manifest*: `leanback` and `touchscreen` declared not-required, a
+`LEANBACK_LAUNCHER` entry, a home-row banner. All of that advertises TV
+capability. None of it affects whether the package can be installed at all —
+that is the ABI list, which nobody looked at. So the app shipped declaring TV
+support while being uninstallable on much of the hardware it was declaring
+support for. Both facts were true at once and neither test nor gate compares
+them.
+
+This is the concrete cost of **S.3** (never run on a TV device or emulator).
+The gap was not a subtle rendering problem, which is what S.3 anticipated; it
+was the app refusing to install.
+
+**Fixed** by setting `RuntimeIdentifiers` explicitly to
+`android-arm;android-arm64;android-x86;android-x64` in **both**
+`TableTop.Maui.csproj` and `TableTop.Android.csproj`. Verified by rebuilding
+and re-reading the packages: both now carry `arm64-v8a`, `armeabi-v7a`, `x86`
+and `x86_64`. `android-x86` is included for 32-bit emulator images, which a TV
+AVD commonly is.
+
+**The two lists must stay identical.** The heads ship the same app to the same
+devices; a difference between them is a device where one installs and the other
+does not. Both csprojs carry a comment saying so.
+
+**Cost:** the fat APK roughly doubles — MAUI Release is now 115.8 MB, the
+native head 80.5 MB. For Play Store distribution this does not reach users,
+since Release already builds an `aab` and Play splits per device. It is only
+the sideload/`adb install` path that carries all four.
+
+**Not verified on a TV device.** The ABIs are confirmed present in the package;
+that the app then runs correctly on a 32-bit TV is exactly what S.3 still
+covers.
+
 ### N.8 — WinUI-declared ViewModels have no runtime test coverage
 
 Fallout from N.7, recorded rather than quietly absorbed.
