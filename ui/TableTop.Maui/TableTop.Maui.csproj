@@ -116,6 +116,33 @@
     <RunAOTCompilation>false</RunAOTCompilation>
   </PropertyGroup>
 
+  <!--
+    ABIs, for both Debug and Release.
+
+    Must be set explicitly. .NET for Android's default RuntimeIdentifiers are
+    android-arm64 and android-x64 only — 32-bit ARM was dropped from the
+    defaults — and a package built that way is REJECTED at install time by any
+    armeabi-v7a device:
+
+      ADB0020: Mono.AndroidTools.IncompatibleCpuAbiException:
+      The package does not support the CPU architecture of this device.
+
+    That is not a niche device class here. This head declares Android TV
+    support (leanback manifest, TV banner, LEANBACK_LAUNCHER entry), and a
+    large share of TV boxes and older streaming sticks are 32-bit ARM. The APK
+    shipped as TV-capable while being uninstallable on much of that hardware —
+    which nothing caught, because the manifest is what advertises TV support
+    and the ABI list is what decides whether it can be installed at all.
+
+    android-x86 is included for 32-bit emulator images, which is what a TV AVD
+    commonly is. Keep this list in step with TableTop.Android.csproj: the two
+    heads ship the same app to the same devices, and a difference between them
+    is a device where one installs and the other does not.
+  -->
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <RuntimeIdentifiers>android-arm;android-arm64;android-x86;android-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
     <TrimmerRootAssembly Include="TableTop.Core" />
     <TrimmerRootAssembly Include="TableTop.Games" />
