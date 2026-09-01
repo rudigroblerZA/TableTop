@@ -40,6 +40,58 @@ namespace TableTop.UiTests;
 /// a newly added ViewModel is covered the moment it appears rather than when
 /// someone remembers to write a test for it.
 /// </summary>
+/// <summary>
+/// The two assemblies these tests sweep, deliberately held in their OWN type.
+///
+/// <para>
+/// <b>This separation is the fix for backlog N.7, and it is not cosmetic.</b>
+/// These were <c>static readonly</c> fields of <see cref="ViewModelBindingTests"/>.
+/// That class is <c>beforefieldinit</c>, so its initializer runs at the first
+/// static access — and the first access happened on a THREAD-POOL thread,
+/// inside <c>WithDeadline(() =&gt; ViewModelTypes().ToList())</c>, because
+/// <c>ViewModelTypes()</c> reads <c>UiAssembly</c>.
+/// </para>
+///
+/// <para>
+/// The CI hang dump (run 33426915180) shows both ends of the resulting block:
+/// </para>
+///
+/// <code>
+/// thread 0x2078   [InlinedCallFrame]            ← native, never returns
+///                 InitClassSlow
+///                 ViewModelTypes()
+///                 &lt;Every_settable_property_raises_PropertyChanged&gt;b__7_0()
+///
+/// thread 0x1be4   ViewModelBindingTests..cctor()  ← waiting for 0x2078
+///                 InitClassSlow
+///                 &lt;WithDeadline&gt;d__18.MoveNext()
+///                 Every_settable_property_raises_PropertyChanged()
+/// </code>
+///
+/// <para>
+/// The pool thread holds the type-initialization lock while it loads the WinUI
+/// app assembly, which does not return on a runner with no interactive desktop
+/// session. The test thread then needs the SAME type initialized to read
+/// <c>PropertyDeadline</c> for its <c>Task.Delay</c> — so it blocks on that
+/// lock, and <b>the deadline never starts counting</b>.
+/// </para>
+///
+/// <para>
+/// That is why three rounds of adding guards changed nothing and why no
+/// deadline ever fired: every guard lived in the class whose initializer was
+/// stuck. Holding the risky load in a separate type means the deadline
+/// machinery initializes independently, the timer runs, and a load that hangs
+/// is reported as a named failure in seconds instead of a five-minute abort.
+/// </para>
+/// </summary>
+internal static class ScannedAssemblies
+{
+    internal static readonly Assembly Ui = typeof(TableTop.WinUI.Infrastructure.Navigator).Assembly;
+
+    internal static readonly Assembly Presentation =
+        typeof(TableTop.Presentation.ViewModels.SettingsViewModel).Assembly;
+}
+
 public sealed class ViewModelBindingTests
 {
     // Anchored on Navigator, which is a real WinUI type. This used to name
@@ -54,7 +106,7 @@ public sealed class ViewModelBindingTests
     // over UiAssembly specifically to pair FooView with FooViewModel against
     // WinUI's own Views folder, and pointing it at Presentation would silently
     // scan the wrong assembly and find nothing to check.
-    private static readonly Assembly UiAssembly = typeof(TableTop.WinUI.Infrastructure.Navigator).Assembly;
+    private static Assembly UiAssembly => ScannedAssemblies.Ui;
 
     // ViewModelTypes() needs a second assembly, and getting a real build
     // environment for the first time (backlog item 2) is what surfaced why:
@@ -71,8 +123,7 @@ public sealed class ViewModelBindingTests
     // to break. TableTop.WinUI already references Presentation (it's how
     // WinUI consumes these ViewModels at all), so this assembly is already
     // loaded in the test host; scanning it too costs nothing extra.
-    private static readonly Assembly PresentationAssembly =
-        typeof(TableTop.Presentation.ViewModels.SettingsViewModel).Assembly;
+    private static Assembly PresentationAssembly => ScannedAssemblies.Presentation;
 
     /// <summary>
     /// Views whose ViewModel doesn't follow the <c>FooView</c> → <c>FooViewModel</c>
@@ -106,12 +157,16 @@ public sealed class ViewModelBindingTests
     // ── Commands ──────────────────────────────────────────────────────────────
 
     [Fact]
-    public void Every_command_property_is_non_null_after_construction()
+    public async Task Every_command_property_is_non_null_after_construction()
     {
         var failures = new List<string>();
         var constructed = 0;
 
-        foreach (var vmType in ViewModelTypes())
+        // On the deadline like the sweep in the other test. This one reached
+        // ViewModelTypes() unguarded, so whichever of the two Facts xUnit ran
+        // first would hang — the aborted runs only ever named the other one
+        // because that is the order they happened to run in (backlog N.7).
+        foreach (var vmType in await DiscoverViewModelTypesAsync())
         {
             if (!TryConstruct(vmType, out var vm, out _)) continue;
             constructed++;
@@ -175,16 +230,7 @@ public sealed class ViewModelBindingTests
         var failures = new List<string>();
         var exercised = 0;
 
-        // The reflection sweep itself is on the deadline, because it is one of
-        // the two places left that could hang once both accessors were cleared.
-        var discovered = await WithDeadline(() => ViewModelTypes().ToList());
-
-        discovered.Completed.Should().BeTrue(
-            $"reflecting over the ViewModel types must return within {PropertyDeadline.TotalSeconds:0}s — " +
-            "loading every type in a WinUI assembly is not obviously cheap, and an unbounded sweep " +
-            "hangs CI (backlog N.7)");
-
-        foreach (var vmType in discovered.Value)
+        foreach (var vmType in await DiscoverViewModelTypesAsync())
         {
             if (!typeof(INotifyPropertyChanged).IsAssignableFrom(vmType)) continue;
 
@@ -433,6 +479,25 @@ public sealed class ViewModelBindingTests
     /// not interruptible — but it is a thread-pool thread, so it does not keep
     /// the host alive and the run still terminates.
     /// </returns>
+    /// <summary>
+    /// The single place either test reaches the assemblies under scan, and it is
+    /// on the deadline. See <see cref="ScannedAssemblies"/> for why the sweep —
+    /// not just the accessors — is what actually had to be guarded, and why the
+    /// guard could not work until that type was split out.
+    /// </summary>
+    private static async Task<IReadOnlyList<Type>> DiscoverViewModelTypesAsync()
+    {
+        var discovered = await WithDeadline(() => ViewModelTypes().ToList());
+
+        discovered.Completed.Should().BeTrue(
+            $"reflecting over the ViewModel types must return within {PropertyDeadline.TotalSeconds:0}s — " +
+            "this is where CI hung: loading the WinUI app assembly does not return on a runner with no " +
+            "interactive desktop session, and the hang dump puts the stuck frame in this sweep's type " +
+            "initializer (backlog N.7)");
+
+        return discovered.Value;
+    }
+
     private static async Task<(bool Completed, T Value)> WithDeadline<T>(Func<T> work)
     {
         var task = Task.Run(work);

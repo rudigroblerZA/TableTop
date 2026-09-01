@@ -72,7 +72,7 @@ So: the tree is green. Every item below is something green does not catch.
 > Two things need a human: tags `v1.35.0`/`v1.35.1` are local and **not
 > pushed**, and `develop` is ahead of `origin`.
 
-### N.7 — CI's WinUI job never finishes: "Run UI tests" hangs — **CONTAINED; narrowed to one test**
+### N.7 — CI's WinUI job never finishes: "Run UI tests" hangs — **ROOT CAUSE FOUND; guard repaired**
 
 **No CI run on this repository has completed since 2026-08-30.** The `Build
 WinUI` job reaches its last step and stays there until the run is cancelled —
@@ -331,6 +331,67 @@ wrong, so it is written here rather than acted on.
 **Still not skipped, disabled or quarantined.** Both facts still run and both
 still have to pass. The job ends red with evidence, which is not the same as
 green.
+
+**Fourth update: the hang dump answers it, and every prediction above was
+looking in the wrong place.**
+
+The `Upload UI test results` step has been archiving a full hang dump on every
+failed run since this item was opened. Nobody had opened one. Run
+`33426915180`'s dump (183MB, `dotnet-dump analyze`) names both ends of the block
+outright:
+
+```
+thread 0x2078   [InlinedCallFrame]                 ← native call, never returns
+                InitClassSlow
+                GetGCStaticBaseSlow
+                ViewModelTypes()
+                <Every_settable_property_raises_PropertyChanged>b__7_0()
+
+thread 0x1be4   ViewModelBindingTests..cctor()     ← waiting on 0x2078
+                InitClassSlow
+                <WithDeadline>d__18.MoveNext()
+                Every_settable_property_raises_PropertyChanged()
+```
+
+**It is a type-initializer block, and the guard was inside it.**
+`ViewModelBindingTests` is `beforefieldinit`, so its static fields initialise at
+the first static access — which happened on a *thread-pool* thread, inside
+`WithDeadline(() => ViewModelTypes().ToList())`, because `ViewModelTypes()`
+reads `UiAssembly`. That thread ran the class initializer, which evaluates
+`typeof(TableTop.WinUI.Infrastructure.Navigator).Assembly` and does not return.
+The test thread then needed the *same* class initialised to read
+`PropertyDeadline` for its `Task.Delay`, and blocked on the initialization lock
+the pool thread was holding.
+
+**So the deadline never started counting.** "Neither deadline fired" was read
+three times as evidence that the guarded steps were clean. It was not evidence
+of anything: the timer could not start, because the timer's own configuration
+lived in the class whose initializer was stuck. The table above marking
+`p.GetValue` and `p.SetValue` **cleared** is withdrawn — those accessors were
+never reached at all, and nothing here has ever tested them.
+
+**Fixed by splitting the type**, not by adding another guard. The two scanned
+assemblies now live in their own `ScannedAssemblies` holder, so
+`ViewModelBindingTests`'s initializer no longer loads a WinUI app assembly. The
+deadline machinery initialises independently, `Task.Delay` runs, and a load that
+hangs is now a named assertion failure in ~5s instead of a five-minute abort and
+a 183MB dump. `Every_command_property_is_non_null_after_construction` reached
+`ViewModelTypes()` unguarded and is now on the same deadline — whichever Fact
+xUnit happened to run first would hang, which is the only reason the aborted
+runs consistently named the other one.
+
+**What is still open.** This makes the failure fast and self-describing; it does
+not make it pass. The underlying fact remains that loading the `TableTop.WinUI`
+assembly does not return on a runner with no interactive desktop session, and
+the native frame below `InitClassSlow` has not been resolved to a module. The
+job will now go red in seconds naming the sweep, rather than stalling — and the
+next question is why that load blocks, which is a different investigation with
+much better evidence available.
+
+**Not reproducible locally, still.** 2/2 in 249ms on this machine after the fix,
+as before it. `DOTNET_PROCESSOR_COUNT=1` — harsher than the runner's 4 cores —
+also passes in 241ms, which rules out the thread-pool starvation theory this
+item might otherwise have reached for next.
 
 **Done when:** the WinUI job completes *and* the tests run to a result.
 
