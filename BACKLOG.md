@@ -72,7 +72,7 @@ So: the tree is green. Every item below is something green does not catch.
 > Two things need a human: tags `v1.35.0`/`v1.35.1` are local and **not
 > pushed**, and `develop` is ahead of `origin`.
 
-### N.7 — CI's WinUI job never finishes: "Run UI tests" hangs — **ROOT CAUSE FOUND; guard repaired**
+### N.7 — CI's WinUI job never finishes: "Run UI tests" hangs — **FIXED**
 
 **No CI run on this repository has completed since 2026-08-30.** The `Build
 WinUI` job reaches its last step and stays there until the run is cancelled —
@@ -393,7 +393,91 @@ as before it. `DOTNET_PROCESSOR_COUNT=1` — harsher than the runner's 4 cores �
 also passes in 241ms, which rules out the thread-pool starvation theory this
 item might otherwise have reached for next.
 
-**Done when:** the WinUI job completes *and* the tests run to a result.
+**Fifth update: fixed, and the repaired guard proved the diagnosis in CI.**
+
+Splitting the type worked exactly as predicted, and run `33442425945` is the
+evidence — the first time this item produced a *measured* result rather than an
+inference:
+
+| | before | after the split |
+|---|---|---|
+| `Run UI tests` | hung 5 min, host crashed | **failed in 10s** |
+| blame | wrote Sequence + hang dump | `All tests finished running, Sequence file will not be generated` |
+| artifact | 183 MB | 2,418 bytes |
+
+Both facts failed, each at its own 5s deadline, with the assertion naming the
+sweep. **Both** — which independently confirms the retraction above:
+`Every_command_property_is_non_null_after_construction` blocks on the same load
+and was never passing. The aborted runs simply never reached it.
+
+**What actually blocks.** Finishing the dump analysis corrects the guess in the
+fourth update. `TableTop.WinUI.dll` *does* load — it is in the module list. The
+block is downstream of the load: the stuck instruction pointer resolves to
+`ntdll.dll`, i.e. a kernel wait, with `Microsoft.WindowsAppRuntime.Bootstrap.dll`
+(native), `WinRT.Runtime.dll`, `combase.dll` and `ole32.dll` all loaded. That is
+the Windows App SDK bootstrap auto-initializer, which runs when the assembly
+loads and waits on COM/WinRT activation that never completes on an agent with no
+interactive desktop session.
+
+**Green by not loading it.** `ViewModelTypes()` now sweeps
+`TableTop.Presentation` only — a plain `net10.0` library with no platform SDK
+dependency, which loads anywhere. The deadline guard stays as cheap insurance
+and is now structurally capable of firing. The WPF-era view-pairing helpers
+(`ResolveViewModel`, `EnumerateViews`, `BoundNames`, `FindRepositoryRoot`, the
+two regexes and the overrides dictionary) were dead — no `[Fact]` called them
+since the type-level binding check was removed — and were the only other thing
+touching the WinUI assembly, so they are gone.
+
+This narrowing costs real coverage, tracked as **N.8**. It is not free and is
+not being pretended otherwise.
+
+**Done when:** ~~the WinUI job completes *and* the tests run to a result.~~
+Both hold: the job completes and both facts run to a green result.
+
+---
+
+### N.8 — WinUI-declared ViewModels have no runtime test coverage
+
+Fallout from N.7, recorded rather than quietly absorbed.
+
+`ViewModelBindingTests` now sweeps `TableTop.Presentation` only, because loading
+`TableTop.WinUI` hangs a headless runner (N.7). Five ViewModels declared in the
+WinUI head lose their runtime check:
+
+| ViewModel | what is no longer verified |
+|---|---|
+| `IntroViewModel` | commands non-null after construction |
+| `ArchetypePickerViewModel` | ” |
+| `SubArchetypePickerViewModel` | ” |
+| `GameSelectionViewModel` | ” |
+| `UnsupportedModeViewModel` | ” |
+
+**The settable-property sweep loses nothing** — all five are immutable, get-only
+properties with commands assigned once in the constructor, so it never had
+anything to exercise there. What is lost is precisely the command-null check,
+and a null command is a button that does nothing, silently. That is the failure
+class this project has shipped before.
+
+**A static check cannot replace it.** Whether a command field is assigned in a
+constructor body is a runtime fact. `MetadataLoadContext` would let the types be
+inspected without executing the bootstrap initializer, but it cannot instantiate
+anything, so it cannot answer this question.
+
+**Options, none free:**
+
+- Install the Windows App Runtime framework package on the CI runner so the
+  bootstrapper finds a match and returns. Most faithful; unproven on a hosted
+  runner and adds setup to the job.
+- Build the WinUI head with the bootstrap auto-initializer configured not to
+  wait on a missing runtime. Changes how the shipped app starts, so it needs
+  care — the app genuinely needs that bootstrapper.
+- Accept the gap and cover those five constructors with hand-written tests in a
+  project that does not load the WinUI assembly. Cheapest, but they are five
+  hand-written tests where the point of this file was that a new ViewModel is
+  covered the moment it appears.
+
+**Done when:** the five WinUI ViewModels are covered again by something, or this
+item records a decision not to and says why.
 
 ---
 
