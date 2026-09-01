@@ -2,6 +2,9 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:TableTop.Presentation.ViewModels;assembly=TableTop.Presentation"
+    xmlns:infra="clr-namespace:TableTop.Presentation.Infrastructure;assembly=TableTop.Presentation"
+    x:DataType="vm:RoasterViewModel"
     SafeAreaEdges="Container"
     x:Class="TableTop.Maui.Pages.RoasterPage"
     Title="Roaster"
@@ -29,7 +32,7 @@
                             SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}"
                             SelectionChanged="OnTemplateSelectionChanged">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="vm:RoasterTemplate">
                         <Border Style="{StaticResource CardStyle}" Padding="12" Margin="0,4">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnTemplateTapped" />
@@ -107,7 +110,7 @@
                            TextColor="{StaticResource TextSecondary}" />
                 </CollectionView.EmptyView>
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="infra:SavedPlayer">
                         <HorizontalStackLayout Spacing="8" Padding="4,6">
                             <Label TextColor="{StaticResource TextPrimary}"
                                    VerticalOptions="Center"
@@ -159,7 +162,7 @@
                            TextColor="{StaticResource TextSecondary}" />
                 </CollectionView.EmptyView>
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="infra:SavedRoster">
                         <Border Style="{StaticResource CardStyle}" Padding="12" Margin="0,4">
                             <Grid ColumnDefinitions="*,Auto">
                                 <VerticalStackLayout Grid.Column="0" Spacing="2">

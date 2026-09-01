@@ -37,13 +37,13 @@ public partial class MillionaireGamePage : ContentPage, IAsyncInitializablePage
 
     private void OnAnswerClicked(object sender, EventArgs e)
     {
-        if (sender is Button { BindingContext: MillionaireGameViewModel.AnswerOption opt })
+        if (sender is Button { BindingContext: AnswerOption opt })
             opt.Invoke();
     }
 
     private void OnLifelineClicked(object sender, EventArgs e)
     {
-        if (sender is Button { BindingContext: MillionaireGameViewModel.LifelineOption opt })
+        if (sender is Button { BindingContext: LifelineOption opt })
             opt.Invoke();
     }
 

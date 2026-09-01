@@ -257,66 +257,67 @@ public sealed class MillionaireGameViewModel : ViewModelBase, IDisposable
     /// <inheritdoc />
     public void Dispose() => _controller?.Dispose();
 
-    /// <summary>One selectable answer.</summary>
-    public sealed class AnswerOption
+}
+
+/// <summary>One selectable answer.</summary>
+public sealed class AnswerOption
+{
+    private readonly MillionaireGameViewModel _owner;
+
+    /// <summary>A, B, C or D.</summary>
+    public AnswerLabel Label { get; }
+    /// <summary>"A)  Paris", ready to render.</summary>
+    public string Display { get; }
+
+    /// <summary>Command that submits this answer. WinUI binds this.</summary>
+    public ICommand SelectCommand { get; }
+
+    internal AnswerOption(AnswerLabel label, string text, MillionaireGameViewModel owner)
     {
-        private readonly MillionaireGameViewModel _owner;
-
-        /// <summary>A, B, C or D.</summary>
-        public AnswerLabel Label { get; }
-        /// <summary>"A)  Paris", ready to render.</summary>
-        public string Display { get; }
-
-        /// <summary>Command that submits this answer. WinUI binds this.</summary>
-        public ICommand SelectCommand { get; }
-
-        internal AnswerOption(AnswerLabel label, string text, MillionaireGameViewModel owner)
-        {
-            Label = label; Display = $"{label})  {text}"; _owner = owner;
-            SelectCommand = new RelayCommand(() => owner.Answer(label), () => owner.CanInteract);
-        }
-
-        /// <summary>Submits this answer. Called directly by MAUI's buttons.</summary>
-        public void Invoke() => _owner.Answer(Label);
+        Label = label; Display = $"{label})  {text}"; _owner = owner;
+        SelectCommand = new RelayCommand(() => owner.Answer(label), () => owner.CanInteract);
     }
 
-    /// <summary>One lifeline.</summary>
-    public sealed class LifelineOption : ViewModelBase
+    /// <summary>Submits this answer. Called directly by MAUI's buttons.</summary>
+    public void Invoke() => _owner.Answer(Label);
+}
+
+/// <summary>One lifeline.</summary>
+public sealed class LifelineOption : ViewModelBase
+{
+    private readonly MillionaireGameViewModel _owner;
+    private bool _available;
+
+    /// <summary>Position in the controller's lifeline list.</summary>
+    public int Index { get; }
+    /// <summary>Display name.</summary>
+    public string Name { get; }
+
+    /// <summary>False once spent.</summary>
+    public bool IsAvailable { get => _available; private set => SetField(ref _available, value); }
+
+    internal LifelineOption(int index, string name, bool available, MillionaireGameViewModel owner)
     {
-        private readonly MillionaireGameViewModel _owner;
-        private bool _available;
-
-        /// <summary>Position in the controller's lifeline list.</summary>
-        public int Index { get; }
-        /// <summary>Display name.</summary>
-        public string Name { get; }
-
-        /// <summary>False once spent.</summary>
-        public bool IsAvailable { get => _available; private set => SetField(ref _available, value); }
-
-        internal LifelineOption(int index, string name, bool available, MillionaireGameViewModel owner)
-        {
-            Index = index; Name = name; _available = available; _owner = owner;
-            UseCommand = new RelayCommand(() => { if (IsAvailable) owner.UseLifeline(index); },
-                                          () => IsAvailable && owner.CanInteract);
-        }
-
-        /// <summary>Command that uses this lifeline. WinUI binds this.</summary>
-        public ICommand UseCommand { get; }
-
-        /// <summary>
-        /// Marks this lifeline spent when the used one matches by name.
-        ///
-        /// By name rather than by re-reading controller state, because
-        /// IMillionaireController exposes no lifeline list — MAUI's version
-        /// queried one that does not exist on the interface.
-        /// </summary>
-        public void MarkUsedIfMatch(string usedName)
-        {
-            if (Name == usedName) IsAvailable = false;
-        }
-
-        /// <summary>Uses this lifeline. Called directly by MAUI's buttons.</summary>
-        public void Invoke() => _owner.UseLifeline(Index);
+        Index = index; Name = name; _available = available; _owner = owner;
+        UseCommand = new RelayCommand(() => { if (IsAvailable) owner.UseLifeline(index); },
+                                      () => IsAvailable && owner.CanInteract);
     }
+
+    /// <summary>Command that uses this lifeline. WinUI binds this.</summary>
+    public ICommand UseCommand { get; }
+
+    /// <summary>
+    /// Marks this lifeline spent when the used one matches by name.
+    ///
+    /// By name rather than by re-reading controller state, because
+    /// IMillionaireController exposes no lifeline list — MAUI's version
+    /// queried one that does not exist on the interface.
+    /// </summary>
+    public void MarkUsedIfMatch(string usedName)
+    {
+        if (Name == usedName) IsAvailable = false;
+    }
+
+    /// <summary>Uses this lifeline. Called directly by MAUI's buttons.</summary>
+    public void Invoke() => _owner.UseLifeline(Index);
 }

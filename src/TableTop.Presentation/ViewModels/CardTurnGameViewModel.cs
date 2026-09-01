@@ -610,43 +610,44 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>One tappable A–D quiz choice.</summary>
-    public sealed class ChoiceItem
+}
+
+/// <summary>One tappable A–D quiz choice.</summary>
+public sealed class ChoiceItem
+{
+    private readonly CardTurnGameViewModel _owner;
+
+    /// <summary>The letter A–D.</summary>
+    public char Letter { get; }
+    /// <summary>Display text including the letter prefix.</summary>
+    public string Display { get; }
+    /// <summary>Command that records this choice. WinUI binds this.</summary>
+    public ICommand ChooseCommand { get; }
+
+    internal ChoiceItem(char letter, string text, CardTurnGameViewModel owner)
     {
-        private readonly CardTurnGameViewModel _owner;
-
-        /// <summary>The letter A–D.</summary>
-        public char Letter { get; }
-        /// <summary>Display text including the letter prefix.</summary>
-        public string Display { get; }
-        /// <summary>Command that records this choice. WinUI binds this.</summary>
-        public ICommand ChooseCommand { get; }
-
-        internal ChoiceItem(char letter, string text, CardTurnGameViewModel owner)
-        {
-            Letter = letter;
-            Display = $"{letter}) {text}";
-            _owner = owner;
-            ChooseCommand = new RelayCommand(() => owner.RecordChoice(letter));
-        }
-
-        /// <summary>Records this choice. Called directly by a head's code-behind, same duality as everywhere else on this screen.</summary>
-        public void Invoke() => _owner.RecordChoice(Letter);
+        Letter = letter;
+        Display = $"{letter}) {text}";
+        _owner = owner;
+        ChooseCommand = new RelayCommand(() => owner.RecordChoice(letter));
     }
 
-    /// <summary>One player's score row: a name, a pip strip, and the numeral.</summary>
-    public sealed record ScoreRow(string Name, int Score, string Pips, bool IsLeading)
-    {
-        /// <summary>Pips shown before the numeral has to carry the value alone.</summary>
-        public const int MaxPips = 6;
+    /// <summary>Records this choice. Called directly by a head's code-behind, same duality as everywhere else on this screen.</summary>
+    public void Invoke() => _owner.RecordChoice(Letter);
+}
 
-        internal static ScoreRow For(string name, int score, int leader)
-        {
-            var filled = Math.Clamp(score, 0, MaxPips);
-            return new ScoreRow(
-                Name: name, Score: score,
-                Pips: new string('\u25CF', filled) + new string('\u25CB', MaxPips - filled),
-                IsLeading: score >= leader && score > 0);
-        }
+/// <summary>One player's score row: a name, a pip strip, and the numeral.</summary>
+public sealed record ScoreRow(string Name, int Score, string Pips, bool IsLeading)
+{
+    /// <summary>Pips shown before the numeral has to carry the value alone.</summary>
+    public const int MaxPips = 6;
+
+    internal static ScoreRow For(string name, int score, int leader)
+    {
+        var filled = Math.Clamp(score, 0, MaxPips);
+        return new ScoreRow(
+            Name: name, Score: score,
+            Pips: new string('\u25CF', filled) + new string('\u25CB', MaxPips - filled),
+            IsLeading: score >= leader && score > 0);
     }
 }

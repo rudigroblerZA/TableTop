@@ -2,6 +2,8 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:TableTop.Presentation.ViewModels;assembly=TableTop.Presentation"
+    x:DataType="vm:PlayerSetupViewModel"
     SafeAreaEdges="Container"
     x:Class="TableTop.Maui.Pages.PlayerSetupPage"
     Title="Add Players"
@@ -58,7 +60,7 @@
                     <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="vm:SavedRosterOption">
                         <Button
                             Text="{Binding Name}"
                             Clicked="OnLoadRosterClicked"
@@ -187,7 +189,7 @@
 
         <VerticalStackLayout BindableLayout.ItemsSource="{Binding Players}">
             <BindableLayout.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="vm:PlayerEntry">
                     <Border Style="{StaticResource CardStyle}">
                         <HorizontalStackLayout Spacing="12">
                             <!-- Initial badge. WinUI had one; MAUI listed names

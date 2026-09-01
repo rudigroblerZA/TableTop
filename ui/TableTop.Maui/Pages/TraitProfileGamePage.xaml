@@ -2,6 +2,8 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:TableTop.Presentation.ViewModels;assembly=TableTop.Presentation"
+    x:DataType="vm:TraitProfileGameViewModel"
     SafeAreaEdges="Container"
     x:Class="TableTop.Maui.Pages.TraitProfileGamePage"
     Title="Profile"
@@ -41,7 +43,7 @@
                 <Border Style="{StaticResource CardStyle}">
                     <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding PlayerResponses}">
                         <BindableLayout.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="vm:PlayerResponseEntry">
                                 <VerticalStackLayout Spacing="4">
                                     <Label Text="{Binding PlayerName}"
                                            FontFamily="{StaticResource DisplayFont}" FontAttributes="Bold"
@@ -84,7 +86,7 @@
 
                 <VerticalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding Profiles}">
                     <BindableLayout.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="vm:PlayerProfileView">
                             <Border Style="{StaticResource CardStyle}">
                                 <VerticalStackLayout Spacing="10">
                                     <Label Text="{Binding PlayerName}" FontFamily="{StaticResource DisplayFont}"
@@ -103,7 +105,7 @@
 
                                     <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Scores}">
                                         <BindableLayout.ItemTemplate>
-                                            <DataTemplate>
+                                            <DataTemplate x:DataType="vm:TraitScoreView">
                                                 <VerticalStackLayout Spacing="2">
                                                     <Label Text="{Binding TraitName}"
                                                            FontFamily="{StaticResource DisplayFont}" FontSize="14"

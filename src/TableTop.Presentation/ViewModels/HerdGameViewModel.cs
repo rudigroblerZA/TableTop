@@ -229,15 +229,16 @@ public sealed class HerdGameViewModel : ViewModelBase, IDisposable
     /// <inheritdoc />
     public void Dispose() => _controller?.Dispose();
 
-    /// <summary>One player's answer for the current round.</summary>
-    public sealed class PlayerAnswerEntry(string playerName) : ViewModelBase
-    {
-        private string _answer = "";
+}
 
-        /// <summary>The player this answer belongs to.</summary>
-        public string PlayerName { get; } = playerName;
+/// <summary>One player's answer for the current round.</summary>
+public sealed class PlayerAnswerEntry(string playerName) : ViewModelBase
+{
+    private string _answer = "";
 
-        /// <summary>What they've typed so far. Blank counts as no answer.</summary>
-        public string Answer { get => _answer; set => SetField(ref _answer, value); }
-    }
+    /// <summary>The player this answer belongs to.</summary>
+    public string PlayerName { get; } = playerName;
+
+    /// <summary>What they've typed so far. Blank counts as no answer.</summary>
+    public string Answer { get => _answer; set => SetField(ref _answer, value); }
 }
