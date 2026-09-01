@@ -2,6 +2,8 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mvm="clr-namespace:TableTop.Maui.ViewModels"
+    x:DataType="mvm:GameplayViewModel"
     SafeAreaEdges="Container"
     x:Class="TableTop.Maui.Pages.GameplayPage"
     Title="{Binding ModeTitle}"

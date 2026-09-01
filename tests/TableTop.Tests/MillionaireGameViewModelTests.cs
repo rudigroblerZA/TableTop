@@ -80,7 +80,7 @@ public sealed class MillionaireGameViewModelTests
     /// wrong one. Named rather than indexed, because <c>Answers[0]</c> reading
     /// as "the one that ends the round" is precisely the assumption that broke.
     /// </summary>
-    private static MillionaireGameViewModel.AnswerOption WrongOption(MillionaireGameViewModel vm) =>
+    private static AnswerOption WrongOption(MillionaireGameViewModel vm) =>
         vm.Answers.Single(a => a.Label == WrongLabel);
 
     [Fact]

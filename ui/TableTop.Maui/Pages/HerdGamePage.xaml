@@ -2,6 +2,8 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:TableTop.Presentation.ViewModels;assembly=TableTop.Presentation"
+    x:DataType="vm:HerdGameViewModel"
     SafeAreaEdges="Container"
     x:Class="TableTop.Maui.Pages.HerdGamePage"
     Title="Herd"
@@ -38,7 +40,7 @@
                 <Border Style="{StaticResource CardStyle}">
                     <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding PlayerAnswers}">
                         <BindableLayout.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="vm:PlayerAnswerEntry">
                                 <Grid ColumnDefinitions="110,*">
                                     <Label Grid.Column="0" Text="{Binding PlayerName}" VerticalOptions="Center"
                                            FontFamily="{StaticResource DisplayFont}" FontAttributes="Bold"

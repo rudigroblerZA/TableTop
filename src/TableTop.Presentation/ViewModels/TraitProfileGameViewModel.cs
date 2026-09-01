@@ -318,125 +318,126 @@ public sealed class TraitProfileGameViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>One player's answer to the current statement.</summary>
-    public sealed class PlayerResponseEntry : ViewModelBase
+}
+
+/// <summary>One player's answer to the current statement.</summary>
+public sealed class PlayerResponseEntry : ViewModelBase
+{
+    private LikertResponse? _response;
+
+    /// <summary>Initialises an unanswered entry for <paramref name="playerName"/>.</summary>
+    public PlayerResponseEntry(string playerName)
     {
-        private LikertResponse? _response;
-
-        /// <summary>Initialises an unanswered entry for <paramref name="playerName"/>.</summary>
-        public PlayerResponseEntry(string playerName)
-        {
-            PlayerName = playerName;
-            PickCommand = new ParameterRelayCommand(p => Pick(ParameterRelayCommand.AsInt(p)));
-        }
-
-        /// <summary>The player this answer belongs to.</summary>
-        public string PlayerName { get; }
-
-        /// <summary>
-        /// Picks this player's response. The parameter is the 1-5 value; see
-        /// <see cref="ParameterRelayCommand"/> for why it is loosely typed.
-        /// </summary>
-        public ICommand PickCommand { get; }
-
-        /// <summary>What they picked, or null when they have not answered.</summary>
-        public LikertResponse? Response
-        {
-            get => _response;
-            set { SetField(ref _response, value); OnPropertyChanged(nameof(HasAnswered)); OnPropertyChanged(nameof(SelectedValue)); }
-        }
-
-        /// <summary>True once this player has picked something.</summary>
-        public bool HasAnswered => _response is not null;
-
-        /// <summary>The picked value as 1-5, or 0 when unanswered — for heads that bind to an int.</summary>
-        public int SelectedValue => _response is { } r ? (int)r : 0;
-
-        /// <summary>Picks a response from a 1-5 value; anything else clears it.</summary>
-        public void Pick(int value) =>
-            Response = value is >= 1 and <= 5 ? (LikertResponse)value : null;
+        PlayerName = playerName;
+        PickCommand = new ParameterRelayCommand(p => Pick(ParameterRelayCommand.AsInt(p)));
     }
 
-    /// <summary>One player's finished profile, shaped for display.</summary>
-    public sealed class PlayerProfileView
+    /// <summary>The player this answer belongs to.</summary>
+    public string PlayerName { get; }
+
+    /// <summary>
+    /// Picks this player's response. The parameter is the 1-5 value; see
+    /// <see cref="ParameterRelayCommand"/> for why it is loosely typed.
+    /// </summary>
+    public ICommand PickCommand { get; }
+
+    /// <summary>What they picked, or null when they have not answered.</summary>
+    public LikertResponse? Response
     {
-        /// <summary>Builds a display view over a finished profile.</summary>
-        public PlayerProfileView(TraitProfile profile)
-        {
-            ArgumentNullException.ThrowIfNull(profile);
-
-            PlayerName = profile.PlayerName;
-            AnsweredItems = profile.AnsweredItems;
-            Scores = new ObservableCollection<TraitScoreView>(
-                profile.Scores.Select(s => new TraitScoreView(s)));
-
-            var top = profile.Strongest();
-            TopTrait = top.Count > 0 ? top[0].Trait.Name : "";
-        }
-
-        /// <summary>Who this profile belongs to.</summary>
-        public string PlayerName { get; }
-
-        /// <summary>How many statements they answered.</summary>
-        public int AnsweredItems { get; }
-
-        /// <summary>One row per dimension, in the scale's order.</summary>
-        public ObservableCollection<TraitScoreView> Scores { get; }
-
-        /// <summary>
-        /// Their highest-scoring dimension, or empty when they answered nothing.
-        ///
-        /// <para>
-        /// The headline for a ranking mode like Love Languages, where which
-        /// dimension is highest matters more than how high it is.
-        /// </para>
-        /// </summary>
-        public string TopTrait { get; }
-
-        /// <summary>True when there is a highest dimension worth naming.</summary>
-        public bool HasTopTrait => TopTrait.Length > 0;
+        get => _response;
+        set { SetField(ref _response, value); OnPropertyChanged(nameof(HasAnswered)); OnPropertyChanged(nameof(SelectedValue)); }
     }
 
-    /// <summary>One dimension's score, shaped for display.</summary>
-    public sealed class TraitScoreView
+    /// <summary>True once this player has picked something.</summary>
+    public bool HasAnswered => _response is not null;
+
+    /// <summary>The picked value as 1-5, or 0 when unanswered — for heads that bind to an int.</summary>
+    public int SelectedValue => _response is { } r ? (int)r : 0;
+
+    /// <summary>Picks a response from a 1-5 value; anything else clears it.</summary>
+    public void Pick(int value) =>
+        Response = value is >= 1 and <= 5 ? (LikertResponse)value : null;
+}
+
+/// <summary>One player's finished profile, shaped for display.</summary>
+public sealed class PlayerProfileView
+{
+    /// <summary>Builds a display view over a finished profile.</summary>
+    public PlayerProfileView(TraitProfile profile)
     {
-        /// <summary>Builds a display view over one dimension's score.</summary>
-        public TraitScoreView(TraitScore score)
-        {
-            ArgumentNullException.ThrowIfNull(score);
+        ArgumentNullException.ThrowIfNull(profile);
 
-            TraitName = score.Trait.Name;
-            Description = score.Trait.Description;
-            Normalized = score.Normalized;
-            HasData = score.HasData;
+        PlayerName = profile.PlayerName;
+        AnsweredItems = profile.AnsweredItems;
+        Scores = new ObservableCollection<TraitScoreView>(
+            profile.Scores.Select(s => new TraitScoreView(s)));
 
-            BandLabel = !score.HasData ? "no answers" : score.Band switch
-            {
-                TraitBand.VeryLow or TraitBand.Low => score.Trait.LowLabel,
-                TraitBand.High or TraitBand.VeryHigh => score.Trait.HighLabel,
-                _ => "in the middle",
-            };
-        }
-
-        /// <summary>The dimension's display name.</summary>
-        public string TraitName { get; }
-
-        /// <summary>What the dimension measures, in a sentence.</summary>
-        public string Description { get; }
-
-        /// <summary>Where they landed, 0-100.</summary>
-        public double Normalized { get; }
-
-        /// <summary>The score rounded, for a label.</summary>
-        public int Rounded => (int)Math.Round(Normalized, MidpointRounding.AwayFromZero);
-
-        /// <summary>0-1, for a progress bar that wants a fraction.</summary>
-        public double Fraction => Normalized / 100d;
-
-        /// <summary>The band in the dimension's own words, not "VeryHigh".</summary>
-        public string BandLabel { get; }
-
-        /// <summary>True when at least one answered item loaded on this dimension.</summary>
-        public bool HasData { get; }
+        var top = profile.Strongest();
+        TopTrait = top.Count > 0 ? top[0].Trait.Name : "";
     }
+
+    /// <summary>Who this profile belongs to.</summary>
+    public string PlayerName { get; }
+
+    /// <summary>How many statements they answered.</summary>
+    public int AnsweredItems { get; }
+
+    /// <summary>One row per dimension, in the scale's order.</summary>
+    public ObservableCollection<TraitScoreView> Scores { get; }
+
+    /// <summary>
+    /// Their highest-scoring dimension, or empty when they answered nothing.
+    ///
+    /// <para>
+    /// The headline for a ranking mode like Love Languages, where which
+    /// dimension is highest matters more than how high it is.
+    /// </para>
+    /// </summary>
+    public string TopTrait { get; }
+
+    /// <summary>True when there is a highest dimension worth naming.</summary>
+    public bool HasTopTrait => TopTrait.Length > 0;
+}
+
+/// <summary>One dimension's score, shaped for display.</summary>
+public sealed class TraitScoreView
+{
+    /// <summary>Builds a display view over one dimension's score.</summary>
+    public TraitScoreView(TraitScore score)
+    {
+        ArgumentNullException.ThrowIfNull(score);
+
+        TraitName = score.Trait.Name;
+        Description = score.Trait.Description;
+        Normalized = score.Normalized;
+        HasData = score.HasData;
+
+        BandLabel = !score.HasData ? "no answers" : score.Band switch
+        {
+            TraitBand.VeryLow or TraitBand.Low => score.Trait.LowLabel,
+            TraitBand.High or TraitBand.VeryHigh => score.Trait.HighLabel,
+            _ => "in the middle",
+        };
+    }
+
+    /// <summary>The dimension's display name.</summary>
+    public string TraitName { get; }
+
+    /// <summary>What the dimension measures, in a sentence.</summary>
+    public string Description { get; }
+
+    /// <summary>Where they landed, 0-100.</summary>
+    public double Normalized { get; }
+
+    /// <summary>The score rounded, for a label.</summary>
+    public int Rounded => (int)Math.Round(Normalized, MidpointRounding.AwayFromZero);
+
+    /// <summary>0-1, for a progress bar that wants a fraction.</summary>
+    public double Fraction => Normalized / 100d;
+
+    /// <summary>The band in the dimension's own words, not "VeryHigh".</summary>
+    public string BandLabel { get; }
+
+    /// <summary>True when at least one answered item loaded on this dimension.</summary>
+    public bool HasData { get; }
 }

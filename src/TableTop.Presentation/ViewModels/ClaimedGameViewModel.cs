@@ -265,31 +265,32 @@ public sealed class ClaimedGameViewModel : ViewModelBase, IDisposable
     /// <inheritdoc />
     public void Dispose() => _controller?.Dispose();
 
-    /// <summary>One territory on the board.</summary>
-    public sealed class TerritoryOption
+}
+
+/// <summary>One territory on the board.</summary>
+public sealed class TerritoryOption
+{
+    private readonly ClaimedGameViewModel _owner;
+
+    /// <summary>The territory's name (its deck category).</summary>
+    public string Name { get; }
+    /// <summary>The holder's name, or "Open" for unclaimed ground.</summary>
+    public string HolderDisplay { get; }
+    /// <summary>True when the current player may challenge this territory right now.</summary>
+    public bool IsChallengeable { get; }
+
+    /// <summary>Command that challenges this territory. WinUI binds this.</summary>
+    public ICommand ChallengeCommand { get; }
+
+    internal TerritoryOption(string name, string? holder, bool isChallengeable, ClaimedGameViewModel owner)
     {
-        private readonly ClaimedGameViewModel _owner;
-
-        /// <summary>The territory's name (its deck category).</summary>
-        public string Name { get; }
-        /// <summary>The holder's name, or "Open" for unclaimed ground.</summary>
-        public string HolderDisplay { get; }
-        /// <summary>True when the current player may challenge this territory right now.</summary>
-        public bool IsChallengeable { get; }
-
-        /// <summary>Command that challenges this territory. WinUI binds this.</summary>
-        public ICommand ChallengeCommand { get; }
-
-        internal TerritoryOption(string name, string? holder, bool isChallengeable, ClaimedGameViewModel owner)
-        {
-            Name = name;
-            HolderDisplay = holder ?? "Open";
-            IsChallengeable = isChallengeable;
-            _owner = owner;
-            ChallengeCommand = new RelayCommand(() => owner.Challenge(name), () => isChallengeable && !owner.HasPendingChallenge);
-        }
-
-        /// <summary>Challenges this territory. Called directly by MAUI's buttons.</summary>
-        public void Invoke() => _owner.Challenge(Name);
+        Name = name;
+        HolderDisplay = holder ?? "Open";
+        IsChallengeable = isChallengeable;
+        _owner = owner;
+        ChallengeCommand = new RelayCommand(() => owner.Challenge(name), () => isChallengeable && !owner.HasPendingChallenge);
     }
+
+    /// <summary>Challenges this territory. Called directly by MAUI's buttons.</summary>
+    public void Invoke() => _owner.Challenge(Name);
 }

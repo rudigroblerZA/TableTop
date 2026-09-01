@@ -47,13 +47,13 @@ public partial class PlayerSetupPage : ContentPage
 
     private void OnRemovePlayerClicked(object sender, EventArgs e)
     {
-        if (sender is Button { BindingContext: PlayerSetupViewModel.PlayerEntry player })
+        if (sender is Button { BindingContext: PlayerEntry player })
             _vm.RemovePlayer(player);
     }
 
     private void OnLoadRosterClicked(object sender, EventArgs e)
     {
-        if (sender is Button { BindingContext: PlayerSetupViewModel.SavedRosterOption option })
+        if (sender is Button { BindingContext: SavedRosterOption option })
             option.Invoke();
     }
 

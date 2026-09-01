@@ -431,11 +431,24 @@ jobs:
       - name: Install workload
         run: dotnet workload install maui --ignore-failed-sources
 
+      # Warnings-as-errors, finally — this is backlog X.6's "done when", and it
+      # could not be turned on until X.6c landed. This head carried 552 XC0022
+      # compiled-binding advisories, and a warning count nobody can read is a
+      # warning count nobody reads: six real doc-comment faults and the
+      # targetSdkVersion gap (X.7) both sat hidden inside it for releases.
       - name: Build MAUI Windows
         run: dotnet build ui/TableTop.Maui/TableTop.Maui.csproj -c Release -f net10.0-windows10.0.19041.0
+             -p:TreatWarningsAsErrors=true
 
+      # XA1006 is exempted, and only XA1006: the Android manifest declares no
+      # targetSdkVersion, so it builds as 28 against API 36. That is backlog
+      # X.7, and fixing it opts the app in to every behaviour change from API 29
+      # on, which wants a device run rather than a flag flip here. Everything
+      # else on this target is an error. Delete this exemption when X.7 lands.
       - name: Build MAUI Android
         run: dotnet build ui/TableTop.Maui/TableTop.Maui.csproj -c Release -f net10.0-android
+             -p:TreatWarningsAsErrors=true
+             -p:WarningsNotAsErrors=XA1006
 
   # ── Native Android head ──────────────────────────────────────────────────
   # TableTop.Android is a native .NET for Android head (Mono.Android, not MAUI).

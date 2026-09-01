@@ -2,6 +2,8 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:TableTop.Presentation.ViewModels;assembly=TableTop.Presentation"
+    x:DataType="vm:MillionaireGameViewModel"
     SafeAreaEdges="Container"
     x:Class="TableTop.Maui.Pages.MillionaireGamePage"
     Title="Millionaire"
@@ -27,7 +29,7 @@
 
                 <CollectionView x:Name="AnswersList" ItemsSource="{Binding Answers}">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="vm:AnswerOption">
                             <Button Text="{Binding Display}" Clicked="OnAnswerClicked"
                                     Style="{StaticResource AnswerPlateStyle}"
                                     HorizontalOptions="Fill" Margin="0,5" />
@@ -38,7 +40,7 @@
                 <Label Text="LIFELINES" Style="{StaticResource PipLabelStyle}" TextColor="{StaticResource PlateEdgeColor}" Margin="0,8,0,0" />
                 <CollectionView x:Name="LifelinesList" ItemsSource="{Binding Lifelines}" ItemsLayout="HorizontalList">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="vm:LifelineOption">
                             <Button Text="{Binding Name}" Clicked="OnLifelineClicked"
                                     IsEnabled="{Binding IsAvailable}"
                                     Style="{StaticResource LifelineStyle}" Margin="4" />

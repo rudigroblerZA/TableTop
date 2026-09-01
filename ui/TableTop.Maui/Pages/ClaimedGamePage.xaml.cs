@@ -37,7 +37,7 @@ public partial class ClaimedGamePage : ContentPage, IAsyncInitializablePage
 
     private void OnChallengeClicked(object sender, EventArgs e)
     {
-        if (sender is Button { BindingContext: ClaimedGameViewModel.TerritoryOption territory })
+        if (sender is Button { BindingContext: TerritoryOption territory })
             territory.Invoke();
     }
 
