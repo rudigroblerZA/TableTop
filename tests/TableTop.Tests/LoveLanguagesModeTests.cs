@@ -187,13 +187,13 @@ public sealed class LoveLanguagesModeTests
         Mode.GetManifest().TotalCards.Should().Be(Mode.GetItemBank().Count);
 
     [Fact]
-    public void TheFactoryBuildsATraitProfileController()
+    public async Task TheFactoryBuildsATraitProfileController()
     {
         var players = new[] { "Ada", "Bo" }
             .Select(n => (TableTop.Core.Abstractions.Players.IPlayer)Player.Create(n))
             .ToList().AsReadOnly();
 
-        var controller = new ControllerFactory().CreateAsync(Mode, players).GetAwaiter().GetResult();
+        var controller = await new ControllerFactory().CreateAsync(Mode, players);
         try { controller.Should().BeOfType<TraitProfileController>(); }
         finally { controller.Dispose(); }
     }

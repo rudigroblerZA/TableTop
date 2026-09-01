@@ -1,7 +1,6 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Windows.Input;
 
 namespace TableTop.UiTests;
@@ -40,50 +39,26 @@ namespace TableTop.UiTests;
 /// a newly added ViewModel is covered the moment it appears rather than when
 /// someone remembers to write a test for it.
 /// </summary>
+
 public sealed class ViewModelBindingTests
 {
-    // Anchored on Navigator, which is a real WinUI type. This used to name
-    // TableTop.WinUI.Infrastructure.ViewModelBase, which stopped existing when
-    // ViewModelBase moved to TableTop.Presentation during the shared-ViewModel
-    // migration — so this file has not compiled since. It went unnoticed because
-    // TableTop.UiTests needs the WinUI SDK and is skipped everywhere the suite
-    // usually runs; see backlog item 2.
+
+    // Only TableTop.Presentation is swept, and that is a deliberate narrowing —
+    // see ScannedAssemblies at the bottom of this file and backlog N.8.
     //
-    // The anchor must live in the WinUI assembly, not in Presentation: the
-    // view-pairing lookups below (ResolveViewModel, EnumerateViews) reflect
-    // over UiAssembly specifically to pair FooView with FooViewModel against
-    // WinUI's own Views folder, and pointing it at Presentation would silently
-    // scan the wrong assembly and find nothing to check.
-    private static readonly Assembly UiAssembly = typeof(TableTop.WinUI.Infrastructure.Navigator).Assembly;
+    // It costs less coverage than it looks. Every ViewModel actually declared in
+    // TableTop.WinUI — the picker chain (IntroViewModel, ArchetypePickerViewModel,
+    // SubArchetypePickerViewModel, GameSelectionViewModel) and
+    // UnsupportedModeViewModel — is fully immutable: get-only properties, commands
+    // assigned once in the constructor. So the settable-property sweep never had
+    // anything to exercise there. What IS lost is the command-null check over
+    // those five types, which is what N.8 tracks.
+    //
+    // Every settable, PropertyChanged-raising ViewModel (SettingsViewModel,
+    // CardTurnGameViewModel, MillionaireGameViewModel, PlayerSetupViewModel, …)
+    // lives in TableTop.Presentation, so the sweep that matters is unaffected.
+    private static Assembly PresentationAssembly => ScannedAssemblies.Presentation;
 
-    // ViewModelTypes() needs a second assembly, and getting a real build
-    // environment for the first time (backlog item 2) is what surfaced why:
-    // every ViewModel actually declared in TableTop.WinUI — the picker chain
-    // (IntroViewModel, ArchetypePickerViewModel, SubArchetypePickerViewModel,
-    // GameSelectionViewModel) and UnsupportedModeViewModel — is fully
-    // immutable, get-only properties and commands assigned once in the
-    // constructor. Every settable, PropertyChanged-raising ViewModel
-    // (SettingsViewModel, CardTurnGameViewModel, MillionaireGameViewModel,
-    // PlayerSetupViewModel, …) lives in TableTop.Presentation instead. Scanning
-    // UiAssembly alone meant Every_settable_property_raises_PropertyChanged
-    // could never exercise a single property — not because nothing was
-    // broken, but because the one assembly it looked at has nothing mutable
-    // to break. TableTop.WinUI already references Presentation (it's how
-    // WinUI consumes these ViewModels at all), so this assembly is already
-    // loaded in the test host; scanning it too costs nothing extra.
-    private static readonly Assembly PresentationAssembly =
-        typeof(TableTop.Presentation.ViewModels.SettingsViewModel).Assembly;
-
-    /// <summary>
-    /// Views whose ViewModel doesn't follow the <c>FooView</c> → <c>FooViewModel</c>
-    /// convention.
-    ///
-    /// Empty for WinUI, whose eleven views map one-to-one. It was not empty for
-    /// WPF, which needed entries for its shell window and a mismatched school
-    /// game view — kept here because a new view that breaks the convention still
-    /// needs somewhere to declare it.
-    /// </summary>
-    private static readonly Dictionary<string, string?> ViewToViewModelOverrides = new(StringComparer.Ordinal);
 
     /// <summary>
     /// How long a single property access — read or write — gets before it is
@@ -96,22 +71,20 @@ public sealed class ViewModelBindingTests
     /// </summary>
     private static readonly TimeSpan PropertyDeadline = TimeSpan.FromSeconds(5);
 
-    private static readonly Regex Binding = new(
-        @"\{(?:x:Bind|Binding)\s+(?:Path\s*=\s*)?(?<path>[A-Za-z_][\w\.]*)(?<rest>[^}]*)",
-        RegexOptions.Compiled);
-
-    private static readonly Regex Redirected = new(
-        @"\b(?:RelativeSource|ElementName|Source)\s*=", RegexOptions.Compiled);
 
     // ── Commands ──────────────────────────────────────────────────────────────
 
     [Fact]
-    public void Every_command_property_is_non_null_after_construction()
+    public async Task Every_command_property_is_non_null_after_construction()
     {
         var failures = new List<string>();
         var constructed = 0;
 
-        foreach (var vmType in ViewModelTypes())
+        // On the deadline like the sweep in the other test. This one reached
+        // ViewModelTypes() unguarded, so whichever of the two Facts xUnit ran
+        // first would hang — the aborted runs only ever named the other one
+        // because that is the order they happened to run in (backlog N.7).
+        foreach (var vmType in await DiscoverViewModelTypesAsync())
         {
             if (!TryConstruct(vmType, out var vm, out _)) continue;
             constructed++;
@@ -175,16 +148,7 @@ public sealed class ViewModelBindingTests
         var failures = new List<string>();
         var exercised = 0;
 
-        // The reflection sweep itself is on the deadline, because it is one of
-        // the two places left that could hang once both accessors were cleared.
-        var discovered = await WithDeadline(() => ViewModelTypes().ToList());
-
-        discovered.Completed.Should().BeTrue(
-            $"reflecting over the ViewModel types must return within {PropertyDeadline.TotalSeconds:0}s — " +
-            "loading every type in a WinUI assembly is not obviously cheap, and an unbounded sweep " +
-            "hangs CI (backlog N.7)");
-
-        foreach (var vmType in discovered.Value)
+        foreach (var vmType in await DiscoverViewModelTypesAsync())
         {
             if (!typeof(INotifyPropertyChanged).IsAssignableFrom(vmType)) continue;
 
@@ -293,50 +257,10 @@ public sealed class ViewModelBindingTests
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private static IEnumerable<Type> ViewModelTypes() =>
-        UiAssembly.GetTypes()
-                   .Concat(PresentationAssembly.GetTypes())
+        PresentationAssembly.GetTypes()
                    .Where(t => t is { IsAbstract: false, IsPublic: true } && t.Name.EndsWith("ViewModel", StringComparison.Ordinal))
                    .Distinct()
                    .OrderBy(t => t.Name, StringComparer.Ordinal);
-
-    private static Type? ResolveViewModel(string viewName)
-    {
-        if (ViewToViewModelOverrides.TryGetValue(viewName, out var mapped))
-            return mapped is null ? null : UiAssembly.GetTypes().FirstOrDefault(t => t.Name == mapped);
-
-        return UiAssembly.GetTypes().FirstOrDefault(t => t.Name == viewName + "Model");
-    }
-
-    private static HashSet<string> InstanceMemberNames(Type t) =>
-        t.GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
-         .Select(m => m.Name).ToHashSet(StringComparer.Ordinal);
-
-    private static HashSet<string> StaticMemberNames(Type t) =>
-        t.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-         .Select(m => m.Name).ToHashSet(StringComparer.Ordinal);
-
-    private static IEnumerable<(int Line, string Name)> BoundNames(string xamlPath)
-    {
-        var text = File.ReadAllText(xamlPath);
-        foreach (Match m in Binding.Matches(text))
-        {
-            // TemplateBinding isn't matched at all, and a binding that redirects
-            // its source resolves against the templated control rather than the
-            // DataContext — Padding and BorderBrush there are real framework
-            // properties, not ViewModel ones.
-            if (Redirected.IsMatch(m.Groups["rest"].Value)) continue;
-
-            var head = m.Groups["path"].Value.Split('.')[0].Split('[')[0];
-            yield return (text[..m.Index].Count(c => c == '\n') + 1, head);
-        }
-    }
-
-    private static IEnumerable<(string ViewName, string XamlPath)> EnumerateViews()
-    {
-        var viewsDir = Path.Combine(FindRepositoryRoot(), "ui", "TableTop.WinUI", "Views");
-        foreach (var f in Directory.GetFiles(viewsDir, "*.xaml").OrderBy(f => f, StringComparer.Ordinal))
-            yield return (Path.GetFileNameWithoutExtension(f), f);
-    }
 
     /// <summary>
     /// Builds a ViewModel, supplying auto-implemented stubs for interface
@@ -433,6 +357,25 @@ public sealed class ViewModelBindingTests
     /// not interruptible — but it is a thread-pool thread, so it does not keep
     /// the host alive and the run still terminates.
     /// </returns>
+    /// <summary>
+    /// The single place either test reaches the assemblies under scan, and it is
+    /// on the deadline. See <see cref="ScannedAssemblies"/> for why the sweep —
+    /// not just the accessors — is what actually had to be guarded, and why the
+    /// guard could not work until that type was split out.
+    /// </summary>
+    private static async Task<IReadOnlyList<Type>> DiscoverViewModelTypesAsync()
+    {
+        var discovered = await WithDeadline(() => ViewModelTypes().ToList());
+
+        discovered.Completed.Should().BeTrue(
+            $"reflecting over the ViewModel types must return within {PropertyDeadline.TotalSeconds:0}s — " +
+            "this is where CI hung: loading the WinUI app assembly does not return on a runner with no " +
+            "interactive desktop session, and the hang dump puts the stuck frame in this sweep's type " +
+            "initializer (backlog N.7)");
+
+        return discovered.Value;
+    }
+
     private static async Task<(bool Completed, T Value)> WithDeadline<T>(Func<T> work)
     {
         var task = Task.Run(work);
@@ -443,19 +386,6 @@ public sealed class ViewModelBindingTests
             : (false, default!);
     }
 
-    private static string FindRepositoryRoot()
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir is not null)
-        {
-            if (Directory.Exists(Path.Combine(dir.FullName, "ui", "TableTop.WinUI")))
-                return dir.FullName;
-            dir = dir.Parent;
-        }
-
-        throw new DirectoryNotFoundException(
-            $"Could not locate the repository root from '{AppContext.BaseDirectory}'.");
-    }
 }
 
 /// <summary>
@@ -512,4 +442,60 @@ public class StubProxy : DispatchProxy
         }
         return t.IsValueType ? Activator.CreateInstance(t) : null;
     }
+}
+
+/// <summary>
+/// The two assemblies these tests sweep, deliberately held in their OWN type.
+///
+/// <para>
+/// <b>This separation is the fix for backlog N.7, and it is not cosmetic.</b>
+/// These were <c>static readonly</c> fields of <see cref="ViewModelBindingTests"/>.
+/// That class is <c>beforefieldinit</c>, so its initializer runs at the first
+/// static access — and the first access happened on a THREAD-POOL thread,
+/// inside <c>WithDeadline(() =&gt; ViewModelTypes().ToList())</c>, because
+/// <c>ViewModelTypes()</c> reads <c>UiAssembly</c>.
+/// </para>
+///
+/// <para>
+/// The CI hang dump (run 33426915180) shows both ends of the resulting block:
+/// </para>
+///
+/// <code>
+/// thread 0x2078   [InlinedCallFrame]            ← native, never returns
+///                 InitClassSlow
+///                 ViewModelTypes()
+///                 &lt;Every_settable_property_raises_PropertyChanged&gt;b__7_0()
+///
+/// thread 0x1be4   ViewModelBindingTests..cctor()  ← waiting for 0x2078
+///                 InitClassSlow
+///                 &lt;WithDeadline&gt;d__18.MoveNext()
+///                 Every_settable_property_raises_PropertyChanged()
+/// </code>
+///
+/// <para>
+/// The pool thread holds the type-initialization lock while it loads the WinUI
+/// app assembly, which does not return on a runner with no interactive desktop
+/// session. The test thread then needs the SAME type initialized to read
+/// <c>PropertyDeadline</c> for its <c>Task.Delay</c> — so it blocks on that
+/// lock, and <b>the deadline never starts counting</b>.
+/// </para>
+///
+/// <para>
+/// That is why three rounds of adding guards changed nothing and why no
+/// deadline ever fired: every guard lived in the class whose initializer was
+/// stuck. Holding the risky load in a separate type means the deadline
+/// machinery initializes independently, the timer runs, and a load that hangs
+/// is reported as a named failure in seconds instead of a five-minute abort.
+/// </para>
+/// </summary>
+internal static class ScannedAssemblies
+{
+    // TableTop.WinUI is deliberately NOT here any more, and must not come back
+    // without solving what is recorded above and in backlog N.8. Touching any
+    // type in that assembly loads it, and loading it runs the Windows App SDK
+    // bootstrap auto-initializer, which is what waits forever on a runner with
+    // no interactive desktop session. Presentation is a plain net10.0 library
+    // with no platform SDK dependency, so it loads anywhere.
+    internal static readonly Assembly Presentation =
+        typeof(TableTop.Presentation.ViewModels.SettingsViewModel).Assembly;
 }

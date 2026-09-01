@@ -72,7 +72,7 @@ So: the tree is green. Every item below is something green does not catch.
 > Two things need a human: tags `v1.35.0`/`v1.35.1` are local and **not
 > pushed**, and `develop` is ahead of `origin`.
 
-### N.7 — CI's WinUI job never finishes: "Run UI tests" hangs — **CONTAINED; narrowed to one test**
+### N.7 — CI's WinUI job never finishes: "Run UI tests" hangs — **FIXED**
 
 **No CI run on this repository has completed since 2026-08-30.** The `Build
 WinUI` job reaches its last step and stays there until the run is cancelled —
@@ -332,7 +332,152 @@ wrong, so it is written here rather than acted on.
 still have to pass. The job ends red with evidence, which is not the same as
 green.
 
-**Done when:** the WinUI job completes *and* the tests run to a result.
+**Fourth update: the hang dump answers it, and every prediction above was
+looking in the wrong place.**
+
+The `Upload UI test results` step has been archiving a full hang dump on every
+failed run since this item was opened. Nobody had opened one. Run
+`33426915180`'s dump (183MB, `dotnet-dump analyze`) names both ends of the block
+outright:
+
+```
+thread 0x2078   [InlinedCallFrame]                 ← native call, never returns
+                InitClassSlow
+                GetGCStaticBaseSlow
+                ViewModelTypes()
+                <Every_settable_property_raises_PropertyChanged>b__7_0()
+
+thread 0x1be4   ViewModelBindingTests..cctor()     ← waiting on 0x2078
+                InitClassSlow
+                <WithDeadline>d__18.MoveNext()
+                Every_settable_property_raises_PropertyChanged()
+```
+
+**It is a type-initializer block, and the guard was inside it.**
+`ViewModelBindingTests` is `beforefieldinit`, so its static fields initialise at
+the first static access — which happened on a *thread-pool* thread, inside
+`WithDeadline(() => ViewModelTypes().ToList())`, because `ViewModelTypes()`
+reads `UiAssembly`. That thread ran the class initializer, which evaluates
+`typeof(TableTop.WinUI.Infrastructure.Navigator).Assembly` and does not return.
+The test thread then needed the *same* class initialised to read
+`PropertyDeadline` for its `Task.Delay`, and blocked on the initialization lock
+the pool thread was holding.
+
+**So the deadline never started counting.** "Neither deadline fired" was read
+three times as evidence that the guarded steps were clean. It was not evidence
+of anything: the timer could not start, because the timer's own configuration
+lived in the class whose initializer was stuck. The table above marking
+`p.GetValue` and `p.SetValue` **cleared** is withdrawn — those accessors were
+never reached at all, and nothing here has ever tested them.
+
+**Fixed by splitting the type**, not by adding another guard. The two scanned
+assemblies now live in their own `ScannedAssemblies` holder, so
+`ViewModelBindingTests`'s initializer no longer loads a WinUI app assembly. The
+deadline machinery initialises independently, `Task.Delay` runs, and a load that
+hangs is now a named assertion failure in ~5s instead of a five-minute abort and
+a 183MB dump. `Every_command_property_is_non_null_after_construction` reached
+`ViewModelTypes()` unguarded and is now on the same deadline — whichever Fact
+xUnit happened to run first would hang, which is the only reason the aborted
+runs consistently named the other one.
+
+**What is still open.** This makes the failure fast and self-describing; it does
+not make it pass. The underlying fact remains that loading the `TableTop.WinUI`
+assembly does not return on a runner with no interactive desktop session, and
+the native frame below `InitClassSlow` has not been resolved to a module. The
+job will now go red in seconds naming the sweep, rather than stalling — and the
+next question is why that load blocks, which is a different investigation with
+much better evidence available.
+
+**Not reproducible locally, still.** 2/2 in 249ms on this machine after the fix,
+as before it. `DOTNET_PROCESSOR_COUNT=1` — harsher than the runner's 4 cores —
+also passes in 241ms, which rules out the thread-pool starvation theory this
+item might otherwise have reached for next.
+
+**Fifth update: fixed, and the repaired guard proved the diagnosis in CI.**
+
+Splitting the type worked exactly as predicted, and run `33442425945` is the
+evidence — the first time this item produced a *measured* result rather than an
+inference:
+
+| | before | after the split |
+|---|---|---|
+| `Run UI tests` | hung 5 min, host crashed | **failed in 10s** |
+| blame | wrote Sequence + hang dump | `All tests finished running, Sequence file will not be generated` |
+| artifact | 183 MB | 2,418 bytes |
+
+Both facts failed, each at its own 5s deadline, with the assertion naming the
+sweep. **Both** — which independently confirms the retraction above:
+`Every_command_property_is_non_null_after_construction` blocks on the same load
+and was never passing. The aborted runs simply never reached it.
+
+**What actually blocks.** Finishing the dump analysis corrects the guess in the
+fourth update. `TableTop.WinUI.dll` *does* load — it is in the module list. The
+block is downstream of the load: the stuck instruction pointer resolves to
+`ntdll.dll`, i.e. a kernel wait, with `Microsoft.WindowsAppRuntime.Bootstrap.dll`
+(native), `WinRT.Runtime.dll`, `combase.dll` and `ole32.dll` all loaded. That is
+the Windows App SDK bootstrap auto-initializer, which runs when the assembly
+loads and waits on COM/WinRT activation that never completes on an agent with no
+interactive desktop session.
+
+**Green by not loading it.** `ViewModelTypes()` now sweeps
+`TableTop.Presentation` only — a plain `net10.0` library with no platform SDK
+dependency, which loads anywhere. The deadline guard stays as cheap insurance
+and is now structurally capable of firing. The WPF-era view-pairing helpers
+(`ResolveViewModel`, `EnumerateViews`, `BoundNames`, `FindRepositoryRoot`, the
+two regexes and the overrides dictionary) were dead — no `[Fact]` called them
+since the type-level binding check was removed — and were the only other thing
+touching the WinUI assembly, so they are gone.
+
+This narrowing costs real coverage, tracked as **N.8**. It is not free and is
+not being pretended otherwise.
+
+**Done when:** ~~the WinUI job completes *and* the tests run to a result.~~
+Both hold: the job completes and both facts run to a green result.
+
+---
+
+### N.8 — WinUI-declared ViewModels have no runtime test coverage
+
+Fallout from N.7, recorded rather than quietly absorbed.
+
+`ViewModelBindingTests` now sweeps `TableTop.Presentation` only, because loading
+`TableTop.WinUI` hangs a headless runner (N.7). Five ViewModels declared in the
+WinUI head lose their runtime check:
+
+| ViewModel | what is no longer verified |
+|---|---|
+| `IntroViewModel` | commands non-null after construction |
+| `ArchetypePickerViewModel` | ” |
+| `SubArchetypePickerViewModel` | ” |
+| `GameSelectionViewModel` | ” |
+| `UnsupportedModeViewModel` | ” |
+
+**The settable-property sweep loses nothing** — all five are immutable, get-only
+properties with commands assigned once in the constructor, so it never had
+anything to exercise there. What is lost is precisely the command-null check,
+and a null command is a button that does nothing, silently. That is the failure
+class this project has shipped before.
+
+**A static check cannot replace it.** Whether a command field is assigned in a
+constructor body is a runtime fact. `MetadataLoadContext` would let the types be
+inspected without executing the bootstrap initializer, but it cannot instantiate
+anything, so it cannot answer this question.
+
+**Options, none free:**
+
+- Install the Windows App Runtime framework package on the CI runner so the
+  bootstrapper finds a match and returns. Most faithful; unproven on a hosted
+  runner and adds setup to the job.
+- Build the WinUI head with the bootstrap auto-initializer configured not to
+  wait on a missing runtime. Changes how the shipped app starts, so it needs
+  care — the app genuinely needs that bootstrapper.
+- Accept the gap and cover those five constructors with hand-written tests in a
+  project that does not load the WinUI assembly. Cheapest, but they are five
+  hand-written tests where the point of this file was that a new ViewModel is
+  covered the moment it appears.
+
+**Done when:** the five WinUI ViewModels are covered again by something, or this
+item records a decision not to and says why.
 
 ---
 
@@ -920,6 +1065,42 @@ forms (4), across `GameplayPage`, `GameSelectionPage`, `PlayerSetupPage`,
 done.** X.6c is blocked on promoting 11 nested ViewModel classes to top-level
 types — see above; that is the next piece of work here, and unlike the other
 two it genuinely wants a machine that can build MAUI.
+
+### X.7 — MAUI's Android manifest sets no `targetSdkVersion`, so it ships as 28
+
+`ui/TableTop.Maui/Platforms/Android/AndroidManifest.xml` declares only
+`<uses-sdk android:minSdkVersion="24" />`. The comment beside it says the intent
+was to "target the current platform the build compiles against" — that is not
+what happens. The Android build says so directly:
+
+```
+warning XA1006: The TargetFrameworkVersion (Android API level 36) is higher
+than the targetSdkVersion (28). Please increase the `android:targetSdkVersion`
+in the AndroidManifest.xml so that the API levels match.
+```
+
+**The two Android heads disagree.** The native head's manifest
+(`ui/TableTop.Android/Properties/AndroidManifest.xml`) sets
+`android:targetSdkVersion="36"` explicitly. Only MAUI's is unset, so the same
+app built two ways targets two different API levels.
+
+**Why it is worth more than a warning line.** `targetSdkVersion` is not
+cosmetic: Google Play gates app updates on it, and 28 (Android 9, 2018) is far
+below the current floor for publishing. It also opts the app out of every
+runtime behaviour change from API 29 onward, which is a silent behaviour
+difference between the two heads, not just a metadata mismatch.
+
+**Not a drive-by edit, which is why it is its own item.** Setting it to 36 opts
+in to all of those behaviour changes at once. The change is one attribute; the
+verification is a real run.
+
+**Done when:** MAUI's manifest names a `targetSdkVersion` matching the native
+head, the app has been launched on an emulator at that level and the roster and
+gameplay screens still work, and XA1006 is gone from the build.
+
+**Found** 2026-08-31 during a local full build of `develop` at `f3ce380`, in the
+warning inventory that the 552 XC0022 advisories (X.6c) had been burying. Not
+verified by a device run — no emulator was started.
 
 ---
 

@@ -922,7 +922,11 @@ public sealed class DayOneModeTests
         // by the generic IGameModeDefinition arm.
         var mode = new TableTop.Games.Couples.DayOneMode();
         mode.Should().BeAssignableTo<TableTop.Core.Abstractions.Game.IDailyDeckProvider>();
-        (mode is TableTop.Core.Abstractions.Game.IGameModeDefinition).Should().BeFalse();
+        // NotBeAssignableTo, not `mode is IGameModeDefinition`: the pattern match
+        // is a compile-time constant false here (CS0184), so it asserted nothing.
+        // This form is a real reflection check and still fails if the mode ever
+        // starts implementing the interface.
+        mode.Should().NotBeAssignableTo<TableTop.Core.Abstractions.Game.IGameModeDefinition>();
     }
 }
 
@@ -1828,13 +1832,12 @@ public sealed class AdvanceTurnExhaustionTests
         }.AsReadOnly();
 
     [Fact]
-    public void RestrictedDeck_DrivenPastExhaustion_EndsCleanly_InsteadOfOverflowing()
+    public async Task RestrictedDeck_DrivenPastExhaustion_EndsCleanly_InsteadOfOverflowing()
     {
         // Between the Two of You is couples-restricted, which is exactly the
         // shape that used to crash.
-        var controller = (ICardTurnController)new ControllerFactory()
-            .CreateAsync(new TableTop.Games.Couples.BetweenTheTwoOfYouMode(), TwoPlayers(), maxRounds: 100)
-            .GetAwaiter().GetResult();
+        var controller = (ICardTurnController)(await new ControllerFactory()
+            .CreateAsync(new TableTop.Games.Couples.BetweenTheTwoOfYouMode(), TwoPlayers(), maxRounds: 100));
 
         var ended = false;
         controller.GameEnded += (_, _) => ended = true;
@@ -1849,7 +1852,7 @@ public sealed class AdvanceTurnExhaustionTests
     }
 
     [Fact]
-    public void EveryCardTurnMode_CanBeDrivenToExhaustion_WithoutCrashing()
+    public async Task EveryCardTurnMode_CanBeDrivenToExhaustion_WithoutCrashing()
     {
         var modes = new List<TableTop.Core.Abstractions.Game.IGameMode>();
         void Walk(IEnumerable<Archetype> nodes)
@@ -1861,8 +1864,8 @@ public sealed class AdvanceTurnExhaustionTests
         var players = TwoPlayers();
         foreach (var mode in modes)
         {
-            var controller = new ControllerFactory()
-                .CreateAsync(mode, players, maxRounds: 100).GetAwaiter().GetResult();
+            var controller = await new ControllerFactory()
+                .CreateAsync(mode, players, maxRounds: 100);
 
             if (controller is ICardTurnController turn)
             {
@@ -2530,7 +2533,7 @@ public sealed class MinimumAgeRestrictionTests
     }
 
     [Fact]
-    public void ADeckWithGatedCards_StillFinishesCleanly_WhenNobodyGaveAnAge()
+    public async Task ADeckWithGatedCards_StillFinishesCleanly_WhenNobodyGaveAnAge()
     {
         // The failure mode worth guarding: gated cards nobody can play must not
         // stall the game. This is the scenario that used to recurse forever
@@ -2538,9 +2541,8 @@ public sealed class MinimumAgeRestrictionTests
         var players = new List<TableTop.Core.Abstractions.Players.IPlayer>
             { Aged("Ana", null), Aged("Ben", null) }.AsReadOnly();
 
-        var controller = (ICardTurnController)new ControllerFactory()
-            .CreateAsync(new AgeGatedMode(), players, maxRounds: 200)
-            .GetAwaiter().GetResult();
+        var controller = (ICardTurnController)(await new ControllerFactory()
+            .CreateAsync(new AgeGatedMode(), players, maxRounds: 200));
 
         var dealt = new List<string>();
         var ended = false;
@@ -2557,14 +2559,13 @@ public sealed class MinimumAgeRestrictionTests
     }
 
     [Fact]
-    public void GatedCards_AreDealt_WhenThePlayersAreOldEnough()
+    public async Task GatedCards_AreDealt_WhenThePlayersAreOldEnough()
     {
         var players = new List<TableTop.Core.Abstractions.Players.IPlayer>
             { Aged("Ana", 30), Aged("Ben", 34) }.AsReadOnly();
 
-        var controller = (ICardTurnController)new ControllerFactory()
-            .CreateAsync(new AgeGatedMode(), players, maxRounds: 200)
-            .GetAwaiter().GetResult();
+        var controller = (ICardTurnController)(await new ControllerFactory()
+            .CreateAsync(new AgeGatedMode(), players, maxRounds: 200));
 
         var dealt = new List<string>();
         var ended = false;
@@ -2687,7 +2688,7 @@ public sealed class LastOrdersTests
     }
 
     [Fact]
-    public void AgelessTable_NeverSeesADrinkCard_ButStillPlaysTheDeck()
+    public async Task AgelessTable_NeverSeesADrinkCard_ButStillPlaysTheDeck()
     {
         // The gate fails closed, which is the point: no stated age, no alcohol.
         var players = new List<TableTop.Core.Abstractions.Players.IPlayer>
@@ -2696,9 +2697,8 @@ public sealed class LastOrdersTests
             TableTop.Core.Domain.Players.Player.Create("Ben"),
         }.AsReadOnly();
 
-        var controller = (ICardTurnController)new ControllerFactory()
-            .CreateAsync(new TableTop.Games.Party.LastOrdersMode(), players, maxRounds: 300)
-            .GetAwaiter().GetResult();
+        var controller = (ICardTurnController)(await new ControllerFactory()
+            .CreateAsync(new TableTop.Games.Party.LastOrdersMode(), players, maxRounds: 300));
 
         var dealt = new List<string>();
         var ended = false;
@@ -2715,7 +2715,7 @@ public sealed class LastOrdersTests
     }
 
     [Fact]
-    public void TableOverTheAge_DoesGetTheDrinkCards()
+    public async Task TableOverTheAge_DoesGetTheDrinkCards()
     {
         var players = new List<TableTop.Core.Abstractions.Players.IPlayer>
         {
@@ -2725,9 +2725,8 @@ public sealed class LastOrdersTests
                 new Dictionary<string, string> { ["age"] = "27" }),
         }.AsReadOnly();
 
-        var controller = (ICardTurnController)new ControllerFactory()
-            .CreateAsync(new TableTop.Games.Party.LastOrdersMode(), players, maxRounds: 300)
-            .GetAwaiter().GetResult();
+        var controller = (ICardTurnController)(await new ControllerFactory()
+            .CreateAsync(new TableTop.Games.Party.LastOrdersMode(), players, maxRounds: 300));
 
         var dealt = new List<string>();
         var ended = false;

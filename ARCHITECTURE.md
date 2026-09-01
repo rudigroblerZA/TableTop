@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.39.0**, August 2026. This replaces the accumulated
+Current as of **1.39.1**, September 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -1151,6 +1151,77 @@ async work to block on, a different shape rather than a template to copy.
   and MAUI UI is not screenshot-testable here. Every gate passes and every file
   parses, but this is a change to how ten screens are drawn and nobody has
   looked at them.
+
+- **1.39.1** is a patch release: no new modes, no new decks, no public API
+  movement. A UI fix, a warning cleanup, and the end of backlog **N.7** — which
+  is the part worth recording, because the diagnosis was wrong three times
+  before the evidence was read.
+
+  **N.7 — the WinUI CI job hung for five minutes and killed its test host.** No
+  CI run completed between 2026-08-30 and 2026-09-01. Three rounds of work had
+  put deadlines around every call the hanging test made into product code, and
+  each reported the same thing: still hung, and *no deadline fired*. That was
+  read each time as evidence the guarded step was clean.
+
+  It was not evidence of anything. The hang dump — which CI had been writing on
+  every failed run since the item was opened, and which nobody had opened —
+  names both ends of the block:
+
+  ```
+  thread 0x2078   [InlinedCallFrame]                <- native, never returns
+                  InitClassSlow
+                  ViewModelTypes()
+
+  thread 0x1be4   ViewModelBindingTests..cctor()    <- waiting on 0x2078
+                  InitClassSlow
+                  <WithDeadline>d__18.MoveNext()
+  ```
+
+  A **type-initializer block with the guard trapped inside it**. The test class
+  is `beforefieldinit`, so its statics initialised at first access — which
+  happened on a thread-pool thread inside `WithDeadline`, because the sweep
+  reads `UiAssembly`. That thread ran the class initializer and blocked. The
+  test thread then needed the *same* class initialised to read
+  `PropertyDeadline` for its `Task.Delay`, and blocked on the initialization
+  lock. **So the timer never started.** Every guard added over three rounds
+  lived in the class whose initializer was stuck, which is precisely why none of
+  them could fire.
+
+  Splitting the risky load into its own type repaired the guard, and CI proved
+  it: a five-minute hang and a 183MB dump became a **10-second named failure**,
+  with blame reporting "All tests finished running". Both facts failed —
+  confirming the already-retracted "construction is fine because the other test
+  passes" inference was wrong for a second reason: that test blocks on the same
+  load and had never been passing.
+
+  What blocks is the Windows App SDK bootstrap auto-initializer. The assembly
+  loads fine; the stuck frame is in `ntdll` — a kernel wait — with
+  `Microsoft.WindowsAppRuntime.Bootstrap.dll`, `WinRT.Runtime.dll` and
+  `combase.dll` loaded, waiting on COM/WinRT activation that never completes on
+  a runner with no interactive desktop session.
+
+  **Green by not loading it.** The ViewModel sweep now covers
+  `TableTop.Presentation` only — plain `net10.0`, no platform SDK dependency.
+  The WPF-era view-pairing helpers, dead since the type-level binding check was
+  removed, were the only other code touching the WinUI assembly and are gone.
+
+  **The cost is real and is filed as N.8, not absorbed.** Five WinUI-declared
+  ViewModels lose their runtime command-null check, and a null command is a
+  button that does nothing, silently. A static check cannot replace it: whether
+  a command is assigned in a constructor body is a runtime fact.
+
+  The general lesson is worth more than the fix: **the job was already
+  instrumented to produce the answer.** `--blame-hang-dump-type full` and an
+  `if: always()` upload had been writing a dump on every failed run for days,
+  while three rounds of hypotheses were spent guessing. Read the
+  instrumentation before adding more of it.
+
+  Also here: MAUI's player-setup screen scrolls and pins its Start button (the
+  roster and the button ran off a phone screen with nothing able to scroll);
+  the engine's 21 build warnings are gone, including a `CS0184` that had made
+  one assertion vacuous; six MAUI doc-comment warnings are fixed; and **X.7** is
+  filed — MAUI's Android manifest sets no `targetSdkVersion`, so it builds as 28
+  while the native head sets 36.
 
 ## What genuinely doesn't exist here
 

@@ -54,7 +54,7 @@ public sealed class SerializedCardTurnControllerTests
     }
 
     [Fact]
-    public void Concurrent_foreign_thread_calls_are_serialised_without_a_host_supplied_pump()
+    public async Task Concurrent_foreign_thread_calls_are_serialised_without_a_host_supplied_pump()
     {
         // ControllerThreadingTests's own "Timer_driven_outcomes..." test proves the
         // pattern is safe when the HOST builds a single-threaded pump around the raw
@@ -84,7 +84,11 @@ public sealed class SerializedCardTurnControllerTests
                 }
             })).ToArray();
 
-            Task.WaitAll(producers, TimeSpan.FromSeconds(30)).Should().BeTrue("producers should finish");
+            // Bounded wait via WhenAny — same assertion as Task.WaitAll(timeout)
+            // without blocking a pool thread (xUnit1031).
+            var allProducers = Task.WhenAll(producers);
+            (await Task.WhenAny(allProducers, Task.Delay(TimeSpan.FromSeconds(30))) == allProducers)
+                .Should().BeTrue("producers should finish");
 
             var totalTurns = controller.SessionReport is { } report ? report.TotalTurns : completed;
             totalTurns.Should().Be(completed,
@@ -97,7 +101,7 @@ public sealed class SerializedCardTurnControllerTests
     }
 
     [Fact]
-    public void Disposing_from_a_foreign_thread_does_not_deadlock()
+    public async Task Disposing_from_a_foreign_thread_does_not_deadlock()
     {
         var controller = new SerializedCardTurnController(
             TestFactory.BuildController(TestFactory.MakeCards(10), TwoPlayers(), maxRounds: 3));
@@ -105,7 +109,9 @@ public sealed class SerializedCardTurnControllerTests
 
         var disposer = Task.Run(() => controller.Dispose());
 
-        disposer.Wait(TimeSpan.FromSeconds(5)).Should().BeTrue(
+        // Bounded wait via WhenAny: a plain await would hang forever on the very
+        // deadlock this test exists to catch.
+        (await Task.WhenAny(disposer, Task.Delay(TimeSpan.FromSeconds(5))) == disposer).Should().BeTrue(
             "Dispose must not block when called off the owner thread — a UI closing a page does exactly this");
     }
 }
