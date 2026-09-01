@@ -390,74 +390,75 @@ public sealed class PlayerSetupViewModel : ViewModelBase
 
     private void RaiseAddState() => (AddPlayerCommand as RelayCommand)?.RaiseCanExecuteChanged();
 
-    /// <summary>One player on the setup list.</summary>
-    public sealed class PlayerEntry
+}
+
+/// <summary>One player on the setup list.</summary>
+public sealed class PlayerEntry
+{
+    /// <summary>Display name.</summary>
+    public string Name { get; }
+    /// <summary>Gender, or null if unspecified.</summary>
+    public string? Gender { get; }
+    /// <summary>Age, or null if unspecified.</summary>
+    public int? Age { get; }
+    /// <summary>Whether this player is part of the couple.</summary>
+    public bool IsCoupleMember { get; }
+
+    /// <summary>First letter, for an avatar badge. Was WinUI-only.</summary>
+    public string Initial => Name.Length > 0 ? Name[..1].ToUpperInvariant() : "?";
+
+    /// <summary>Gender, age and couple status as one line, or empty.</summary>
+    public string Detail
     {
-        /// <summary>Display name.</summary>
-        public string Name { get; }
-        /// <summary>Gender, or null if unspecified.</summary>
-        public string? Gender { get; }
-        /// <summary>Age, or null if unspecified.</summary>
-        public int? Age { get; }
-        /// <summary>Whether this player is part of the couple.</summary>
-        public bool IsCoupleMember { get; }
-
-        /// <summary>First letter, for an avatar badge. Was WinUI-only.</summary>
-        public string Initial => Name.Length > 0 ? Name[..1].ToUpperInvariant() : "?";
-
-        /// <summary>Gender, age and couple status as one line, or empty.</summary>
-        public string Detail
+        get
         {
-            get
-            {
-                var bits = new List<string>();
-                if (Gender is { Length: > 0 } g) bits.Add(g);
-                if (Age is { } a) bits.Add($"{a}");
-                if (IsCoupleMember) bits.Add("couple");
-                return string.Join(" · ", bits);
-            }
-        }
-
-        /// <summary>True when there is anything to show in <see cref="Detail"/>.</summary>
-        public bool HasDetail => Detail.Length > 0;
-
-        /// <summary>Creates an entry.</summary>
-        public PlayerEntry(string name, string? gender, int? age, bool isCoupleMember = false)
-        {
-            Name = name; Gender = gender; Age = age; IsCoupleMember = isCoupleMember;
+            var bits = new List<string>();
+            if (Gender is { Length: > 0 } g) bits.Add(g);
+            if (Age is { } a) bits.Add($"{a}");
+            if (IsCoupleMember) bits.Add("couple");
+            return string.Join(" · ", bits);
         }
     }
 
-    /// <summary>
-    /// One saved roster offered in the picker — same
-    /// <see cref="ICommand"/>-for-WinUI/<c>Invoke()</c>-for-MAUI duality as
-    /// <c>MonogamyGameViewModel.ZoneOption</c> and
-    /// <c>ClaimedGameViewModel.TerritoryOption</c>.
-    /// </summary>
-    public sealed class SavedRosterOption
+    /// <summary>True when there is anything to show in <see cref="Detail"/>.</summary>
+    public bool HasDetail => Detail.Length > 0;
+
+    /// <summary>Creates an entry.</summary>
+    public PlayerEntry(string name, string? gender, int? age, bool isCoupleMember = false)
     {
-        private readonly PlayerSetupViewModel _owner;
-
-        /// <summary>The roster this option loads.</summary>
-        public SavedRoster Roster { get; }
-
-        /// <summary>Display name, e.g. "Friday Regulars".</summary>
-        public string Name => Roster.Name;
-
-        /// <summary>"Couple · 2 players", from <see cref="SavedRoster.Subtitle"/>.</summary>
-        public string Subtitle => Roster.Subtitle;
-
-        /// <summary>Command that loads this roster. WinUI binds this.</summary>
-        public ICommand LoadCommand { get; }
-
-        internal SavedRosterOption(SavedRoster roster, PlayerSetupViewModel owner)
-        {
-            Roster = roster;
-            _owner = owner;
-            LoadCommand = new RelayCommand(() => owner.LoadRoster(roster));
-        }
-
-        /// <summary>Loads this roster. Called directly by MAUI's buttons.</summary>
-        public void Invoke() => _owner.LoadRoster(Roster);
+        Name = name; Gender = gender; Age = age; IsCoupleMember = isCoupleMember;
     }
+}
+
+/// <summary>
+/// One saved roster offered in the picker — same
+/// <see cref="ICommand"/>-for-WinUI/<c>Invoke()</c>-for-MAUI duality as
+/// <c>ZoneOption</c> and
+/// <c>TerritoryOption</c>.
+/// </summary>
+public sealed class SavedRosterOption
+{
+    private readonly PlayerSetupViewModel _owner;
+
+    /// <summary>The roster this option loads.</summary>
+    public SavedRoster Roster { get; }
+
+    /// <summary>Display name, e.g. "Friday Regulars".</summary>
+    public string Name => Roster.Name;
+
+    /// <summary>"Couple · 2 players", from <see cref="SavedRoster.Subtitle"/>.</summary>
+    public string Subtitle => Roster.Subtitle;
+
+    /// <summary>Command that loads this roster. WinUI binds this.</summary>
+    public ICommand LoadCommand { get; }
+
+    internal SavedRosterOption(SavedRoster roster, PlayerSetupViewModel owner)
+    {
+        Roster = roster;
+        _owner = owner;
+        LoadCommand = new RelayCommand(() => owner.LoadRoster(roster));
+    }
+
+    /// <summary>Loads this roster. Called directly by MAUI's buttons.</summary>
+    public void Invoke() => _owner.LoadRoster(Roster);
 }

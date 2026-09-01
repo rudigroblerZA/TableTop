@@ -2,6 +2,9 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mvm="clr-namespace:TableTop.Maui.ViewModels"
+    xmlns:hosting="clr-namespace:TableTop.Hosting;assembly=TableTop.Hosting"
+    x:DataType="mvm:GameSelectionViewModel"
     SafeAreaEdges="Container"
     x:Class="TableTop.Maui.Pages.GameSelectionPage"
     x:Name="SelectionPage"
@@ -58,7 +61,7 @@
                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="hosting:Archetype">
                     <Border Padding="14" StrokeShape="RoundRectangle 12" Stroke="#73C49E4C" BackgroundColor="#16382E" Margin="2" WidthRequest="104">
                         <!-- Tap handled explicitly: on Android the Border eats the
                              touch before the CollectionView sees it. -->
@@ -96,7 +99,7 @@
                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="hosting:Archetype">
                     <Border Padding="14,10" StrokeShape="RoundRectangle 12" Stroke="#73C49E4C" BackgroundColor="#16382E" Margin="2">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnSubArchetypeTapped" />
@@ -125,7 +128,7 @@
                         SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                         SelectionChanged="OnGameModeSelectionChanged">
             <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="mvm:GameModeItem">
                     <Border Style="{StaticResource CardStyle}" Margin="0,4">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnGameModeTapped" />

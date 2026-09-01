@@ -925,7 +925,7 @@ and a test that pins two numbers in a 700-line document invites the belief that
 the whole file is checked. The honest fix there is that README is the enforced
 copy, which ARCHITECTURE.md now says out loud at the point it repeats them.
 
-### X.6 — MAUI deprecations — **PARTLY FIXED** (a and c open), and the original count was wrong
+### X.6 — MAUI deprecations — **FIXED**, and the original count was wrong
 
 **Correction first.** This item said "96 CS0618 warnings". That was measured by
 grepping the build for `warning CS0618` — the C# compiler's share only. Turning
@@ -1021,7 +1021,7 @@ forms (4), across `GameplayPage`, `GameSelectionPage`, `PlayerSetupPage`,
   here — it is a denylist keyed on tag name and has no `ContentPage` rules, so
   `SafeAreaEdges` is trusted from the API docs, not from the gate. Safe-area
   behaviour has still never been observed on hardware.
-- **X.6c — compiled bindings (492 XC0022) — BLOCKED, and this item's premise
+- **X.6c — compiled bindings (552 XC0022) — FIXED. Below is the analysis that blocked it, kept because its premise
   was wrong.** It said "mechanical but wide". It is neither: it is blocked on a
   structural problem that has to be fixed first.
 
@@ -1060,11 +1060,43 @@ forms (4), across `GameplayPage`, `GameSelectionPage`, `PlayerSetupPage`,
   public refactor of the shared ViewModel layer whose failure mode is a broken
   build is exactly the trade the rest of this backlog refuses to make.
 
-**Done when:** all three land and MAUI's CI step carries
-`-p:TreatWarningsAsErrors=true` like the other three heads. **X.6a and X.6b are
-done.** X.6c is blocked on promoting 11 nested ViewModel classes to top-level
-types — see above; that is the next piece of work here, and unlike the other
-two it genuinely wants a machine that can build MAUI.
+**X.6c update: unblocked, and it cost far less than the block implied.**
+
+The prerequisite was real — XAML cannot name a nested type, so the 11
+`DataTemplate` scopes binding to nested classes had to be promoted first. What
+the entry did not know is that **`TableTop.Presentation` is not in
+`api/*.api.txt`**; only Core, Games and Hosting are snapshotted. So promoting
+them moved no tracked public surface, `PublicApiSurfaceTests` never fired, and
+the MAJOR/MINOR question the entry implied never arose.
+
+Twelve types promoted to `TableTop.Presentation.ViewModels`: `ChoiceItem`,
+`ScoreRow`, `TerritoryOption`, `PlayerAnswerEntry`, `AnswerOption`,
+`LifelineOption`, `ZoneOption`, `PlayerEntry`, `SavedRosterOption`,
+`PlayerResponseEntry`, `PlayerProfileView`, `TraitScoreView`. Presentation
+compiled with **no accessibility errors**, which says none of them had been
+reaching into their outer class's privates — the one thing that would have
+turned this into a real refactor. Only 8 call sites named them by qualified
+`Outer.Inner` form and were rewritten.
+
+Then `x:DataType` on all 11 pages and all 16 `DataTemplate` scopes, including
+the nested one on `TraitProfileGamePage` (`Scores` inside `Profiles`).
+
+**Every binding path resolved on the first build.** That is the part worth
+recording: with compiled bindings a wrong path is a build error, not a silently
+empty control, so this pass was also an audit of every binding in the head —
+and it found nothing wrong. **552 XC0022 → 0.**
+
+**Done when:** ~~all three land and MAUI's CI step carries
+`-p:TreatWarningsAsErrors=true` like the other three heads.~~ All three landed.
+Both MAUI CI steps now carry `-p:TreatWarningsAsErrors=true`, so all four heads
+are gated.
+
+The Android target additionally carries `-p:WarningsNotAsErrors=XA1006`, and
+only XA1006 — that is **X.7**, which wants a device run rather than a flag
+flip. Delete the exemption when X.7 lands. Everything else on both targets is
+now an error, which is the point: this head's warning count was 552 lines deep,
+and a count nobody can read is a count nobody reads. Six real doc-comment
+faults and the `targetSdkVersion` gap both sat hidden inside it.
 
 ### X.7 — MAUI's Android manifest sets no `targetSdkVersion`, so it ships as 28
 

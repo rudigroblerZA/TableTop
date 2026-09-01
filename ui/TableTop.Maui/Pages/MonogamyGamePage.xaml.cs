@@ -37,7 +37,7 @@ public partial class MonogamyGamePage : ContentPage, IAsyncInitializablePage
 
     private void OnZoneClicked(object sender, EventArgs e)
     {
-        if (sender is Button { BindingContext: MonogamyGameViewModel.ZoneOption opt })
+        if (sender is Button { BindingContext: ZoneOption opt })
             opt.Invoke();
     }
 

@@ -2,6 +2,8 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:TableTop.Presentation.ViewModels;assembly=TableTop.Presentation"
+    x:DataType="vm:MonogamyGameViewModel"
     SafeAreaEdges="Container"
     x:Class="TableTop.Maui.Pages.MonogamyGamePage"
     Title="Monogamy"
@@ -30,7 +32,7 @@
                     <Label Text="DOUBLES — PICK YOUR ZONE" Style="{StaticResource PipLabelStyle}" TextColor="{StaticResource RoseGoldBrightColor}" />
                     <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding ZoneChoices}">
                         <BindableLayout.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="vm:ZoneOption">
                                 <Button Text="{Binding Display}" Clicked="OnZoneClicked"
                                         Style="{StaticResource VelvetButtonStyle}" />
                             </DataTemplate>
