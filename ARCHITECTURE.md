@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.39.1**, September 2026. This replaces the accumulated
+Current as of **1.39.2**, September 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -1222,6 +1222,61 @@ async work to block on, a different shape rather than a template to copy.
   one assertion vacuous; six MAUI doc-comment warnings are fixed; and **X.7** is
   filed — MAUI's Android manifest sets no `targetSdkVersion`, so it builds as 28
   while the native head sets 36.
+
+- **1.39.2** closed backlog **X.6c**, and with it **X.6** — the last item that
+  was blocked rather than merely unstarted. **552 XC0022 compiled-binding
+  advisories to zero**, and MAUI joins the other three heads in building under
+  `-p:TreatWarningsAsErrors=true`.
+
+  **The block was real but narrower than its own description.** X.6c said the
+  prerequisite was "promoting 11 nested ViewModel classes to top-level types",
+  which "changes the shared layer's public shape for all four heads". The XAML
+  constraint was correct: XAML cannot name a nested type, there is no
+  `Outer+Inner` syntax XamlC accepts, and a `DataTemplate` without its own
+  `x:DataType` inherits the enclosing scope's — so a page could only be
+  annotated if every template inside it could be, which ruled out 8 of 11 pages.
+
+  What the entry did not know is that **`TableTop.Presentation` is not in
+  `api/*.api.txt`**. Only Core, Games and Hosting are snapshotted. So promoting
+  these types moved no tracked public surface, `PublicApiSurfaceTests` never
+  fired, and the MAJOR/MINOR judgement the entry anticipated never arose.
+
+  Twelve types promoted to `TableTop.Presentation.ViewModels`: `ChoiceItem`,
+  `ScoreRow`, `TerritoryOption`, `PlayerAnswerEntry`, `AnswerOption`,
+  `LifelineOption`, `ZoneOption`, `PlayerEntry`, `SavedRosterOption`,
+  `PlayerResponseEntry`, `PlayerProfileView`, `TraitScoreView`. **Presentation
+  compiled with no accessibility errors** — none of them had been reaching into
+  their outer class's private members, which is the single thing that would have
+  made this a refactor rather than a move. Eight call sites named them by
+  qualified `Outer.Inner` form and were rewritten.
+
+  Then `x:DataType` on all 11 pages and all 16 `DataTemplate` scopes, including
+  the nested one on `TraitProfileGamePage` (`Scores` inside `Profiles`) that the
+  entry singled out as making partial adoption impossible.
+
+  **Every binding path resolved on the first build**, which is the result worth
+  keeping. With compiled bindings a wrong path is a build error rather than a
+  silently empty control, so switching this on across the head was an audit of
+  every binding in it — and found nothing wrong. The failure mode this whole
+  file keeps warning about (a binding to a name that does not exist renders
+  EMPTY, throws nothing, warns nothing) is now a compile error in MAUI.
+
+  **Both MAUI CI steps carry warnings-as-errors**, which was X.6's "done when"
+  and the reason it could not close. The Android target also carries
+  `-p:WarningsNotAsErrors=XA1006`, and only that one — the manifest declares no
+  `targetSdkVersion` so it builds as 28 against API 36, which is **X.7**, and
+  fixing it opts the app in to every behaviour change from API 29 onward. That
+  wants a device run, not a flag flip.
+
+  The reason this mattered beyond tidiness: **a warning count nobody can read is
+  a warning count nobody reads.** This head's was 552 lines deep, and six real
+  doc-comment faults plus the `targetSdkVersion` gap sat hidden inside it for
+  releases. Both were found only by breaking the count down by warning code
+  rather than assuming it was all compiled-binding noise.
+
+  **Not run on a device.** The compiler now verifies every binding, which is a
+  stronger check than the runtime resolution it replaced, but no screen has been
+  rendered.
 
 ## What genuinely doesn't exist here
 
