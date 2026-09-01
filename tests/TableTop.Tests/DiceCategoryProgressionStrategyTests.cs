@@ -73,7 +73,7 @@ public sealed class DiceCategoryProgressionStrategyTests
         strategy.SelectCandidate(null!, BuildDeck(), null!);
 
         strategy.LastRoll.Should().NotBeNull();
-        strategy.LastRoll!.Total.Should().BeInRange(2, 12);
+        strategy.LastRoll.Total.Should().BeInRange(2, 12);
     }
 
     [Fact]
@@ -82,9 +82,18 @@ public sealed class DiceCategoryProgressionStrategyTests
         var a = new DiceCategoryProgressionStrategy(Cats, Map, new Random(42));
         var b = new DiceCategoryProgressionStrategy(Cats, Map, new Random(42));
 
-        var idA = a.SelectCandidate(null!, BuildDeck(), null!);
-        var idB = b.SelectCandidate(null!, BuildDeck(), null!);
+        // ONE deck for both: BuildDeck() mints fresh Guid card ids on every
+        // call, so handing each strategy its own deck made the returned ids
+        // incomparable by construction. SelectCandidate only Peeks, so sharing
+        // is safe.
+        var deck = BuildDeck();
 
+        var idA = a.SelectCandidate(null!, deck, null!);
+        var idB = b.SelectCandidate(null!, deck, null!);
+
+        // The selection itself is what "deterministic" means here; asserting
+        // only on LastRoll left SelectCandidate's actual return value untested.
+        idA.Should().Be(idB);
         a.LastRoll.Should().Be(b.LastRoll);
     }
 

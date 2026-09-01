@@ -1,3 +1,4 @@
+using System.Text;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Hosting;
 using TableTop.Hosting.Abstractions;
@@ -132,7 +133,7 @@ internal sealed class ConsoleSchoolRenderer
         SC.ResetColor();
     }
 
-    private void OnSkipAttempted(object? sender, SkipAttemptedEvent e)
+    private static void OnSkipAttempted(object? sender, SkipAttemptedEvent e)
     {
         if (e.IsFree)
         {
@@ -179,7 +180,7 @@ internal sealed class ConsoleSchoolRenderer
         SC.ResetColor();
     }
 
-    private void OnNextTurnHint(object? sender, NextTurnHintEvent e)
+    private static void OnNextTurnHint(object? sender, NextTurnHintEvent e)
     {
         var colour = e.Urgency switch
         {
@@ -205,7 +206,7 @@ internal sealed class ConsoleSchoolRenderer
         }
     }
 
-    private void OnSessionSaved(object? sender, SessionSavedEvent e)
+    private static void OnSessionSaved(object? sender, SessionSavedEvent e)
     {
         SC.ForegroundColor = CC.DarkGray;
         SC.WriteLine($"  💾  Saved ({e.SavedAt:HH:mm})");
@@ -231,6 +232,8 @@ internal sealed class ConsoleSchoolRenderer
 
         SC.ResetColor();
         SC.WriteLine();
+        SC.ForegroundColor = CC.Yellow;
+        SC.WriteLine($"  Session total: {_totalScore} points");
         SC.ForegroundColor = CC.Green;
         SC.WriteLine("  Fantastic effort from everyone! Well done! 🌟");
         SC.ResetColor();
@@ -307,7 +310,7 @@ internal sealed class ConsoleSchoolRenderer
         SC.WriteLine();
     }
 
-    private void PrintSchoolPrompt()
+    private static void PrintSchoolPrompt()
     {
         SC.ForegroundColor = CC.DarkGray;
         SC.WriteLine("  [ENTER / c] Correct   [s] Skip   [f] Didn't get it   [+/-] Difficulty   [q] Quit");
@@ -336,14 +339,14 @@ internal sealed class ConsoleSchoolRenderer
         {
             if (string.IsNullOrWhiteSpace(paragraph)) { yield return ""; continue; }
             var words = paragraph.Split(' ');
-            var line = "";
+            var line = new StringBuilder();
             foreach (var word in words)
             {
                 if (line.Length + word.Length + 1 > width && line.Length > 0)
-                { yield return line.TrimEnd(); line = ""; }
-                line += word + " ";
+                { yield return line.ToString().TrimEnd(); line.Clear(); }
+                line.Append(word).Append(' ');
             }
-            if (line.Trim().Length > 0) yield return line.TrimEnd();
+            if (line.ToString().Trim().Length > 0) yield return line.ToString().TrimEnd();
         }
     }
 }

@@ -12,7 +12,7 @@ public sealed class RollWithItModeTests
     {
         var node = ArchetypeRegistry.Default().FindById("fun.rollwithit");
         node.Should().NotBeNull();
-        node!.Modes.Should().Contain(m => m.Name == "Roll With It");
+        node.Modes.Should().Contain(m => m.Name == "Roll With It");
     }
 
     [Fact]

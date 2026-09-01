@@ -12,7 +12,7 @@ public sealed class DiceNightModeTests
     {
         var node = ArchetypeRegistry.Default().FindById("fun.family.dicenight");
         node.Should().NotBeNull();
-        node!.Modes.Should().Contain(m => m.Name == "Dice Night");
+        node.Modes.Should().Contain(m => m.Name == "Dice Night");
     }
 
     [Fact]

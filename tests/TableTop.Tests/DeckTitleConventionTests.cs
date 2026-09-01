@@ -107,31 +107,4 @@ public sealed class DeckTitleConventionTests
             $"'category' field is the honest home for them.\n  {string.Join("\n  ", offenders)}");
     }
 
-    private static List<string> ReadTitles(string path)
-    {
-        using var doc = JsonDocument.Parse(File.ReadAllText(path));
-        if (!doc.RootElement.TryGetProperty("cards", out var cards))
-            return [];
-
-        return cards.EnumerateArray()
-                    .Select(c => c.TryGetProperty("title", out var t) && t.ValueKind == JsonValueKind.String
-                        ? (t.GetString() ?? string.Empty).Trim()
-                        : string.Empty)
-                    .Where(t => t.Length > 0)
-                    .ToList();
-    }
-
-    private static string FindGamesSourceDirectory()
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir is not null)
-        {
-            var candidate = Path.Combine(dir.FullName, "src", "TableTop.Games");
-            if (Directory.Exists(candidate)) return candidate;
-            dir = dir.Parent;
-        }
-
-        throw new DirectoryNotFoundException(
-            $"Could not locate 'src/TableTop.Games' from '{AppContext.BaseDirectory}'.");
-    }
 }

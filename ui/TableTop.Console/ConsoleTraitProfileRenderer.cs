@@ -80,7 +80,7 @@ internal sealed class ConsoleTraitProfileRenderer
 
     // ── Events ────────────────────────────────────────────────────────────────
 
-    private void OnCompleted(object? sender, TraitAssessmentCompletedEvent e)
+    private static void OnCompleted(object? sender, TraitAssessmentCompletedEvent e)
     {
         ConsoleUi.Clear();
         ConsoleUi.Banner();

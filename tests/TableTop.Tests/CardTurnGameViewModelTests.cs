@@ -342,7 +342,7 @@ public sealed class CardTurnGameViewModelTests
     private sealed class ThrowingPersistence(Exception toThrow) : TableTop.Hosting.Persistence.IGamePersistence
     {
         public bool HasSavedSession => false;
-        public Task SaveAsync(TableTop.Hosting.Persistence.SessionSnapshot s, CancellationToken ct = default) =>
+        public Task SaveAsync(TableTop.Hosting.Persistence.SessionSnapshot snapshot, CancellationToken ct = default) =>
             Task.FromException(toThrow);
         public Task<TableTop.Hosting.Persistence.SessionSnapshot?> LoadAsync(CancellationToken ct = default) =>
             Task.FromResult<TableTop.Hosting.Persistence.SessionSnapshot?>(null);

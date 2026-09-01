@@ -46,7 +46,7 @@ internal sealed class ConsoleMillionaireRenderer
 
     // ── Event handlers ────────────────────────────────────────────────────────
 
-    private void OnHotSeatBegan(object? sender, HotSeatBeganEvent e)
+    private static void OnHotSeatBegan(object? sender, HotSeatBeganEvent e)
     {
         ConsoleUi.Clear();
         ConsoleUi.Banner();
@@ -71,7 +71,7 @@ internal sealed class ConsoleMillionaireRenderer
         _waitingForInput = true;
     }
 
-    private void OnLifelineUsed(object? sender, LifelineUsedEvent e)
+    private static void OnLifelineUsed(object? sender, LifelineUsedEvent e)
     {
         SC.ForegroundColor = CC.Magenta;
         foreach (var line in e.Narrative.Split('\n'))

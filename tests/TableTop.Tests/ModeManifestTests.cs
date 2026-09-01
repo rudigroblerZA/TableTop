@@ -358,7 +358,7 @@ public sealed class ModeManifestTests
         var classroom = registry.FindById("classroom");
         classroom.Should().NotBeNull();
 
-        var allClassroomModes = classroom!.AllModes;
+        var allClassroomModes = classroom.AllModes;
         var mode = classroom.SurpriseMe();
 
         if (mode is not null)

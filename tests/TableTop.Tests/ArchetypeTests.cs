@@ -170,7 +170,7 @@ public sealed class NewSchoolModeTests
     {
         var node = ArchetypeRegistry.Default().FindById(id);
         node.Should().NotBeNull($"archetype '{id}' should exist");
-        node!.Modes.Should().Contain(m => m.Name.Contains(modeName));
+        node.Modes.Should().Contain(m => m.Name.Contains(modeName));
     }
 
     [Fact]
@@ -199,7 +199,7 @@ public sealed class NewSchoolModeTests
         // renamed this one rather than colliding.
         var node = ArchetypeRegistry.Default().FindById("classroom.mentalmaths");
         node.Should().NotBeNull();
-        node!.Modes.Should().Contain(m => m.Name.Contains("Mental Maths"));
+        node.Modes.Should().Contain(m => m.Name.Contains("Mental Maths"));
     }
 
     [Fact]
@@ -269,7 +269,7 @@ public sealed class CouplesGameTests
     {
         var node = ArchetypeRegistry.Default().FindById(id);
         node.Should().NotBeNull($"archetype '{id}' should exist");
-        node!.Modes.Should().Contain(m => m.Name.Contains(modeName));
+        node.Modes.Should().Contain(m => m.Name.Contains(modeName));
     }
 
     [Fact]
@@ -385,7 +385,7 @@ public sealed class FamilyGameTests
     {
         var node = ArchetypeRegistry.Default().FindById(id);
         node.Should().NotBeNull($"archetype '{id}' should exist");
-        node!.Modes.Should().Contain(m => m.Name.Contains(modeName));
+        node.Modes.Should().Contain(m => m.Name.Contains(modeName));
     }
 
     [Fact]
@@ -786,7 +786,7 @@ public sealed class ArchitectureTests
             .ToList();
 
         var concreteGameModes = referencedTypes
-            .Where(t => t!.Assembly == gamesAssembly &&
+            .Where(t => t.Assembly == gamesAssembly &&
                         typeof(TableTop.Core.Abstractions.Game.IGameMode).IsAssignableFrom(t))
             .ToList();
 
@@ -812,7 +812,7 @@ internal sealed class InMemoryPersistence : IGamePersistence
 {
     private SessionSnapshot? _saved;
     public bool HasSavedSession => _saved is not null;
-    public Task SaveAsync(SessionSnapshot s, CancellationToken ct = default) { _saved = s; return Task.CompletedTask; }
+    public Task SaveAsync(SessionSnapshot snapshot, CancellationToken ct = default) { _saved = snapshot; return Task.CompletedTask; }
     public Task<SessionSnapshot?> LoadAsync(CancellationToken ct = default) => Task.FromResult(_saved);
     public Task DeleteAsync(CancellationToken ct = default) { _saved = null; return Task.CompletedTask; }
 }

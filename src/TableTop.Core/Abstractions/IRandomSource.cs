@@ -81,6 +81,12 @@ public sealed class SeededRandomSource : IRandomSource
     public int Seed { get; }
 
     /// <summary>Initialises a new <see cref="SeededRandomSource"/> instance.</summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Security", "S2245:Using pseudorandom number generators (PRNGs) is security-sensitive",
+        Justification = "Deliberate. This type exists to make shuffles REPRODUCIBLE from a " +
+                        "logged seed so a game can be replayed; a cryptographic RNG cannot be " +
+                        "seeded and would defeat its only purpose. No security decision is " +
+                        "made from these values.")]
     public SeededRandomSource(int seed)
     {
         Seed = seed;

@@ -78,7 +78,7 @@ public sealed class PersistenceRoundTripTests
 
         var snapshot = await persistence.LoadAsync();
         snapshot.Should().NotBeNull();
-        snapshot!.RequiresMigration.Should().BeFalse();
+        snapshot.RequiresMigration.Should().BeFalse();
         snapshot.Round.Should().Be(lastRound,
             "saved snapshot must record the round number from the last completed turn");
         snapshot.Round.Should().BeGreaterThan(0,
@@ -156,7 +156,7 @@ public sealed class PersistenceRoundTripTests
 
         ctrlB.RecordOutcome(CardOutcome.Completed);
 
-        var firstCardInSessionB = playedCards.First().Id;
+        var firstCardInSessionB = playedCards[0].Id;
         cardsPlayedInSessionA.Should().NotContain(firstCardInSessionB,
             "NoDuplicateCardRule must prevent cards from session A being replayed in session B");
     }
@@ -178,7 +178,6 @@ public sealed class PersistenceRoundTripTests
         ctrlA.RecordOutcome(CardOutcome.Completed);   // Alice completes
         ctrlA.RecordOutcome(CardOutcome.Skipped);     // Bob: second skip — penalised
 
-        var bobScoreBeforeSave = players[1].Score;
         await ctrlA.SaveAsync();
 
         var snapshot = await persistence.LoadAsync();
@@ -186,7 +185,7 @@ public sealed class PersistenceRoundTripTests
 
         // Bob's skip count must be in the snapshot
         var bobId = players[1].Id.ToString();
-        snapshot!.SkipCounts.ContainsKey(bobId).Should().BeTrue(
+        snapshot.SkipCounts.ContainsKey(bobId).Should().BeTrue(
             "skip count dictionary must include Bob's ID");
         snapshot.SkipCounts[bobId].Should().BeGreaterThan(0,
             "skip count must be persisted so the resumed session knows a penalty applies");
@@ -207,7 +206,7 @@ public sealed class PersistenceRoundTripTests
 
         var snapshot = await persistence.LoadAsync();
         snapshot.Should().NotBeNull();
-        snapshot!.SchemaVersion.Should().Be(SessionSnapshot.CurrentSchemaVersion,
+        snapshot.SchemaVersion.Should().Be(SessionSnapshot.CurrentSchemaVersion,
             "every saved snapshot must carry the current schema version");
     }
 

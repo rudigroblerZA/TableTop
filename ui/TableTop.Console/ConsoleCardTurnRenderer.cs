@@ -92,12 +92,12 @@ internal sealed class ConsoleCardTurnRenderer
         ConsoleUi.PressEnterToContinue();
     }
 
-    private void OnTurnSkipped(object? sender, TurnSkippedEvent e)
+    private static void OnTurnSkipped(object? sender, TurnSkippedEvent e)
     {
         ConsoleUi.PrintSkippedTurn(e.PlayerName, e.Reason);
     }
 
-    private void OnTurnUndone(object? sender, TurnUndoneEvent e)
+    private static void OnTurnUndone(object? sender, TurnUndoneEvent e)
     {
         // TurnUndone re-presents the reversed card via a fresh CardReady, which
         // sets _waitingForInput itself — this handler only prints the outcome.
@@ -107,6 +107,7 @@ internal sealed class ConsoleCardTurnRenderer
     private void OnGameEnded(object? sender, GameEndedEvent e)
     {
         _waitingForInput = false;
+        ConsoleUi.PrintMessage($"{_gameTitle} complete!");
         ConsoleUi.PrintFinalStandings(
             e.FinalStandings.Select(s => (s.Name, s.Score)),
             e.TotalRounds);
@@ -122,6 +123,7 @@ internal sealed class ConsoleCardTurnRenderer
         }
         foreach (var id in _playerIds)
             action(id);
+        ConsoleUi.PrintMessage($"{label} applied to all {_playerIds.Length} player(s).");
         _waitingForInput = true;
     }
 
@@ -137,14 +139,14 @@ internal sealed class ConsoleCardTurnRenderer
         }
     }
 
-    private void OnFlowChanged(object? sender, TableTop.Hosting.Events.FlowChangedEvent e)
+    private static void OnFlowChanged(object? sender, TableTop.Hosting.Events.FlowChangedEvent e)
     {
         SC.ForegroundColor = CC.DarkCyan;
         SC.WriteLine($"\n  ⇄  {e.PlayerName}: {e.Change} → {e.NewDifficulty} · {e.NewPace}");
         SC.ResetColor();
     }
 
-    private void OnNextTurnHint(object? sender, TableTop.Hosting.Events.NextTurnHintEvent e)
+    private static void OnNextTurnHint(object? sender, TableTop.Hosting.Events.NextTurnHintEvent e)
     {
         SC.ForegroundColor = e.Urgency switch
         {
