@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.39.3**, September 2026. This replaces the accumulated
+Current as of **1.39.4**, September 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -1336,6 +1336,74 @@ async work to block on, a different shape rather than a template to copy.
   believed. Zero mismatches. That is the same discipline the "Verification,
   honestly" section asks for: a rewrite nobody can test is a rewrite you have to
   test some other way.
+
+- **1.39.4** is fixes only. `api/*.api.txt` is byte-identical to 1.39.3 — the one
+  type this release adds is `internal` — which is why this is a PATCH.
+
+  **The Sonar pass of 1.39.3 had been reading half the codebase.** It ran
+  SonarAnalyzer over `TableTop.Engine.slnx`, and so does CI: the
+  `Scanner Begin`/`Scanner End` steps bracket builds of Core, Games, Hosting,
+  Console and Tests. Neither had ever looked at `TableTop.WinUI`,
+  `TableTop.Maui` or `TableTop.Android` — roughly 6,400 lines, and the
+  graphical heads are the product. 1.39.3's entry above reports "227 findings"
+  against a tree that excluded them. This release applies the same rules to
+  the rest.
+
+  **The finding that mattered was a settings default, not a code smell.**
+  WinUI's `AutoNextPlayer` defaulted to `true` while MAUI and the native
+  Android head both defaulted it to `false`: a fresh install auto-advanced to
+  the next player on one head and waited for a tap on the other two. The
+  property exists in WinUI *because* the heads had diverged — its own doc
+  comment says the settings screen was shared so the same product would stop
+  "behaving differently depending on which head you opened" — and the port
+  reintroduced the divergence in the change written to remove it. All thirteen
+  shared `IAppSettings` defaults were compared across the three heads; twelve
+  agreed exactly, and nothing in this file or `BACKLOG.md` recorded a reason
+  for the thirteenth.
+
+  **Nothing that runs could have caught it, so this adds a gate rather than a
+  test.** `TableTop.Tests` cannot reference a UI head — that is what keeps it
+  cross-platform — the test doubles in `PresentationTestDoubles.cs` pick their
+  own values and assert nothing about what ships, and `WinUIAppSettings`'
+  only public entry point is a static `Instance` that reads the real user's
+  `settings.json`. `scripts/check-settings-defaults.py` parses all three heads
+  and diffs their defaults instead, in the same shape as
+  `check-head-family-coverage.py` and for the same reason: an interface
+  constrains the shape, not the value a head returns when the user has never
+  touched the setting. It was run against the bug before being believed —
+  restoring WinUI's `true` fails it, naming all three heads and their values.
+
+  Two dead private fields (`S4487`), both WinUI. `ArchetypePickerViewModel`
+  stored the registry and never read it, which was worth checking rather than
+  deleting on sight: the picker chain navigates on `Archetype` objects, so
+  dropping a filtered registry could have leaked below-age-floor content. It
+  does not — `ArchetypeFilter.Apply` deep-filters and `FilterNode` recurses, so
+  every `Archetype` handed downstream already carries filtered `SubArchetypes`
+  and `Modes`, which is what `FilteredArchetypeRegistry`'s own remarks describe.
+  That class stored the registry it wraps and never read it either; it survived
+  the first pass over the file because a comment mentions `_inner.SurpriseMe`,
+  so a plain grep counted three references to a field with no readers.
+
+  **One robustness fix that is not a rule hit**, and is recorded as such —
+  three of its five sites are in code Sonar has scanned without flagging. Every
+  write-then-rename path cleaned up its temp file with an unguarded
+  `File.Delete` *inside the handler that exists to absorb write failures*. In
+  the three engine repositories that handler ends in `throw;`, so a cleanup
+  failure replaced the original exception and the caller was told it could not
+  delete a `.tmp` file when the real cause was a full disk. In WinUI's two
+  stores the handler swallows, so a throwing delete escaped a method documented
+  as best-effort. Cleanup is now non-throwing at all five sites, and the
+  `File.Exists` guard went with it: `File.Delete` already no-ops on a missing
+  file, so checking first was a race rather than a guard.
+
+  **Verified without an SDK**, and the limits are worth stating: no build ran.
+  All nine static gates pass, every touched file was checked for brace and
+  paren balance, and both removed fields were confirmed to have no remaining
+  references. The redundant `!` class that made up the bulk of 1.39.3's count
+  was deliberately left alone here — that pass verified those by observing zero
+  new CS warnings, and without a compiler there is no equivalent check, so
+  removing any would have been a guess.
+
 
 ## What genuinely doesn't exist here
 
