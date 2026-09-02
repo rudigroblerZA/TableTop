@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.39.2**, September 2026. This replaces the accumulated
+Current as of **1.39.3**, September 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -1277,6 +1277,65 @@ async work to block on, a different shape rather than a template to copy.
   **Not run on a device.** The compiler now verifies every binding, which is a
   stronger check than the runtime resolution it replaced, but no screen has been
   rendered.
+
+- **1.39.3** is fixes only. `api/*.api.txt` is byte-identical to 1.39.2, which
+  is why this is a PATCH.
+
+  **Two Android ABI corrections, reported from a real TV deployment.** Both
+  heads shipped `arm64-v8a` and `x86_64` only, because neither csproj set
+  `RuntimeIdentifiers` and the .NET for Android default dropped 32-bit ARM. Any
+  `armeabi-v7a` device — a large share of TV boxes and older streaming sticks —
+  refused to install with `IncompatibleCpuAbiException`. Nothing caught it
+  because 1.35.0's Android TV work was entirely *manifest*: leanback, a
+  `LEANBACK_LAUNCHER` entry, a banner. That advertises TV capability and has no
+  bearing on whether the package can be installed at all. The app therefore
+  shipped declaring TV support while being uninstallable on much of the hardware
+  it declared support for, and both facts were true at once. `android-x86` was
+  then dropped again after measurement: it is emulator-only in practice and cost
+  27 MB. The two heads' lists must stay identical — a difference is a device
+  where one installs and the other does not.
+
+  **A Sonar pass that was worth running for three findings, not for the count.**
+  SonarAnalyzer 10.33 was wired in temporarily, read, and removed; no analyzer
+  dependency ships. 227 findings, 187 fixed. The three that mattered were not
+  style:
+
+    * `EngineInvariantTests.Issue5_PlayerManager_AcceptsAnyIPlayer` assigned
+      `var act = () => mgr.AddPlayer(stub)` and never invoked it, then asserted
+      `ActivePlayers` is non-null — true with zero players. The test never added
+      anyone and **could not have failed**.
+    * `SelectCandidate_IsDeterministic_ForAGivenSeed` compared only `LastRoll`.
+      Adding the obvious `idA.Should().Be(idB)` *failed*: `BuildDeck()` mints
+      fresh `Guid` ids per call, so each strategy got a different deck and the
+      ids were incomparable by construction. The test named for determinism
+      never checked the value determinism is about.
+    * `TwoTruthsOneWishCardBank` built `couplesOnly.And(new AdultOnlyRestriction())`
+      and applied it to **none** of its 29 cards, while two sibling modes apply
+      the same combined restriction. Removing the dead local changes nothing at
+      runtime; whether some of those cards should be 18+ is a content decision
+      and stays open.
+
+  Three more were state tracked and never surfaced: `_totalScore` accumulated
+  every turn and never displayed, `_gameTitle` captured and never printed, and
+  `FlowAll`'s label ("Level Up", "Speed Up", …) dropped so bulk flow changes gave
+  no feedback.
+
+  **What was refused matters as much as what was fixed.** Sonar wanted
+  `GenderOptions` and `ResultsCaveat` made `static`. They are bound from six XAML
+  files across MAUI and WinUI plus the native Android head, and `{Binding}` cannot
+  resolve a static member — applying it would have silently emptied those
+  controls, which is the failure mode this file keeps warning about. Four more
+  were false positives: two "commented out code" hits are explanatory comments,
+  and two "empty record" hits are the `BreakEffect`/`RewardEffect` DU bases that
+  exist to give exhaustive matching. `S2245` on `SeededRandomSource` is suppressed
+  with justification rather than fixed — the type exists to be seeded so a shuffle
+  can be replayed, and a cryptographic RNG cannot be.
+
+  The Console head has no test coverage, so the five word-wrap rewrites were
+  checked against the originals over 20,000 randomised inputs before being
+  believed. Zero mismatches. That is the same discipline the "Verification,
+  honestly" section asks for: a rewrite nobody can test is a rewrite you have to
+  test some other way.
 
 ## What genuinely doesn't exist here
 
