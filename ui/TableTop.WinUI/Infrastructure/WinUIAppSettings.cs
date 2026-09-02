@@ -147,6 +147,14 @@ public sealed class WinUIAppSettings : TableTop.Presentation.Infrastructure.IApp
     /// Added when the settings screen was shared: MAUI had always offered this
     /// and WinUI never did, so the same product behaved differently depending on
     /// which head you opened.
+    ///
+    /// <para>
+    /// The default must stay <c>false</c>, matching MAUI and the native Android
+    /// head. The port that added this property here defaulted it to <c>true</c>,
+    /// which reintroduced the very divergence it was written to remove — every
+    /// other one of the thirteen shared defaults agrees across all three heads,
+    /// and this was the only one that did not.
+    /// </para>
     /// </summary>
     public bool AutoNextPlayer
     {
@@ -234,11 +242,37 @@ public sealed class WinUIAppSettings : TableTop.Presentation.Infrastructure.IApp
                 // a permissions failure threw UnauthorizedAccessException straight
                 // through this method instead of being swallowed like this comment
                 // always claimed.
-                if (File.Exists(tmp)) File.Delete(tmp);
+                //
+                // The cleanup is guarded for the same reason. Deleting the temp
+                // file can fail on exactly the causes this handler exists to
+                // absorb — if the write got far enough to create it and the
+                // rename then failed, an unguarded delete threw straight out of
+                // this method and the "shouldn't crash the app" promise held
+                // everywhere except the one path that had already gone wrong.
+                TryDeleteTemp(tmp);
             }
         }
 
         Changed?.Invoke(this, changedKey);
+    }
+
+    /// <summary>
+    /// Removes a leftover temp file without ever throwing. No
+    /// <see cref="File.Exists(string)"/> check first: <see cref="File.Delete(string)"/>
+    /// already no-ops on a missing file. A temp file that survives is harmless
+    /// — it is uniquely named, so it collides with nothing.
+    /// </summary>
+    private static void TryDeleteTemp(string path)
+    {
+        try
+        {
+            File.Delete(path);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // Nothing useful to do: the save has already failed and been
+            // absorbed, and this is only tidy-up.
+        }
     }
 
     /// <summary>Plain data shape serialised to <c>settings.json</c>.</summary>
@@ -253,7 +287,7 @@ public sealed class WinUIAppSettings : TableTop.Presentation.Infrastructure.IApp
         public int CardsPerPlayer { get; set; } = 0;
         public bool EnableTimer { get; set; } = false;
         public int TimerSeconds { get; set; } = 60;
-        public bool AutoNextPlayer { get; set; } = true;
+        public bool AutoNextPlayer { get; set; } = false;
         public bool ShowCardCount { get; set; } = true;
         public bool ShowDifficultyBadge { get; set; } = true;
         public bool ShowCategoryBadge { get; set; } = true;

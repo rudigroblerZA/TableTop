@@ -53,6 +53,7 @@ python3 scripts/check-mvvm-method-parity.py        # MAUI page calling a VM meth
 python3 scripts/check-head-family-coverage.py      # a head's declared game support drifted from its test copy
 python3 scripts/check-xaml-resources.py      # a {StaticResource} key that isn't defined anywhere
 python3 scripts/check-async-void.py                # an async void handler with no try/catch (MAUI + native Android)
+python3 scripts/check-settings-defaults.py         # an IAppSettings default that differs between heads
 ```
 
 **On Windows, use `python` — not `python3`.** Install with
@@ -190,7 +191,7 @@ and WinUI apps use the player repository; add players through their setup screen
 ## Versioning
 
 `VersionPrefix` in `Directory.Build.props` is the single place to bump; every
-project inherits it. Currently **1.39.2**. The public API of Core, Games and
+project inherits it. Currently **1.39.4**. The public API of Core, Games and
 Hosting is stable, so a breaking change to it needs a major bump;
 `AssemblyVersion` tracks the major only (1.0.0.0 across the whole 1.x line), so
 assemblies built against 1.0.0 keep binding without a rebuild.

@@ -91,7 +91,9 @@ public sealed class JsonPlayerRepository : IPlayerRepository
             }
             catch
             {
-                if (File.Exists(tmp)) File.Delete(tmp);
+                // Best-effort, so a cleanup failure cannot replace the write
+                // failure being rethrown below.
+                TempFile.TryDelete(tmp);
                 throw;
             }
         }

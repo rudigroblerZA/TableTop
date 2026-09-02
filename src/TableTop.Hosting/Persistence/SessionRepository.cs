@@ -78,8 +78,10 @@ public sealed class JsonSessionRepository : IGamePersistence, ISessionRepository
             {
                 // The rename either happened (nothing left to clean up) or
                 // didn't — in which case this call's own uniquely-named temp
-                // file is the only thing that could be left behind.
-                if (File.Exists(tmp)) File.Delete(tmp);
+                // file is the only thing that could be left behind. Best-effort
+                // so the write failure below, not a cleanup failure, is what the
+                // caller sees.
+                TempFile.TryDelete(tmp);
                 throw;
             }
         }
