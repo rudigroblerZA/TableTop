@@ -138,7 +138,6 @@ public sealed class IntroViewModel : ViewModelBase
 public sealed class ArchetypePickerViewModel : ViewModelBase
 {
     private readonly Navigator _navigator;
-    private readonly IArchetypeRegistry _registry;
 
     /// <summary>Root archetypes to display.</summary>
     public ObservableCollection<Archetype> Archetypes { get; }
@@ -151,7 +150,13 @@ public sealed class ArchetypePickerViewModel : ViewModelBase
     public ArchetypePickerViewModel(Navigator navigator, IArchetypeRegistry registry)
     {
         _navigator = navigator;
-        _registry = registry;
+
+        // The registry is read once, here, and deliberately not stored:
+        // ArchetypeFilter.Apply returns deep-filtered copies, so every
+        // Archetype handed to the pickers below already carries filtered
+        // SubArchetypes and Modes. FilteredArchetypeRegistry's remarks say the
+        // same thing from the other side — filtering once at the registry
+        // means none of the three picker screens needs to know it happened.
         Archetypes = new ObservableCollection<Archetype>(registry.RootArchetypes);
         BackCommand = new RelayCommand(() => _navigator.GoBack());
         SelectCommand = new RelayCommandOf<Archetype>(a =>
