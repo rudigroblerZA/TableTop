@@ -64,8 +64,31 @@ public sealed class WinUIRosterStore : IRosterStore
                 // Best-effort, same as WinUIAppSettings.Persist — a failed save
                 // shouldn't crash the app, and both real causes (disk full,
                 // permissions) are caught rather than just the first of them.
-                if (File.Exists(tmp)) File.Delete(tmp);
+                // The cleanup is guarded for the same reason it is there: an
+                // unguarded delete can throw the very exception types this
+                // handler exists to absorb, straight out of a method documented
+                // as best-effort.
+                TryDeleteTemp(tmp);
             }
+        }
+    }
+
+    /// <summary>
+    /// Removes a leftover temp file without ever throwing. No
+    /// <see cref="File.Exists(string)"/> check first: <see cref="File.Delete(string)"/>
+    /// already no-ops on a missing file. A temp file that survives is harmless
+    /// — it is uniquely named, so it collides with nothing.
+    /// </summary>
+    private static void TryDeleteTemp(string path)
+    {
+        try
+        {
+            File.Delete(path);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // Nothing useful to do: the save has already failed and been
+            // absorbed, and this is only tidy-up.
         }
     }
 }

@@ -71,6 +71,7 @@ python3 scripts/check-mvvm-method-parity.py    # MAUI page calling a method its 
 python3 scripts/check-head-family-coverage.py  # a head's declared game support drifted from its test copy
 python3 scripts/check-xaml-resources.py        # a {StaticResource} key that isn't defined anywhere
 python3 scripts/check-async-void.py             # an async void handler with no try/catch (MAUI + native Android)
+python3 scripts/check-settings-defaults.py      # an IAppSettings default that differs between heads
 python3 scripts/check-ui-compiles.py           # needs the .NET SDK + both UI workloads
 python3 scripts/check-coverage.py <dir>        # coverage floors; needs a Cobertura report (CI runs it)
 ```

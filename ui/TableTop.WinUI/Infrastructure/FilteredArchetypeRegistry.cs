@@ -14,14 +14,16 @@ namespace TableTop.WinUI.Infrastructure;
 /// </summary>
 public sealed class FilteredArchetypeRegistry : IArchetypeRegistry
 {
-    private readonly IArchetypeRegistry _inner;
     private readonly IReadOnlyList<Archetype> _filteredRoots;
 
     /// <param name="inner">The real registry to filter.</param>
     /// <param name="minAgeRating">Floor — archetypes rated below this are hidden.</param>
     public FilteredArchetypeRegistry(IArchetypeRegistry inner, AgeRating minAgeRating)
     {
-        _inner = inner;
+        // The wrapped registry is not retained: ArchetypeFilter.Apply returns
+        // deep-filtered copies, so _filteredRoots is a complete tree and every
+        // member below answers from it. Keeping a field for the unfiltered
+        // registry would only offer a way to route around the floor.
         _filteredRoots = new ArchetypeFilter(minAgeRating: minAgeRating, maxAgeRating: AgeRating.Adult)
             .Apply(inner.RootArchetypes);
     }
@@ -56,10 +58,10 @@ public sealed class FilteredArchetypeRegistry : IArchetypeRegistry
         bool allowAdultContent = false,
         int? maxCards = null)
     {
-        // Delegating to _inner.SurpriseMe would only respect the CEILING
-        // parameter — it has no concept of this wrapper's floor, so it could
-        // still surprise the player with something the floor was set to
-        // hide. Picking directly from AllModes (already floor+ceiling
+        // Delegating to the wrapped registry's SurpriseMe would only respect
+        // the CEILING parameter — it has no concept of this wrapper's floor,
+        // so it could still surprise the player with something the floor was
+        // set to hide. Picking directly from AllModes (already floor+ceiling
         // filtered by ArchetypeFilter in the constructor) is correct by
         // construction instead.
         //

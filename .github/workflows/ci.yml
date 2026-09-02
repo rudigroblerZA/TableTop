@@ -86,6 +86,17 @@ jobs:
       - name: Check async void handlers are guarded (MAUI + native Android)
         run: python3 scripts/check-async-void.py
 
+      # An IAppSettings property whose DEFAULT differs per head. The interface
+      # constrains the shape, not the value a head returns when the user has
+      # never touched the setting, so first-run behaviour was free to diverge
+      # with nothing to catch it. AutoNextPlayer did exactly that: ported into
+      # WinUI *because* the heads behaved differently, and defaulted to true
+      # while MAUI and Android both said false. TableTop.Tests cannot reference
+      # a UI head, and the test doubles pick their own values, so nothing that
+      # ran could see it.
+      - name: Check IAppSettings defaults agree across heads
+        run: python3 scripts/check-settings-defaults.py
+
       # Backlog K.4. Five directories literally named "{Base,Modes,Data}" and
       # similar were committed — brace expansion run under sh, which doesn't
       # expand braces. All empty, and one had an unbalanced brace, meaning that
