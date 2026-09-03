@@ -23,16 +23,25 @@ var services = new ServiceCollection()
                            //          IPlayerRepository, IRosterRepository, IHintEngine
         sessionFilePath: Path.Combine(appDataDir, "session.json"),
         playerFilePath: Path.Combine(appDataDir, "players.json"),
-        rosterFilePath: Path.Combine(appDataDir, "rosters.json"));
+        rosterFilePath: Path.Combine(appDataDir, "rosters.json"),
+        favouritesFilePath: Path.Combine(appDataDir, "favourites.json"));
 
 var provider = services.BuildServiceProvider();
 
 try
 {
+    // Loaded here, once, before anything renders. FavouritesService is read
+    // synchronously by the picker, so the one await it needs has to happen
+    // somewhere that can afford it — a composition root can, a layout pass
+    // cannot.
+    var favourites = provider.GetRequiredService<TableTop.Hosting.FavouritesService>();
+    favourites.LoadAsync().GetAwaiter().GetResult();
+
     var launcher = new ConsoleGameLauncher(
         repository: provider.GetRequiredService<TableTop.Hosting.Persistence.IPlayerRepository>(),
         controllerFactory: provider.GetRequiredService<TableTop.Hosting.Abstractions.IControllerFactory>(),
-        rosterRepository: provider.GetRequiredService<TableTop.Hosting.Persistence.IRosterRepository>());
+        rosterRepository: provider.GetRequiredService<TableTop.Hosting.Persistence.IRosterRepository>(),
+        favourites: favourites);
 
     launcher.Run();
 }

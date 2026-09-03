@@ -1405,6 +1405,121 @@ async work to block on, a different shape rather than a template to copy.
   removing any would have been a guess.
 
 
+- **1.40.0** adds one mode to each of the three root archetypes — **Hypothesis!**
+  (Classroom), **The Pitch** (Fun) and **House Rules** (Couples) — plus the
+  first scoring mechanic that can take points away, and starred modes.
+  Fourteen new public types across Core, Games and Hosting. MINOR: new modes,
+  new decks, new capability.
+
+  **One removal, and it is the narrow carve-out rather than a MAJOR.**
+  `AddTableTopHosting` gained a fifth optional parameter (`favouritesFilePath`),
+  which `PublicApiSurfaceTests` reports as a removed four-parameter overload plus
+  an added five-parameter one. It is source-compatible — every existing call site
+  compiles untouched, and all of them are in this repo — but it is a binary break,
+  which is exactly the case `Directory.Build.props` carves out on the grounds
+  that nothing here is published. Publish a package and this line is a 2.0.0.
+
+  **All three are `CardTurn`, and that was the design constraint, not an
+  accident.** A new controller family is the expensive kind of mode — it means
+  a `ControllerFactory` arm, a `ControllerFamilies.TryFor` arm in the same
+  order, and a screen in each of the four heads, which is the work 1.25.0 and
+  1.38.0 each spent a release on. Nothing about "one mode per archetype" needed
+  that, so each of these is a plain deck with a distinctive mechanic carried in
+  the card text and the labels. `ArchetypeExpansionModesTests` asserts the
+  family for all three rather than leaving it implied, because the cost of
+  discovering otherwise is a head falling through to a screen that rejects the
+  mode.
+
+  **Each fills a gap rather than thickening a pile.** Hypothesis! is the second
+  classroom science deck but asks the opposite question of Science Sprint —
+  what you would *bet on*, not what you remember — and several cards are chosen
+  precisely because the popular answer is wrong (the sealed candle, the ice cube
+  at the brim, which way a drain spins), so recall alone costs you. The Pitch
+  sits opposite One-Star Reviews: same muscle, opposite direction, defending
+  the indefensible instead of demolishing the loved. House Rules is the larger
+  gap — every one of the twenty-one Couples decks before it was about feeling,
+  and none touched the thermostat, the spending threshold or whose family gets
+  Christmas.
+
+  **Two content rules are enforced by tests because prose cannot hold them.**
+  The Pitch's *catch* — the angle you are forced to take — appears on every
+  card and is asserted, since without it the room reaches for the same joke
+  every round (that the product is bad) and the deck is spent in four cards.
+  House Rules' *Park It* footer is asserted on every domain card and its skip
+  label is pinned to the string, because a deck that forces a decision tonight
+  manufactures agreements neither partner means, and a rule nobody means is
+  worse than no rule once it is written down. Both are the kind of invariant
+  that is obvious while authoring and invisible to whoever pastes in the next
+  twenty cards.
+
+  **`RiskRewardScoringStrategy` is the first strategy in the engine that can
+  return a negative number**, and that is the whole mechanic. Every other
+  strategy scores a `Failed` outcome identically to a `Skipped` one — zero —
+  which makes attempting a card strictly free, so there has never been a reason
+  not to try every card however far beyond you it is. It is a decorator, not a
+  strategy of its own, because the stake has to be whatever the card was already
+  worth: it asks the wrapped strategy what a *completion* would have paid and
+  risks that same amount. Wrap `DifficultyBasedScoringStrategy` and an Extreme
+  card is worth 5 and costs 5. Declining stays free on purpose — if a decline
+  were punished too you may as well gamble, and the choice the mechanic exists
+  to create disappears.
+
+  **It is opt-in, and only Hypothesis! takes it**, which is the right size for a
+  first outing: a mode built on committing to a prediction is the one place
+  where committing to a wrong one ought to cost something. Note the interaction
+  worth knowing before adding a second: `CardTurnController.SkipPenalty` is a
+  separate additive policy, so a host setting both is charging for declines
+  through the back door and has re-broken the mechanic.
+
+  **The head gap is real and is recorded rather than papered over.** Only
+  Console records `CardOutcome.Failed` at all — WinUI, MAUI and native Android
+  offer Complete and Skip and nothing else, so under those heads the strategy
+  degrades to exactly the strategy it wraps. That is graceful rather than
+  broken, but the mechanic is genuinely Console-only until the shared
+  `CardTurnGameViewModel` grows a third command and each head grows a button.
+  Deliberately *not* fixed here by adding an unbound `FailCommand` to
+  Presentation: an ICommand no head binds is the same dead-surface trap as the
+  `TimerExpired` event that could not be raised, recorded three entries above.
+  Backlog item added instead.
+
+  **Favourites are a Hosting service plus a JSON file, not a ViewModel
+  concern.** `JsonFavouritesRepository` is a line-for-line sibling of the roster
+  and player repositories — per-instance semaphore, uniquely-named temp file,
+  atomic replace, corrupt-file-tolerant load — and `FavouritesService` holds the
+  in-memory set on top of it. The split exists because a picker asks "is this
+  one starred?" once per row during layout: making that an `await` per row would
+  either block the render or force every head to build the same cache. So the
+  set loads once at the composition root and is read synchronously thereafter,
+  and only mutations touch the disk.
+
+  Two decisions in there are load-bearing. Writes are **write-through with
+  rollback**: if the save throws, the in-memory change is reverted before
+  rethrowing, because a list showing a star that survived nowhere is worse than
+  a visible failure. And modes are keyed by **name**, not by an invented id —
+  the catalogue is compiled in and `SessionResumer` and `SavedSessionLookup`
+  already resolve by name, so a second identity for the same thing would be the
+  bug. The consequence is stated in the interface: renaming a mode drops its
+  favourites exactly as it already drops its saved sessions, which is why
+  `FilterFavourites` filters the caller's list rather than resolving names
+  against the registry — an unresolvable favourite simply does not appear.
+
+  **Console is wired; the graphical heads are not.** Its picker sorts starred
+  modes first, marks them, and takes `f3` to toggle row 3. The reorder happens
+  once outside the redraw loop on purpose — reordering per redraw would renumber
+  the list under a player who is selecting from it by number. WinUI, MAUI and
+  Android can consume `FavouritesService` from DI whenever their pickers want
+  it; nothing about the service is Console-shaped.
+
+  **Verified with a real SDK**, unusually for an entry here: 1,128 tests pass and
+  all nine static gates pass. `api/*.api.txt` was regenerated and read — 35 added
+  lines in Games, 5 in Core, 27 added and 1 removed in Hosting, the removal being
+  the overload described above. One limit worth stating: the Console favourites
+  UI was **not** observed running. This head calls `Console.Clear()`, which
+  throws "The handle is invalid" the moment output is redirected, so it cannot be
+  driven with piped input at all — a pre-existing property of the head, not
+  something this change introduced. The service beneath it is covered by
+  fourteen tests; the key handling on top of it is covered by the compiler only.
+
 ## What genuinely doesn't exist here
 
 - **A visual deck editor, or any content authoring at all outside the repo.**

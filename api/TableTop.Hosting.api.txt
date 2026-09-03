@@ -1009,12 +1009,29 @@ sealed class TableTop.Hosting.Events.WalkedAwayEvent
     Void Deconstruct(Int64& Prize)
     WalkedAwayEvent <Clone>$()
 static class TableTop.Hosting.Extensions.ServiceCollectionExtensions
-    IServiceCollection AddTableTopHosting(IServiceCollection services, String sessionFilePath = default, String playerFilePath = default, String rosterFilePath = default)
+    IServiceCollection AddTableTopHosting(IServiceCollection services, String sessionFilePath = default, String playerFilePath = default, String rosterFilePath = default, String favouritesFilePath = default)
     IServiceCollection UseEngineDiagnostics(IServiceCollection services)
     IServiceCollection UseGamePersistence(IServiceCollection services)
     IServiceCollection UseHintEngine(IServiceCollection services)
     IServiceCollection UseLoggerDiagnostics(IServiceCollection services)
     IServiceCollection UsePlayerRepository(IServiceCollection services)
+sealed class TableTop.Hosting.FavouriteChangedEventArgs
+    .ctor(String modeName, Boolean isFavourite)
+    Boolean IsFavourite { get; }
+    String ModeName { get; }
+sealed class TableTop.Hosting.FavouritesService
+    .ctor(IFavouritesRepository repository)
+    Boolean IsFavourite(IGameMode mode)
+    Boolean IsFavourite(String modeName)
+    IReadOnlyCollection<String> Names { get; }
+    IReadOnlyList<IGameMode> FavouritesFirst(IEnumerable<IGameMode> modes)
+    IReadOnlyList<IGameMode> FilterFavourites(IEnumerable<IGameMode> modes)
+    Int32 Count { get; }
+    Task ClearAsync(CancellationToken ct = default)
+    Task LoadAsync(CancellationToken ct = default)
+    Task<Boolean> ToggleAsync(IGameMode mode, CancellationToken ct = default)
+    Task<Boolean> ToggleAsync(String modeName, CancellationToken ct = default)
+    event EventHandler<FavouriteChangedEventArgs> FavouriteChanged
 sealed class TableTop.Hosting.Hints.DefaultHintEngine
     .ctor()
     NextTurnHint GenerateHint(IPlayer player, HintContext context)
@@ -1067,6 +1084,10 @@ sealed class TableTop.Hosting.Persistence.FlowStateSnapshot
     Int32 CardsPlayedAtLevel { get; set; }
     String Difficulty { get; set; }
     String Pace { get; set; }
+abstract interface TableTop.Hosting.Persistence.IFavouritesRepository
+    Task ClearAsync(CancellationToken ct = default)
+    Task SaveAsync(IEnumerable<String> modeNames, CancellationToken ct = default)
+    Task<IReadOnlyList<String>> LoadAsync(CancellationToken ct = default)
 abstract interface TableTop.Hosting.Persistence.IGamePersistence
     Boolean HasSavedSession { get; }
     Task DeleteAsync(CancellationToken ct = default)
@@ -1081,6 +1102,11 @@ abstract interface TableTop.Hosting.Persistence.IRosterRepository
     Task SaveAsync(IEnumerable<RosterProfile> rosters, CancellationToken ct = default)
     Task<IReadOnlyList<RosterProfile>> LoadAsync(CancellationToken ct = default)
 abstract interface TableTop.Hosting.Persistence.ISessionRepository
+sealed class TableTop.Hosting.Persistence.JsonFavouritesRepository
+    .ctor(String filePath = default)
+    Task ClearAsync(CancellationToken ct = default)
+    Task SaveAsync(IEnumerable<String> modeNames, CancellationToken ct = default)
+    Task<IReadOnlyList<String>> LoadAsync(CancellationToken ct = default)
 sealed class TableTop.Hosting.Persistence.JsonPlayerRepository
     .ctor(String filePath = default)
     Task ClearAsync(CancellationToken ct = default)
