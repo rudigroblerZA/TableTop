@@ -109,6 +109,19 @@ sealed class TableTop.Games.Couples.HeatCheckMode
     String Name { get; }
     String SkipLabel { get; }
     TableShape SuitableFor { get; }
+static class TableTop.Games.Couples.HouseRulesCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Couples.HouseRulesMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    IReadOnlyList<String> CategoriesPinnedToEnd { get; }
+    IReadOnlyList<String> CategoriesPinnedToStart { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
 static class TableTop.Games.Couples.InYourShoesCardBank
     IReadOnlyList<ICard> All { get; }
 sealed class TableTop.Games.Couples.InYourShoesMode
@@ -756,6 +769,18 @@ sealed class TableTop.Games.Fun.SplitTheRoomMode
     String Name { get; }
     String SkipLabel { get; }
     TableShape SuitableFor { get; }
+static class TableTop.Games.Fun.ThePitchCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.Fun.ThePitchMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    Int32 MinimumPlayers { get; }
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+    TableShape SuitableFor { get; }
 static class TableTop.Games.Fun.ThisOrThatCardBank
     IReadOnlyList<ICard> All { get; }
 sealed class TableTop.Games.Fun.ThisOrThatMode
@@ -867,6 +892,16 @@ static class TableTop.Games.School.Grade6QuestionBank
 static class TableTop.Games.School.GrammarQuestCardBank
     IReadOnlyList<ICard> All { get; }
 sealed class TableTop.Games.School.GrammarQuestMode
+    .ctor()
+    IReadOnlyDictionary<String, String> CategoryColours { get; }
+    IReadOnlyList<ICard> GetCards()
+    String CompleteLabel { get; }
+    String Description { get; }
+    String Name { get; }
+    String SkipLabel { get; }
+static class TableTop.Games.School.HypothesisCardBank
+    IReadOnlyList<ICard> All { get; }
+sealed class TableTop.Games.School.HypothesisMode
     .ctor()
     IReadOnlyDictionary<String, String> CategoryColours { get; }
     IReadOnlyList<ICard> GetCards()

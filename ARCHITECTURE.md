@@ -1405,6 +1405,48 @@ async work to block on, a different shape rather than a template to copy.
   removing any would have been a guess.
 
 
+- **1.40.0** adds one mode to each of the three root archetypes — **Hypothesis!**
+  (Classroom), **The Pitch** (Fun) and **House Rules** (Couples) — plus their
+  three card banks. Six new public types in Games, no removals and no interface
+  changes, so MINOR on the plainest reading of the rule: new modes, new decks.
+
+  **All three are `CardTurn`, and that was the design constraint, not an
+  accident.** A new controller family is the expensive kind of mode — it means
+  a `ControllerFactory` arm, a `ControllerFamilies.TryFor` arm in the same
+  order, and a screen in each of the four heads, which is the work 1.25.0 and
+  1.38.0 each spent a release on. Nothing about "one mode per archetype" needed
+  that, so each of these is a plain deck with a distinctive mechanic carried in
+  the card text and the labels. `ArchetypeExpansionModesTests` asserts the
+  family for all three rather than leaving it implied, because the cost of
+  discovering otherwise is a head falling through to a screen that rejects the
+  mode.
+
+  **Each fills a gap rather than thickening a pile.** Hypothesis! is the second
+  classroom science deck but asks the opposite question of Science Sprint —
+  what you would *bet on*, not what you remember — and several cards are chosen
+  precisely because the popular answer is wrong (the sealed candle, the ice cube
+  at the brim, which way a drain spins), so recall alone costs you. The Pitch
+  sits opposite One-Star Reviews: same muscle, opposite direction, defending
+  the indefensible instead of demolishing the loved. House Rules is the larger
+  gap — every one of the twenty-one Couples decks before it was about feeling,
+  and none touched the thermostat, the spending threshold or whose family gets
+  Christmas.
+
+  **Two content rules are enforced by tests because prose cannot hold them.**
+  The Pitch's *catch* — the angle you are forced to take — appears on every
+  card and is asserted, since without it the room reaches for the same joke
+  every round (that the product is bad) and the deck is spent in four cards.
+  House Rules' *Park It* footer is asserted on every domain card and its skip
+  label is pinned to the string, because a deck that forces a decision tonight
+  manufactures agreements neither partner means, and a rule nobody means is
+  worse than no rule once it is written down. Both are the kind of invariant
+  that is obvious while authoring and invisible to whoever pastes in the next
+  twenty cards.
+
+  **Verified with a real SDK**, unusually for an entry here: 1,095 tests pass,
+  all nine static gates pass, and `api/TableTop.Games.api.txt` was regenerated
+  and read — 35 added lines, all of them the six new types, nothing removed.
+
 ## What genuinely doesn't exist here
 
 - **A visual deck editor, or any content authoring at all outside the repo.**
