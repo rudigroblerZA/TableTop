@@ -71,11 +71,18 @@ public static class ServiceCollectionExtensions
     /// A head that starts using it must pass a real path here.
     /// </para>
     /// </param>
+    /// <param name="favouritesFilePath">
+    /// Optional custom path for the JSON starred-modes file. Same default and
+    /// the same reasoning as <paramref name="sessionFilePath"/>, including the
+    /// write-permission caveat above: an installed head must pass an app-data
+    /// path rather than accept <c>AppContext.BaseDirectory</c>.
+    /// </param>
     public static IServiceCollection AddTableTopHosting(
         this IServiceCollection services,
         string? sessionFilePath = null,
         string? playerFilePath = null,
-        string? rosterFilePath = null)
+        string? rosterFilePath = null,
+        string? favouritesFilePath = null)
     {
         // ── Controller factory ───────────────────────────────────────────────
         // Transient: a new factory is cheap and now genuinely carries no state of
@@ -99,6 +106,15 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IRosterRepository>(
             _ => new JsonRosterRepository(rosterFilePath));
+
+        services.AddSingleton<IFavouritesRepository>(
+            _ => new JsonFavouritesRepository(favouritesFilePath));
+
+        // Singleton, and it has to be: FavouritesService holds the in-memory set
+        // the pickers read synchronously while rendering. Registered transient,
+        // each head would get its own empty cache and stars would appear to
+        // vanish between screens.
+        services.AddSingleton<FavouritesService>();
 
         // ── Hint engine ──────────────────────────────────────────────────────
         // Singleton: stateless — holds no mutable data, safe to share.

@@ -40,8 +40,13 @@ public sealed class HypothesisMode : BaseGameModeDefinition
     /// <summary>Label for the button that records a correct prediction.</summary>
     public override string CompleteLabel => "Called It";
 
-    /// <summary>Label for the button that passes on a card.</summary>
-    public override string SkipLabel => "Got It Wrong";
+    /// <summary>
+    /// Label for declining the card. Deliberately not "Got It Wrong": under
+    /// <see cref="RiskRewardScoringStrategy"/> a decline and a wrong answer are
+    /// different outcomes worth different amounts, and labelling the free one as
+    /// failure would tell players the opposite of how the mode scores.
+    /// </summary>
+    public override string SkipLabel => "Pass";
 
     /// <summary>Category → hex colour map used by UIs to tint card chrome.</summary>
     public override IReadOnlyDictionary<string, string> CategoryColours =>
@@ -55,11 +60,21 @@ public sealed class HypothesisMode : BaseGameModeDefinition
         };
 
     /// <summary>
-    /// Difficulty-based, not flat: the counter-intuitive cards are the ones
-    /// worth backing yourself on, and a flat point would pay the same for
-    /// "the ice cube melts" as for guessing where a tree's mass comes from.
+    /// Difficulty-based, so the counter-intuitive cards pay more than "the ice
+    /// cube melts" — then wrapped in press-your-luck, because a mode built on
+    /// committing to a prediction should charge you for committing to a wrong
+    /// one. Predicting and missing costs what the card would have paid;
+    /// passing costs nothing.
+    ///
+    /// <para>
+    /// This is the only mode in the catalogue that can move a score downwards.
+    /// It is opt-in for exactly that reason, and it degrades to plain
+    /// difficulty-based scoring on any head that cannot record a failed attempt
+    /// — which today is every head except Console.
+    /// </para>
     /// </summary>
-    protected override IScoringStrategy BuildScoring() => new DifficultyBasedScoringStrategy();
+    protected override IScoringStrategy BuildScoring() =>
+        new RiskRewardScoringStrategy(new DifficultyBasedScoringStrategy());
 
     /// <summary>Returns the built-in Hypothesis! card bank.</summary>
     protected override IReadOnlyList<ICard> BuildCards(IReadOnlyList<IPlayer> players) =>
@@ -93,8 +108,9 @@ public static class HypothesisCardBank
     private static string Predict(string setup, string reveal) =>
         "<b>🧪 Predict first. Everyone commits out loud on three — then flip.</b>\n\n" +
         setup + "\n\n" +
-        "<i>Right prediction = a point. The correct mechanism = a point too, even if you " +
-        "predicted wrong. Table decides.</i>\n\n" +
+        "<i>Called it = the card's points. Predicted and missed = you lose the same again. " +
+        "Not sure? Pass — passing is always free. Naming the right mechanism upgrades a miss " +
+        "to a pass; the table decides.</i>\n\n" +
         "Answer: " + reveal;
 
     private static IReadOnlyList<ICard> Build() => CardDeckBuilder
