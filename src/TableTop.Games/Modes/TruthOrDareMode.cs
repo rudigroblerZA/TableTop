@@ -24,7 +24,7 @@ namespace TableTop.Games;
 ///
 /// <para>
 /// <b>Declaring is enforced, not just trusted.</b> Every card's text follows
-/// the <see cref="TableTop.Hosting.TruthOrDareCards"/> convention — an intro,
+/// the <c>TableTop.Hosting.TruthOrDareCards</c> convention — an intro,
 /// then a line starting <c>TRUTH:</c>, then one starting <c>DARE:</c>, then a
 /// <c>Chicken clause:</c> forfeit. The shared gameplay screen (and Console)
 /// detect that shape and hide both halves behind a "Truth or Dare?" choice,
@@ -76,7 +76,7 @@ public sealed class TruthOrDareMode : BaseGameModeDefinition
 /// <summary>
 /// Built-in paired-card bank for Truth or Dare, authored with
 /// <see cref="CardDeckBuilder"/>'s fluent DSL. Every card's body is composed
-/// by <see cref="Pair"/> in the shape <see cref="TableTop.Hosting.TruthOrDareCards"/>
+/// by <see cref="Pair"/> in the shape <c>TableTop.Hosting.TruthOrDareCards</c>
 /// knows how to split back apart at play time.
 /// </summary>
 public static class TruthOrDareCardBank
@@ -305,7 +305,7 @@ public static class TruthOrDareCardBank
 
     /// <summary>
     /// Composes one card's body in the shape
-    /// <see cref="TableTop.Hosting.TruthOrDareCards"/> parses: an intro, a
+    /// <c>TableTop.Hosting.TruthOrDareCards</c> parses: an intro, a
     /// <c>TRUTH:</c> line, a <c>DARE:</c> line, then the chicken-clause
     /// forfeit — so the gameplay screen can hide both halves until the player
     /// declares one out loud, same as the physical game.
