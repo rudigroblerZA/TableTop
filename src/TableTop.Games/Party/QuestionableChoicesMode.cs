@@ -109,6 +109,11 @@ public static class QuestionableChoicesCardBank
            "waving at someone waving past you", "the queue moving faster in the other lane",
            "remembering something you said in 2011", "your card being declined confidently",
            "standing up too fast at your age", "the silence after your joke"], Difficulty.Hard),
+        P(ModernLifeCategory, "My phone knows entirely too much about ______.",
+          ["my 3am spiralling", "a symptom I only whispered near it",
+           "how long I stare at a menu", "the ex I have not typed in years",
+           "my capacity to rewatch one show", "a purchase I made out of pure spite",
+           "how many times I've opened the fridge tonight", "the group chat I mute but never leave"], Difficulty.Medium),
 
         // ── THE OFFICE ───────────────────────────────────────────────────────
         P(TheOfficeCategory, "This meeting could have been ______.",
@@ -136,6 +141,11 @@ public static class QuestionableChoicesCardBank
            "meetings about upcoming meetings", "the software we paid a fortune for",
            "the person who says 'just quickly'", "my own browser tabs",
            "having to look approachable", "the open-plan office as a concept"], Difficulty.Medium),
+        P(TheOfficeCategory, "The performance review said I need to work on ______.",
+          ["being seen to care", "my 'tone' in an email nobody else read properly",
+           "synergy, whatever that turns out to mean", "showing up to the thing I was already doing",
+           "not saying the quiet part in the loud meeting", "my calendar as a personal brand",
+           "pretending the restructure was fine", "communicating more, apparently, somehow"], Difficulty.Medium),
 
         // ── RELATIONSHIPS ────────────────────────────────────────────────────
         P(RelationshipsCategory, "The fastest way to end a first date is ______.",
@@ -159,6 +169,11 @@ public static class QuestionableChoicesCardBank
            "complaining in perfect harmony", "silently agreeing to leave",
            "narrating the pet's inner thoughts", "one shared, deeply petty grudge",
            "the exact right cup of tea", "saying nothing about the noise I made"], Difficulty.Hard),
+        P(RelationshipsCategory, "You know it's serious when they ______.",
+          ["let you pick the restaurant, twice", "meet the friend who tells everything",
+           "start using 'we' about the future", "survive a family gathering without a debrief",
+           "give you their charger and don't ask for it back", "text the group chat about you first",
+           "let you see them ill", "start doing the voice for your pet, too"], Difficulty.Medium),
 
         // ── EXISTENTIAL ──────────────────────────────────────────────────────
         P(ExistentialCategory, "At 3am, the thought that arrives is ______.",
@@ -181,6 +196,11 @@ public static class QuestionableChoicesCardBank
            "the bins are the only real deadline", "everyone is tired and lying about it",
            "no one knows how tax works", "we all just kept going after school ended",
            "being fine is a rumour we spread", "the food shop is eternal"], Difficulty.Hard),
+        P(ExistentialCategory, "The universe sent me a very clear sign when ______.",
+          ["I missed the bus by one polite wave", "the fortune cookie just said 'no'",
+           "two strangers agreed with each other about me", "the streetlight timed itself to my mood",
+           "I found the receipt for a decision I regret", "the song came on at the exact wrong moment",
+           "my horoscope described the meeting I'd just left", "a bird looked at me like it knew"], Difficulty.Hard),
 
         // ── CHAOS ────────────────────────────────────────────────────────────
         P(ChaosCategory, "The wedding was going perfectly until ______.",
@@ -204,6 +224,11 @@ public static class QuestionableChoicesCardBank
            "'The suspect was extremely apologetic.'", "'It was a bin, not a person.'",
            "'Both parties blame the sat-nav.'", "'No crime occurred. Everyone was just like that.'",
            "'The trifle was, in fact, the weapon.'", "'A neighbourly disagreement about a hedge.'"], Difficulty.Extreme),
+        P(ChaosCategory, "The group chat went silent the moment someone mentioned ______.",
+          ["the money still owed from March", "who actually organised last time",
+           "the thing that happened at the barbecue", "a plus-one nobody had approved",
+           "the venue's 'strict' dress code", "whose idea the karaoke was",
+           "the photo that was absolutely not meant to be seen", "the seating plan, again"], Difficulty.Medium),
     ];
 
     private static ICard P(string category, string prompt, string[] answers, Difficulty d) =>
