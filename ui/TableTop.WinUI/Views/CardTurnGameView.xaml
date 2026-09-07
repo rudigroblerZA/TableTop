@@ -167,6 +167,27 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+
+                        <!-- Truth-or-Dare declare gate: shown only while a
+                             Truth-or-Dare card is waiting on the player to say
+                             which, out loud, before either half is revealed.
+                             CardBodyText carries only the intro until one of
+                             these fires. -->
+                        <StackPanel Orientation="Horizontal" Spacing="10"
+                                    Visibility="{Binding AwaitingDeclaration, Converter={StaticResource BoolToVis}}">
+                            <Button Content="Truth" Command="{Binding DeclareTruthCommand}"
+                                    HorizontalAlignment="Stretch" Padding="22,11"
+                                    FontFamily="Georgia" FontSize="15"
+                                    Background="#0F000000" Foreground="{StaticResource CardInkBrush}"
+                                    BorderBrush="{StaticResource CardRuleBrush}" BorderThickness="1"
+                                    CornerRadius="7"/>
+                            <Button Content="Dare" Command="{Binding DeclareDareCommand}"
+                                    HorizontalAlignment="Stretch" Padding="22,11"
+                                    FontFamily="Georgia" FontSize="15"
+                                    Background="#0F000000" Foreground="{StaticResource CardInkBrush}"
+                                    BorderBrush="{StaticResource CardRuleBrush}" BorderThickness="1"
+                                    CornerRadius="7"/>
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
 

@@ -204,6 +204,19 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
     public bool HasChoices => _inner.HasChoices;
     /// <summary>True for an ordinary card with no letter choices.</summary>
     public bool HasNoChoices => _inner.HasNoChoices;
+    /// <summary>
+    /// True when the normal action row (Complete/Skip/Undo/Save/flow) should
+    /// show — hidden for A–D quiz cards, same as before, and now also while a
+    /// Truth-or-Dare card is still awaiting its declaration, since "Did It"
+    /// has nothing to record yet.
+    /// </summary>
+    public bool ShowActionRow => _inner.HasNoChoices && !_inner.AwaitingDeclaration;
+    /// <summary>True when the current card is a Truth-or-Dare pair.</summary>
+    public bool IsTruthOrDare => _inner.IsTruthOrDare;
+    /// <summary>True while a Truth-or-Dare card is waiting on the player to declare.</summary>
+    public bool AwaitingDeclaration => _inner.AwaitingDeclaration;
+    /// <summary>"Truth" or "Dare" once declared; empty until then.</summary>
+    public string DeclaredLabel => _inner.DeclaredLabel;
     /// <summary>False for modes whose progression strategy isn't flow-aware.</summary>
     public bool SupportsFlow => _inner.SupportsFlow;
     /// <summary>True once a turn has been recorded and not yet undone.</summary>
@@ -248,6 +261,10 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
     public void FlipCard() => _inner.FlipCard();
     /// <summary>Tallies the current player's answer, then completes the turn.</summary>
     public void RecordChoice(char letter) => _inner.RecordChoice(letter);
+    /// <summary>Declares Truth, revealing only the truth prompt.</summary>
+    public void DeclareTruth() => _inner.DeclareTruth();
+    /// <summary>Declares Dare, revealing only the dare prompt.</summary>
+    public void DeclareDare() => _inner.DeclareDare();
     /// <summary>Nudges everyone's difficulty up.</summary>
     public void LevelUp() => _inner.LevelUp();
     /// <inheritdoc cref="LevelUp" />
@@ -315,8 +332,15 @@ public sealed class GameplayViewModel : BindableObject, IDisposable
 
         // Forwards every property-changed notification 1:1 — this is what
         // makes every pass-through property above stay live without each one
-        // needing its own explicit re-raise.
-        _inner.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
+        // needing its own explicit re-raise. ShowActionRow is the one
+        // exception: it's computed from two source properties, so it needs an
+        // explicit re-raise whenever either one changes.
+        _inner.PropertyChanged += (_, e) =>
+        {
+            OnPropertyChanged(e.PropertyName);
+            if (e.PropertyName is nameof(CardTurnGameViewModel.HasNoChoices) or nameof(CardTurnGameViewModel.AwaitingDeclaration))
+                OnPropertyChanged(nameof(ShowActionRow));
+        };
 
         _settings.Changed += OnSettingChanged;
     }

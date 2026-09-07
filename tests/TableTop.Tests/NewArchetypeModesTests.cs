@@ -482,6 +482,63 @@ public sealed class TruthOrDarePairedCardTests
     }
 }
 
+/// <summary>
+/// <see cref="TruthOrDareCards"/> — the lexical parser that lets the shared
+/// gameplay screen (and Console) hide both halves of a Truth-or-Dare card
+/// until the player declares one, purely from card text. Same approach as
+/// <see cref="ChoiceCards"/> and <see cref="CardFaces"/>: no card type or
+/// per-head changes needed.
+/// </summary>
+public sealed class TruthOrDareCardsTests
+{
+    private const string Sample =
+        "The reader asks: \"Truth or dare?\" — declare OUT LOUD before hearing either.\n\n" +
+        "TRUTH: What's your secret?\n\n" +
+        "DARE: Do a dance.\n\n" +
+        "Chicken clause: back out after hearing your pick, and you owe a forfeit.";
+
+    [Fact]
+    public void TryParse_SplitsIntroTruthDareAndForfeit()
+    {
+        var parsed = TruthOrDareCards.TryParse(Sample);
+
+        parsed.Should().NotBeNull();
+        parsed!.Value.Intro.Should().Contain("declare OUT LOUD");
+        parsed.Value.Truth.Should().Be("What's your secret?");
+        parsed.Value.Dare.Should().Be("Do a dance.");
+        parsed.Value.Forfeit.Should().Be("back out after hearing your pick, and you owe a forfeit.");
+    }
+
+    [Fact]
+    public void TryParse_ReturnsNull_ForOrdinaryText() =>
+        TruthOrDareCards.TryParse("Just an ordinary card with no markers.").Should().BeNull();
+
+    [Fact]
+    public void TryParse_ReturnsNull_WhenDareAppearsBeforeTruth() =>
+        TruthOrDareCards.TryParse("DARE: first\nTRUTH: second").Should().BeNull();
+
+    [Fact]
+    public void IsTruthOrDareCard_IsFalse_WhenMarkersAppearMidSentence() =>
+        // The mode's own gender-directed prompt does exactly this — "DARE:"
+        // appears mid-sentence, not at the start of its own line, and must
+        // not be mistaken for a real declare-then-reveal card.
+        TruthOrDareCards.IsTruthOrDareCard(
+            "What trend did you regret? Truth — or DARE: recreate it.").Should().BeFalse();
+
+    [Fact]
+    public void EveryPairedCard_InTheRealDeck_ParsesCleanly()
+    {
+        foreach (var c in TableTop.Games.TruthOrDareCardBank.All.Where(c => c is not PromptCard))
+        {
+            var parsed = TruthOrDareCards.TryParse(c.Description);
+            parsed.Should().NotBeNull($"'{c.Title}' should parse as a Truth-or-Dare pair");
+            parsed!.Value.Truth.Should().NotBeEmpty();
+            parsed.Value.Dare.Should().NotBeEmpty();
+            parsed.Value.Forfeit.Should().NotBeEmpty();
+        }
+    }
+}
+
 /// <summary>Invariants for the expand-games batch: Odd One Out, One-Star
 /// Reviews, Alibi, and Villain Origin.</summary>
 public sealed class ExpandGamesBatchTests

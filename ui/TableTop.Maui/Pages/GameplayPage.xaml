@@ -170,6 +170,16 @@
                 <Button Text="D" Clicked="OnChoiceDClicked" Background="{Binding Theme.PrimaryButton}" TextColor="{Binding Theme.PrimaryButtonText}" FontFamily="{Binding DisplayFont}" FontAttributes="Bold" FontSize="16" HeightRequest="50" CornerRadius="10" HorizontalOptions="FillAndExpand"/>
             </VerticalStackLayout>
 
+            <!-- Truth-or-Dare declare gate: shown only while a Truth-or-Dare
+                 card is waiting on the player to say which, out loud, before
+                 either half is revealed. CardBodyText carries only the intro
+                 until one of these fires. -->
+            <HorizontalStackLayout Spacing="8" Margin="0,8,0,0"
+                                   IsVisible="{Binding AwaitingDeclaration}">
+                <Button Text="Truth" Clicked="OnDeclareTruthClicked" Background="{Binding Theme.PrimaryButton}" TextColor="{Binding Theme.PrimaryButtonText}" FontFamily="{Binding DisplayFont}" FontAttributes="Bold" FontSize="16" HeightRequest="50" CornerRadius="10" HorizontalOptions="FillAndExpand"/>
+                <Button Text="Dare" Clicked="OnDeclareDareClicked" Background="{Binding Theme.PrimaryButton}" TextColor="{Binding Theme.PrimaryButtonText}" FontFamily="{Binding DisplayFont}" FontAttributes="Bold" FontSize="16" HeightRequest="50" CornerRadius="10" HorizontalOptions="FillAndExpand"/>
+            </HorizontalStackLayout>
+
             <!-- Action buttons.
                  Text comes from the MODE, not from here: Truth or Dare says
                  "Did It" / "Chickened Out", Last Orders says "Pass (always
@@ -193,7 +203,7 @@
                  engine and from no head at all; App.xaml has carried a button
                  style commented "Quiet tertiary (Quit, Undo)" the whole time. -->
             <HorizontalStackLayout Spacing="8" Margin="0,8,0,0"
-                                   IsVisible="{Binding HasNoChoices}">
+                                   IsVisible="{Binding ShowActionRow}">
                 <Button Text="Easier"
                         Clicked="OnLevelDownClicked"
                         IsVisible="{Binding SupportsFlow}"

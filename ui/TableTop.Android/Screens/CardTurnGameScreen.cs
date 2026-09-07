@@ -13,8 +13,9 @@ public sealed class CardTurnGameScreen(CardTurnGameViewModel vm)
 {
     private TextView _player = null!, _count = null!, _title = null!, _meta = null!, _body = null!;
     private TextView _scores = null!, _flash = null!, _hint = null!, _timer = null!, _summary = null!;
-    private LinearLayout _choiceRow = null!, _actionRow = null!, _flowRow = null!;
+    private LinearLayout _choiceRow = null!, _actionRow = null!, _flowRow = null!, _declareRow = null!;
     private Button _flip = null!, _complete = null!, _skip = null!, _undo = null!, _save = null!, _quit = null!;
+    private Button _declareTruth = null!, _declareDare = null!;
 
     /// <inheritdoc />
     public override string Title => Vm.ModeTitle;
@@ -38,6 +39,15 @@ public sealed class CardTurnGameScreen(CardTurnGameViewModel vm)
         _flip = Ui.Button(context, "Reveal answer").OnClick(() => Vm.FlipCard());
         _choiceRow = new LinearLayout(context) { Orientation = Orientation.Vertical };
 
+        // Truth-or-Dare declare gate: shown only while the current card is
+        // waiting on the player to say which, out loud, before either half
+        // is revealed. Vm.CardBodyText carries only the intro until then.
+        _declareTruth = Ui.Button(context, "Truth").OnClick(() => Vm.DeclareTruth());
+        _declareDare = Ui.Button(context, "Dare").OnClick(() => Vm.DeclareDare());
+        _declareRow = Ui.Row(context);
+        _declareRow.AddView(_declareTruth);
+        _declareRow.AddView(_declareDare);
+
         _complete = Ui.Button(context, "Completed").OnClick(() => Vm.Complete());
         _skip = Ui.Button(context, "Skip").OnClick(() => Vm.Skip());
         _actionRow = Ui.Row(context);
@@ -57,7 +67,7 @@ public sealed class CardTurnGameScreen(CardTurnGameViewModel vm)
         foreach (var v in new View[]
                  {
                      _player, _count, _title, _meta, _body, _timer, _flash, _hint,
-                     _flip, _choiceRow, _actionRow, _flowRow, _scores, _summary,
+                     _flip, _choiceRow, _declareRow, _actionRow, _flowRow, _scores, _summary,
                      _undo, _save, _quit,
                  })
             column.AddView(v);
@@ -73,7 +83,7 @@ public sealed class CardTurnGameScreen(CardTurnGameViewModel vm)
             _title.Text = "Couldn't start";
             _body.Text = Vm.LoadError;
             Hide(_player, _count, _meta, _timer, _flash, _hint, _flip, _choiceRow,
-                _actionRow, _flowRow, _scores, _undo, _save);
+                _declareRow, _actionRow, _flowRow, _scores, _undo, _save);
             _quit.Text = "Back";
             return;
         }
@@ -100,7 +110,9 @@ public sealed class CardTurnGameScreen(CardTurnGameViewModel vm)
 
         RenderChoices();
 
-        _actionRow.Visibility = Vm.IsPlaying && !Vm.HasChoices ? ViewStates.Visible : ViewStates.Gone;
+        _declareRow.Visibility = Vm.AwaitingDeclaration && !Vm.IsGameOver ? ViewStates.Visible : ViewStates.Gone;
+
+        _actionRow.Visibility = Vm.IsPlaying && !Vm.HasChoices && !Vm.AwaitingDeclaration ? ViewStates.Visible : ViewStates.Gone;
         _complete.Text = Vm.CompleteLabel;
         _skip.Text = Vm.SkipLabel;
 

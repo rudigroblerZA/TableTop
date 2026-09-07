@@ -1552,6 +1552,54 @@ async work to block on, a different shape rather than a template to copy.
   synthesized and cannot be named, so the rule does not apply. Plus one constant
   array hoisted out of an argument in the Console head (`CA1861`).
 
+- **1.41.0** reworks Truth or Dare so declaring is enforced by the app
+  instead of trusted to the player's honesty. Before this, every card's
+  `Description` carried both the truth and the dare in full, in the open, on
+  screen at once — the physical game's core tension (say "truth" or "dare"
+  *before* you know what either one asks) reduced to a suggestion nobody
+  could actually be held to. One new public type in Hosting, `TruthOrDareCards`:
+  MINOR, "added to a class."
+
+  **Lexical, not a new card type — same call as `ChoiceCards` and
+  `CardFaces`.** A card's body follows a plain convention (an intro, then a
+  `TRUTH:` line, a `DARE:` line, and a `Chicken clause:` forfeit) and
+  `TruthOrDareCards.TryParse` splits it back apart. That means no new
+  `ICard` interface, no `ControllerFactory` arm, no `ControllerFamilies`
+  entry — the existing `CardTurn` family and every head's existing screen
+  already carry it, the same way an A/B/C/D-formatted card gets quiz buttons
+  for free without a `IMultipleChoiceCard`. `TruthOrDareCardBank` moved to
+  `CardDeckBuilder`'s fluent DSL in the same change, replacing the file's own
+  three-line `T(...)` helper — the twelve-mode duplication `CardDeckBuilder`
+  exists to end, one mode later.
+
+  **`CardTurnGameViewModel` gained the declare gate, so WinUI and MAUI get
+  it without their own code.** `IsTruthOrDare`/`AwaitingDeclaration`/
+  `DeclaredLabel` plus `DeclareTruthCommand`/`DeclareDareCommand` mirror the
+  existing `Choices`/`ChoiceItem` shape; `CardBodyText` shows only the intro
+  until one is declared, then only the chosen half plus the forfeit — the
+  other half is never bound to anything a view could accidentally render.
+  `Complete()`/`Skip()` refuse to record an outcome while
+  `AwaitingDeclaration` is true, not just their `RelayCommand`s' `CanExecute`
+  — the same lesson `CreateAsync_WithALoadError_CommandsAreSafeToExecute_NotJustDisabled`
+  already pinned for the load-error path applies here too, since MAUI's
+  code-behind calls the plain methods directly. Console got the equivalent
+  gate directly in `ConsoleCardTurnRenderer`, since it renders `ICardTurnController`
+  events itself rather than going through `Presentation` at all; a head that
+  predates either change still shows the whole card, both halves included,
+  same graceful degradation `IThisOrThatCard` documents for a head that
+  doesn't know about it.
+
+  **Not verified by a local build** — this sandbox has no `dotnet`. Checked
+  by reading: every call site of `CardDeckBuilder.Card`, `TruthOrDareCards`,
+  and the new `CardTurnGameViewModel` members; brace/paren balance on every
+  touched file; and that `TruthOrDareCardBank.All`'s card count and
+  restriction count are unchanged from before the refactor (34 paired cards
+  plus the one gender-directed prompt, 4 restricted). `api/TableTop.Hosting.api.txt`
+  was hand-edited to add `TruthOrDareCards`' two members in the format the
+  file's other static-class entries use; run
+  `TABLETOP_UPDATE_API=1 dotnet test --filter PublicApiSurfaceTests` once a
+  real SDK is available and diff before trusting it.
+
 ## What genuinely doesn't exist here
 
 - **A visual deck editor, or any content authoring at all outside the repo.**

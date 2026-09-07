@@ -113,6 +113,8 @@ public partial class GameplayPage : ContentPage, IAsyncInitializablePage
     private void OnChoiceBClicked(object sender, EventArgs e) => _vm.RecordChoice('B');
     private void OnChoiceCClicked(object sender, EventArgs e) => _vm.RecordChoice('C');
     private void OnChoiceDClicked(object sender, EventArgs e) => _vm.RecordChoice('D');
+    private void OnDeclareTruthClicked(object sender, EventArgs e) => _vm.DeclareTruth();
+    private void OnDeclareDareClicked(object sender, EventArgs e) => _vm.DeclareDare();
 
     private async void OnEndGameClicked(object sender, EventArgs e)
     {

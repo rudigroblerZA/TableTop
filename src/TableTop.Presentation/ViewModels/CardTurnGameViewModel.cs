@@ -68,6 +68,9 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
     private string _playerName = "", _cardTitle = "", _cardCategory = "", _cardDifficulty = "";
     private string _frontText = "", _flashText = "", _summaryText = "", _cardCountText = "";
     private string? _backText;
+    private (string Intro, string Truth, string Dare, string Forfeit)? _truthOrDare;
+    private bool _hasDeclared;
+    private string _declaredLabel = "";
     private bool _isFlipped, _isGameOver;
     private int _round, _played, _secondsRemaining;
     private string _hintText = "", _hintUrgency = "Gentle";
@@ -174,12 +177,41 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
     public bool IsFlipped => _isFlipped;
     /// <summary>True when this card has a hidden answer face.</summary>
     public bool HasBack => _backText is not null;
-    /// <summary>The text of the currently visible face.</summary>
-    public string CardBodyText => _isFlipped && _backText is not null ? _backText : _frontText;
+    /// <summary>
+    /// The text of the currently visible face. For a Truth-or-Dare card this
+    /// is the intro alone until declared, then only the chosen half plus its
+    /// forfeit — the other half is never shown, which is the entire point of
+    /// declaring blind.
+    /// </summary>
+    public string CardBodyText
+    {
+        get
+        {
+            if (_truthOrDare is { } tod)
+                return _hasDeclared
+                    ? $"{(_declaredLabel == "Truth" ? tod.Truth : tod.Dare)}\n\nChicken clause: {tod.Forfeit}"
+                    : tod.Intro;
+
+            return _isFlipped && _backText is not null ? _backText : _frontText;
+        }
+    }
     /// <summary>Flip button caption for the current face.</summary>
     public string FlipButtonText => _isFlipped ? "Back to question" : "Reveal answer";
     /// <summary>Flips a two-faced card. WinUI binds this; MAUI's code-behind calls it directly.</summary>
     public ICommand FlipCommand { get; }
+
+    // ── Truth or Dare (declare, then reveal only that half) ─────────────────
+
+    /// <summary>True when the current card is a Truth-or-Dare pair — see <see cref="TruthOrDareCards"/>.</summary>
+    public bool IsTruthOrDare => _truthOrDare is not null;
+    /// <summary>True while a Truth-or-Dare card is waiting on the player to declare.</summary>
+    public bool AwaitingDeclaration => IsTruthOrDare && !_hasDeclared;
+    /// <summary>"Truth" or "Dare" once declared; empty until then.</summary>
+    public string DeclaredLabel => _declaredLabel;
+    /// <summary>Declares Truth, revealing only the truth prompt.</summary>
+    public ICommand DeclareTruthCommand { get; }
+    /// <summary>Declares Dare, revealing only the dare prompt.</summary>
+    public ICommand DeclareDareCommand { get; }
 
     // ── Choice cards (A–D quiz) ───────────────────────────────────────────────
 
@@ -260,12 +292,14 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
             ? ChoiceCards.ExtractStyleNames(gmd.GetCards([]).Select(c => c.Description))
             : new Dictionary<char, string>();
 
-        CompleteCommand = new RelayCommand(() => Complete(), () => IsPlaying);
-        SkipCommand = new RelayCommand(() => Skip(), () => IsPlaying);
+        CompleteCommand = new RelayCommand(() => Complete(), () => IsPlaying && !AwaitingDeclaration);
+        SkipCommand = new RelayCommand(() => Skip(), () => IsPlaying && !AwaitingDeclaration);
         QuitCommand = new RelayCommand(() => Quit());
         SaveCommand = new RelayCommand(() => _ = SaveSession(), () => CanSave);
         UndoCommand = new RelayCommand(() => UndoLastTurn(), () => CanUndo);
         FlipCommand = new RelayCommand(() => FlipCard(), () => HasBack);
+        DeclareTruthCommand = new RelayCommand(() => Declare("Truth"), () => AwaitingDeclaration);
+        DeclareDareCommand = new RelayCommand(() => Declare("Dare"), () => AwaitingDeclaration);
         LevelUpCommand = new RelayCommand(() => LevelUp(), () => SupportsFlow);
         LevelDownCommand = new RelayCommand(() => LevelDown(), () => SupportsFlow);
         SpeedUpCommand = new RelayCommand(() => SpeedUp(), () => SupportsFlow);
@@ -300,6 +334,8 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         SaveCommand = new RelayCommand(() => { }, () => false);
         UndoCommand = new RelayCommand(() => { }, () => false);
         FlipCommand = new RelayCommand(() => { }, () => false);
+        DeclareTruthCommand = new RelayCommand(() => { }, () => false);
+        DeclareDareCommand = new RelayCommand(() => { }, () => false);
         LevelUpCommand = new RelayCommand(() => { }, () => false);
         LevelDownCommand = new RelayCommand(() => { }, () => false);
         SpeedUpCommand = new RelayCommand(() => { }, () => false);
@@ -382,6 +418,9 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         _frontText = front;
         _backText = back;
         _isFlipped = false;
+        _truthOrDare = TruthOrDareCards.TryParse(plain);
+        _hasDeclared = false;
+        _declaredLabel = "";
 
         Choices.Clear();
         foreach (var (letter, text) in ChoiceCards.Extract(e.CardText))
@@ -394,7 +433,11 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(FlipButtonText));
         OnPropertyChanged(nameof(HasChoices));
         OnPropertyChanged(nameof(HasNoChoices));
+        OnPropertyChanged(nameof(IsTruthOrDare));
+        OnPropertyChanged(nameof(AwaitingDeclaration));
+        OnPropertyChanged(nameof(DeclaredLabel));
         (FlipCommand as RelayCommand)?.RaiseCanExecuteChanged();
+        RaiseActionState();
 
         SecondsRemaining = _secondsRemaining;
         if (TimerEnabled && !IsGameOver) _ = StartTimerAsync();
@@ -475,11 +518,17 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
 
     // ── Actions ───────────────────────────────────────────────────────────────
 
-    /// <summary>Records the current card's outcome; the engine advances and rotates.</summary>
-    public void Complete() { if (_controller is not null && !IsGameOver) { StopTimer(); _controller.RecordOutcome(CardOutcome.Completed); } }
+    /// <summary>
+    /// Records the current card's outcome; the engine advances and rotates.
+    /// A no-op while a Truth-or-Dare card is still awaiting its declaration —
+    /// there is nothing to have "done it" on yet — so this guards the same as
+    /// <see cref="CompleteCommand"/>'s <c>CanExecute</c> rather than trusting
+    /// every caller to check it first (MAUI's code-behind calls this directly).
+    /// </summary>
+    public void Complete() { if (_controller is not null && !IsGameOver && !AwaitingDeclaration) { StopTimer(); _controller.RecordOutcome(CardOutcome.Completed); } }
 
-    /// <summary>Skips the current card.</summary>
-    public void Skip() { if (_controller is not null && !IsGameOver) { StopTimer(); _controller.RecordOutcome(CardOutcome.Skipped); } }
+    /// <summary>Skips the current card. Same declare-first guard as <see cref="Complete"/>.</summary>
+    public void Skip() { if (_controller is not null && !IsGameOver && !AwaitingDeclaration) { StopTimer(); _controller.RecordOutcome(CardOutcome.Skipped); } }
 
     /// <summary>Ends the game early — final standings arrive via <see cref="GameOver"/> and <see cref="SummaryText"/>.</summary>
     public void Quit()
@@ -569,6 +618,27 @@ public sealed class CardTurnGameViewModel : ViewModelBase, IDisposable
         (SkipCommand as RelayCommand)?.RaiseCanExecuteChanged();
         (SaveCommand as RelayCommand)?.RaiseCanExecuteChanged();
         (UndoCommand as RelayCommand)?.RaiseCanExecuteChanged();
+        (DeclareTruthCommand as RelayCommand)?.RaiseCanExecuteChanged();
+        (DeclareDareCommand as RelayCommand)?.RaiseCanExecuteChanged();
+    }
+
+    /// <summary>Declares Truth, revealing only the truth prompt. MAUI's code-behind calls this directly.</summary>
+    public void DeclareTruth() => Declare("Truth");
+
+    /// <summary>Declares Dare, revealing only the dare prompt. MAUI's code-behind calls this directly.</summary>
+    public void DeclareDare() => Declare("Dare");
+
+    /// <summary>Declares "Truth" or "Dare", revealing only that half plus the forfeit.</summary>
+    private void Declare(string choice)
+    {
+        if (_truthOrDare is null || _hasDeclared) return;
+
+        _hasDeclared = true;
+        _declaredLabel = choice;
+        OnPropertyChanged(nameof(AwaitingDeclaration));
+        OnPropertyChanged(nameof(DeclaredLabel));
+        OnPropertyChanged(nameof(CardBodyText));
+        RaiseActionState();
     }
 
     // ── Timer ─────────────────────────────────────────────────────────────────

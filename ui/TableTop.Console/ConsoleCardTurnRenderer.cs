@@ -17,6 +17,8 @@ internal sealed class ConsoleCardTurnRenderer
     private readonly string _gameTitle;
     private CardReadyEvent? _currentCard;
     private bool _waitingForInput;
+    private (string Intro, string Truth, string Dare, string Forfeit)? _truthOrDare;
+    private bool _awaitingDeclaration;
 
     public ConsoleCardTurnRenderer(ICardTurnController controller, string gameTitle)
     {
@@ -71,17 +73,48 @@ internal sealed class ConsoleCardTurnRenderer
             ? [e.Player.Id]
             : _playerIds;
 
-        ConsoleUi.Clear();
-        ConsoleUi.Banner();
-        ConsoleUi.PrintRoundHeader(e.Round, e.PlayerName);
         // Card text carries <b>/<i> markup for the graphical heads. The console
         // has no rich text, and leaving the tags in also breaks the card box:
         // the border is padded to a fixed width from the string length.
+        var plain = CardText.StripHtml(e.CardText);
+        _truthOrDare = TruthOrDareCards.TryParse(plain);
+        _awaitingDeclaration = _truthOrDare is not null;
+
+        ConsoleUi.Clear();
+        ConsoleUi.Banner();
+        ConsoleUi.PrintRoundHeader(e.Round, e.PlayerName);
         ConsoleUi.PrintCard(
-            e.Category, e.CardTitle, CardText.StripHtml(e.CardText), e.Difficulty, e.Restriction);
+            e.Category, e.CardTitle, _truthOrDare is { } tod ? tod.Intro : plain, e.Difficulty, e.Restriction);
+        SC.WriteLine();
+
+        if (_awaitingDeclaration)
+            PrintDeclarePrompt();
+        else
+            PrintOutcomePrompt();
+        ConsoleUi.PrintPromptMarker(">");  // backlog: was silently eating one real input line
+        _waitingForInput = true;
+    }
+
+    /// <summary>
+    /// Reveals only the declared half — the physical game's whole mechanic —
+    /// by re-drawing the same card box with the chosen prompt and forfeit in
+    /// place of the intro, then falls through to the normal outcome prompt.
+    /// </summary>
+    private void Declare(string choice)
+    {
+        if (_currentCard is not { } e || _truthOrDare is not { } tod) return;
+
+        _awaitingDeclaration = false;
+        var prompt = choice == "Truth" ? tod.Truth : tod.Dare;
+        var body = $"You declared {choice.ToUpperInvariant()}:\n\n{prompt}\n\nChicken clause: {tod.Forfeit}";
+
+        ConsoleUi.Clear();
+        ConsoleUi.Banner();
+        ConsoleUi.PrintRoundHeader(e.Round, e.PlayerName);
+        ConsoleUi.PrintCard(e.Category, e.CardTitle, body, e.Difficulty, e.Restriction);
         SC.WriteLine();
         PrintOutcomePrompt();
-        ConsoleUi.PrintPromptMarker(">");  // backlog: was silently eating one real input line
+        ConsoleUi.PrintPromptMarker(">");
         _waitingForInput = true;
     }
 
@@ -163,6 +196,42 @@ internal sealed class ConsoleCardTurnRenderer
     private void HandleInput(string input)
     {
         _waitingForInput = false;
+
+        // Truth-or-dare declaration gate: the player must say which before
+        // either half is shown, so c/s/f make no sense yet — only t/d (and
+        // the always-available q/p/u) are accepted here.
+        if (_awaitingDeclaration)
+        {
+            switch (input)
+            {
+                case "t": Declare("Truth"); return;
+                case "d": Declare("Dare"); return;
+                case "p": _controller.TogglePause(); return;
+                case "u":
+                    if (!_controller.UndoLastTurn())
+                    {
+                        ConsoleUi.PrintError("Nothing to undo yet.");
+                        _waitingForInput = true;
+                    }
+                    return;
+                case "q":
+                    if (ConsoleUi.PromptYesNo("Quit?"))
+                        _controller.Quit();
+                    else
+                    {
+                        PrintDeclarePrompt();
+                        ConsoleUi.PrintPromptMarker(">");
+                        _waitingForInput = true;
+                    }
+                    return;
+                default:
+                    ConsoleUi.PrintError("Declare first — enter t (truth) or d (dare).");
+                    ConsoleUi.PrintPromptMarker(">");
+                    _waitingForInput = true;
+                    return;
+            }
+        }
+
         switch (input)
         {
             case "c": _controller.RecordOutcome(CardOutcome.Completed); break;
@@ -227,4 +296,7 @@ internal sealed class ConsoleCardTurnRenderer
         if (_controller.SupportsFlow)
             ConsoleUi.PrintMessage("  [+] Level Up   [-] Level Down   [>] Faster   [<] Slower   [r] Reset");
     }
+
+    private static void PrintDeclarePrompt() =>
+        ConsoleUi.PrintMessage("  [t] Truth   [d] Dare   [u] Undo   [p] Pause   [q] Quit");
 }
