@@ -75,9 +75,11 @@ public sealed class TruthOrDareMode : BaseGameModeDefinition
 
 /// <summary>
 /// Built-in paired-card bank for Truth or Dare, authored with
-/// <see cref="CardDeckBuilder"/>'s fluent DSL. Every card's body is composed
-/// by <see cref="Pair"/> in the shape <c>TableTop.Hosting.TruthOrDareCards</c>
-/// knows how to split back apart at play time.
+/// <see cref="CardDeckBuilder"/>'s fluent DSL. Each card is a plain
+/// <see cref="CardDeckBuilder.Card"/> carrying the intro, then
+/// <see cref="CardDeckBuilder.WithPreActions"/> folds in the declare-gate —
+/// which composes exactly the shape <c>TableTop.Hosting.TruthOrDareCards</c>
+/// splits back apart at play time.
 /// </summary>
 public static class TruthOrDareCardBank
 {
@@ -89,6 +91,9 @@ public static class TruthOrDareCardBank
 
     private const string Deck = "Truth or Dare";
     private const string CardLabel = "Truth or Dare";
+
+    private const string Intro =
+        "The reader asks: \"Truth or dare?\" — declare OUT LOUD before hearing either.";
 
     /// <summary>All truth-or-dare cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
@@ -102,190 +107,156 @@ public static class TruthOrDareCardBank
 
             // ── CLASSICS — the warm-up shuffle ───────────────────────────────
             .Category(ClassicsCategory)
-            .Card(CardLabel, Pair(
-                "What's the most embarrassing thing that happened to you as a kid?",
-                "Do your best impression of another player until someone guesses who.",
-                "you owe the group one round of applause for yourself, standing"),
-                Difficulty.Easy)
-            .Card(CardLabel, Pair(
-                "What's your guiltiest pleasure — the one you'd deny in public?",
-                "Speak in a terrible posh accent until your next turn.",
-                "the group picks your accent for the NEXT two turns instead"),
-                Difficulty.Easy)
-            .Card(CardLabel, Pair(
-                "What's the worst haircut, outfit, or phase you've ever committed to?",
-                "Let the player to your right restyle your hair right now. It stays.",
-                "you must show the group your oldest surviving photo of yourself"),
-                Difficulty.Easy)
-            .Card(CardLabel, Pair(
-                "Reveal a secret talent nobody at this table knows about.",
-                "Demonstrate ANY talent for 20 seconds. Confidence counts as talent.",
-                "hum your own sad exit music while doing a lap of the room"),
-                Difficulty.Easy)
-            .Card(CardLabel, Pair(
-                "What's the worst lie you've ever told — and did it work?",
-                "Tell a 30-second story that's a complete lie; the group votes if it was convincing.",
-                "you must answer the NEXT truth asked of anyone, honestly, as a bonus"),
-                Difficulty.Easy)
-            .Card(CardLabel, Pair(
-                "What food do you pretend to like in social situations?",
-                "Eat a spoonful of a condiment chosen by the group (from what's actually in the kitchen).",
-                "you fetch snacks for the whole table, taking orders"),
-                Difficulty.Easy)
-            .Card(CardLabel, Pair(
-                "What's the most childish thing you still do — and love?",
-                "Play the rest of this round sitting on the floor like it's story time.",
-                "your chair is gone for one round anyway, AND you lose the moral high ground"),
-                Difficulty.Easy)
-            .Card(CardLabel, Pair(
-                "What song do you secretly know every single word to?",
-                "Sing the chorus of any song — committed, full volume, air instruments included.",
-                "the group picks the song and you HUM it with feeling"),
-                Difficulty.Medium)
+            .Card(CardLabel, Intro, Difficulty.Easy).WithPreActions(a => a
+                .AddButton("Truth", "What's the most embarrassing thing that happened to you as a kid?")
+                .AddButton("Dare", "Do your best impression of another player until someone guesses who.")
+                .AddFooter(Forfeit("you owe the group one round of applause for yourself, standing")))
+            .Card(CardLabel, Intro, Difficulty.Easy).WithPreActions(a => a
+                .AddButton("Truth", "What's your guiltiest pleasure — the one you'd deny in public?")
+                .AddButton("Dare", "Speak in a terrible posh accent until your next turn.")
+                .AddFooter(Forfeit("the group picks your accent for the NEXT two turns instead")))
+            .Card(CardLabel, Intro, Difficulty.Easy).WithPreActions(a => a
+                .AddButton("Truth", "What's the worst haircut, outfit, or phase you've ever committed to?")
+                .AddButton("Dare", "Let the player to your right restyle your hair right now. It stays.")
+                .AddFooter(Forfeit("you must show the group your oldest surviving photo of yourself")))
+            .Card(CardLabel, Intro, Difficulty.Easy).WithPreActions(a => a
+                .AddButton("Truth", "Reveal a secret talent nobody at this table knows about.")
+                .AddButton("Dare", "Demonstrate ANY talent for 20 seconds. Confidence counts as talent.")
+                .AddFooter(Forfeit("hum your own sad exit music while doing a lap of the room")))
+            .Card(CardLabel, Intro, Difficulty.Easy).WithPreActions(a => a
+                .AddButton("Truth", "What's the worst lie you've ever told — and did it work?")
+                .AddButton("Dare", "Tell a 30-second story that's a complete lie; the group votes if it was convincing.")
+                .AddFooter(Forfeit("you must answer the NEXT truth asked of anyone, honestly, as a bonus")))
+            .Card(CardLabel, Intro, Difficulty.Easy).WithPreActions(a => a
+                .AddButton("Truth", "What food do you pretend to like in social situations?")
+                .AddButton("Dare", "Eat a spoonful of a condiment chosen by the group (from what's actually in the kitchen).")
+                .AddFooter(Forfeit("you fetch snacks for the whole table, taking orders")))
+            .Card(CardLabel, Intro, Difficulty.Easy).WithPreActions(a => a
+                .AddButton("Truth", "What's the most childish thing you still do — and love?")
+                .AddButton("Dare", "Play the rest of this round sitting on the floor like it's story time.")
+                .AddFooter(Forfeit("your chair is gone for one round anyway, AND you lose the moral high ground")))
+            .Card(CardLabel, Intro, Difficulty.Medium).WithPreActions(a => a
+                .AddButton("Truth", "What song do you secretly know every single word to?")
+                .AddButton("Dare", "Sing the chorus of any song — committed, full volume, air instruments included.")
+                .AddFooter(Forfeit("the group picks the song and you HUM it with feeling")))
 
             // ── SPOTLIGHT — performance pieces ───────────────────────────────
             .Category(SpotlightCategory)
-            .Card(CardLabel, Pair(
-                "What's a moment you were secretly VERY proud of but never told anyone?",
-                "Deliver a dramatic Oscar acceptance speech for the most mundane thing you did today.",
-                "the group writes your acceptance speech and you read it verbatim"),
-                Difficulty.Medium)
-            .Card(CardLabel, Pair(
-                "Who at this table would you trade lives with for a week, and why?",
-                "Swap seats and IDENTITIES with the player opposite for the next two rounds — answer as them.",
-                "they get to answer YOUR next truth for you"),
-                Difficulty.Medium)
-            .Card(CardLabel, Pair(
-                "What's your most-used excuse — the one you keep in your back pocket?",
-                "Sell the group an object within arm's reach like a late-night TV host. 45 seconds. They vote: sold or not.",
-                "you must genuinely compliment each player's haggling skills, individually"),
-                Difficulty.Medium)
-            .Card(CardLabel, Pair(
-                "Describe your worst date ever — no name needed, all details welcome.",
-                "Reenact, solo, both sides of a disastrous first-date conversation.",
-                "the player to your left narrates their GUESS of your worst date and you may not correct them"),
-                Difficulty.Medium)
-            .Card(CardLabel, Pair(
-                "What's the weirdest thing you've ever googled at 2 a.m.?",
-                "Hand your phone to the player on your right; they read your three most recent emoji aloud, with interpretive commentary.",
-                "you describe your search history's general 'vibe' in three honest words"),
-                Difficulty.Hard)
-            .Card(CardLabel, Pair(
-                "What compliment do you fish for most often?",
-                "Walk the room like a runway model while the group provides fashion-week commentary.",
-                "each player gives you the compliment you clearly wanted — sarcastically"),
-                Difficulty.Medium)
-            .Card(CardLabel, Pair(
-                "If your life had a blooper reel, what moment is definitely on it?",
-                "Reenact your most recent clumsy moment in slow motion with sound effects.",
-                "the table reenacts how they IMAGINE it went and you must applaud"),
-                Difficulty.Medium)
+            .Card(CardLabel, Intro, Difficulty.Medium).WithPreActions(a => a
+                .AddButton("Truth", "What's a moment you were secretly VERY proud of but never told anyone?")
+                .AddButton("Dare", "Deliver a dramatic Oscar acceptance speech for the most mundane thing you did today.")
+                .AddFooter(Forfeit("the group writes your acceptance speech and you read it verbatim")))
+            .Card(CardLabel, Intro, Difficulty.Medium).WithPreActions(a => a
+                .AddButton("Truth", "Who at this table would you trade lives with for a week, and why?")
+                .AddButton("Dare", "Swap seats and IDENTITIES with the player opposite for the next two rounds — answer as them.")
+                .AddFooter(Forfeit("they get to answer YOUR next truth for you")))
+            .Card(CardLabel, Intro, Difficulty.Medium).WithPreActions(a => a
+                .AddButton("Truth", "What's your most-used excuse — the one you keep in your back pocket?")
+                .AddButton("Dare", "Sell the group an object within arm's reach like a late-night TV host. 45 seconds. They vote: sold or not.")
+                .AddFooter(Forfeit("you must genuinely compliment each player's haggling skills, individually")))
+            .Card(CardLabel, Intro, Difficulty.Medium).WithPreActions(a => a
+                .AddButton("Truth", "Describe your worst date ever — no name needed, all details welcome.")
+                .AddButton("Dare", "Reenact, solo, both sides of a disastrous first-date conversation.")
+                .AddFooter(Forfeit("the player to your left narrates their GUESS of your worst date and you may not correct them")))
+            .Card(CardLabel, Intro, Difficulty.Hard).WithPreActions(a => a
+                .AddButton("Truth", "What's the weirdest thing you've ever googled at 2 a.m.?")
+                .AddButton("Dare", "Hand your phone to the player on your right; they read your three most recent emoji aloud, with interpretive commentary.")
+                .AddFooter(Forfeit("you describe your search history's general 'vibe' in three honest words")))
+            .Card(CardLabel, Intro, Difficulty.Medium).WithPreActions(a => a
+                .AddButton("Truth", "What compliment do you fish for most often?")
+                .AddButton("Dare", "Walk the room like a runway model while the group provides fashion-week commentary.")
+                .AddFooter(Forfeit("each player gives you the compliment you clearly wanted — sarcastically")))
+            .Card(CardLabel, Intro, Difficulty.Medium).WithPreActions(a => a
+                .AddButton("Truth", "If your life had a blooper reel, what moment is definitely on it?")
+                .AddButton("Dare", "Reenact your most recent clumsy moment in slow motion with sound effects.")
+                .AddFooter(Forfeit("the table reenacts how they IMAGINE it went and you must applaud")))
 
             // ── CHAOS — the table gets involved ──────────────────────────────
             .Category(ChaosCategory)
-            .Card(CardLabel, Pair(
-                "Rank everyone at this table by who'd survive longest in a zombie film. Justify last place.",
-                "The group strikes a pose; you have 10 seconds to memorise it, then recreate ALL of them in sequence.",
-                "you're officially first eaten in every hypothetical from now on"),
-                Difficulty.Medium)
-            .Card(CardLabel, Pair(
-                "Which player's phone would be the most incriminating to read aloud, and why do you think so?",
-                "Trade one shoe with the player across from you. Wear it until the deck says otherwise.",
-                "BOTH your shoes go in the middle of the table as a monument to cowardice"),
-                Difficulty.Medium)
-            .Card(CardLabel, Pair(
-                "What's a group opinion this table holds that you secretly disagree with?",
-                "For the next three rounds, you must agree — enthusiastically — with everything anyone says.",
-                "the group assigns you an opinion and you must defend it for one minute"),
-                Difficulty.Hard)
-            .Card(CardLabel, Pair(
-                "Who at this table texts back the slowest, and what's your theory about why?",
-                "Send a (harmless, group-approved) text to the last non-player person you messaged, dictated by the table.",
-                "the table drafts the text they WOULD have sent and reads it aloud"),
-                Difficulty.Hard)
-            .Card(CardLabel, Pair(
-                "If this friend group had a reality show, what would the season-one scandal be?",
-                "Improvise the reality-show confessional interview about the player to your left. Camera three is imaginary but unblinking.",
-                "you're the scandal now — the group writes the headline"),
-                Difficulty.Medium)
-            .Card(CardLabel, Pair(
-                "What's something everyone here does that secretly drives you a little mad?",
-                "The group invents a brand-new rule for the game right now; it applies only to you.",
-                "TWO rules. They enjoy this too much."),
-                Difficulty.Hard)
+            .Card(CardLabel, Intro, Difficulty.Medium).WithPreActions(a => a
+                .AddButton("Truth", "Rank everyone at this table by who'd survive longest in a zombie film. Justify last place.")
+                .AddButton("Dare", "The group strikes a pose; you have 10 seconds to memorise it, then recreate ALL of them in sequence.")
+                .AddFooter(Forfeit("you're officially first eaten in every hypothetical from now on")))
+            .Card(CardLabel, Intro, Difficulty.Medium).WithPreActions(a => a
+                .AddButton("Truth", "Which player's phone would be the most incriminating to read aloud, and why do you think so?")
+                .AddButton("Dare", "Trade one shoe with the player across from you. Wear it until the deck says otherwise.")
+                .AddFooter(Forfeit("BOTH your shoes go in the middle of the table as a monument to cowardice")))
+            .Card(CardLabel, Intro, Difficulty.Hard).WithPreActions(a => a
+                .AddButton("Truth", "What's a group opinion this table holds that you secretly disagree with?")
+                .AddButton("Dare", "For the next three rounds, you must agree — enthusiastically — with everything anyone says.")
+                .AddFooter(Forfeit("the group assigns you an opinion and you must defend it for one minute")))
+            .Card(CardLabel, Intro, Difficulty.Hard).WithPreActions(a => a
+                .AddButton("Truth", "Who at this table texts back the slowest, and what's your theory about why?")
+                .AddButton("Dare", "Send a (harmless, group-approved) text to the last non-player person you messaged, dictated by the table.")
+                .AddFooter(Forfeit("the table drafts the text they WOULD have sent and reads it aloud")))
+            .Card(CardLabel, Intro, Difficulty.Medium).WithPreActions(a => a
+                .AddButton("Truth", "If this friend group had a reality show, what would the season-one scandal be?")
+                .AddButton("Dare", "Improvise the reality-show confessional interview about the player to your left. Camera three is imaginary but unblinking.")
+                .AddFooter(Forfeit("you're the scandal now — the group writes the headline")))
+            .Card(CardLabel, Intro, Difficulty.Hard).WithPreActions(a => a
+                .AddButton("Truth", "What's something everyone here does that secretly drives you a little mad?")
+                .AddButton("Dare", "The group invents a brand-new rule for the game right now; it applies only to you.")
+                .AddFooter(Forfeit("TWO rules. They enjoy this too much.")))
 
             // ── HOT SEAT — squirm-grade truths, blush-grade dares ────────────
             .Category(HotSeatCategory)
-            .Card(CardLabel, Pair(
-                "What's the pettiest grudge you are actively still holding?",
-                "Call the player who most recently beat you at anything and formally, flowerily concede.",
-                "you must publicly forgive the grudge — naming it counts"),
-                Difficulty.Hard)
-            .Card(CardLabel, Pair(
-                "What's the closest you've come to getting caught doing something you shouldn't?",
-                "Confess a small, real, never-admitted thing to the group's chosen 'judge', who assigns community service (one silly task).",
-                "the judge assigns the task anyway, doubled, with a gavel sound"),
-                Difficulty.Hard)
-            .Card(CardLabel, Pair(
-                "Whose approval do you want most — and does that person know?",
-                "Text someone (group-approved) a sincere compliment right now and show the send screen.",
-                "you give that compliment to every player here instead, maintaining eye contact"),
-                Difficulty.Hard)
-            .Card(CardLabel, Pair(
-                "What's the most trouble you ever got into that your parents STILL don't know about?",
-                "Let the group scroll exactly one screen of your camera roll (you pick the decade, they pick the direction).",
-                "you describe the single worst photo of you in existence, in loving detail"),
-                Difficulty.Extreme)
-            .Card(CardLabel, Pair(
-                "What's a promise you broke that still bothers you?",
-                "Make one real, small promise to a player of the group's choosing — witnessed, dated, and enforceable at the next game night.",
-                "the group sets the promise AND the penalty for breaking it"),
-                Difficulty.Hard)
+            .Card(CardLabel, Intro, Difficulty.Hard).WithPreActions(a => a
+                .AddButton("Truth", "What's the pettiest grudge you are actively still holding?")
+                .AddButton("Dare", "Call the player who most recently beat you at anything and formally, flowerily concede.")
+                .AddFooter(Forfeit("you must publicly forgive the grudge — naming it counts")))
+            .Card(CardLabel, Intro, Difficulty.Hard).WithPreActions(a => a
+                .AddButton("Truth", "What's the closest you've come to getting caught doing something you shouldn't?")
+                .AddButton("Dare", "Confess a small, real, never-admitted thing to the group's chosen 'judge', who assigns community service (one silly task).")
+                .AddFooter(Forfeit("the judge assigns the task anyway, doubled, with a gavel sound")))
+            .Card(CardLabel, Intro, Difficulty.Hard).WithPreActions(a => a
+                .AddButton("Truth", "Whose approval do you want most — and does that person know?")
+                .AddButton("Dare", "Text someone (group-approved) a sincere compliment right now and show the send screen.")
+                .AddFooter(Forfeit("you give that compliment to every player here instead, maintaining eye contact")))
+            .Card(CardLabel, Intro, Difficulty.Extreme).WithPreActions(a => a
+                .AddButton("Truth", "What's the most trouble you ever got into that your parents STILL don't know about?")
+                .AddButton("Dare", "Let the group scroll exactly one screen of your camera roll (you pick the decade, they pick the direction).")
+                .AddFooter(Forfeit("you describe the single worst photo of you in existence, in loving detail")))
+            .Card(CardLabel, Intro, Difficulty.Hard).WithPreActions(a => a
+                .AddButton("Truth", "What's a promise you broke that still bothers you?")
+                .AddButton("Dare", "Make one real, small promise to a player of the group's choosing — witnessed, dated, and enforceable at the next game night.")
+                .AddFooter(Forfeit("the group sets the promise AND the penalty for breaking it")))
 
             // ── LEGENDS — the cards people talk about next week ──────────────
             .Category(LegendsCategory)
-            .Card(CardLabel, Pair(
-                "What is your single most embarrassing moment — the crown jewel, the one you'd delete from history?",
-                "The group has one minute to design a dare using only what's in this room. You've already agreed.",
-                "you tell the SECOND most embarrassing moment AND do a lap of honour"),
-                Difficulty.Extreme)
-            .Card(CardLabel, Pair(
-                "If everyone here heard your internal monologue for one hour today, what would you owe apologies for?",
-                "Perform one minute of interpretive dance titled 'My Week'. The group must guess three events from it.",
-                "the group performs 'Your Week' AS THEY IMAGINE IT and you may not defend yourself"),
-                Difficulty.Extreme)
-            .Card(CardLabel, Pair(
-                "What's the biggest risk you never took — and what do you think was on the other side of it?",
-                "Do the thing you always say you'd do 'if I wasn't so embarrassed' — right now, 30-second version.",
-                "you must toast, out loud, to the risk you'll take before next game night. Witnessed."),
-                Difficulty.Extreme)
-            .Card(CardLabel, Pair(
-                "Tell the story you've been saving — the one that starts 'okay but you can't tell anyone'.",
-                "Trust fall. The group catches. (The group MUST catch. That's the real dare and it's theirs.)",
-                "you owe the story at the NEXT game night, and it accrues interest"),
-                Difficulty.Extreme)
+            .Card(CardLabel, Intro, Difficulty.Extreme).WithPreActions(a => a
+                .AddButton("Truth", "What is your single most embarrassing moment — the crown jewel, the one you'd delete from history?")
+                .AddButton("Dare", "The group has one minute to design a dare using only what's in this room. You've already agreed.")
+                .AddFooter(Forfeit("you tell the SECOND most embarrassing moment AND do a lap of honour")))
+            .Card(CardLabel, Intro, Difficulty.Extreme).WithPreActions(a => a
+                .AddButton("Truth", "If everyone here heard your internal monologue for one hour today, what would you owe apologies for?")
+                .AddButton("Dare", "Perform one minute of interpretive dance titled 'My Week'. The group must guess three events from it.")
+                .AddFooter(Forfeit("the group performs 'Your Week' AS THEY IMAGINE IT and you may not defend yourself")))
+            .Card(CardLabel, Intro, Difficulty.Extreme).WithPreActions(a => a
+                .AddButton("Truth", "What's the biggest risk you never took — and what do you think was on the other side of it?")
+                .AddButton("Dare", "Do the thing you always say you'd do 'if I wasn't so embarrassed' — right now, 30-second version.")
+                .AddFooter(Forfeit("you must toast, out loud, to the risk you'll take before next game night. Witnessed.")))
+            .Card(CardLabel, Intro, Difficulty.Extreme).WithPreActions(a => a
+                .AddButton("Truth", "Tell the story you've been saving — the one that starts 'okay but you can't tell anyone'.")
+                .AddButton("Dare", "Trust fall. The group catches. (The group MUST catch. That's the real dare and it's theirs.)")
+                .AddFooter(Forfeit("you owe the story at the NEXT game night, and it accrues interest")))
 
             // ── RESTRICTED SUBSET — appears only when the table qualifies ────
-            .Card(CardLabel, Pair(
-                "What did you ACTUALLY think after your first date with your partner?",
-                "Recreate your partner's most characteristic gesture until they admit it's accurate.",
-                "your partner answers the truth FOR you, and their version is now canon"),
-                Difficulty.Medium, restriction: couplesOnly)
-            .Card(CardLabel, Pair(
-                "What's one thing your partner does that you'll never admit you find adorable? Admit it.",
-                "Serenade your partner with 15 seconds of any song, hand on heart, full sincerity.",
-                "your partner picks the song and conducts you"),
-                Difficulty.Hard, restriction: couplesOnly)
-            .Card(CardLabel, Pair(
-                "What's the real story of your wildest night out — the unabridged edition?",
-                "Reenact, PG-13 and solo, the dance move that defined your going-out era.",
-                "the group rates your going-out era from its surviving photos. You provide one."),
-                Difficulty.Hard, restriction: adultsOnly)
-            .Card(CardLabel, Pair(
-                "What's the most money you've ever spent on something you never told anyone about?",
-                "Show the group your most shameful recent purchase in your order history (one item, your pick of app).",
-                "the group guesses the amount, loudly, until you confirm hot or cold"),
-                Difficulty.Extreme, restriction: adultsOnly)
+            .Card(CardLabel, Intro, Difficulty.Medium, restriction: couplesOnly).WithPreActions(a => a
+                .AddButton("Truth", "What did you ACTUALLY think after your first date with your partner?")
+                .AddButton("Dare", "Recreate your partner's most characteristic gesture until they admit it's accurate.")
+                .AddFooter(Forfeit("your partner answers the truth FOR you, and their version is now canon")))
+            .Card(CardLabel, Intro, Difficulty.Hard, restriction: couplesOnly).WithPreActions(a => a
+                .AddButton("Truth", "What's one thing your partner does that you'll never admit you find adorable? Admit it.")
+                .AddButton("Dare", "Serenade your partner with 15 seconds of any song, hand on heart, full sincerity.")
+                .AddFooter(Forfeit("your partner picks the song and conducts you")))
+            .Card(CardLabel, Intro, Difficulty.Hard, restriction: adultsOnly).WithPreActions(a => a
+                .AddButton("Truth", "What's the real story of your wildest night out — the unabridged edition?")
+                .AddButton("Dare", "Reenact, PG-13 and solo, the dance move that defined your going-out era.")
+                .AddFooter(Forfeit("the group rates your going-out era from its surviving photos. You provide one.")))
+            .Card(CardLabel, Intro, Difficulty.Extreme, restriction: adultsOnly).WithPreActions(a => a
+                .AddButton("Truth", "What's the most money you've ever spent on something you never told anyone about?")
+                .AddButton("Dare", "Show the group your most shameful recent purchase in your order history (one item, your pick of app).")
+                .AddFooter(Forfeit("the group guesses the amount, loudly, until you confirm hot or cold")))
 
             .Build();
 
@@ -304,15 +275,10 @@ public static class TruthOrDareCardBank
     }
 
     /// <summary>
-    /// Composes one card's body in the shape
-    /// <c>TableTop.Hosting.TruthOrDareCards</c> parses: an intro, a
-    /// <c>TRUTH:</c> line, a <c>DARE:</c> line, then the chicken-clause
-    /// forfeit — so the gameplay screen can hide both halves until the player
-    /// declares one out loud, same as the physical game.
+    /// Wraps a card's forfeit fragment in the chicken-clause sentence
+    /// <c>WithPreActions</c> then prefixes with <c>Chicken clause:</c> — the
+    /// exact wording <c>TableTop.Hosting.TruthOrDareCards</c> strips back off.
     /// </summary>
-    private static string Pair(string truth, string dare, string forfeit) =>
-        "The reader asks: \"Truth or dare?\" — declare OUT LOUD before hearing either.\n\n" +
-        "TRUTH: " + truth + "\n\n" +
-        "DARE: " + dare + "\n\n" +
-        "Chicken clause: back out after hearing your pick, and " + forfeit + ".";
+    private static string Forfeit(string consequence) =>
+        "back out after hearing your pick, and " + consequence + ".";
 }
