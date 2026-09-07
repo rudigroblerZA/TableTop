@@ -131,6 +131,13 @@ public sealed class RoasterViewModel : ViewModelBase
     public ObservableCollection<SavedPlayer> ConfiguredPlayers { get; } = [];
 
     /// <summary>Gender choices for the player-entry picker — "" reads as unspecified.</summary>
+    /// <remarks>
+    /// An <b>instance</b> property, not static, and that is load-bearing:
+    /// <c>{Binding}</c> resolves against the instance on both XAML heads, so a
+    /// static one binds to nothing and the picker renders EMPTY. CA1822 will
+    /// suggest making it static — it is wrong here, and
+    /// <c>check-xaml-bindings.py</c> fails when that suggestion is taken.
+    /// </remarks>
     public IReadOnlyList<string> GenderOptions => GenderChoices;
 
     private string _newPlayerName = "";
