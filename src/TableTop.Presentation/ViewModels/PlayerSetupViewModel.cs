@@ -59,7 +59,16 @@ public sealed class PlayerSetupViewModel : ViewModelBase
     public IGameMode Mode => _mode;
 
     /// <summary>Selectable gender values; empty string means unspecified.</summary>
-    public static IReadOnlyList<string> GenderOptions => GenderChoices;
+    /// <remarks>
+    /// An <b>instance</b> property, not static, and that is load-bearing:
+    /// <c>{Binding}</c> resolves against the instance on both XAML heads, so a
+    /// static one binds to nothing and the gender picker renders EMPTY. CA1822
+    /// will suggest making it static — it is wrong here, and
+    /// <c>check-xaml-bindings.py</c> plus
+    /// <c>BindableSurfaceTests.GenderOptions_IsAnInstanceProperty_OnTheSharedViewModel</c>
+    /// both fail when that suggestion is taken.
+    /// </remarks>
+    public IReadOnlyList<string> GenderOptions => GenderChoices;
 
     /// <summary>Adds the pending entry to <see cref="Players"/>.</summary>
     public ICommand AddPlayerCommand { get; }
