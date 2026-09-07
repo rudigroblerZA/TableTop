@@ -85,6 +85,8 @@ public static class RankThisCardBank
         R(SillyCategory, "How hilarious would it be if everyone walked backwards on Tuesdays?", Difficulty.Easy),
         R(SillyCategory, "How good of a career choice is professional pillow fort architect?", Difficulty.Easy),
         R(SillyCategory, "How much would you enjoy living in a house made entirely of cheese?", Difficulty.Medium),
+        R(SillyCategory, "How good an idea is a doorbell that only plays kazoo music?", Difficulty.Easy),
+        R(SillyCategory, "How chaotic would a world without knees be?", Difficulty.Medium),
 
         // ── PREFERENCE ───────────────────────────────────────────────────────
         R(PreferenceCategory, "How much do you like pineapple on pizza?", Difficulty.Easy),
@@ -97,6 +99,8 @@ public static class RankThisCardBank
         R(PreferenceCategory, "How much do you love the smell of fresh bread?", Difficulty.Easy),
         R(PreferenceCategory, "How much do you enjoy early mornings?", Difficulty.Easy),
         R(PreferenceCategory, "How much would you want to live in a big city?", Difficulty.Medium),
+        R(PreferenceCategory, "How much do you prefer window seats over aisle seats?", Difficulty.Easy),
+        R(PreferenceCategory, "How much would you rather text than call?", Difficulty.Easy),
 
         // ── VALUES ────────────────────────────────────────────────────────────
         R(ValuesCategory, "How important is honesty, even when it hurts?", Difficulty.Hard),
@@ -107,6 +111,8 @@ public static class RankThisCardBank
         R(ValuesCategory, "How much do you believe everything happens for a reason?", Difficulty.Hard),
         R(ValuesCategory, "How important is ambition in living a good life?", Difficulty.Medium),
         R(ValuesCategory, "How much do you think forgiveness is stronger than holding a grudge?", Difficulty.Hard),
+        R(ValuesCategory, "How important is keeping a promise, even a small one?", Difficulty.Medium),
+        R(ValuesCategory, "How much does loyalty matter to you over honesty?", Difficulty.Hard),
 
         // ── SCARY ────────────────────────────────────────────────────────────
         R(ScaryCategory, "How scary would it be to wake up with no memory?", Difficulty.Medium),
@@ -115,6 +121,8 @@ public static class RankThisCardBank
         R(ScaryCategory, "How scary is deep water?", Difficulty.Easy),
         R(ScaryCategory, "How frightening would it be to make a huge mistake at work?", Difficulty.Medium),
         R(ScaryCategory, "How scary is the idea of being truly alone?", Difficulty.Hard),
+        R(ScaryCategory, "How unsettling would it be to hear your own voice on an answering machine you don't remember leaving?", Difficulty.Medium),
+        R(ScaryCategory, "How scary is the idea of moving somewhere you know nobody?", Difficulty.Medium),
 
         // ── WEIRD ────────────────────────────────────────────────────────────
         R(WeirdCategory, "How weird would it be if mirrors showed your future instead of your reflection?", Difficulty.Medium),
@@ -122,6 +130,8 @@ public static class RankThisCardBank
         R(WeirdCategory, "How bizarre would it be if you could taste colours?", Difficulty.Medium),
         R(WeirdCategory, "How odd would it be if plants could communicate with you?", Difficulty.Medium),
         R(WeirdCategory, "How unusual would it be if your shadow had a mind of its own?", Difficulty.Medium),
+        R(WeirdCategory, "How strange would it be if every door led somewhere different each time?", Difficulty.Medium),
+        R(WeirdCategory, "How odd would it be if your reflection was always one second behind you?", Difficulty.Medium),
     ];
 
     private static ICard R(string category, string prompt, Difficulty d) =>
