@@ -1080,6 +1080,10 @@ sealed class TableTop.Core.Domain.Scoring.FixedScoringStrategy
     .ctor(Int32 pointsPerCompletion = default)
     Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome, Nullable<TimeSpan> elapsed = default)
     String Name { get; }
+sealed class TableTop.Core.Domain.Scoring.RiskRewardScoringStrategy
+    .ctor(IScoringStrategy baseStrategy, Double failurePenaltyRatio = default)
+    Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome, Nullable<TimeSpan> elapsed = default)
+    String Name { get; }
 sealed class TableTop.Core.Domain.Scoring.StreakScoringStrategy
     .ctor(IScoringStrategy baseStrategy, Int32 streakMultiplier = default)
     Int32 CalculateScore(ICard card, IPlayer player, CardOutcome outcome, Nullable<TimeSpan> elapsed = default)
@@ -1152,6 +1156,7 @@ static class TableTop.Core.TableTopDefaults+Manifest
     Int32 SecondsPerCardMax
     Int32 SecondsPerCardMin
 static class TableTop.Core.TableTopDefaults+Scoring
+    Double FailurePenaltyRatio
     Int32 PointsPerCompletion
     Int32 SkipPenalty
     Int32 StreakMultiplier

@@ -45,15 +45,23 @@ internal sealed class ConsoleGameLauncher
     private readonly IPlayerRepository _repository;
     private readonly IRosterRepository _rosterRepository;
     private readonly IControllerFactory _controllerFactory;
+    private readonly FavouritesService? _favourites;
 
+    /// <param name="favourites">
+    /// Starred modes, already loaded. Null disables the feature and the picker
+    /// hides its star column entirely — see <c>ConsoleArchetypePicker._favourites</c>
+    /// for why absent and empty are kept distinguishable.
+    /// </param>
     public ConsoleGameLauncher(
         IPlayerRepository? repository = null,
         IControllerFactory? controllerFactory = null,
-        IRosterRepository? rosterRepository = null)
+        IRosterRepository? rosterRepository = null,
+        FavouritesService? favourites = null)
     {
         _repository = repository ?? new JsonPlayerRepository();
         _rosterRepository = rosterRepository ?? new JsonRosterRepository();
         _controllerFactory = controllerFactory ?? new ControllerFactory();
+        _favourites = favourites;
         SeedDefaultsIfEmpty();
     }
 
@@ -68,7 +76,7 @@ internal sealed class ConsoleGameLauncher
 
             // Build archetype registry (includes any JSON modes from ./modes/)
             var registry = BuildRegistry();
-            var mode = ConsoleArchetypePicker.Run(registry);
+            var mode = ConsoleArchetypePicker.Run(registry, _favourites);
             if (mode is null) break;
 
             var suitability = TableSuitability.Check(mode, players);

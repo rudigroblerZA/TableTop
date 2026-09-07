@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using TableTop.Core.Abstractions.Cards;
 
 namespace TableTop.Core.Domain.Decks;
@@ -8,7 +9,7 @@ namespace TableTop.Core.Domain.Decks;
 /// </summary>
 public sealed class InMemoryCardProvider : ICardProvider
 {
-    private readonly IReadOnlyList<ICard> _cards;
+    private readonly ReadOnlyCollection<ICard> _cards;
 
     /// <summary>Initialises a new <see cref="InMemoryCardProvider"/> instance.</summary>
     public InMemoryCardProvider(IEnumerable<ICard> cards)
@@ -19,5 +20,5 @@ public sealed class InMemoryCardProvider : ICardProvider
 
     /// <inheritdoc />
     public Task<IReadOnlyList<ICard>> GetCardsAsync(CancellationToken cancellationToken = default) =>
-        Task.FromResult(_cards);
+        Task.FromResult<IReadOnlyList<ICard>>(_cards);
 }

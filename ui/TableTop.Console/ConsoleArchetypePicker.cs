@@ -19,11 +19,27 @@ internal static class ConsoleArchetypePicker
     /// Runs the full archetype → sub-archetype → game selection flow.
     /// Returns the chosen <see cref="IGameMode"/>, or null if the user quits.
     /// </summary>
-    public static IGameMode? Run(IArchetypeRegistry registry)
+    public static IGameMode? Run(IArchetypeRegistry registry, FavouritesService? favourites = null)
     {
+        _favourites = favourites;
         var mode = PickFromArchetype(registry.RootArchetypes, isRoot: true);
         return mode;
     }
+
+    /// <summary>
+    /// The starred-modes service for this run, or null when the host did not
+    /// supply one.
+    ///
+    /// <para>
+    /// Static because the picker is, and the picker is static because it holds
+    /// no other state. Nullable rather than a null-object because the whole
+    /// favourites row disappears when it is absent — there is a visible
+    /// difference between "no favourites yet" and "this host does not do
+    /// favourites", and collapsing the two would show players a Favourites
+    /// entry that could never fill up.
+    /// </para>
+    /// </summary>
+    private static FavouritesService? _favourites;
 
     // ── Step 1: root archetype ────────────────────────────────────────────────
 
@@ -132,28 +148,97 @@ internal static class ConsoleArchetypePicker
             return null;
         }
 
-        ConsoleUi.Clear();
-        ConsoleUi.Banner();
-        ConsoleUi.SectionHeader($"SELECT GAME — {categoryName.ToUpperInvariant()}");
+        // Re-ordered once, outside the loop. Doing it per redraw would renumber
+        // the list under the player the instant they starred something — they
+        // would type "3" expecting what was on row 3 a second ago.
+        var ordered = _favourites?.FavouritesFirst(modes) ?? modes;
 
-        for (var i = 0; i < modes.Count; i++)
+        while (true)
         {
-            SC.ForegroundColor = CC.Cyan;
-            SC.Write($"  {i + 1}.  {modes[i].Name}");
-            SC.ResetColor();
+            ConsoleUi.Clear();
+            ConsoleUi.Banner();
+            ConsoleUi.SectionHeader($"SELECT GAME — {categoryName.ToUpperInvariant()}");
+
+            for (var i = 0; i < ordered.Count; i++)
+                PrintGameRow(i + 1, ordered[i]);
+
+            SC.WriteLine();
             SC.ForegroundColor = CC.DarkGray;
-            SC.WriteLine($"  —  {modes[i].Description}");
+            SC.WriteLine("  0. Back");
+            if (_favourites is not null)
+                SC.WriteLine("  f<number>. Star or unstar a game (e.g. f3)");
             SC.ResetColor();
+            SC.WriteLine();
+
+            // Not PromptInt: it accepts only a number, and the star command has
+            // to share this prompt. The numeric path below reproduces
+            // PromptInt's contract exactly, EOF handling included — without it a
+            // piped run would spin here forever, which PromptInt's own remarks
+            // record as a real bug rather than a hypothetical one.
+            var raw = ConsoleUi.Prompt($"Your choice (0-{ordered.Count}):");
+
+            if (ConsoleUi.InputEnded)
+            {
+                ConsoleUi.PrintError("Input ended; going back.");
+                return null;
+            }
+
+            if (_favourites is not null &&
+                raw.StartsWith('f') &&
+                int.TryParse(raw.AsSpan(1), out var star) &&
+                star >= 1 && star <= ordered.Count)
+            {
+                ToggleFavourite(ordered[star - 1]);
+                continue;
+            }
+
+            if (int.TryParse(raw, out var choice) && choice >= 0 && choice <= ordered.Count)
+                return choice == 0 ? null : ordered[choice - 1];
+
+            ConsoleUi.PrintError($"Please enter 0-{ordered.Count}" +
+                (_favourites is not null ? ", or f followed by a number to star one." : "."));
+            ConsoleUi.PressEnterToContinue();
         }
+    }
 
-        SC.WriteLine();
-        SC.ForegroundColor = CC.DarkGray;
-        SC.WriteLine("  0. Back");
+    /// <summary>Prints one game row, starred ones marked and highlighted.</summary>
+    private static void PrintGameRow(int number, IGameMode mode)
+    {
+        var starred = _favourites?.IsFavourite(mode) == true;
+
+        SC.ForegroundColor = starred ? CC.Yellow : CC.Cyan;
+        SC.Write($"  {number}.  {(starred ? "★ " : "")}{mode.Name}");
         SC.ResetColor();
-        SC.WriteLine();
+        SC.ForegroundColor = CC.DarkGray;
+        SC.WriteLine($"  —  {mode.Description}");
+        SC.ResetColor();
+    }
 
-        var choice = ConsoleUi.PromptInt("Your choice", 0, modes.Count);
-        return choice == 0 ? null : modes[choice - 1];
+    /// <summary>
+    /// Stars or unstars a mode, reporting a write failure rather than swallowing
+    /// it — <c>FavouritesService</c> rolls the in-memory change back when the
+    /// save throws, so staying silent would show the star reverting for no
+    /// visible reason.
+    /// </summary>
+    private static void ToggleFavourite(IGameMode mode)
+    {
+        try
+        {
+            var nowFavourite = _favourites!.ToggleAsync(mode).GetAwaiter().GetResult();
+            ConsoleUi.PrintMessage(nowFavourite
+                ? $"★ {mode.Name} added to favourites."
+                : $"{mode.Name} removed from favourites.");
+        }
+        catch (IOException ex)
+        {
+            ConsoleUi.PrintError($"Could not save favourites: {ex.Message}");
+            ConsoleUi.PressEnterToContinue();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            ConsoleUi.PrintError($"Could not save favourites: {ex.Message}");
+            ConsoleUi.PressEnterToContinue();
+        }
     }
 
     // ── Display helpers ───────────────────────────────────────────────────────

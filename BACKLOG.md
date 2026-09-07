@@ -1199,6 +1199,40 @@ verified by a device run — no emulator was started.
 
 ---
 
+### X.8 — Three heads cannot record a failed attempt, so the press-your-luck mechanic is Console-only
+
+`RiskRewardScoringStrategy` (1.40.0) is the only scoring strategy in the engine
+that can subtract points, and it does so on `CardOutcome.Failed`. Only the
+Console head ever produces that outcome:
+
+```
+ui/TableTop.Console/ConsoleCardTurnRenderer.cs:170   case "f": _controller.RecordOutcome(CardOutcome.Failed);
+ui/TableTop.Console/ConsoleSchoolRenderer.cs:258     _controller.RecordOutcome(CardOutcome.Failed);
+```
+
+WinUI, MAUI and native Android all drive `CardTurnGameViewModel`, which exposes
+`CompleteCommand` and `SkipCommand` and nothing else. There is no third command
+to bind, so on those three heads a wrong answer can only be recorded as a skip —
+and a skip is free by design. **Hypothesis!** therefore scores as plain
+difficulty-based scoring everywhere except Console.
+
+**This degrades rather than breaks**, which is why it is here and not in `Now`:
+players get the mode, they just do not get the penalty half of it, and no score
+is ever wrong for the outcome it was given.
+
+**Why it was not fixed in the same change.** The obvious move — add a
+`FailCommand` to `CardTurnGameViewModel` — creates an `ICommand` that no head
+binds. That is the same dead-surface trap as the `TimerExpired` event that was
+documented as "raised by an external timer component" while being unraisable by
+anyone. Surface with no consumer reads as support that exists.
+
+**What closing this looks like:** `FailCommand` on the shared ViewModel, a
+`FailLabel` on `BaseGameModeDefinition` alongside `CompleteLabel`/`SkipLabel`
+(virtual, defaulting to "Failed", so no mode is forced to care), and a third
+button on each head's card-turn screen. `HypothesisMode` already labels its skip
+"Pass" rather than "Got It Wrong" in anticipation — the two are different
+outcomes worth different amounts, and only Console can currently tell them apart.
+
 ## Later
 
 ### L.1 — Coverage floors, now that there is a real number — **FIXED**

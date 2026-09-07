@@ -45,6 +45,14 @@ public static class TableTopDefaults
 
         /// <summary>Multiplier applied to a scoring streak.</summary>
         public const int StreakMultiplier = 2;
+
+        /// <summary>
+        /// Share of a card's would-be reward lost when a player attempts it and
+        /// fails, under <c>RiskRewardScoringStrategy</c>. 1.0 risks exactly what
+        /// was on offer, which is the version that makes the attempt/decline
+        /// choice a coin-flip at even odds.
+        /// </summary>
+        public const double FailurePenaltyRatio = 1.0;
     }
 
     /// <summary>

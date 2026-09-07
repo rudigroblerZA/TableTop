@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Decks;
 using TableTop.Core.Abstractions.Players;
@@ -76,7 +77,7 @@ public sealed class DifficultyProgressionStrategy : IProgressionStrategy
 /// </summary>
 public sealed class CategoryProgressionStrategy : IProgressionStrategy
 {
-    private readonly IReadOnlyList<string> _categories;
+    private readonly ReadOnlyCollection<string> _categories;
     private int _categoryIndex;
 
     /// <summary>Initialises a new <see cref="CategoryProgressionStrategy"/> instance.</summary>

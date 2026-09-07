@@ -126,6 +126,7 @@ public sealed class ArchetypeRegistry : IArchetypeRegistry
             new("classroom.oddoneout",  "Odd One Out",        "Four things, one impostor — everyone points on three, then flip for the rule.",        "🔍", new List<IGameMode> { new OddOneOutMode()        }.AsReadOnly(), null, AgeRating.AllAges),
             new("classroom.logiclab",   "Logic Lab",          "Riddles, deductions, sequences, and liars — pure reasoning, answers explained on the flip.", "🧠", new List<IGameMode> { new LogicLabMode()         }.AsReadOnly(), null, AgeRating.AllAges),
             new("classroom.explainitback", "Explain It Back", "Teach the concept in your own words. They answer the Check — you're graded on whether it landed.", "🎓", new List<IGameMode> { new ExplainItBackMode() }.AsReadOnly(), null, AgeRating.AllAges),
+            new("classroom.hypothesis", "Hypothesis!",     "Predict what happens before the flip, then explain why — the mechanism is the real answer.", "🧪", new List<IGameMode> { new HypothesisMode() }.AsReadOnly(), null, AgeRating.AllAges),
             new("classroom.icebreakers","Icebreakers", "Conversation starters and gentle get-to-know-you games.",                 "🤝", new List<IGameMode> { new GetToKnowYouMode(), new WouldYouRatherMode() }.AsReadOnly(), null, AgeRating.AllAges),
         };
 
@@ -202,6 +203,7 @@ public sealed class ArchetypeRegistry : IArchetypeRegistry
             new("fun.forbidden",   "Forbidden Words",   "Describe the word without saying the three words you most want to say.",            "🚫", new List<IGameMode> { new ForbiddenWordsMode() }.AsReadOnly(), null, AgeRating.AllAges),
             new("fun.superpowers", "Useless Superpowers", "Draw a terrible power, then pitch why it makes you the greatest hero alive.",       "🦸", new List<IGameMode> { new UselessSuperpowersMode() }.AsReadOnly(), null, AgeRating.AllAges),
             new("fun.onestar",     "One-Star Reviews",    "Deliver a scathing one-star review of something universally beloved.",              "⭐", new List<IGameMode> { new OneStarReviewsMode()     }.AsReadOnly(), null, AgeRating.AllAges),
+            new("fun.pitch",       "The Pitch",           "Thirty seconds to sell something nobody wants — and the card picks the angle you must take.", "💡", new List<IGameMode> { new ThePitchMode()          }.AsReadOnly(), null, AgeRating.AllAges),
             new("fun.alibi",       "Alibi",               "A silly crime, two suspects, one hastily agreed alibi — questioned separately.",     "🚨", new List<IGameMode> { new AlibiMode()              }.AsReadOnly(), null, AgeRating.AllAges),
             new("fun.slang",       "Slang Check",         "Hot-seat quiz of internet and dating slang — 15 rungs from 'rizz' to the deep cuts.", "💬", new List<IGameMode> { new SlangCheckMode()         }.AsReadOnly(), null, AgeRating.Teen),
             new("fun.sixtyseconds", "60 Seconds",          "One category, one sixty-second window — name as many as you can before the clock runs out.", "⏱️", new List<IGameMode> { new SixtySecondsMode()       }.AsReadOnly(), null, AgeRating.AllAges),
@@ -259,6 +261,7 @@ public sealed class ArchetypeRegistry : IArchetypeRegistry
                     new("couples.connection.lovelanguages", "Love Languages",      "Forty statements on how you each receive affection. No winner — you get a ranking, then you compare.", "💞", new List<IGameMode> { new LoveLanguagesMode() }.AsReadOnly(), null, AgeRating.Teen),
                     new("couples.connection.dynamics",     "Between the Two of You","A self-knowledge quiz on the dynamics of intimacy — lead/follow, give/receive, and more. Find your leans, then grow together.", "🧭", new List<IGameMode> { new BetweenTheTwoOfYouMode() }.AsReadOnly(), null, AgeRating.Adult),
                     new("couples.connection.cartographers","The Cartographers",    "Draw one map of your relationship as a country — terrain, cities, names, and the parts still unexplored. Keep the map.", "🗺️", new List<IGameMode> { new CartographersMode()      }.AsReadOnly(), null, AgeRating.Teen),
+                    new("couples.connection.houserules",  "House Rules",          "The practical deck — money, mess, time, families and the future. Both answer, then write down one rule you would both keep.", "🏠", new List<IGameMode> { new HouseRulesMode() }.AsReadOnly(), null, AgeRating.Teen),
                 }.AsReadOnly()),
 
             // ── Dares ─────────────────────────────────────────────────────────

@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using TableTop.Core.Abstractions;
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Players;
@@ -13,7 +14,7 @@ namespace TableTop.Core.Domain.Rules;
 /// </summary>
 public sealed class RuleEvaluator : IRuleEvaluator
 {
-    private readonly IReadOnlyList<IRule> _rules;
+    private readonly ReadOnlyCollection<IRule> _rules;
     private readonly IEngineDiagnostics _diagnostics;
 
     /// <summary>Creates a RuleEvaluator with the default no-op diagnostics.</summary>

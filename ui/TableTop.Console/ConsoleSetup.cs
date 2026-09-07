@@ -202,6 +202,8 @@ internal static class ConsolePlayerSetup
 /// <summary>Prompts the user to choose a progression strategy.</summary>
 internal static class ConsoleGameSetup
 {
+    private static readonly string[] CyclingCategories = ["Truth", "Dare"];
+
     public static TableTop.Core.Abstractions.Progression.IProgressionStrategy ChooseProgression()
     {
         ConsoleUi.PrintMessage("Choose card progression:");
@@ -219,7 +221,7 @@ internal static class ConsoleGameSetup
             3 => new RandomProgressionStrategy(),
             4 => new LinearProgressionStrategy(),
             5 => new ScoreBasedProgressionStrategy(),
-            6 => new CategoryProgressionStrategy(["Truth", "Dare"]),
+            6 => new CategoryProgressionStrategy(CyclingCategories),
             _ => new FlowAwareProgressionStrategy()
         };
     }
