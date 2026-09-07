@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TruthOrDare.LobbyPage"
+             BackgroundColor="#1A1A19"
+             Shell.NavBarIsVisible="False">
+
+    <!--
+        Fonts: register in MauiProgram.CreateMauiApp()
+            fonts.AddFont("Anton-Regular.ttf", "Anton");
+            fonts.AddFont("BarlowCondensed-Regular.ttf", "Condensed");
+            fonts.AddFont("BarlowCondensed-Medium.ttf", "CondensedMedium");
+            fonts.AddFont("tabler-icons.ttf", "Tabler");
+
+        CornerRadius order in MAUI is top-left, top-right, BOTTOM-LEFT, bottom-right —
+        not the CSS order. The values below are already converted.
+    -->
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Ink">#F1EFE8</Color>
+            <Color x:Key="Muted">#888780</Color>
+            <Color x:Key="Slab">#2C2C2A</Color>
+            <Color x:Key="SlabQuiet">#222221</Color>
+            <Color x:Key="TruthLight">#AFA9EC</Color>
+            <Color x:Key="TruthDark">#26215C</Color>
+            <Color x:Key="DareLight">#F0997B</Color>
+            <Color x:Key="DareDark">#4A1B0C</Color>
+            <Color x:Key="MintLight">#5DCAA5</Color>
+            <Color x:Key="MintDark">#04342C</Color>
+
+            <Style x:Key="Display" TargetType="Label">
+                <Setter Property="FontFamily" Value="Anton" />
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+            </Style>
+
+            <Style x:Key="Eyebrow" TargetType="Label">
+                <Setter Property="FontFamily" Value="Condensed" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="CharacterSpacing" Value="2" />
+                <Setter Property="TextColor" Value="{StaticResource Muted}" />
+            </Style>
+
+            <Style x:Key="Initials" TargetType="Label">
+                <Setter Property="FontFamily" Value="CondensedMedium" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <Style x:Key="PlayerRow" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="{StaticResource Slab}" />
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="Padding" Value="16,12" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,10,20,24" Spacing="0">
+
+            <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,20">
+                <Label Grid.Column="0" Text="&#xea60;" FontFamily="Tabler" FontSize="22"
+                       TextColor="#B4B2A9" VerticalOptions="Center" />
+                <Label Grid.Column="2" Text="&#xeb20;" FontFamily="Tabler" FontSize="20"
+                       TextColor="#B4B2A9" VerticalOptions="Center" />
+            </Grid>
+
+            <Label Style="{StaticResource Display}" Text="Truth" FontSize="58"
+                   TextColor="{StaticResource TruthLight}" LineHeight="0.92" />
+            <Label Style="{StaticResource Display}" Text="or" FontSize="58"
+                   TextColor="#5F5E5A" LineHeight="0.92" />
+            <Label Style="{StaticResource Display}" Text="dare" FontSize="58"
+                   TextColor="{StaticResource DareLight}" LineHeight="0.92"
+                   Margin="0,0,0,26" />
+
+            <Label Style="{StaticResource Eyebrow}" Text="3 players" Margin="0,0,0,10" />
+
+            <VerticalStackLayout Spacing="2" Margin="0,0,0,24">
+
+                <Border Style="{StaticResource PlayerRow}" StrokeShape="RoundRectangle 14,14,2,2">
+                    <Grid ColumnDefinitions="32,*" ColumnSpacing="12">
+                        <Border Grid.Column="0" WidthRequest="32" HeightRequest="32"
+                                StrokeThickness="0" StrokeShape="Ellipse"
+                                BackgroundColor="{StaticResource TruthLight}">
+                            <Label Style="{StaticResource Initials}" Text="MA"
+                                   TextColor="{StaticResource TruthDark}" />
+                        </Border>
+                        <Label Grid.Column="1" Style="{StaticResource Display}" Text="Maya"
+                               FontSize="22" VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource PlayerRow}" StrokeShape="RoundRectangle 2">
+                    <Grid ColumnDefinitions="32,*" ColumnSpacing="12">
+                        <Border Grid.Column="0" WidthRequest="32" HeightRequest="32"
+                                StrokeThickness="0" StrokeShape="Ellipse"
+                                BackgroundColor="{StaticResource DareLight}">
+                            <Label Style="{StaticResource Initials}" Text="TS"
+                                   TextColor="{StaticResource DareDark}" />
+                        </Border>
+                        <Label Grid.Column="1" Style="{StaticResource Display}" Text="Tshepo"
+                               FontSize="22" VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource PlayerRow}" StrokeShape="RoundRectangle 2">
+                    <Grid ColumnDefinitions="32,*" ColumnSpacing="12">
+                        <Border Grid.Column="0" WidthRequest="32" HeightRequest="32"
+                                StrokeThickness="0" StrokeShape="Ellipse"
+                                BackgroundColor="{StaticResource MintLight}">
+                            <Label Style="{StaticResource Initials}" Text="JO"
+                                   TextColor="{StaticResource MintDark}" />
+                        </Border>
+                        <Label Grid.Column="1" Style="{StaticResource Display}" Text="Jonas"
+                               FontSize="22" VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource PlayerRow}"
+                        BackgroundColor="{StaticResource SlabQuiet}"
+                        StrokeShape="RoundRectangle 2,2,14,14">
+                    <Grid ColumnDefinitions="32,*" ColumnSpacing="12">
+                        <Border Grid.Column="0" WidthRequest="32" HeightRequest="32"
+                                Stroke="#5F5E5A" StrokeThickness="0.5"
+                                StrokeDashArray="3,3" StrokeShape="Ellipse">
+                            <Label Text="&#xeb0b;" FontFamily="Tabler" FontSize="16"
+                                   TextColor="{StaticResource Muted}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Label Grid.Column="1" Text="Add player" FontFamily="Condensed"
+                               FontSize="19" TextColor="{StaticResource Muted}"
+                               VerticalOptions="Center" />
+                    </Grid>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnAddPlayer" />
+                    </Border.GestureRecognizers>
+                </Border>
+
+            </VerticalStackLayout>
+
+            <Label Style="{StaticResource Eyebrow}" Text="how spicy" Margin="0,0,0,10" />
+
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="4" Margin="0,0,0,26">
+                <Border Grid.Column="0" StrokeThickness="0" Padding="0,16"
+                        BackgroundColor="{StaticResource TruthLight}"
+                        StrokeShape="RoundRectangle 12,2,12,2">
+                    <Label Style="{StaticResource Display}" Text="Mild" FontSize="19"
+                           TextColor="{StaticResource TruthDark}" HorizontalOptions="Center" />
+                </Border>
+                <Border Grid.Column="1" StrokeThickness="0" Padding="0,16"
+                        BackgroundColor="{StaticResource Slab}"
+                        StrokeShape="RoundRectangle 2">
+                    <Label Style="{StaticResource Display}" Text="Spicy" FontSize="19"
+                           TextColor="{StaticResource Muted}" HorizontalOptions="Center" />
+                </Border>
+                <Border Grid.Column="2" StrokeThickness="0" Padding="0,16"
+                        BackgroundColor="{StaticResource Slab}"
+                        StrokeShape="RoundRectangle 2,12,2,12">
+                    <Label Style="{StaticResource Display}" Text="Chaos" FontSize="19"
+                           TextColor="{StaticResource Muted}" HorizontalOptions="Center" />
+                </Border>
+            </Grid>
+
+            <Border StrokeThickness="0" Padding="0,18" BackgroundColor="{StaticResource Ink}"
+                    StrokeShape="RoundRectangle 16">
+                <Label Style="{StaticResource Display}" Text="Start game" FontSize="24"
+                       TextColor="#1A1A19" HorizontalOptions="Center" />
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnStartGame" />
+                </Border.GestureRecognizers>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

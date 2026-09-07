@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TruthOrDare.PlayPage"
+             BackgroundColor="#1A1A19"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Ink">#F1EFE8</Color>
+            <Color x:Key="Muted">#888780</Color>
+            <Color x:Key="Slab">#2C2C2A</Color>
+            <Color x:Key="TruthFill">#3C3489</Color>
+            <Color x:Key="TruthInk">#EEEDFE</Color>
+            <Color x:Key="TruthLight">#AFA9EC</Color>
+            <Color x:Key="DareFill">#993C1D</Color>
+            <Color x:Key="DareInk">#FAECE7</Color>
+            <Color x:Key="DareLight">#F0997B</Color>
+            <Color x:Key="DareDark">#4A1B0C</Color>
+
+            <Style x:Key="Display" TargetType="Label">
+                <Setter Property="FontFamily" Value="Anton" />
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+            </Style>
+
+            <Style x:Key="Eyebrow" TargetType="Label">
+                <Setter Property="FontFamily" Value="Condensed" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="CharacterSpacing" Value="2" />
+                <Setter Property="TextColor" Value="{StaticResource Muted}" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid Padding="14,10,14,20" RowDefinitions="Auto,Auto,*,Auto,Auto" RowSpacing="0">
+
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="6,0" Margin="0,0,0,12">
+            <Label Grid.Column="0" Text="&#xed45;" FontFamily="Tabler" FontSize="20"
+                   TextColor="#B4B2A9" VerticalOptions="Center" />
+            <Label Grid.Column="1" Style="{StaticResource Eyebrow}" Text="round 3 / 10"
+                   HorizontalOptions="Center" VerticalOptions="Center" />
+            <Label Grid.Column="2" Text="&#xee5e;" FontFamily="Tabler" FontSize="20"
+                   TextColor="#B4B2A9" VerticalOptions="Center" />
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnDefinitions="30,*,Auto" ColumnSpacing="10"
+              Padding="6,0" Margin="0,0,0,14">
+            <Border Grid.Column="0" WidthRequest="30" HeightRequest="30"
+                    StrokeThickness="0" StrokeShape="Ellipse"
+                    BackgroundColor="{StaticResource DareLight}">
+                <Label Text="TS" FontFamily="CondensedMedium" FontSize="13"
+                       TextColor="{StaticResource DareDark}"
+                       HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+            <Label Grid.Column="1" Style="{StaticResource Display}" Text="Tshepo"
+                   FontSize="26" VerticalOptions="Center" />
+            <Label Grid.Column="2" Text="1 pass left" FontFamily="Condensed" FontSize="14"
+                   TextColor="{StaticResource Muted}" VerticalOptions="Center" />
+        </Grid>
+
+        <!-- The stage. Drawing a card collapses the losing row to zero. -->
+        <Grid Grid.Row="2" x:Name="Stage" RowDefinitions="*,*" RowSpacing="4"
+              MinimumHeightRequest="340">
+
+            <Border Grid.Row="0" x:Name="TruthCard"
+                    BackgroundColor="{StaticResource TruthFill}"
+                    StrokeThickness="0" StrokeShape="RoundRectangle 18,18,4,4">
+                <Grid>
+                    <VerticalStackLayout x:Name="TruthChoice" Spacing="6"
+                                         HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Style="{StaticResource Display}" Text="Truth" FontSize="46"
+                               TextColor="{StaticResource TruthInk}" HorizontalOptions="Center" />
+                        <Label Style="{StaticResource Eyebrow}" Text="tap to draw"
+                               TextColor="{StaticResource TruthLight}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout x:Name="TruthPrompt" Spacing="16" IsVisible="False"
+                                         Padding="24,26" VerticalOptions="Start">
+                        <Label Style="{StaticResource Eyebrow}" Text="truth"
+                               TextColor="{StaticResource TruthLight}" />
+                        <Label x:Name="TruthPromptText" FontFamily="CondensedMedium"
+                               FontSize="32" LineHeight="1.15"
+                               TextColor="{StaticResource TruthInk}" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnTruthTapped" />
+                </Border.GestureRecognizers>
+            </Border>
+
+            <Border Grid.Row="1" x:Name="DareCard"
+                    BackgroundColor="{StaticResource DareFill}"
+                    StrokeThickness="0" StrokeShape="RoundRectangle 4,4,18,18">
+                <Grid>
+                    <VerticalStackLayout x:Name="DareChoice" Spacing="6"
+                                         HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Style="{StaticResource Display}" Text="Dare" FontSize="46"
+                               TextColor="{StaticResource DareInk}" HorizontalOptions="Center" />
+                        <Label Style="{StaticResource Eyebrow}" Text="tap to draw"
+                               TextColor="{StaticResource DareLight}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout x:Name="DarePrompt" Spacing="16" IsVisible="False"
+                                         Padding="24,26" VerticalOptions="Start">
+                        <Label Style="{StaticResource Eyebrow}" Text="dare"
+                               TextColor="{StaticResource DareLight}" />
+                        <Label x:Name="DarePromptText" FontFamily="CondensedMedium"
+                               FontSize="32" LineHeight="1.15"
+                               TextColor="{StaticResource DareInk}" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnDareTapped" />
+                </Border.GestureRecognizers>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="3" x:Name="Actions" ColumnDefinitions="*,2*" ColumnSpacing="4"
+              Margin="0,12,0,0" IsVisible="False">
+            <Border Grid.Column="0" StrokeThickness="0" Padding="0,14"
+                    BackgroundColor="{StaticResource Slab}"
+                    StrokeShape="RoundRectangle 14,2,14,2">
+                <Label Style="{StaticResource Display}" Text="Pass" FontSize="19"
+                       TextColor="#B4B2A9" HorizontalOptions="Center" />
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnPass" />
+                </Border.GestureRecognizers>
+            </Border>
+            <Border Grid.Column="1" StrokeThickness="0" Padding="0,14"
+                    BackgroundColor="{StaticResource Ink}"
+                    StrokeShape="RoundRectangle 2,14,2,14">
+                <Label Style="{StaticResource Display}" Text="Did it" FontSize="19"
+                       TextColor="#1A1A19" HorizontalOptions="Center" />
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnDone" />
+                </Border.GestureRecognizers>
+            </Border>
+        </Grid>
+
+        <Label Grid.Row="4" x:Name="Note" FontFamily="Condensed" FontSize="14"
+               TextColor="{StaticResource Muted}" HorizontalOptions="Center"
+               HeightRequest="18" Margin="0,10,0,0" />
+    </Grid>
+</ContentPage>

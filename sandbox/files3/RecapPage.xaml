@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FactOrFiction.RecapPage"
+             BackgroundColor="#1A1A19"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Ink">#F1EFE8</Color>
+            <Color x:Key="Muted">#888780</Color>
+            <Color x:Key="Slab">#2C2C2A</Color>
+            <Color x:Key="WrongRow">#3A2222</Color>
+
+            <Style x:Key="Display" TargetType="Label">
+                <Setter Property="FontFamily" Value="Anton" />
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+            </Style>
+
+            <Style x:Key="RowText" TargetType="Label">
+                <Setter Property="FontFamily" Value="Condensed" />
+                <Setter Property="FontSize" Value="17" />
+                <Setter Property="TextColor" Value="#D3D1C7" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <Style x:Key="RowIcon" TargetType="Label">
+                <Setter Property="FontFamily" Value="Tabler" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <Style x:Key="Row" TargetType="Border">
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="Padding" Value="14,13" />
+                <Setter Property="BackgroundColor" Value="{StaticResource Slab}" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,10,20,24" Spacing="0">
+
+            <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,18">
+                <Label Grid.Column="0" Text="&#xea60;" FontFamily="Tabler" FontSize="22"
+                       TextColor="#B4B2A9" />
+                <Label Grid.Column="2" Text="&#xebbf;" FontFamily="Tabler" FontSize="20"
+                       TextColor="#B4B2A9" />
+            </Grid>
+
+            <Label Style="{StaticResource Display}" Text="4" FontSize="72" LineHeight="0.9"
+                   TextColor="#C0DD97" />
+            <Label Style="{StaticResource Display}" Text="out of five" FontSize="30"
+                   Margin="0,0,0,22" />
+
+            <VerticalStackLayout Spacing="2" Margin="0,0,0,22">
+
+                <Border Style="{StaticResource Row}" StrokeShape="RoundRectangle 14,14,2,2">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <Label Grid.Column="0" Style="{StaticResource RowIcon}" Text="&#xeaa5;"
+                               TextColor="#97C459" />
+                        <Label Grid.Column="1" Style="{StaticResource RowText}"
+                               Text="Bananas are berries" />
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource Row}" StrokeShape="RoundRectangle 2">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <Label Grid.Column="0" Style="{StaticResource RowIcon}" Text="&#xeaa5;"
+                               TextColor="#97C459" />
+                        <Label Grid.Column="1" Style="{StaticResource RowText}"
+                               Text="Great Wall visible from space" />
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource Row}" StrokeShape="RoundRectangle 2"
+                        BackgroundColor="{StaticResource WrongRow}">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <Label Grid.Column="0" Style="{StaticResource RowIcon}" Text="&#xeb55;"
+                               TextColor="#F09595" />
+                        <Label Grid.Column="1" Style="{StaticResource RowText}"
+                               Text="Goldfish forget in three seconds" TextColor="#F7C1C1" />
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource Row}" StrokeShape="RoundRectangle 2">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <Label Grid.Column="0" Style="{StaticResource RowIcon}" Text="&#xeaa5;"
+                               TextColor="#97C459" />
+                        <Label Grid.Column="1" Style="{StaticResource RowText}"
+                               Text="Octopuses have three hearts" />
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource Row}" StrokeShape="RoundRectangle 2,2,14,14">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <Label Grid.Column="0" Style="{StaticResource RowIcon}" Text="&#xeaa5;"
+                               TextColor="#97C459" />
+                        <Label Grid.Column="1" Style="{StaticResource RowText}"
+                               Text="Honey never spoils" />
+                    </Grid>
+                </Border>
+
+            </VerticalStackLayout>
+
+            <Border StrokeThickness="0" Padding="16" BackgroundColor="{StaticResource Slab}"
+                    StrokeShape="RoundRectangle 16" Margin="0,0,0,12">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="best streak" FontFamily="Condensed" FontSize="13"
+                           CharacterSpacing="2" TextColor="{StaticResource Muted}" />
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Style="{StaticResource Display}" Text="3" FontSize="30" />
+                        <Label Text="in a row, cards 1 to 3" FontFamily="Condensed" FontSize="17"
+                               TextColor="{StaticResource Muted}" VerticalOptions="End" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border StrokeThickness="0" Padding="0,16" BackgroundColor="{StaticResource Ink}"
+                    StrokeShape="RoundRectangle 16">
+                <Label Style="{StaticResource Display}" Text="Play again" FontSize="24"
+                       TextColor="#1A1A19" HorizontalOptions="Center" />
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnPlayAgain" />
+                </Border.GestureRecognizers>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

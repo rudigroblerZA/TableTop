@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ThisOrThat.SwipePage"
+             BackgroundColor="#1A1A19"
+             Shell.NavBarIsVisible="False">
+
+    <!--
+        Fonts (register in MauiProgram.CreateMauiApp):
+            fonts.AddFont("Anton-Regular.ttf", "Anton");
+            fonts.AddFont("BarlowCondensed-Regular.ttf", "Condensed");
+            fonts.AddFont("BarlowCondensed-Medium.ttf", "CondensedMedium");
+            fonts.AddFont("tabler-icons.ttf", "Tabler");
+
+        CornerRadius order is top-left, top-right, BOTTOM-LEFT, bottom-right.
+        The three cards share one Grid cell so they stack; only TopCard takes the pan.
+    -->
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Ink">#F1EFE8</Color>
+            <Color x:Key="Muted">#888780</Color>
+            <Color x:Key="Slab">#2C2C2A</Color>
+            <Color x:Key="ThisFill">#3C3489</Color>
+            <Color x:Key="ThisInk">#EEEDFE</Color>
+            <Color x:Key="ThisLight">#AFA9EC</Color>
+            <Color x:Key="ThisDim">#2F2A6B</Color>
+            <Color x:Key="ThatFill">#993C1D</Color>
+            <Color x:Key="ThatInk">#FAECE7</Color>
+            <Color x:Key="ThatLight">#F0997B</Color>
+            <Color x:Key="ThatDim">#7A3018</Color>
+
+            <Style x:Key="Display" TargetType="Label">
+                <Setter Property="FontFamily" Value="Anton" />
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+            </Style>
+
+            <Style x:Key="Eyebrow" TargetType="Label">
+                <Setter Property="FontFamily" Value="Condensed" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="CharacterSpacing" Value="2" />
+                <Setter Property="TextColor" Value="{StaticResource Muted}" />
+            </Style>
+
+            <Style x:Key="OptionText" TargetType="Label">
+                <Setter Property="FontFamily" Value="Anton" />
+                <Setter Property="FontSize" Value="30" />
+                <Setter Property="LineHeight" Value="0.94" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid Padding="16,10,16,20" RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="0">
+
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="4,0" Margin="0,0,0,16">
+            <Label Grid.Column="0" Text="&#xeb55;" FontFamily="Tabler" FontSize="20"
+                   TextColor="#B4B2A9" VerticalOptions="Center" />
+            <Label Grid.Column="1" x:Name="CountLabel" Style="{StaticResource Eyebrow}"
+                   Text="6 left" HorizontalOptions="Center" VerticalOptions="Center" />
+            <Label Grid.Column="2" Text="&#xebde;" FontFamily="Tabler" FontSize="20"
+                   TextColor="#B4B2A9" VerticalOptions="Center" />
+        </Grid>
+
+        <Label Grid.Row="1" Style="{StaticResource Display}" Text="This or that" FontSize="30" />
+        <Label Grid.Row="2" Text="Swipe toward the one you'd pick."
+               FontFamily="Condensed" FontSize="16" TextColor="{StaticResource Muted}"
+               Margin="0,4,0,16" />
+
+        <!-- Deck: all three cards occupy the same cell. -->
+        <Grid Grid.Row="3" MinimumHeightRequest="330" Margin="0,0,0,14">
+
+            <Border x:Name="BackCard2" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 20"
+                    TranslationY="16" Scale="0.92">
+                <Grid ColumnDefinitions="*,*">
+                    <BoxView Grid.Column="0" Color="{StaticResource ThisDim}" />
+                    <BoxView Grid.Column="1" Color="{StaticResource ThatDim}" />
+                </Grid>
+            </Border>
+
+            <Border x:Name="BackCard1" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 20"
+                    TranslationY="8" Scale="0.96">
+                <Grid ColumnDefinitions="*,*">
+                    <BoxView Grid.Column="0" Color="{StaticResource ThisDim}" />
+                    <BoxView Grid.Column="1" Color="{StaticResource ThatDim}" />
+                </Grid>
+            </Border>
+
+            <Border x:Name="TopCard" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 20"
+                    AnchorX="0.5" AnchorY="0.5">
+                <Grid ColumnDefinitions="*,*">
+                    <Grid Grid.Column="0" BackgroundColor="{StaticResource ThisFill}" Padding="14,20">
+                        <Label x:Name="ThisLabel" Style="{StaticResource OptionText}"
+                               Text="Sunrise" TextColor="{StaticResource ThisInk}" />
+                    </Grid>
+                    <Grid Grid.Column="1" BackgroundColor="{StaticResource ThatFill}" Padding="14,20">
+                        <Label x:Name="ThatLabel" Style="{StaticResource OptionText}"
+                               Text="Sunset" TextColor="{StaticResource ThatInk}" />
+                    </Grid>
+                </Grid>
+                <Border.GestureRecognizers>
+                    <PanGestureRecognizer PanUpdated="OnPanUpdated" />
+                </Border.GestureRecognizers>
+            </Border>
+
+            <!-- Shown once the deck runs out. -->
+            <Border x:Name="DoneCard" IsVisible="False" StrokeThickness="0"
+                    BackgroundColor="{StaticResource Slab}"
+                    StrokeShape="RoundRectangle 20">
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Style="{StaticResource Display}" Text="All in" FontSize="34"
+                           HorizontalOptions="Center" />
+                    <Label Text="Pass to the next player" FontFamily="Condensed" FontSize="17"
+                           TextColor="{StaticResource Muted}" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnSeeResults" />
+                </Border.GestureRecognizers>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="4" ColumnDefinitions="Auto,*,Auto" Padding="6,0">
+            <Label Grid.Column="0" x:Name="HintLeft" Text="&#xea19;  swipe"
+                   FontFamily="Condensed" FontSize="16" TextColor="{StaticResource Muted}" />
+            <Label Grid.Column="1" Text="skip" FontFamily="Condensed" FontSize="16"
+                   TextColor="#5F5E5A" HorizontalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnSkip" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label Grid.Column="2" x:Name="HintRight" Text="swipe  &#xea1f;"
+                   FontFamily="Condensed" FontSize="16" TextColor="{StaticResource Muted}" />
+        </Grid>
+    </Grid>
+</ContentPage>

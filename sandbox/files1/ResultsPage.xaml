@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ThisOrThat.ResultsPage"
+             BackgroundColor="#1A1A19"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Ink">#F1EFE8</Color>
+            <Color x:Key="Muted">#888780</Color>
+            <Color x:Key="Slab">#2C2C2A</Color>
+            <Color x:Key="ThisFill">#3C3489</Color>
+            <Color x:Key="ThisInk">#EEEDFE</Color>
+            <Color x:Key="ThisLight">#AFA9EC</Color>
+            <Color x:Key="ThatFill">#993C1D</Color>
+            <Color x:Key="ThatInk">#FAECE7</Color>
+            <Color x:Key="ThatLight">#F0997B</Color>
+
+            <Style x:Key="Display" TargetType="Label">
+                <Setter Property="FontFamily" Value="Anton" />
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+            </Style>
+
+            <Style x:Key="OptionName" TargetType="Label">
+                <Setter Property="FontFamily" Value="Condensed" />
+                <Setter Property="FontSize" Value="17" />
+            </Style>
+
+            <Style x:Key="BarCount" TargetType="Label">
+                <Setter Property="FontFamily" Value="Anton" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,10,20,24" Spacing="0">
+
+            <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,18">
+                <Label Grid.Column="0" Text="&#xea60;" FontFamily="Tabler" FontSize="22"
+                       TextColor="#B4B2A9" />
+                <Label Grid.Column="2" Text="&#xebbf;" FontFamily="Tabler" FontSize="20"
+                       TextColor="#B4B2A9" />
+            </Grid>
+
+            <Label Style="{StaticResource Display}" Text="Where you" FontSize="38" LineHeight="0.94" />
+            <Label Style="{StaticResource Display}" Text="split" FontSize="38" LineHeight="0.94"
+                   TextColor="{StaticResource ThisLight}" Margin="0,0,0,24" />
+
+            <VerticalStackLayout Spacing="18">
+
+                <VerticalStackLayout Spacing="6">
+                    <Grid ColumnDefinitions="*,*">
+                        <Label Grid.Column="0" Style="{StaticResource OptionName}" Text="Sunrise"
+                               TextColor="{StaticResource ThisLight}" />
+                        <Label Grid.Column="1" Style="{StaticResource OptionName}" Text="Sunset"
+                               TextColor="{StaticResource ThatLight}" HorizontalOptions="End" />
+                    </Grid>
+                    <Grid ColumnDefinitions="1*,3*" ColumnSpacing="3" HeightRequest="34">
+                        <Border Grid.Column="0" StrokeThickness="0" Padding="10,0"
+                                BackgroundColor="{StaticResource ThisFill}"
+                                StrokeShape="RoundRectangle 10,3,10,3">
+                            <Label Style="{StaticResource BarCount}" Text="1"
+                                   TextColor="{StaticResource ThisInk}" HorizontalOptions="Start" />
+                        </Border>
+                        <Border Grid.Column="1" StrokeThickness="0" Padding="10,0"
+                                BackgroundColor="{StaticResource ThatFill}"
+                                StrokeShape="RoundRectangle 3,10,3,10">
+                            <Label Style="{StaticResource BarCount}" Text="3"
+                                   TextColor="{StaticResource ThatInk}" HorizontalOptions="End" />
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="6">
+                    <Grid ColumnDefinitions="*,*">
+                        <Label Grid.Column="0" Style="{StaticResource OptionName}" Text="Reply instantly"
+                               TextColor="{StaticResource ThisLight}" />
+                        <Label Grid.Column="1" Style="{StaticResource OptionName}" Text="Reply in 3 days"
+                               TextColor="{StaticResource ThatLight}" HorizontalOptions="End" />
+                    </Grid>
+                    <Grid ColumnDefinitions="1*,1*" ColumnSpacing="3" HeightRequest="34">
+                        <Border Grid.Column="0" StrokeThickness="0" Padding="10,0"
+                                BackgroundColor="{StaticResource ThisFill}"
+                                StrokeShape="RoundRectangle 10,3,10,3">
+                            <Label Style="{StaticResource BarCount}" Text="2"
+                                   TextColor="{StaticResource ThisInk}" HorizontalOptions="Start" />
+                        </Border>
+                        <Border Grid.Column="1" StrokeThickness="0" Padding="10,0"
+                                BackgroundColor="{StaticResource ThatFill}"
+                                StrokeShape="RoundRectangle 3,10,3,10">
+                            <Label Style="{StaticResource BarCount}" Text="2"
+                                   TextColor="{StaticResource ThatInk}" HorizontalOptions="End" />
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="6">
+                    <Grid ColumnDefinitions="*,*">
+                        <Label Grid.Column="0" Style="{StaticResource OptionName}" Text="Window seat"
+                               TextColor="{StaticResource ThisLight}" />
+                        <Label Grid.Column="1" Style="{StaticResource OptionName}" Text="Aisle seat"
+                               TextColor="#5F5E5A" HorizontalOptions="End" />
+                    </Grid>
+                    <Border StrokeThickness="0" Padding="10,0" HeightRequest="34"
+                            BackgroundColor="{StaticResource ThisFill}"
+                            StrokeShape="RoundRectangle 10">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Label Grid.Column="0" Style="{StaticResource BarCount}" Text="4"
+                                   TextColor="{StaticResource ThisInk}" />
+                            <Label Grid.Column="1" Text="unanimous" FontFamily="Condensed"
+                                   FontSize="15" TextColor="{StaticResource ThisLight}"
+                                   HorizontalOptions="End" VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+
+            <Border StrokeThickness="0" Padding="16" Margin="0,26,0,0"
+                    BackgroundColor="{StaticResource Slab}"
+                    StrokeShape="RoundRectangle 16">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="most contrarian" FontFamily="Condensed" FontSize="13"
+                           CharacterSpacing="2" TextColor="{StaticResource Muted}" />
+                    <Grid ColumnDefinitions="30,*,Auto" ColumnSpacing="10">
+                        <Border Grid.Column="0" WidthRequest="30" HeightRequest="30"
+                                StrokeThickness="0" StrokeShape="Ellipse" BackgroundColor="#5DCAA5">
+                            <Label Text="JO" FontFamily="CondensedMedium" FontSize="13"
+                                   TextColor="#04342C"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Label Grid.Column="1" Style="{StaticResource Display}" Text="Jonas"
+                               FontSize="22" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="5 of 9 alone" FontFamily="Condensed"
+                               FontSize="15" TextColor="{StaticResource Muted}"
+                               VerticalOptions="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
