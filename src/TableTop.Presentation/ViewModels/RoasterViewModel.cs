@@ -131,7 +131,7 @@ public sealed class RoasterViewModel : ViewModelBase
     public ObservableCollection<SavedPlayer> ConfiguredPlayers { get; } = [];
 
     /// <summary>Gender choices for the player-entry picker — "" reads as unspecified.</summary>
-    public IReadOnlyList<string> GenderOptions => GenderChoices;
+    public static IReadOnlyList<string> GenderOptions => GenderChoices;
 
     private string _newPlayerName = "";
     /// <summary>Bound to the "add a player" name entry.</summary>

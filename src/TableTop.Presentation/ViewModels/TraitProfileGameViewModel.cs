@@ -118,7 +118,7 @@ public sealed class TraitProfileGameViewModel : ViewModelBase, IDisposable
     /// <c>check-xaml-bindings.py</c> caught it — the exact silently-empty-UI
     /// failure that gate exists for.
     /// </remarks>
-    public string ResultsCaveat =>
+    public static string ResultsCaveat =>
         "Scores show where your answers landed on this quiz's own range — they are not "
         + "percentiles, and this is not a personality test.";
 

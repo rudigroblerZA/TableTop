@@ -59,7 +59,7 @@ public sealed class PlayerSetupViewModel : ViewModelBase
     public IGameMode Mode => _mode;
 
     /// <summary>Selectable gender values; empty string means unspecified.</summary>
-    public IReadOnlyList<string> GenderOptions => GenderChoices;
+    public static IReadOnlyList<string> GenderOptions => GenderChoices;
 
     /// <summary>Adds the pending entry to <see cref="Players"/>.</summary>
     public ICommand AddPlayerCommand { get; }
