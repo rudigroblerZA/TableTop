@@ -1409,6 +1409,81 @@ than a line count.
 
 ---
 
+### L.5 — Two tests fail on a local run and pass in CI, and nothing said so
+
+These two fail every time on the maintainer's machine and have never failed in
+CI:
+
+```
+TableTop.Tests.ThreadingAndDiagnosticsTests.ThreadingGuard_DifferentThread_ThrowsInDebug
+TableTop.Tests.JsonPersistenceConcurrencyTests.JsonSessionRepository_ConcurrentSaves_NeverThrow_AndLeaveAValidFile
+```
+
+**The cost is other people's time, which is why it is worth an entry at all.**
+Nothing in the tree recorded this, so a red local suite reads as a regression.
+It was investigated from scratch during the 1.40.0 work — production code and
+both tests read, `BACKLOG.md` searched, CI history checked — before the
+maintainer said they always fail locally. That is the whole loss, and it repeats
+for every contributor and every assistant session until it is written down.
+
+**The threading one has a structural explanation; the concurrency one does
+not.** `ThreadingGuard_DifferentThread_ThrowsInDebug` asserts *opposite
+outcomes* on either side of an `#if DEBUG`: in Debug a wrong-thread call must
+throw, in Release it must not, because `ThreadingGuard.Enabled` defaults on in
+Debug and off in Release. CI runs `dotnet test … -c Release` and nothing else,
+so **the Debug branch of that test has never executed in CI**. A test whose
+Debug half is unrun anywhere automated is a half-tested test, whatever the
+cause of the local failure turns out to be.
+
+`JsonSessionRepository_ConcurrentSaves_NeverThrow_AndLeaveAValidFile` fires 20
+concurrent `SaveAsync` calls at a real temp file. Its sibling
+`JsonPlayerRepository_ConcurrentSaves_NeverThrow_AndLeaveAValidFile` does the
+same thing against the other repository and was *not* reported as failing, which
+is the interesting part and is unexplained.
+
+**Evidence.** Both tests passed in CI runs 231 and 232 on `07b65a6` (1,128
+tests, whole suite green). Read and found correct by inspection: `ThreadingGuard`
+defaults `Enabled` to `true` in Debug, throws `InvalidOperationException`, and
+its message does contain both `"CardTurnController.RecordOutcome"` and
+`"not thread-safe"` as the Debug branch asserts; `JsonSessionRepository.SaveAsync`
+serialises on a `SemaphoreSlim`, uses a per-call `Guid` temp name and
+`File.Move(overwrite: true)`, and the test hands each task its own
+`SessionSnapshot`, so there is no shared-object mutation. All three classes that
+touch the process-wide `ThreadingGuard.Enabled` share
+`[Collection("ThreadingGuard")]` and restore the previous value in a `finally`.
+There is no `xunit.runner.json` and no `CollectionBehavior`, so collections run
+in parallel by default; `coverage.runsettings` configures coverage only and
+changes no parallelism.
+
+**Not verified: the actual failure output.** No assertion text was ever
+captured, so the cause of either failure is *unknown*, not diagnosed. Everything
+above narrows it and none of it identifies it. The single most useful next
+artefact is the console output:
+
+```bash
+dotnet test tests/TableTop.Tests/TableTop.Tests.csproj \
+  --filter "FullyQualifiedName~ThreadingGuard_DifferentThread_ThrowsInDebug|FullyQualifiedName~JsonSessionRepository_ConcurrentSaves" \
+  --logger "console;verbosity=detailed"
+```
+
+For the threading test the direction discriminates the hypotheses: "expected
+null, found `InvalidOperationException`" points at configuration or
+cross-collection interference, "expected not-null" points at the guard genuinely
+not firing. Those need opposite fixes.
+
+**Deliberately not fixed blind.** The obvious patch — stop the test depending on
+the ambient default and set `ThreadingGuard.Enabled` explicitly — deletes the
+Release half's assertion that the default *is* off, which is a real claim about
+shipped behaviour. Loosening a guard to silence a failure nobody has read is how
+the `[Conditional("DEBUG")]` problem in L.4 survived as long as it did.
+
+**Done when** the failure text has been captured once, the cause named here, and
+either the tests are fixed or this entry says why the local-only failure is
+acceptable and permanent. Adding a Debug leg to CI would close the structural
+half independently, and is the cheaper of the two.
+
+---
+
 ## Someday
 
 ### S.1 — Two roster models answering one question — **DECIDED: keep both**
