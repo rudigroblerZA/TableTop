@@ -2260,6 +2260,8 @@ public sealed class FamilyAtlasModeTests
 /// </summary>
 public sealed class CoupleMemberTagTests
 {
+    private static readonly string[] CoupleTags = ["couple-member", "adult"];
+
     private static IReadOnlyList<TableTop.Core.Abstractions.Players.IPlayer> Untagged() =>
         new List<TableTop.Core.Abstractions.Players.IPlayer>
         {
@@ -2274,10 +2276,10 @@ public sealed class CoupleMemberTagTests
         {
             TableTop.Core.Domain.Players.Player.Create("Ana",
                 new Dictionary<string, string> { ["gender"] = "female" },
-                new[] { "couple-member", "adult" }),
+                CoupleTags),
             TableTop.Core.Domain.Players.Player.Create("Ben",
                 new Dictionary<string, string> { ["gender"] = "male" },
-                new[] { "couple-member", "adult" }),
+                CoupleTags),
         }.AsReadOnly();
 
     [Fact]
@@ -2417,15 +2419,17 @@ public sealed class ArchetypeTreeDepthTests
 /// </summary>
 public sealed class PinnedCategoryTests
 {
+    private static readonly string[] CoupleTags = ["couple-member", "adult"];
+
     private static IReadOnlyList<TableTop.Core.Abstractions.Players.IPlayer> Couple() =>
         new List<TableTop.Core.Abstractions.Players.IPlayer>
         {
             TableTop.Core.Domain.Players.Player.Create("Ana",
                 new Dictionary<string, string> { ["gender"] = "female" },
-                new[] { "couple-member", "adult" }),
+                CoupleTags),
             TableTop.Core.Domain.Players.Player.Create("Ben",
                 new Dictionary<string, string> { ["gender"] = "male" },
-                new[] { "couple-member", "adult" }),
+                CoupleTags),
         }.AsReadOnly();
 
     private static List<string> DealtCategories(

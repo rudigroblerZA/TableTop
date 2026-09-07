@@ -5,6 +5,8 @@ namespace TableTop.Tests;
 
 public sealed class RuleEvaluatorTests
 {
+    private static readonly string[] AdultTags = ["adult"];
+
     private static IRuleContext MakeCtx()
     {
         var cards = TestFactory.MakeCards(3);
@@ -49,7 +51,7 @@ public sealed class RuleEvaluatorTests
         var rule = new RestrictionRule();
         var adultCard = new StandardCard(Guid.NewGuid(), "Adult", "d",
             Difficulty.Easy, "T", [], new TableTop.Core.Domain.Restrictions.AdultOnlyRestriction());
-        var player = Player.Create("Alice", tags: new[] { "adult" });
+        var player = Player.Create("Alice", tags: AdultTags);
         var result = rule.Evaluate(adultCard, player, MakeCtx());
         result.IsAllowed.Should().BeTrue();
     }

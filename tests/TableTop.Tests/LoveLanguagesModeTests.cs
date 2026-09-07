@@ -21,6 +21,8 @@ public sealed class LoveLanguagesModeTests
 {
     private static readonly LoveLanguagesMode Mode = new();
 
+    private static readonly string[] PlayerNames = ["Ada", "Bo"];
+
     private static readonly string[] Keys =
     [
         LoveLanguages.WordsKey, LoveLanguages.ServiceKey, LoveLanguages.GiftsKey,
@@ -189,7 +191,7 @@ public sealed class LoveLanguagesModeTests
     [Fact]
     public async Task TheFactoryBuildsATraitProfileController()
     {
-        var players = new[] { "Ada", "Bo" }
+        var players = PlayerNames
             .Select(n => (TableTop.Core.Abstractions.Players.IPlayer)Player.Create(n))
             .ToList().AsReadOnly();
 
