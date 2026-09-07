@@ -70,15 +70,11 @@ public sealed class ThisOrThatMode : BaseGameModeDefinition
 }
 
 /// <summary>
-/// Built-in card bank for This Or That.
-///
-/// <para>
-/// Not authored with <c>CardDeckBuilder</c>: that builder produces
-/// <c>StandardCard</c>s, and these need to be <see cref="ThisOrThatCard"/>s.
-/// <see cref="ThisOrThatCard.Create"/> uses the same content-derived
-/// deterministic id scheme, so the property that mattered — a saved session
-/// still resolving its cards after a restart — is preserved.
-/// </para>
+/// Built-in card bank for This Or That, authored with
+/// <see cref="CardDeckBuilder"/> — the rules card via <c>Card</c>, the
+/// comparisons via its <c>ThisOrThatCard</c> method, the same fluent DSL the
+/// StandardCard decks use. The content-derived deterministic id scheme is
+/// preserved, so a saved session still resolves its cards after a restart.
 /// </summary>
 public static class ThisOrThatCardBank
 {
@@ -93,99 +89,92 @@ public static class ThisOrThatCardBank
     /// <summary>All cards, in intended play order.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
-    private static ICard Rules() => new StandardCard(
-        new Guid(System.Security.Cryptography.SHA256.HashData(
-            System.Text.Encoding.UTF8.GetBytes($"{Deck}|How To Play|rules"))[..16]),
-        "How This Works",
-        "Every card offers two options.\n\n" +
-        "<b>Everyone picks at the same time</b> — count down from three and say it together, or point. " +
-        "Picking simultaneously matters: go round the table one at a time and people drift toward whatever the last person said.\n\n" +
-        "Then read out what each option says about whoever picked it. It isn't a score and there's no right answer — " +
-        "it's just the bit that starts the argument.",
-        Difficulty.Easy,
-        HowToPlayCategory);
-
-    private static ICard C(string category, string title, string question,
-        string labelA, string keyA, string detailA,
-        string labelB, string keyB, string detailB,
-        Difficulty difficulty = Difficulty.Easy) =>
-        ThisOrThatCard.Create(Deck, title, question, difficulty, category,
-            new ThisOrThatOption(labelA, keyA, detailA),
-            new ThisOrThatOption(labelB, keyB, detailB));
-
     private static IReadOnlyList<ICard> Build() =>
-    [
-        Rules(),
+        CardDeckBuilder.For(Deck)
 
-        // ── EVERYDAY ─────────────────────────────────────────────────────────
-        C(EverydayCategory, "Morning", "Which morning would you rather have?",
-            "Sunrise walk",  "tot-sunrise",  "You'd rather earn the day than be handed it. People find this either inspiring or unbearable.",
-            "Lie-in",        "tot-liein",    "You know rest isn't laziness. You've probably had to defend that at least once."),
-        C(EverydayCategory, "The Commute", "Pick your journey.",
-            "Empty road",    "tot-road",     "You want the time to think. You'd take longer if it meant being alone with your thoughts.",
-            "Packed train",  "tot-train",    "You'd rather be moving with people than moving alone. You read on public transport and mean it."),
-        C(EverydayCategory, "Weekend", "Two days off. Which?",
-            "Nothing booked","tot-empty",    "You protect unstructured time. Someone in your life finds this frustrating.",
-            "Full calendar", "tot-calendar", "You get more rest from doing things than from doing nothing. This confuses the other type."),
-        C(EverydayCategory, "The Room", "Which space is yours?",
-            "Spotless",      "tot-tidy",     "Your outside matches your inside, or you're using one to manage the other.",
-            "Lived in",      "tot-messy",    "You'd rather the room served you than the other way round. You know where everything is."),
-        C(EverydayCategory, "The Notification", "How do you take bad news by text?",
-            "Rip it off fast",   "tot-fast",   "You'd rather know now and deal with it now. Waiting is worse than the news itself, to you.",
-            "Let it sit unread", "tot-unread", "You want a moment before the moment. Other people find this maddening; you find it necessary."),
+            .Category(HowToPlayCategory)
+            .Card("How This Works",
+                "Every card offers two options.\n\n" +
+                "<b>Everyone picks at the same time</b> — count down from three and say it together, or point. " +
+                "Picking simultaneously matters: go round the table one at a time and people drift toward whatever the last person said.\n\n" +
+                "Then read out what each option says about whoever picked it. It isn't a score and there's no right answer — " +
+                "it's just the bit that starts the argument.",
+                Difficulty.Easy)
 
-        // ── FOOD ─────────────────────────────────────────────────────────────
-        C(FoodCategory, "The Meal", "Last meal, no consequences.",
-            "Something new", "tot-new",      "Novelty beats certainty for you, even at the end. You've been burned by this and did it again.",
-            "The old favourite","tot-fav",   "You know what's good and you're not performing for anyone. There's confidence in that."),
-        C(FoodCategory, "Sweet Or Salt", "One flavour for the rest of your life.",
-            "Sweet",         "tot-sweet",    "You go toward pleasure directly. Little patience for the long way round.",
-            "Salt",          "tot-salt",     "You like things that make you want more rather than things that satisfy. Read into that what you like."),
-        C(FoodCategory, "The Table", "Where are you eating?",
-            "Street food",   "tot-street",   "You care more about the thing itself than the setting. Hard to impress with a tablecloth.",
-            "Long dinner",   "tot-dinner",   "The meal is the excuse; the sitting there is the point. You'd stay for hours."),
-        C(FoodCategory, "The Leftovers", "One rule for the rest of your life.",
-            "Never waste a scrap", "tot-noWaste", "You treat food as a small moral obligation. Somebody in your life has been quietly grateful for this.",
-            "Always cook too much", "tot-toomuch", "Abundance is the point for you, even when it's wasteful. You'd rather over-provide than run short."),
+            // ── EVERYDAY ─────────────────────────────────────────────────────────
+            .Category(EverydayCategory)
+            .ThisOrThatCard("Morning", "Which morning would you rather have?",
+                new("Sunrise walk",  "tot-sunrise",  "You'd rather earn the day than be handed it. People find this either inspiring or unbearable."),
+                new("Lie-in",        "tot-liein",    "You know rest isn't laziness. You've probably had to defend that at least once."))
+            .ThisOrThatCard("The Commute", "Pick your journey.",
+                new("Empty road",    "tot-road",     "You want the time to think. You'd take longer if it meant being alone with your thoughts."),
+                new("Packed train",  "tot-train",    "You'd rather be moving with people than moving alone. You read on public transport and mean it."))
+            .ThisOrThatCard("Weekend", "Two days off. Which?",
+                new("Nothing booked","tot-empty",    "You protect unstructured time. Someone in your life finds this frustrating."),
+                new("Full calendar", "tot-calendar", "You get more rest from doing things than from doing nothing. This confuses the other type."))
+            .ThisOrThatCard("The Room", "Which space is yours?",
+                new("Spotless",      "tot-tidy",     "Your outside matches your inside, or you're using one to manage the other."),
+                new("Lived in",      "tot-messy",    "You'd rather the room served you than the other way round. You know where everything is."))
+            .ThisOrThatCard("The Notification", "How do you take bad news by text?",
+                new("Rip it off fast",   "tot-fast",   "You'd rather know now and deal with it now. Waiting is worse than the news itself, to you."),
+                new("Let it sit unread", "tot-unread", "You want a moment before the moment. Other people find this maddening; you find it necessary."))
 
-        // ── WOULD YOU ────────────────────────────────────────────────────────
-        C(WouldYouCategory, "The Ability", "Pick a power.",
-            "Fly",           "tot-fly",      "You want out — of rooms, of situations, of the ground. Escape appeals to you more than most.",
-            "Invisible",     "tot-invisible","You want to observe without cost. Consider what you'd actually do with it.",
-            Difficulty.Medium),
-        C(WouldYouCategory, "Time", "One trip, one way.",
-            "Meet your past self",  "tot-past",   "There's something you'd warn yourself about. You know exactly what it is.",
-            "Meet your future self","tot-future", "You want reassurance more than you want to change anything. Or you're just nosy.",
-            Difficulty.Medium),
-        C(WouldYouCategory, "The Truth", "One of these, permanently.",
-            "Always know when someone's lying", "tot-lie",   "You'd take painful clarity over comfortable doubt. That costs more than people expect.",
-            "Always be believed",               "tot-trust", "You want to be taken at your word. Ask yourself whether that's about trust or about winning.",
-            Difficulty.Medium),
-        C(WouldYouCategory, "The Audience", "How does the work land?",
-            "Loved by a few",  "tot-few",    "Depth over reach. You'd rather matter enormously to a handful of people.",
-            "Liked by many",   "tot-many",   "Reach over depth. There's nothing shallow in wanting to be part of something big.",
-            Difficulty.Medium),
-        C(WouldYouCategory, "The Memory", "One of these, permanently.",
-            "Forget one bad memory entirely",   "tot-forget",   "You'd trade the lesson for the peace. That's not weakness, it's a real trade.",
-            "Keep every memory, sharp forever",  "tot-keepall",  "You want the whole record, painful parts included. You'd rather feel it than lose it.",
-            Difficulty.Medium),
+            // ── FOOD ─────────────────────────────────────────────────────────────
+            .Category(FoodCategory)
+            .ThisOrThatCard("The Meal", "Last meal, no consequences.",
+                new("Something new", "tot-new",      "Novelty beats certainty for you, even at the end. You've been burned by this and did it again."),
+                new("The old favourite","tot-fav",   "You know what's good and you're not performing for anyone. There's confidence in that."))
+            .ThisOrThatCard("Sweet Or Salt", "One flavour for the rest of your life.",
+                new("Sweet",         "tot-sweet",    "You go toward pleasure directly. Little patience for the long way round."),
+                new("Salt",          "tot-salt",     "You like things that make you want more rather than things that satisfy. Read into that what you like."))
+            .ThisOrThatCard("The Table", "Where are you eating?",
+                new("Street food",   "tot-street",   "You care more about the thing itself than the setting. Hard to impress with a tablecloth."),
+                new("Long dinner",   "tot-dinner",   "The meal is the excuse; the sitting there is the point. You'd stay for hours."))
+            .ThisOrThatCard("The Leftovers", "One rule for the rest of your life.",
+                new("Never waste a scrap", "tot-noWaste", "You treat food as a small moral obligation. Somebody in your life has been quietly grateful for this."),
+                new("Always cook too much", "tot-toomuch", "Abundance is the point for you, even when it's wasteful. You'd rather over-provide than run short."))
 
-        // ── DEEP END ─────────────────────────────────────────────────────────
-        C(DeepEndCategory, "The Regret", "Which would you rather carry?",
-            "The thing you did",     "tot-did",    "You'd rather have acted and been wrong. You can live with consequences better than questions.",
-            "The thing you didn't",  "tot-didnt",  "You'd rather keep the possibility intact. That's safer and it costs you something.",
-            Difficulty.Hard),
-        C(DeepEndCategory, "Being Known", "Pick one.",
-            "Fully known by one person", "tot-one", "You want somewhere to put all of it. That's a lot to ask of one person, and you know it.",
-            "Partly known by many",      "tot-many2","You'd rather be widely liked than deeply seen. That's a real choice, not a failure of nerve.",
-            Difficulty.Hard),
-        C(DeepEndCategory, "The Harder Thing", "Which do you actually find harder?",
-            "Asking for help",   "tot-ask",   "You'd rather struggle than owe. Worth asking who taught you that.",
-            "Being asked",       "tot-asked", "You'd rather be needed than need. Also worth asking about.",
-            Difficulty.Hard),
-        C(DeepEndCategory, "The Ending", "Pick how it goes.",
-            "Know exactly when it's coming",  "tot-know",    "You want to prepare, say the things, close the loop. Certainty is worth the dread to you.",
-            "Never see it coming at all",      "tot-noidea",  "You'd rather live without the countdown, even at the cost of goodbye. That's its own kind of brave.",
-            Difficulty.Hard),
-    ];
+            // ── WOULD YOU ────────────────────────────────────────────────────────
+            .Category(WouldYouCategory)
+            .ThisOrThatCard("The Ability", "Pick a power.",
+                new("Fly",           "tot-fly",      "You want out — of rooms, of situations, of the ground. Escape appeals to you more than most."),
+                new("Invisible",     "tot-invisible","You want to observe without cost. Consider what you'd actually do with it."),
+                Difficulty.Medium)
+            .ThisOrThatCard("Time", "One trip, one way.",
+                new("Meet your past self",  "tot-past",   "There's something you'd warn yourself about. You know exactly what it is."),
+                new("Meet your future self","tot-future", "You want reassurance more than you want to change anything. Or you're just nosy."),
+                Difficulty.Medium)
+            .ThisOrThatCard("The Truth", "One of these, permanently.",
+                new("Always know when someone's lying", "tot-lie",   "You'd take painful clarity over comfortable doubt. That costs more than people expect."),
+                new("Always be believed",               "tot-trust", "You want to be taken at your word. Ask yourself whether that's about trust or about winning."),
+                Difficulty.Medium)
+            .ThisOrThatCard("The Audience", "How does the work land?",
+                new("Loved by a few",  "tot-few",    "Depth over reach. You'd rather matter enormously to a handful of people."),
+                new("Liked by many",   "tot-many",   "Reach over depth. There's nothing shallow in wanting to be part of something big."),
+                Difficulty.Medium)
+            .ThisOrThatCard("The Memory", "One of these, permanently.",
+                new("Forget one bad memory entirely",   "tot-forget",   "You'd trade the lesson for the peace. That's not weakness, it's a real trade."),
+                new("Keep every memory, sharp forever",  "tot-keepall",  "You want the whole record, painful parts included. You'd rather feel it than lose it."),
+                Difficulty.Medium)
+
+            // ── DEEP END ─────────────────────────────────────────────────────────
+            .Category(DeepEndCategory)
+            .ThisOrThatCard("The Regret", "Which would you rather carry?",
+                new("The thing you did",     "tot-did",    "You'd rather have acted and been wrong. You can live with consequences better than questions."),
+                new("The thing you didn't",  "tot-didnt",  "You'd rather keep the possibility intact. That's safer and it costs you something."),
+                Difficulty.Hard)
+            .ThisOrThatCard("Being Known", "Pick one.",
+                new("Fully known by one person", "tot-one", "You want somewhere to put all of it. That's a lot to ask of one person, and you know it."),
+                new("Partly known by many",      "tot-many2","You'd rather be widely liked than deeply seen. That's a real choice, not a failure of nerve."),
+                Difficulty.Hard)
+            .ThisOrThatCard("The Harder Thing", "Which do you actually find harder?",
+                new("Asking for help",   "tot-ask",   "You'd rather struggle than owe. Worth asking who taught you that."),
+                new("Being asked",       "tot-asked", "You'd rather be needed than need. Also worth asking about."),
+                Difficulty.Hard)
+            .ThisOrThatCard("The Ending", "Pick how it goes.",
+                new("Know exactly when it's coming",  "tot-know",    "You want to prepare, say the things, close the loop. Certainty is worth the dread to you."),
+                new("Never see it coming at all",      "tot-noidea",  "You'd rather live without the countdown, even at the cost of goodbye. That's its own kind of brave."),
+                Difficulty.Hard)
+
+            .Build();
 }

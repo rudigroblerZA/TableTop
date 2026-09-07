@@ -1600,6 +1600,36 @@ async work to block on, a different shape rather than a template to copy.
   `TABLETOP_UPDATE_API=1 dotnet test --filter PublicApiSurfaceTests` once a
   real SDK is available and diff before trusting it.
 
+- **1.42.0** moved `ThisOrThatCardBank` onto `CardDeckBuilder`, the same
+  migration 1.41.0 did for Truth or Dare — one mode later, one more of the
+  twelve-file `private static ICard C(...)` duplication `CardDeckBuilder`
+  exists to end. This deck needed the builder to stop being StandardCard-only,
+  so `CardDeckBuilder` gained a `ThisOrThatCard(title, question, optionA,
+  optionB, difficulty)` method that emits `ThisOrThatCard`s into the same
+  fluent chain. One member added to a class: MINOR, "added to a class," same
+  call as 1.41.0's `TruthOrDareCards`.
+
+  **A distinct method, not a `Card` overload.** A second `Card` overload
+  taking two `ThisOrThatOption`s compiles, but every call site that passes a
+  target-typed `new(...)` for an option then fails to resolve — `new(...)` is
+  considered convertible to both the `Difficulty` of the existing overload and
+  the `ThisOrThatOption` of the new one, and the two are equally good. Naming
+  it `ThisOrThatCard` keeps `new("Sunrise walk", "tot-sunrise", "…")` at the
+  call site unambiguous, and keeps the `Card` doc honest that `Card` means a
+  `StandardCard`.
+
+  **Card ids are unchanged.** `ThisOrThatCard.Create` already derived a stable
+  id from `deck|category|title|body|labelA|labelB`; the builder method calls
+  straight through to it with the same arguments the old `C(...)` helper
+  passed, so every comparison card keeps its id. Only the "How This Works"
+  rules card's id moves — it was a hand-rolled `…|How To Play|rules` seed and
+  is now a normal `CardDeckBuilder` `Card`, seeded `…|How To Play|How This
+  Works|<body>` like every other StandardCard in the codebase.
+
+  Verified by a local `dotnet build` + `dotnet test TableTop.Engine.slnx`
+  (1137 pass, up 3: new `CardDeckBuilderTests` for the two-option method).
+  `api/TableTop.Core.api.txt` regenerated via `TABLETOP_UPDATE_API=1`.
+
 ## What genuinely doesn't exist here
 
 - **A visual deck editor, or any content authoring at all outside the repo.**
