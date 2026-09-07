@@ -18,7 +18,7 @@ namespace TableTop.Hosting;
 /// </para>
 ///
 /// <para>
-/// <b>Write-through, not write-behind.</b> <see cref="ToggleAsync"/> updates the
+/// <b>Write-through, not write-behind.</b> <see cref="ToggleAsync(IGameMode, CancellationToken)"/> updates the
 /// in-memory set and persists in the same call, so a star survives a kill as
 /// well as a clean exit. If the write throws, the in-memory change is rolled
 /// back before rethrowing — otherwise the UI would show a star that no longer
