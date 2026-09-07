@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Flyout header art. Baize (#174034) ground with a walnut/brass frame and three
+  fanned cards, matching the framed-table shell the WinUI and WPF heads use.
+
+  Sized 300x150 rather than square because it spans the full width of the
+  flyout drawer and sits above the menu, so a tall image would push the first
+  navigation item off a short phone screen.
+
+  Colours are taken from App.xaml's palette so the header cannot drift from the
+  rest of the head: baize #174034, walnut #4A2E1D, brass #C49E4C, gold #E3C67F.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="150" viewBox="0 0 300 150">
+  <defs>
+    <linearGradient id="felt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1C4A3C"/>
+      <stop offset="1" stop-color="#123028"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="300" height="150" fill="url(#felt)"/>
+  <rect x="0" y="132" width="300" height="18" fill="#4A2E1D"/>
+  <rect x="0" y="130" width="300" height="3" fill="#C49E4C"/>
+
+  <g transform="translate(150 68)">
+    <g transform="rotate(-18) translate(-46 -34)">
+      <rect width="52" height="72" rx="7" fill="#F3ECDC" stroke="#C49E4C" stroke-width="1.5"/>
+      <text x="26" y="46" font-family="Georgia, serif" font-size="30" fill="#B23A34" text-anchor="middle">&#9829;</text>
+    </g>
+    <g transform="rotate(0) translate(-26 -40)">
+      <rect width="52" height="72" rx="7" fill="#F7F2E6" stroke="#C49E4C" stroke-width="1.5"/>
+      <text x="26" y="46" font-family="Georgia, serif" font-size="30" fill="#1B1B1B" text-anchor="middle">&#9824;</text>
+    </g>
+    <g transform="rotate(18) translate(-6 -34)">
+      <rect width="52" height="72" rx="7" fill="#F3ECDC" stroke="#C49E4C" stroke-width="1.5"/>
+      <text x="26" y="46" font-family="Georgia, serif" font-size="30" fill="#B23A34" text-anchor="middle">&#9830;</text>
+    </g>
+  </g>
+
+  <text x="150" y="126" font-family="Georgia, serif" font-size="26" font-weight="bold"
+        fill="#E3C67F" text-anchor="middle" letter-spacing="1.5">TableTop</text>
+</svg>

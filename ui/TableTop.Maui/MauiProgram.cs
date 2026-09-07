@@ -51,8 +51,22 @@ public static class MauiProgram
         // IServiceProvider is threaded to those call sites instead so they can
         // still reach IControllerFactory/IAppSettings for the one path that
         // needs them (GameplayPage's CardTurn family).
-        builder.Services.AddSingleton<GameSelectionPage>();
+        // TRANSIENT, not singleton, and the flyout is why. A Page may have only
+        // one parent: putting one instance into a second NavigationPage — which
+        // is exactly what "open the picker from the drawer, go Home, open it
+        // again" does — throws. It was a singleton when it was the fixed root
+        // page and had a single consumer; it now has three. Nothing is lost by
+        // rebuilding it, because the selection lives in the singleton
+        // GameSelectionViewModel below, not in the page.
+        builder.Services.AddTransient<GameSelectionPage>();
         builder.Services.AddTransient<SettingsPage>();
+
+        // The flyout shell and its two fixed screens. AppFlyoutPage is resolved
+        // once, by App.CreateWindow; HomePage is transient for the same
+        // re-parenting reason as the picker.
+        builder.Services.AddTransient<AppFlyoutPage>();
+        builder.Services.AddTransient<FlyoutMenuPage>();
+        builder.Services.AddTransient<HomePage>();
 
         // ── ViewModels ───────────────────────────────────────────────────────
         // Same reasoning as the Pages above: PlayerSetupViewModel and
@@ -62,6 +76,11 @@ public static class MauiProgram
         // need from the container.
         builder.Services.AddSingleton<GameSelectionViewModel>();
         builder.Services.AddTransient<SettingsViewModel>();
+
+        // Singleton so it subscribes to IAppSettings.Changed exactly once. The
+        // drawer is built once and lives for the life of the app, and a second
+        // subscription would rebuild the menu twice per settings change.
+        builder.Services.AddSingleton<FlyoutMenuViewModel>();
 
         return builder.Build();
     }

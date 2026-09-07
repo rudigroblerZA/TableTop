@@ -158,6 +158,21 @@
     <MauiIcon Include="Resources/Images/appicon.svg" />
   </ItemGroup>
 
+  <!--
+    Flyout header art. Listed explicitly rather than globbing Resources/Images:
+    appicon.svg and splash.svg live in that folder too, and a glob would feed
+    them to Resizetizer a second time as ordinary images on top of their
+    MauiIcon/MauiSplashScreen processing.
+
+    Resizetizer emits this as flyout_header.png, which is the name the XAML
+    binds. The underscore is not cosmetic — Android resource names allow only
+    lowercase letters, digits and underscores, so a dash or a capital here
+    fails the Android build rather than the Windows one.
+  -->
+  <ItemGroup>
+    <MauiImage Include="Resources/Images/flyout_header.svg" />
+  </ItemGroup>
+
   <!-- Splash screen -->
   <ItemGroup>
     <!-- Color MUST match splash.svg's background (#174034, baize): MAUI uses it
