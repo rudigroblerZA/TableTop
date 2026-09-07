@@ -1,6 +1,6 @@
 # TableTop — Architecture Review
 
-Current as of **1.39.4**, September 2026. This replaces the accumulated
+Current as of **1.40.0**, September 2026. This replaces the accumulated
 documentation that used to live in `docs/` — most of it (week-by-week status
 reports, a stakeholder presentation, a delivery summary) was stale project
 history rather than a description of the system as it stands. This is a
@@ -1519,6 +1519,38 @@ async work to block on, a different shape rather than a template to copy.
   driven with piped input at all — a pre-existing property of the head, not
   something this change introduced. The service beneath it is covered by
   fourteen tests; the key handling on top of it is covered by the compiler only.
+
+  **Three things landed after the above was written**, and are released here
+  rather than under a version of their own. Twenty cards were added to Rank
+  This, This Or That and Questionable Choices — two prompts per category for the
+  first, one pairing or prompt per category for the other two — taking the
+  library to **106 modes, 3,924 cards**. Those cards reached `main` directly and
+  sat there while `main` still declared 1.39.4, so this release is the first
+  version number that actually covers them; the merge back into `develop` is
+  what reconciled the two counts.
+
+  **`develop`'s CI was red for that whole window, and the cause is worth
+  recording.** `FavouritesService`'s class summary referred to
+  `<see cref="ToggleAsync"/>` while the type has two overloads of it. That is
+  `CS0419`, which is a warning locally and a hard error in CI, where
+  `TreatWarningsAsErrors=true` — so every head build failed on a doc comment,
+  and the failure surfaced on `Build Android (native)` rather than anywhere near
+  the code it describes. The `<inheritdoc>` six lines below it had qualified the
+  same overload correctly all along.
+
+  Last, an analyzer sweep of three rules Sonar reports and CI does not fail on.
+  `ChoiceCards`' two regexes became `[GeneratedRegex]` partial methods
+  (`SYSLIB1045`), which trades `RegexOptions.Compiled`'s first-use IL emit for
+  source generated at build time — worth having on a head that publishes under
+  trimming constraints. Five private members that only ever hold a
+  `ReadOnlyCollection<T>` are now typed as one (`CA1859`); the one non-mechanical
+  part was `InMemoryCardProvider`, where `Task<T>` is invariant, so
+  `Task.FromResult` needed an explicit type argument to keep satisfying
+  `ICardProvider`. The roughly one hundred mode `Build()` methods were left
+  alone deliberately, and a grep makes them look like the bulk of the findings:
+  they return collection expressions, whose concrete type is compiler-
+  synthesized and cannot be named, so the rule does not apply. Plus one constant
+  array hoisted out of an argument in the Console head (`CA1861`).
 
 ## What genuinely doesn't exist here
 
