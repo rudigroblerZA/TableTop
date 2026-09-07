@@ -2,10 +2,12 @@ namespace TableTop.Tests;
 
 public sealed class PromptCardTests
 {
+    private static readonly string[] AdultTags = ["adult"];
+
     private static Player MakePlayer(string name, string gender, int age = 25) =>
         Player.Create(name,
             attributes: new Dictionary<string, string> { ["gender"] = gender, ["age"] = age.ToString() },
-            tags: age >= 18 ? new string[] { "adult" } : new string[0]);
+            tags: age >= 18 ? AdultTags : Array.Empty<string>());
 
     [Fact]
     public void ResolvePrompt_MalePlayer_ReturnsMaleText()
