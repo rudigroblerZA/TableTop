@@ -475,6 +475,9 @@ public sealed class FamilyGameTests
 
 public sealed class ArchitectureTests
 {
+    private static readonly string[] MarriedCoupleTags = ["couple-member", "married"];
+    private static readonly string[] CoupleMemberTags = ["couple-member"];
+
     [Fact]
     public void IGameMode_HasNoRunMethod()
     {
@@ -626,8 +629,8 @@ public sealed class ArchitectureTests
     {
         var players = new[]
         {
-            TestFactory.MakePlayer("Alice", gender: "female", extraTags: new[] { "couple-member", "married" }),
-            TestFactory.MakePlayer("Bob",   gender: "male",   extraTags: new[] { "couple-member", "married" })
+            TestFactory.MakePlayer("Alice", gender: "female", extraTags: MarriedCoupleTags),
+            TestFactory.MakePlayer("Bob",   gender: "male",   extraTags: MarriedCoupleTags)
         };
         var factory = new ControllerFactory();
         var controller = await factory.CreateAsync(new MonogamyMode(), players);
@@ -707,8 +710,8 @@ public sealed class ArchitectureTests
     {
         var players = new[]
         {
-            TestFactory.MakePlayer("Alice", gender: "female", extraTags: new[] { "couple-member" }),
-            TestFactory.MakePlayer("Bob",   gender: "male",   extraTags: new[] { "couple-member" })
+            TestFactory.MakePlayer("Alice", gender: "female", extraTags: CoupleMemberTags),
+            TestFactory.MakePlayer("Bob",   gender: "male",   extraTags: CoupleMemberTags)
         };
         var factory = new ControllerFactory();
         var controller = await factory.CreateAsync(new CustomMonogamyMode(), players);
