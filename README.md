@@ -14,7 +14,7 @@ A fully UI-agnostic card game engine for couples and party games.
 TableTop/
 ├── src/
 │   ├── TableTop.Core/         ← Abstractions, domain, deck/rule/scoring engine
-│   ├── TableTop.Games/        ← Game mode definitions (103 modes, 3,831 cards)
+│   ├── TableTop.Games/        ← Game mode definitions (103 modes, 3,830 cards)
 │   │                             cards live in the in-code banks; see ARCHITECTURE.md
 │   ├── TableTop.Hosting/      ← Controllers, events, hints, persistence
 │   └── TableTop.Presentation/ ← ViewModels shared by WinUI + MAUI + Android (plain net10.0)
