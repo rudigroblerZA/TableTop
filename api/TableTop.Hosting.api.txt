@@ -1207,3 +1207,6 @@ sealed class TableTop.Hosting.TableSuitabilityResult
     TableShape Required { get; set; }
     TableSuitabilityResult <Clone>$()
     Void Deconstruct(Boolean& Suits, String& ModeName, TableShape& Required, TableShape& Actual)
+static class TableTop.Hosting.TruthOrDareCards
+    Boolean IsTruthOrDareCard(String cardText)
+    Nullable<ValueTuple<String, String, String, String>> TryParse(String cardText)

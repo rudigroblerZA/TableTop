@@ -115,6 +115,42 @@ public sealed class CardTurnGameViewModelTests
     }
 
     [Fact]
+    public async Task TruthOrDare_HidesBothHalves_UntilDeclared_ThenRevealsOnlyThatHalf()
+    {
+        var (a, b) = Players();
+        var vm = await CardTurnGameViewModel.CreateAsync(
+            new FakeNavigator(), new TruthOrDareMode(), [a, b], new FakeAppSettings(), TestFactory.PlainControllerFactory());
+
+        var found = false;
+        for (var i = 0; i < 20 && !vm.IsGameOver; i++)
+        {
+            if (vm.IsTruthOrDare)
+            {
+                found = true;
+                vm.AwaitingDeclaration.Should().BeTrue();
+                vm.CardBodyText.Should().NotContain("TRUTH:")
+                    .And.NotContain("DARE:", "neither half may be visible before the player declares");
+                vm.CompleteCommand.CanExecute(null).Should().BeFalse("there is nothing to record until a half is declared");
+                vm.Complete(); // must be a safe no-op — MAUI's code-behind calls this directly, not just the command
+                vm.AwaitingDeclaration.Should().BeTrue("Complete() must not bypass the declare gate");
+
+                vm.DeclareTruthCommand.Execute(null);
+
+                vm.AwaitingDeclaration.Should().BeFalse();
+                vm.DeclaredLabel.Should().Be("Truth");
+                vm.CardBodyText.Should().NotContain("DARE:", "the undeclared half must stay hidden after declaring");
+                vm.CompleteCommand.CanExecute(null).Should().BeTrue();
+                vm.Complete();
+                break;
+            }
+            vm.Complete();
+        }
+
+        found.Should().BeTrue("TruthOrDareMode must produce at least one declare-then-reveal card within 20 turns");
+        vm.Dispose();
+    }
+
+    [Fact]
     public async Task RecordChoice_TalliesThePick_AndAppearsInTheGameOverSummary()
     {
         // BetweenTheTwoOfYouMode writes cards in the literal "A) ... B) ..."
