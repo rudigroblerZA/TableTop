@@ -11,12 +11,13 @@ namespace TableTop.Hosting;
 /// Purely lexical — no card type changes needed, so every existing and future
 /// mode that writes "A) option" lines gets answer buttons for free.
 /// </summary>
-public static class ChoiceCards
+public static partial class ChoiceCards
 {
-    private static readonly Regex ChoiceLine = new(
-        @"^\s*([A-D])\)\s+(.+?)\s*$",
-        RegexOptions.Multiline | RegexOptions.Compiled,
-        TimeSpan.FromSeconds(1));
+    // Source-generated rather than RegexOptions.Compiled: the matcher is emitted
+    // as C# at build time, so there is no runtime IL emit on first use — which
+    // the Android head needs, since it publishes with trimming constraints.
+    [GeneratedRegex(@"^\s*([A-D])\)\s+(.+?)\s*$", RegexOptions.Multiline, matchTimeoutMilliseconds: 1000)]
+    private static partial Regex ChoiceLine();
 
     /// <summary>
     /// Extracts the choice options from <paramref name="cardText"/>.
@@ -30,7 +31,7 @@ public static class ChoiceCards
         if (string.IsNullOrEmpty(cardText)) return Array.Empty<(char, string)>();
 
         var found = new List<(char Letter, string Text)>();
-        foreach (Match m in ChoiceLine.Matches(cardText))
+        foreach (Match m in ChoiceLine().Matches(cardText))
             found.Add((m.Groups[1].Value[0], m.Groups[2].Value));
 
         if (found.Count < 2) return Array.Empty<(char, string)>();
@@ -53,10 +54,8 @@ public static class ChoiceCards
             ? null
             : tally.OrderByDescending(kv => kv.Value).ThenBy(kv => kv.Key).First().Key;
 
-    private static readonly Regex StyleLine = new(
-        @"Mostly\s+([A-D])\s*[—–-]+\s*(The\s+[^.<\n]+)",
-        RegexOptions.Compiled,
-        TimeSpan.FromSeconds(1));
+    [GeneratedRegex(@"Mostly\s+([A-D])\s*[—–-]+\s*(The\s+[^.<\n]+)", RegexOptions.None, matchTimeoutMilliseconds: 1000)]
+    private static partial Regex StyleLine();
 
     /// <summary>
     /// Scans a deck's card texts for a results key of the form
@@ -70,7 +69,7 @@ public static class ChoiceCards
         foreach (var text in cardTexts)
         {
             if (string.IsNullOrEmpty(text)) continue;
-            foreach (Match m in StyleLine.Matches(text))
+            foreach (Match m in StyleLine().Matches(text))
                 map[m.Groups[1].Value[0]] = m.Groups[2].Value.Trim();
         }
         return map;

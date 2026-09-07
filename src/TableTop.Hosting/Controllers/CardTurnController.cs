@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Decks;
 using TableTop.Core.Abstractions.Game;
@@ -618,7 +619,7 @@ public sealed class CardTurnController : ICardTurnController
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private IReadOnlyList<ScoreEntry> BuildScores() =>
+    private ReadOnlyCollection<ScoreEntry> BuildScores() =>
         _game.PlayerManager.Players
              .OrderByDescending(p => p.Score)
              .Select(p => new ScoreEntry(p.DisplayName, p.Score))

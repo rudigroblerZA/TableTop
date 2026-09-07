@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using TableTop.Core.Abstractions.Analysis;
 using TableTop.Core.Abstractions.Players;
 using TableTop.Core.Domain.Analysis;
@@ -34,7 +35,7 @@ namespace TableTop.Hosting.Controllers;
 public sealed class TraitProfileController : ITraitProfileController
 {
     private readonly IReadOnlyList<TraitItemCard> _items;
-    private readonly IReadOnlyList<string> _playerNames;
+    private readonly ReadOnlyCollection<string> _playerNames;
     private readonly TraitProfileBuilder _builder;
 
     private int _index = -1;
