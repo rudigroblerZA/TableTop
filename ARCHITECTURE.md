@@ -1600,6 +1600,45 @@ async work to block on, a different shape rather than a template to copy.
   `TABLETOP_UPDATE_API=1 dotnet test --filter PublicApiSurfaceTests` once a
   real SDK is available and diff before trusting it.
 
+- **1.42.0** gave `CardDeckBuilder` two post-`Card(...)` modifiers,
+  `WithPreActions` and `WithPostActions`, plus the `CardActionSet` collector
+  they hand to their callback. `WithPreActions(a => a.AddButton("Truth", …)
+  .AddButton("Dare", …).AddFooter(…))` folds a declare-before-reveal gate into
+  the card just added; `WithPostActions(a => a.AddButton("Answer", …))` appends
+  a flip-to-reveal back face. One new type and four new members in Core, no
+  removals: MINOR, "added to a class."
+
+  **Sugar over the existing text conventions, not a new card model.** This is
+  the same call `TruthOrDareCards` and `ChoiceCards` and `CardFaces` all make
+  (recorded under 1.41.0 and earlier): the interactive behaviour lives in a
+  lexical convention on the card body, detected at play time, so no head needs
+  per-mode code. `WithPreActions` composes exactly the intro / `TRUTH:` /
+  `DARE:` / `Chicken clause:` shape `TruthOrDareCards.TryParse` already splits;
+  `WithPostActions` composes the trailing `Answer:` / `The reading:` line
+  `CardFaces.Split` already peels onto the back. The builder just writes that
+  text from structured input instead of the author hand-formatting it (the
+  `Pair(...)` string helper in `TruthOrDareCardBank` is the pattern it
+  replaces).
+
+  **Kept honest about the narrowness.** Because the shared gameplay screen
+  gates only on the `Truth`/`Dare` pair, `WithPreActions` *requires* those two
+  labels in that order and throws otherwise — widening it means teaching
+  `TruthOrDareCards` new markers first, then the `GateLabels` array in
+  `CardDeckBuilder` to match. `WithPostActions` likewise only accepts the
+  markers `CardFaces` splits on (`RevealLabels`, mirroring
+  `CardFaces.BackMarkers`). `CardDeckBuilderTests` round-trips every composed
+  body back through the real `TruthOrDareCards` / `CardFaces` parsers rather
+  than asserting on raw strings, so a convention change breaks the tests
+  loudly. Pre- and post-actions are one-per-card and mutually exclusive — a
+  gate and a flip on the same card would have their markers collide.
+
+  No consumer migrated yet: `TruthOrDareCardBank` is the intended first, in a
+  follow-up. Verified by a local `dotnet build` + `dotnet test` (1146 pass, up
+  12 for the new tests); `api/TableTop.Core.api.txt` regenerated via
+  `TABLETOP_UPDATE_API=1`. Numbered 1.42.0 from `develop`; overlaps with the
+  still-open This-Or-That builder PR, also 1.42.0 and also "added to
+  `CardDeckBuilder`" — whichever lands second folds into a shared entry.
+
 ## What genuinely doesn't exist here
 
 - **A visual deck editor, or any content authoring at all outside the repo.**

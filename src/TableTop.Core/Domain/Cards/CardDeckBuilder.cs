@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using TableTop.Core.Abstractions.Cards;
@@ -51,6 +52,7 @@ public sealed class CardDeckBuilder
 {
     private readonly string _deckName;
     private readonly List<ICard> _cards = [];
+    private readonly HashSet<string> _lastCardRewrites = [];
     private string _currentCategory = "";
 
     private CardDeckBuilder(string deckName) => _deckName = deckName;
@@ -97,7 +99,91 @@ public sealed class CardDeckBuilder
         _cards.Add(new StandardCard(
             StableId(_deckName, _currentCategory, title, description),
             title, description, difficulty, _currentCategory, tags, restriction));
+        _lastCardRewrites.Clear();
 
+        return this;
+    }
+
+    /// <summary>
+    /// Folds a declare-before-reveal gate into the card just added: its current
+    /// <c>description</c> becomes the intro shown up front, and each
+    /// <see cref="CardActionSet.AddButton"/> becomes a branch that stays hidden
+    /// until the player picks it out loud — after which only that branch (plus
+    /// any <see cref="CardActionSet.AddFooter"/> line) is shown.
+    ///
+    /// <para>
+    /// This is <b>sugar over the existing text convention</b>, not a new card
+    /// model. The composed body is exactly the shape
+    /// <c>TableTop.Hosting.TruthOrDareCards</c> parses — an intro, then a
+    /// <c>LABEL:</c> line per branch, then an optional <c>Chicken clause:</c>
+    /// footer — so the shared gameplay screen renders the gate with no
+    /// per-mode UI code. Because that parser currently recognises exactly the
+    /// <c>Truth</c>/<c>Dare</c> pair, this method requires those two labels, in
+    /// that order; widening it means teaching <c>TruthOrDareCards</c> the new
+    /// markers first (and updating <see cref="GateLabels"/> here to match).
+    /// </para>
+    /// </summary>
+    /// <exception cref="InvalidOperationException">No <see cref="Card"/> was added first, or actions were already applied to it.</exception>
+    /// <exception cref="ArgumentException">The buttons are not the <c>Truth</c>/<c>Dare</c> pair in order.</exception>
+    public CardDeckBuilder WithPreActions(Action<CardActionSet> configure)
+    {
+        ArgumentNullException.ThrowIfNull(configure);
+        var set = new CardActionSet();
+        configure(set);
+
+        if (!set.Buttons.Select(b => b.Label).SequenceEqual(GateLabels, StringComparer.OrdinalIgnoreCase))
+            throw new ArgumentException(
+                $"{nameof(WithPreActions)} composes the shared declare-gate, which currently recognises " +
+                $"only these buttons, in this order: {string.Join(", ", GateLabels)}. " +
+                "Add exactly those, then widen TruthOrDareCards + GateLabels together to support more.",
+                nameof(configure));
+
+        ReplaceLastCardBody(current =>
+        {
+            var parts = new List<string> { current };
+            parts.AddRange(set.Buttons.Select(b => $"{b.Label.ToUpperInvariant()}: {b.Text}"));
+            if (set.Footer is not null)
+                parts.Add($"Chicken clause: {set.Footer}");
+            return string.Join("\n\n", parts);
+        });
+
+        return this;
+    }
+
+    /// <summary>
+    /// Appends a reveal-after face to the card just added: one
+    /// <see cref="CardActionSet.AddButton"/> whose label is a marker
+    /// <c>TableTop.Hosting.CardFaces</c> splits onto the back
+    /// (<c>Answer</c> or <c>The reading</c>), so a head that flips answer-bearing
+    /// cards shows the question first and this text only after the flip.
+    ///
+    /// <para>
+    /// Sugar over the same text convention: the body gains a trailing
+    /// <c>Answer: …</c> (or <c>The reading: …</c>) line and nothing else. Kept
+    /// in step with <c>CardFaces.BackMarkers</c> by <see cref="RevealLabels"/>
+    /// and a cross-check test.
+    /// </para>
+    /// </summary>
+    /// <exception cref="InvalidOperationException">No <see cref="Card"/> was added first, or actions were already applied to it.</exception>
+    /// <exception cref="ArgumentException">Not exactly one button, its label is not a known reveal marker, or a footer was set.</exception>
+    public CardDeckBuilder WithPostActions(Action<CardActionSet> configure)
+    {
+        ArgumentNullException.ThrowIfNull(configure);
+        var set = new CardActionSet();
+        configure(set);
+
+        if (set.Buttons.Count != 1 || set.Footer is not null)
+            throw new ArgumentException(
+                $"{nameof(WithPostActions)} takes exactly one {nameof(CardActionSet.AddButton)} and no footer — " +
+                "it appends a single reveal-after face.", nameof(configure));
+
+        var (label, text) = set.Buttons[0];
+        if (!RevealLabels.Contains(label, StringComparer.OrdinalIgnoreCase))
+            throw new ArgumentException(
+                $"'{label}' is not a reveal marker CardFaces splits on. Use one of: {string.Join(", ", RevealLabels)}.",
+                nameof(configure));
+
+        ReplaceLastCardBody(current => $"{current.TrimEnd()}\n\n{label}: {text}");
         return this;
     }
 
@@ -121,4 +207,79 @@ public sealed class CardDeckBuilder
     /// </summary>
     private static Guid StableId(string deckName, string category, string title, string description) =>
         new(SHA256.HashData(Encoding.UTF8.GetBytes($"{deckName}|{category}|{title}|{description}"))[..16]);
+
+    /// <summary>
+    /// Branch buttons <see cref="WithPreActions"/> accepts, in the order the
+    /// composed body must list them. Mirrors the <c>TRUTH:</c>/<c>DARE:</c>
+    /// markers <c>TableTop.Hosting.TruthOrDareCards</c> hard-codes — widen both
+    /// together. <c>CardDeckBuilderTests</c> pins that they stay in step.
+    /// </summary>
+    private static readonly string[] GateLabels = ["Truth", "Dare"];
+
+    /// <summary>
+    /// Reveal markers <see cref="WithPostActions"/> accepts. Mirrors
+    /// <c>TableTop.Hosting.CardFaces.BackMarkers</c> (minus the colon) — a
+    /// cross-check test keeps the two lists identical.
+    /// </summary>
+    private static readonly string[] RevealLabels = ["Answer", "The reading"];
+
+    /// <summary>
+    /// Replaces the most recently added card with a copy whose body is
+    /// <paramref name="rewrite"/> applied to the current body — re-deriving the
+    /// id, since the text (and therefore the card's identity) has changed.
+    /// At most one rewrite per card: <see cref="WithPreActions"/> and
+    /// <see cref="WithPostActions"/> are mutually exclusive on a single card
+    /// (a declare-gate and a flip-reveal on the same card would have their
+    /// markers step on each other), and neither may be applied twice.
+    /// </summary>
+    private void ReplaceLastCardBody(Func<string, string> rewrite, [CallerMemberName] string caller = "")
+    {
+        if (_cards.Count == 0)
+            throw new InvalidOperationException(
+                $"Call {nameof(Card)}(...) before {caller}(...) — it modifies the card just added.");
+        if (_cards[^1] is not StandardCard last)
+            throw new InvalidOperationException(
+                $"{caller}(...) only applies to a {nameof(Card)}(...) card, not {_cards[^1].GetType().Name}.");
+        if (_lastCardRewrites.Count > 0)
+            throw new InvalidOperationException(
+                $"'{last.Title}' already has {string.Join("/", _lastCardRewrites)} folded in. " +
+                $"{nameof(WithPreActions)} and {nameof(WithPostActions)} are one-per-card and mutually exclusive.");
+        _lastCardRewrites.Add(caller);
+
+        var body = rewrite(last.Description);
+        _cards[^1] = new StandardCard(
+            StableId(_deckName, last.Category, last.Title, body),
+            last.Title, body, last.Difficulty, last.Category, last.Tags, last.Restriction);
+    }
+}
+
+/// <summary>
+/// Collects the branch/reveal buttons for a <see cref="CardDeckBuilder.WithPreActions"/>
+/// or <see cref="CardDeckBuilder.WithPostActions"/> call. A button is a label
+/// plus the text shown once it is chosen; <see cref="AddFooter"/> is the single
+/// consequence line shown after any branch (Truth or Dare's chicken clause).
+/// </summary>
+public sealed class CardActionSet
+{
+    internal CardActionSet() { }
+
+    internal List<(string Label, string Text)> Buttons { get; } = [];
+    internal string? Footer { get; private set; }
+
+    /// <summary>Adds a button. <paramref name="revealText"/> is what the player sees after picking it.</summary>
+    public CardActionSet AddButton(string label, string revealText)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(label);
+        ArgumentException.ThrowIfNullOrWhiteSpace(revealText);
+        Buttons.Add((label.Trim(), revealText.Trim()));
+        return this;
+    }
+
+    /// <summary>Sets the consequence line shown after a branch is chosen. Pre-actions only.</summary>
+    public CardActionSet AddFooter(string text)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(text);
+        Footer = text.Trim();
+        return this;
+    }
 }

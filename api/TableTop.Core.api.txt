@@ -686,10 +686,15 @@ sealed class TableTop.Core.Domain.Cards.BreakCard
     BreakScope Scope { get; }
     Nullable<BreakActivity> Activity { get; }
     Nullable<Int32> DurationMinutes { get; }
+sealed class TableTop.Core.Domain.Cards.CardActionSet
+    CardActionSet AddButton(String label, String revealText)
+    CardActionSet AddFooter(String text)
 sealed class TableTop.Core.Domain.Cards.CardDeckBuilder
     CardDeckBuilder Card(String title, String description, Difficulty difficulty, IEnumerable<String> tags = default, IRestriction restriction = default)
     CardDeckBuilder Category(String name)
     CardDeckBuilder For(String deckName)
+    CardDeckBuilder WithPostActions(Action<CardActionSet> configure)
+    CardDeckBuilder WithPreActions(Action<CardActionSet> configure)
     IReadOnlyList<ICard> Build()
 sealed class TableTop.Core.Domain.Cards.GenderDirectedTextResolver
     .ctor(String defaultText, IDictionary<String, String> variantsByGender)

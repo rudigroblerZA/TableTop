@@ -19,7 +19,7 @@ TableTop/
 │   ├── TableTop.Hosting/      ← Controllers, events, hints, persistence
 │   └── TableTop.Presentation/ ← ViewModels shared by WinUI + MAUI + Android (plain net10.0)
 ├── tests/
-│   ├── TableTop.Tests/        ← 1134 tests — engine only, no UI required, any OS
+│   ├── TableTop.Tests/        ← 1146 tests — engine only, no UI required, any OS
 │   └── TableTop.UiTests/      ← ViewModel tests     (Windows — references WinUI)
 ├── ui/
 │   ├── TableTop.Console/      ← Terminal UI         (any OS, no extra installs)
@@ -191,7 +191,7 @@ and WinUI apps use the player repository; add players through their setup screen
 ## Versioning
 
 `VersionPrefix` in `Directory.Build.props` is the single place to bump; every
-project inherits it. Currently **1.41.0**. The public API of Core, Games and
+project inherits it. Currently **1.42.0**. The public API of Core, Games and
 Hosting is stable, so a breaking change to it needs a major bump;
 `AssemblyVersion` tracks the major only (1.0.0.0 across the whole 1.x line), so
 assemblies built against 1.0.0 keep binding without a rebuild.
