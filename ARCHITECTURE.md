@@ -32,7 +32,7 @@ MAUI need their respective SDKs, which this environment does not have — see
 
 ## Content
 
-**103 modes, 3,811 cards, all compiled in.** (README carries the same pair and
+**106 modes, 3,924 cards, all compiled in.** (README carries the same pair and
 is the enforced copy — `DocumentationAccuracyTests` fails when it drifts.
 Nothing enforces this line, which is why it sat two releases behind at 99 /
 3,657 until backlog X.5. Trust README's numbers over these if they disagree.) Every mode builds its deck from an
