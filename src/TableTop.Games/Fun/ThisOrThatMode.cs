@@ -130,6 +130,9 @@ public static class ThisOrThatCardBank
         C(EverydayCategory, "The Room", "Which space is yours?",
             "Spotless",      "tot-tidy",     "Your outside matches your inside, or you're using one to manage the other.",
             "Lived in",      "tot-messy",    "You'd rather the room served you than the other way round. You know where everything is."),
+        C(EverydayCategory, "The Notification", "How do you take bad news by text?",
+            "Rip it off fast",   "tot-fast",   "You'd rather know now and deal with it now. Waiting is worse than the news itself, to you.",
+            "Let it sit unread", "tot-unread", "You want a moment before the moment. Other people find this maddening; you find it necessary."),
 
         // ── FOOD ─────────────────────────────────────────────────────────────
         C(FoodCategory, "The Meal", "Last meal, no consequences.",
@@ -141,6 +144,9 @@ public static class ThisOrThatCardBank
         C(FoodCategory, "The Table", "Where are you eating?",
             "Street food",   "tot-street",   "You care more about the thing itself than the setting. Hard to impress with a tablecloth.",
             "Long dinner",   "tot-dinner",   "The meal is the excuse; the sitting there is the point. You'd stay for hours."),
+        C(FoodCategory, "The Leftovers", "One rule for the rest of your life.",
+            "Never waste a scrap", "tot-noWaste", "You treat food as a small moral obligation. Somebody in your life has been quietly grateful for this.",
+            "Always cook too much", "tot-toomuch", "Abundance is the point for you, even when it's wasteful. You'd rather over-provide than run short."),
 
         // ── WOULD YOU ────────────────────────────────────────────────────────
         C(WouldYouCategory, "The Ability", "Pick a power.",
@@ -159,6 +165,10 @@ public static class ThisOrThatCardBank
             "Loved by a few",  "tot-few",    "Depth over reach. You'd rather matter enormously to a handful of people.",
             "Liked by many",   "tot-many",   "Reach over depth. There's nothing shallow in wanting to be part of something big.",
             Difficulty.Medium),
+        C(WouldYouCategory, "The Memory", "One of these, permanently.",
+            "Forget one bad memory entirely",   "tot-forget",   "You'd trade the lesson for the peace. That's not weakness, it's a real trade.",
+            "Keep every memory, sharp forever",  "tot-keepall",  "You want the whole record, painful parts included. You'd rather feel it than lose it.",
+            Difficulty.Medium),
 
         // ── DEEP END ─────────────────────────────────────────────────────────
         C(DeepEndCategory, "The Regret", "Which would you rather carry?",
@@ -172,6 +182,10 @@ public static class ThisOrThatCardBank
         C(DeepEndCategory, "The Harder Thing", "Which do you actually find harder?",
             "Asking for help",   "tot-ask",   "You'd rather struggle than owe. Worth asking who taught you that.",
             "Being asked",       "tot-asked", "You'd rather be needed than need. Also worth asking about.",
+            Difficulty.Hard),
+        C(DeepEndCategory, "The Ending", "Pick how it goes.",
+            "Know exactly when it's coming",  "tot-know",    "You want to prepare, say the things, close the loop. Certainty is worth the dread to you.",
+            "Never see it coming at all",      "tot-noidea",  "You'd rather live without the countdown, even at the cost of goodbye. That's its own kind of brave.",
             Difficulty.Hard),
     ];
 }
