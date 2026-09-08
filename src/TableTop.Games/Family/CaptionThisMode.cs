@@ -65,86 +65,83 @@ public static class CaptionThisCardBank
     internal const string HeadlineCategory = "Headline";
     internal const string OverheardCategory = "Overheard";
 
+    private const string Deck = "Caption This";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── SCENES ───────────────────────────────────────────────────────────
-        Scene("A penguin is standing at a bus stop, holding a tiny umbrella, looking furious.", Difficulty.Easy),
-        Scene("A cat has knocked every single item off a desk and is now sitting in the exact centre, staring at you.", Difficulty.Easy),
-        Scene("A man in a full suit of medieval armour is trying to order a coffee at a busy café.", Difficulty.Easy),
-        Scene("Three pigeons are gathered around a single chip, clearly mid-negotiation.", Difficulty.Easy),
-        Scene("A dog has somehow climbed onto the roof of a shed and refuses to acknowledge that anything is wrong.", Difficulty.Easy),
-        Scene("A toddler has dressed the family dog in a wedding veil and is conducting a ceremony.", Difficulty.Medium),
-        Scene("A businessman is sprinting through an airport while a single shoe trails ten metres behind him.", Difficulty.Medium),
-        Scene("A goat has escaped onto a golf course and appears to be lining up a putt.", Difficulty.Medium),
-        Scene("Someone has built an enormous, elaborate sandcastle and a single seagull is standing on top like a king.", Difficulty.Medium),
-        Scene("A robot vacuum has cornered the family cat and the two of them are locked in a tense standoff.", Difficulty.Hard),
-        Scene("A elderly woman is having an intense argument with a self-checkout machine while everyone watches.", Difficulty.Easy),
-        Scene("A squirrel is standing on its hind legs, holding a sandwich, staring directly into a security camera.", Difficulty.Easy),
-        Scene("A person has somehow gotten their head stuck in a vending machine and is dangling from it.", Difficulty.Medium),
-        Scene("A couple of ducks are waddling through a fast-food drive-thru queue like they own the place.", Difficulty.Easy),
-        Scene("A man is attempting to parallel park a minivan, has been at it for five minutes, and is clearly losing his mind.", Difficulty.Medium),
-        Scene("A child has built a blanket fort so elaborate it now has a moat.", Difficulty.Easy),
-        Scene("A library has run out of bookshelf space and someone is stacking books on the floor in increasingly creative ways.", Difficulty.Medium),
-        Scene("A corgi has stolen a baguette and is sprinting away from its owner at full speed, baguette held high.", Difficulty.Easy),
-        Scene("A person has dressed their houseplant in tiny clothes and is taking it to brunch.", Difficulty.Medium),
-        Scene("A queue of people is standing outside a shop at 5am on a freezing morning waiting for the sales to start.", Difficulty.Easy),
+            .Category(SceneCategory)
+            .Card(SceneCategory, SceneBody("A penguin is standing at a bus stop, holding a tiny umbrella, looking furious."), Difficulty.Easy)
+            .Card(SceneCategory, SceneBody("A cat has knocked every single item off a desk and is now sitting in the exact centre, staring at you."), Difficulty.Easy)
+            .Card(SceneCategory, SceneBody("A man in a full suit of medieval armour is trying to order a coffee at a busy café."), Difficulty.Easy)
+            .Card(SceneCategory, SceneBody("Three pigeons are gathered around a single chip, clearly mid-negotiation."), Difficulty.Easy)
+            .Card(SceneCategory, SceneBody("A dog has somehow climbed onto the roof of a shed and refuses to acknowledge that anything is wrong."), Difficulty.Easy)
+            .Card(SceneCategory, SceneBody("A toddler has dressed the family dog in a wedding veil and is conducting a ceremony."), Difficulty.Medium)
+            .Card(SceneCategory, SceneBody("A businessman is sprinting through an airport while a single shoe trails ten metres behind him."), Difficulty.Medium)
+            .Card(SceneCategory, SceneBody("A goat has escaped onto a golf course and appears to be lining up a putt."), Difficulty.Medium)
+            .Card(SceneCategory, SceneBody("Someone has built an enormous, elaborate sandcastle and a single seagull is standing on top like a king."), Difficulty.Medium)
+            .Card(SceneCategory, SceneBody("A robot vacuum has cornered the family cat and the two of them are locked in a tense standoff."), Difficulty.Hard)
+            .Card(SceneCategory, SceneBody("A elderly woman is having an intense argument with a self-checkout machine while everyone watches."), Difficulty.Easy)
+            .Card(SceneCategory, SceneBody("A squirrel is standing on its hind legs, holding a sandwich, staring directly into a security camera."), Difficulty.Easy)
+            .Card(SceneCategory, SceneBody("A person has somehow gotten their head stuck in a vending machine and is dangling from it."), Difficulty.Medium)
+            .Card(SceneCategory, SceneBody("A couple of ducks are waddling through a fast-food drive-thru queue like they own the place."), Difficulty.Easy)
+            .Card(SceneCategory, SceneBody("A man is attempting to parallel park a minivan, has been at it for five minutes, and is clearly losing his mind."), Difficulty.Medium)
+            .Card(SceneCategory, SceneBody("A child has built a blanket fort so elaborate it now has a moat."), Difficulty.Easy)
+            .Card(SceneCategory, SceneBody("A library has run out of bookshelf space and someone is stacking books on the floor in increasingly creative ways."), Difficulty.Medium)
+            .Card(SceneCategory, SceneBody("A corgi has stolen a baguette and is sprinting away from its owner at full speed, baguette held high."), Difficulty.Easy)
+            .Card(SceneCategory, SceneBody("A person has dressed their houseplant in tiny clothes and is taking it to brunch."), Difficulty.Medium)
+            .Card(SceneCategory, SceneBody("A queue of people is standing outside a shop at 5am on a freezing morning waiting for the sales to start."), Difficulty.Easy)
 
         // ── HEADLINES ────────────────────────────────────────────────────────
-        Headline("Local man wins argument with self-checkout machine; experts baffled.", Difficulty.Easy),
-        Headline("Squirrel reportedly 'knows what it did' after week-long campaign against bird feeder.", Difficulty.Easy),
-        Headline("Town's only roundabout achieves sentience; demands respect.", Difficulty.Medium),
-        Headline("Scientists confirm the last biscuit always tastes better; nation unsurprised.", Difficulty.Medium),
-        Headline("Cat elected mayor of small village 'by accident', refuses to step down.", Difficulty.Medium),
-        Headline("Man who said 'I'll just have one' returns home at 4am with a kebab and a new friend named Dave.", Difficulty.Hard),
-        Headline("Local family's GPS develops opinions, begins offering life advice.", Difficulty.Hard),
-        Headline("Penguin spotted queuing for bus; local transport authority very confused.", Difficulty.Easy),
-        Headline("Dog discovers ability to climb onto roof; immediately regrets all decisions.", Difficulty.Easy),
-        Headline("Seagull crowns itself king of sandcastle; refuses to surrender.", Difficulty.Medium),
-        Headline("Robot vacuum declares war on family feline; standoff enters hour three.", Difficulty.Medium),
-        Headline("Ducks stage successful infiltration of drive-thru; nuggets acquired.", Difficulty.Easy),
-        Headline("Corgi's baguette heist sparks international manhunt.", Difficulty.Easy),
-        Headline("Houseplant's brunch outing leaves restaurant staff speechless.", Difficulty.Medium),
-        Headline("Queue of bargain hunters forms 24 hours early; camping chairs spotted.", Difficulty.Easy),
+            .Category(HeadlineCategory)
+            .Card(HeadlineCategory, HeadlineBody("Local man wins argument with self-checkout machine; experts baffled."), Difficulty.Easy)
+            .Card(HeadlineCategory, HeadlineBody("Squirrel reportedly 'knows what it did' after week-long campaign against bird feeder."), Difficulty.Easy)
+            .Card(HeadlineCategory, HeadlineBody("Town's only roundabout achieves sentience; demands respect."), Difficulty.Medium)
+            .Card(HeadlineCategory, HeadlineBody("Scientists confirm the last biscuit always tastes better; nation unsurprised."), Difficulty.Medium)
+            .Card(HeadlineCategory, HeadlineBody("Cat elected mayor of small village 'by accident', refuses to step down."), Difficulty.Medium)
+            .Card(HeadlineCategory, HeadlineBody("Man who said 'I'll just have one' returns home at 4am with a kebab and a new friend named Dave."), Difficulty.Hard)
+            .Card(HeadlineCategory, HeadlineBody("Local family's GPS develops opinions, begins offering life advice."), Difficulty.Hard)
+            .Card(HeadlineCategory, HeadlineBody("Penguin spotted queuing for bus; local transport authority very confused."), Difficulty.Easy)
+            .Card(HeadlineCategory, HeadlineBody("Dog discovers ability to climb onto roof; immediately regrets all decisions."), Difficulty.Easy)
+            .Card(HeadlineCategory, HeadlineBody("Seagull crowns itself king of sandcastle; refuses to surrender."), Difficulty.Medium)
+            .Card(HeadlineCategory, HeadlineBody("Robot vacuum declares war on family feline; standoff enters hour three."), Difficulty.Medium)
+            .Card(HeadlineCategory, HeadlineBody("Ducks stage successful infiltration of drive-thru; nuggets acquired."), Difficulty.Easy)
+            .Card(HeadlineCategory, HeadlineBody("Corgi's baguette heist sparks international manhunt."), Difficulty.Easy)
+            .Card(HeadlineCategory, HeadlineBody("Houseplant's brunch outing leaves restaurant staff speechless."), Difficulty.Medium)
+            .Card(HeadlineCategory, HeadlineBody("Queue of bargain hunters forms 24 hours early; camping chairs spotted."), Difficulty.Easy)
 
         // ── OVERHEARD ────────────────────────────────────────────────────────
-        Overheard("...what someone says the moment before everything goes catastrophically wrong at a barbecue.", Difficulty.Easy),
-        Overheard("...what a dog would say if it could speak, the first time it sees snow.", Difficulty.Easy),
-        Overheard("...what the last person on Earth says when they hear a knock at the door.", Difficulty.Medium),
-        Overheard("...what your phone's autocorrect would say if it finally snapped.", Difficulty.Medium),
-        Overheard("...what a houseplant is thinking as you walk past it for the fifth day without watering it.", Difficulty.Medium),
-        Overheard("...what the pilot says over the intercom that makes everyone immediately put down their drinks.", Difficulty.Hard),
-        Overheard("...what a satnav says after you ignore its directions for the eleventh time.", Difficulty.Hard),
-        Overheard("...what a penguin mutters while standing in the rain at a bus stop.", Difficulty.Easy),
-        Overheard("...what a cat thinks while plotting your demise from the top of the wardrobe.", Difficulty.Easy),
-        Overheard("...what a medieval knight whispers to themselves while staring at a flat white.", Difficulty.Medium),
-        Overheard("...what a seagull screams victoriously from the top of a sandcastle.", Difficulty.Easy),
-        Overheard("...what a dog yells from the shed roof when it realizes the error of its ways.", Difficulty.Medium),
-        Overheard("...what a squirrel says after stealing your entire lunch bag.", Difficulty.Easy),
-        Overheard("...what a corgi thinks while sprinting away with its baguette prize.", Difficulty.Easy),
-        Overheard("...what someone says after their head gets stuck in a vending machine.", Difficulty.Medium),
-    ];
+            .Category(OverheardCategory)
+            .Card(OverheardCategory, OverheardBody("...what someone says the moment before everything goes catastrophically wrong at a barbecue."), Difficulty.Easy)
+            .Card(OverheardCategory, OverheardBody("...what a dog would say if it could speak, the first time it sees snow."), Difficulty.Easy)
+            .Card(OverheardCategory, OverheardBody("...what the last person on Earth says when they hear a knock at the door."), Difficulty.Medium)
+            .Card(OverheardCategory, OverheardBody("...what your phone's autocorrect would say if it finally snapped."), Difficulty.Medium)
+            .Card(OverheardCategory, OverheardBody("...what a houseplant is thinking as you walk past it for the fifth day without watering it."), Difficulty.Medium)
+            .Card(OverheardCategory, OverheardBody("...what the pilot says over the intercom that makes everyone immediately put down their drinks."), Difficulty.Hard)
+            .Card(OverheardCategory, OverheardBody("...what a satnav says after you ignore its directions for the eleventh time."), Difficulty.Hard)
+            .Card(OverheardCategory, OverheardBody("...what a penguin mutters while standing in the rain at a bus stop."), Difficulty.Easy)
+            .Card(OverheardCategory, OverheardBody("...what a cat thinks while plotting your demise from the top of the wardrobe."), Difficulty.Easy)
+            .Card(OverheardCategory, OverheardBody("...what a medieval knight whispers to themselves while staring at a flat white."), Difficulty.Medium)
+            .Card(OverheardCategory, OverheardBody("...what a seagull screams victoriously from the top of a sandcastle."), Difficulty.Easy)
+            .Card(OverheardCategory, OverheardBody("...what a dog yells from the shed roof when it realizes the error of its ways."), Difficulty.Medium)
+            .Card(OverheardCategory, OverheardBody("...what a squirrel says after stealing your entire lunch bag."), Difficulty.Easy)
+            .Card(OverheardCategory, OverheardBody("...what a corgi thinks while sprinting away with its baguette prize."), Difficulty.Easy)
+            .Card(OverheardCategory, OverheardBody("...what someone says after their head gets stuck in a vending machine."), Difficulty.Medium)
 
-    private static ICard Scene(string text, Difficulty d) =>
-        StandardCard.Create(
-            SceneCategory,
-            "<b>Caption this scene:</b>\n\n" + text +
-            "\n\nEveryone has fifteen seconds. Best caption wins the round.",
-            d, SceneCategory);
+            .Build();
 
-    private static ICard Headline(string text, Difficulty d) =>
-        StandardCard.Create(
-            HeadlineCategory,
-            "<b>Write the tabloid headline:</b>\n\n" + text +
-            "\n\nActually — that <i>is</i> the event. Now everyone writes a better, funnier headline for it.",
-            d, HeadlineCategory);
+    private static string SceneBody(string text) =>
+        "<b>Caption this scene:</b>\n\n" + text +
+        "\n\nEveryone has fifteen seconds. Best caption wins the round.";
 
-    private static ICard Overheard(string text, Difficulty d) =>
-        StandardCard.Create(
-            OverheardCategory,
-            "<b>Finish the moment — say out loud</b> " + text +
-            "\n\nGo round the circle. Funniest line takes the point.",
-            d, OverheardCategory);
+    private static string HeadlineBody(string text) =>
+        "<b>Write the tabloid headline:</b>\n\n" + text +
+        "\n\nActually — that <i>is</i> the event. Now everyone writes a better, funnier headline for it.";
+
+    private static string OverheardBody(string text) =>
+        "<b>Finish the moment — say out loud</b> " + text +
+        "\n\nGo round the circle. Funniest line takes the point.";
 }
