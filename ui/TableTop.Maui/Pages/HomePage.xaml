@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    The landing screen, and a direct port of WinUI's IntroView: a brass plaque
+    centred on the felt carrying Continue, Play, Settings and Roaster.
+
+    Before the flyout there was no landing screen on this head at all — the app
+    opened straight onto the three-picker GameSelectionPage, and Settings was a
+    gear in the toolbar while Roaster was buried one level inside Settings. That
+    is why Roaster is promoted here as well as into the drawer: WinUI has
+    offered it from its first screen all along.
+-->
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mvm="clr-namespace:TableTop.Maui.ViewModels"
+    x:DataType="mvm:GameSelectionViewModel"
+    SafeAreaEdges="Container"
+    x:Class="TableTop.Maui.Pages.HomePage"
+    Title="TableTop"
+    Background="{StaticResource BaizeBrush}">
+
+    <ScrollView>
+        <!-- The plaque. MaxWidth so it stays a plaque on a tablet or on
+             Windows rather than stretching to a full-width slab. -->
+        <Border VerticalOptions="Center"
+                HorizontalOptions="Center"
+                MaximumWidthRequest="440"
+                Margin="24,32"
+                Padding="32,30"
+                StrokeShape="RoundRectangle 14"
+                Stroke="#59C49E4C"
+                BackgroundColor="#4D000000">
+            <VerticalStackLayout Spacing="12">
+                <Label Text="🃏"
+                       FontSize="52"
+                       HorizontalTextAlignment="Center" />
+
+                <Label Text="TableTop"
+                       Style="{StaticResource HeaderLabelStyle}"
+                       TextColor="{StaticResource GoldBrightColor}"
+                       HorizontalTextAlignment="Center" />
+
+                <Label Text="CARD GAMES FOR EVERY TABLE"
+                       Style="{StaticResource PipLabelStyle}"
+                       HorizontalTextAlignment="Center" />
+
+                <!-- Offered only when there is a session to continue, and it
+                     names the table and the round so "continue" is
+                     unambiguous. Above Play because a group whose phone died
+                     mid-game came back for this, not for a new one. -->
+                <Button Text="{Binding ResumeText}"
+                        IsVisible="{Binding CanResume}"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Margin="0,18,0,0"
+                        Clicked="OnResumeClicked" />
+
+                <Button Text="Play"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Margin="0,4,0,0"
+                        Clicked="OnPlayClicked" />
+
+                <Button Text="Settings"
+                        Style="{StaticResource FeltButtonStyle}"
+                        Clicked="OnSettingsClicked" />
+
+                <Button Text="Roaster"
+                        Style="{StaticResource QuietButtonStyle}"
+                        Clicked="OnRoasterClicked" />
+            </VerticalStackLayout>
+        </Border>
+    </ScrollView>
+</ContentPage>

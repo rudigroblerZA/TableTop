@@ -38,15 +38,14 @@ public partial class App : Application
     {
         // Resources are loaded (ctor ran InitializeComponent) — pages may now
         // safely use {StaticResource HeaderLabelStyle} and friends.
-        var root = _services.GetRequiredService<GameSelectionPage>();
-
-        return new Window(new NavigationPage(root)
-        {
-            // Walnut bar over the felt table, matching the framed-table shell
-            // the WPF and WinUI heads use. This shows on every page, so it was
-            // the most visible thing still wearing the pre-mock palette.
-            BarBackgroundColor = Color.FromArgb("#4A2E1D"),
-            BarTextColor = Color.FromArgb("#E3C67F"),
-        });
+        //
+        // The root is the FlyoutPage, which owns both the drawer and the
+        // NavigationPage that used to be the root here. The walnut bar moved
+        // with it: AppFlyoutPage applies it to every detail stack it builds,
+        // because swapping the detail replaces that NavigationPage.
+        //
+        // A FlyoutPage must be the window's root — it cannot be pushed onto a
+        // navigation stack — so this is the one place it can be set.
+        return new Window(_services.GetRequiredService<AppFlyoutPage>());
     }
 }
