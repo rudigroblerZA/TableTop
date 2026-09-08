@@ -67,142 +67,69 @@ public static class SpeedBlitzCardBank
     internal const string RiddleCategory = "Riddle";
     internal const string MathCategory = "Math";
 
+    private const string Deck = "Speed Blitz";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── NAME (categories, 20-30 sec) ────────────────────────────────────
-        Card(NameCategory, "Animals",
-            "Name 5 animals that start with 'M' in 20 seconds.",
-            Difficulty.Easy),
-        Card(NameCategory, "Countries",
-            "Name 4 countries in Africa in 25 seconds.",
-            Difficulty.Easy),
-        Card(NameCategory, "Breakfast Foods",
-            "List 5 things people eat for breakfast in 20 seconds.",
-            Difficulty.Easy),
-        Card(NameCategory, "Colors",
-            "Name 6 shades of blue in 25 seconds.",
-            Difficulty.Medium),
-        Card(NameCategory, "Celebrities",
-            "Name 5 actors from superhero films in 20 seconds.",
-            Difficulty.Medium),
-        Card(NameCategory, "Sports",
-            "List 4 sports played with a ball in 15 seconds.",
-            Difficulty.Easy),
-        Card(NameCategory, "Fruits",
-            "Name 7 fruits in 20 seconds.",
-            Difficulty.Easy),
-        Card(NameCategory, "Brands",
-            "Name 5 car manufacturers in 20 seconds.",
-            Difficulty.Medium),
-        Card(NameCategory, "Things in a Kitchen",
-            "List 6 kitchen appliances in 20 seconds.",
-            Difficulty.Easy),
-        Card(NameCategory, "Professions",
-            "Name 8 jobs that require university training in 25 seconds.",
-            Difficulty.Medium),
+            .Category(NameCategory)
+            .Card("Animals", Body("Name 5 animals that start with 'M' in 20 seconds."), Difficulty.Easy)
+            .Card("Countries", Body("Name 4 countries in Africa in 25 seconds."), Difficulty.Easy)
+            .Card("Breakfast Foods", Body("List 5 things people eat for breakfast in 20 seconds."), Difficulty.Easy)
+            .Card("Colors", Body("Name 6 shades of blue in 25 seconds."), Difficulty.Medium)
+            .Card("Celebrities", Body("Name 5 actors from superhero films in 20 seconds."), Difficulty.Medium)
+            .Card("Sports", Body("List 4 sports played with a ball in 15 seconds."), Difficulty.Easy)
+            .Card("Fruits", Body("Name 7 fruits in 20 seconds."), Difficulty.Easy)
+            .Card("Brands", Body("Name 5 car manufacturers in 20 seconds."), Difficulty.Medium)
+            .Card("Things in a Kitchen", Body("List 6 kitchen appliances in 20 seconds."), Difficulty.Easy)
+            .Card("Professions", Body("Name 8 jobs that require university training in 25 seconds."), Difficulty.Medium)
 
         // ── WORDS (rhymes, anagrams, word chains) ─────────────────────────
-        Card(WordsCategory, "Rhyme Sprint",
-            "Say as many words that rhyme with 'MAKE' as you can in 20 seconds.",
-            Difficulty.Easy),
-        Card(WordsCategory, "Same Start",
-            "List words that start with 'ST' in 25 seconds — get at least 5.",
-            Difficulty.Medium),
-        Card(WordsCategory, "Opposites",
-            "Give the opposite of 5 words we call out: START! (opposite: STOP). Go!",
-            Difficulty.Easy),
-        Card(WordsCategory, "Hidden Word",
-            "Find a word hidden in: SCRAMBLED. (Answer: CRUMBLED/CRAB/BRED/SCAM/CRAM) — 15 seconds.",
-            Difficulty.Medium),
-        Card(WordsCategory, "Alliteration",
-            "Think of 3 sentences where most words start with the same letter in 20 seconds.",
-            Difficulty.Medium),
-        Card(WordsCategory, "Vowel Count",
-            "How many vowels in the word BEAUTIFUL? (Answer: 5 — E, A, U, I, U) — 10 seconds.",
-            Difficulty.Easy),
-        Card(WordsCategory, "Missing Letter",
-            "C_T, D_G, B_T, F_SH — fill in the missing letters (5 seconds each).",
-            Difficulty.Easy),
-        Card(WordsCategory, "Compound Words",
-            "List 4 compound words (e.g., SUNFLOWER) in 20 seconds.",
-            Difficulty.Medium),
+            .Category(WordsCategory)
+            .Card("Rhyme Sprint", Body("Say as many words that rhyme with 'MAKE' as you can in 20 seconds."), Difficulty.Easy)
+            .Card("Same Start", Body("List words that start with 'ST' in 25 seconds — get at least 5."), Difficulty.Medium)
+            .Card("Opposites", Body("Give the opposite of 5 words we call out: START! (opposite: STOP). Go!"), Difficulty.Easy)
+            .Card("Hidden Word", Body("Find a word hidden in: SCRAMBLED. (Answer: CRUMBLED/CRAB/BRED/SCAM/CRAM) — 15 seconds."), Difficulty.Medium)
+            .Card("Alliteration", Body("Think of 3 sentences where most words start with the same letter in 20 seconds."), Difficulty.Medium)
+            .Card("Vowel Count", Body("How many vowels in the word BEAUTIFUL? (Answer: 5 — E, A, U, I, U) — 10 seconds."), Difficulty.Easy)
+            .Card("Missing Letter", Body("C_T, D_G, B_T, F_SH — fill in the missing letters (5 seconds each)."), Difficulty.Easy)
+            .Card("Compound Words", Body("List 4 compound words (e.g., SUNFLOWER) in 20 seconds."), Difficulty.Medium)
 
         // ── TRIVIA (quick answer rounds) ────────────────────────────────────
-        Card(TriviaCategory, "Olympics",
-            "Which country hosted the 2016 Summer Olympics? (Answer: Brazil) — 5 seconds.",
-            Difficulty.Easy),
-        Card(TriviaCategory, "Shakespeare",
-            "Complete: 'To be or ___?' (Answer: not to be) — 5 seconds.",
-            Difficulty.Easy),
-        Card(TriviaCategory, "Planets",
-            "How many planets orbit the Sun? (Answer: 8) — 5 seconds.",
-            Difficulty.Easy),
-        Card(TriviaCategory, "Literature",
-            "Who wrote Pride and Prejudice? (Answer: Jane Austen) — 5 seconds.",
-            Difficulty.Medium),
-        Card(TriviaCategory, "Science",
-            "What's the chemical symbol for gold? (Answer: Au) — 5 seconds.",
-            Difficulty.Medium),
-        Card(TriviaCategory, "Geography",
-            "What's the capital of Australia? (Answer: Canberra) — 5 seconds.",
-            Difficulty.Medium),
-        Card(TriviaCategory, "History",
-            "In what year did the Titanic sink? (Answer: 1912) — 5 seconds.",
-            Difficulty.Easy),
+            .Category(TriviaCategory)
+            .Card("Olympics", Body("Which country hosted the 2016 Summer Olympics? (Answer: Brazil) — 5 seconds."), Difficulty.Easy)
+            .Card("Shakespeare", Body("Complete: 'To be or ___?' (Answer: not to be) — 5 seconds."), Difficulty.Easy)
+            .Card("Planets", Body("How many planets orbit the Sun? (Answer: 8) — 5 seconds."), Difficulty.Easy)
+            .Card("Literature", Body("Who wrote Pride and Prejudice? (Answer: Jane Austen) — 5 seconds."), Difficulty.Medium)
+            .Card("Science", Body("What's the chemical symbol for gold? (Answer: Au) — 5 seconds."), Difficulty.Medium)
+            .Card("Geography", Body("What's the capital of Australia? (Answer: Canberra) — 5 seconds."), Difficulty.Medium)
+            .Card("History", Body("In what year did the Titanic sink? (Answer: 1912) — 5 seconds."), Difficulty.Easy)
 
         // ── RIDDLE (solve or think fast) ────────────────────────────────────
-        Card(RiddleCategory, "Classic",
-            "What has hands but can't clap? (Answer: Clock) — 20 seconds.",
-            Difficulty.Easy),
-        Card(RiddleCategory, "Logic",
-            "I'm tall when young, short when old. What am I? (Answer: Candle) — 20 seconds.",
-            Difficulty.Easy),
-        Card(RiddleCategory, "Wordplay",
-            "What gets wet while drying? (Answer: Towel) — 15 seconds.",
-            Difficulty.Easy),
-        Card(RiddleCategory, "Lateral Thinking",
-            "A man pushes his car to a hotel and tells the owner he's bankrupt. Why? (Answer: Playing Monopoly) — 30 seconds.",
-            Difficulty.Hard),
-        Card(RiddleCategory, "Clever",
-            "The more you take, the more you leave behind. What am I? (Answer: Footprints) — 20 seconds.",
-            Difficulty.Medium),
-        Card(RiddleCategory, "Tricky",
-            "A doctor and a boy were fishing. The boy was the doctor's son, but the doctor was not the boy's father. Who was the doctor? (Answer: His mother) — 30 seconds.",
-            Difficulty.Hard),
+            .Category(RiddleCategory)
+            .Card("Classic", Body("What has hands but can't clap? (Answer: Clock) — 20 seconds."), Difficulty.Easy)
+            .Card("Logic", Body("I'm tall when young, short when old. What am I? (Answer: Candle) — 20 seconds."), Difficulty.Easy)
+            .Card("Wordplay", Body("What gets wet while drying? (Answer: Towel) — 15 seconds."), Difficulty.Easy)
+            .Card("Lateral Thinking", Body("A man pushes his car to a hotel and tells the owner he's bankrupt. Why? (Answer: Playing Monopoly) — 30 seconds."), Difficulty.Hard)
+            .Card("Clever", Body("The more you take, the more you leave behind. What am I? (Answer: Footprints) — 20 seconds."), Difficulty.Medium)
+            .Card("Tricky", Body("A doctor and a boy were fishing. The boy was the doctor's son, but the doctor was not the boy's father. Who was the doctor? (Answer: His mother) — 30 seconds."), Difficulty.Hard)
 
         // ── MATH (quick calculation) ────────────────────────────────────────
-        Card(MathCategory, "Times Tables",
-            "What is 9 × 8? (Answer: 72) — 5 seconds.",
-            Difficulty.Easy),
-        Card(MathCategory, "Quick Division",
-            "What is 144 ÷ 12? (Answer: 12) — 5 seconds.",
-            Difficulty.Easy),
-        Card(MathCategory, "Percentage",
-            "What is 10% of 250? (Answer: 25) — 10 seconds.",
-            Difficulty.Easy),
-        Card(MathCategory, "Two-Step",
-            "If a book costs £8 and is 25% off, what's the sale price? (Answer: £6) — 15 seconds.",
-            Difficulty.Medium),
-        Card(MathCategory, "Mental Math",
-            "Add these: 47 + 38 + 15 = ? (Answer: 100) — 10 seconds.",
-            Difficulty.Medium),
-        Card(MathCategory, "Fraction",
-            "What is 3/4 of 40? (Answer: 30) — 10 seconds.",
-            Difficulty.Medium),
-        Card(MathCategory, "Geometry",
-            "A square has sides of 6cm. What's its area? (Answer: 36 cm²) — 10 seconds.",
-            Difficulty.Easy),
-        Card(MathCategory, "Sequence",
-            "What's the next number: 2, 4, 8, 16, ___? (Answer: 32) — 10 seconds.",
-            Difficulty.Easy),
-    ];
+            .Category(MathCategory)
+            .Card("Times Tables", Body("What is 9 × 8? (Answer: 72) — 5 seconds."), Difficulty.Easy)
+            .Card("Quick Division", Body("What is 144 ÷ 12? (Answer: 12) — 5 seconds."), Difficulty.Easy)
+            .Card("Percentage", Body("What is 10% of 250? (Answer: 25) — 10 seconds."), Difficulty.Easy)
+            .Card("Two-Step", Body("If a book costs £8 and is 25% off, what's the sale price? (Answer: £6) — 15 seconds."), Difficulty.Medium)
+            .Card("Mental Math", Body("Add these: 47 + 38 + 15 = ? (Answer: 100) — 10 seconds."), Difficulty.Medium)
+            .Card("Fraction", Body("What is 3/4 of 40? (Answer: 30) — 10 seconds."), Difficulty.Medium)
+            .Card("Geometry", Body("A square has sides of 6cm. What's its area? (Answer: 36 cm²) — 10 seconds."), Difficulty.Easy)
+            .Card("Sequence", Body("What's the next number: 2, 4, 8, 16, ___? (Answer: 32) — 10 seconds."), Difficulty.Easy)
 
-    private static ICard Card(string category, string title, string prompt, Difficulty d) =>
-        StandardCard.Create(
-            title,
-            prompt + "\n\n<b>Set timer for the suggested time. Go!</b>",
-            d, category);
+            .Build();
+
+    private static string Body(string prompt) =>
+        prompt + "\n\n<b>Set timer for the suggested time. Go!</b>";
 }
