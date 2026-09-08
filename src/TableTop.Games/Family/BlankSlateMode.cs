@@ -75,117 +75,122 @@ public static class BlankSlateCardBank
     internal const string CreaturesCategory = "Creatures";
     internal const string AbsurdCategory = "Absurd";
 
+    private const string Deck = "Blank Slate";
+
     /// <summary>All cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── EVERYDAY ─────────────────────────────────────────────────────────
-        P(EverydayCategory, "The real reason the washing machine keeps eating socks is ______.",
+            .Category(EverydayCategory)
+            .Card(Title("The real reason the washing machine keeps eating socks is ______."), Body(EverydayCategory, "The real reason the washing machine keeps eating socks is ______.",
           ["a very small, very hungry monster", "the socks are simply tired of us",
            "an escape tunnel behind the drum", "Dad", "a portal to a sock dimension",
            "they were never in there to begin with", "the cat's retirement fund",
-           "science has no answer"], Difficulty.Easy),
-        P(EverydayCategory, "Nothing ruins a family road trip faster than ______.",
+           "science has no answer"]), Difficulty.Easy)
+            .Card(Title("Nothing ruins a family road trip faster than ______."), Body(EverydayCategory, "Nothing ruins a family road trip faster than ______.",
           ["the same song for four hours", "someone needing the toilet immediately",
            "a map read upside down", "the snacks running out in the first ten minutes",
            "an argument about the thermostat", "a wasp in the car",
-           "'I think we passed it'", "everyone singing different words"], Difficulty.Easy),
-        P(EverydayCategory, "I would tidy my room, but ______.",
+           "'I think we passed it'", "everyone singing different words"]), Difficulty.Easy)
+            .Card(Title("I would tidy my room, but ______."), Body(EverydayCategory, "I would tidy my room, but ______.",
           ["the floor is lava", "I've made a system and you wouldn't understand it",
            "there's a very comfortable pile", "my socks are load-bearing",
            "I'm saving it for a rainy decade", "archaeologists will want this untouched",
-           "it's tidy in a way you can't see", "I have simply chosen peace"], Difficulty.Easy),
-        P(EverydayCategory, "The worst possible thing to find at the bottom of your school bag is ______.",
+           "it's tidy in a way you can't see", "I have simply chosen peace"]), Difficulty.Easy)
+            .Card(Title("The worst possible thing to find at the bottom of your school bag is ______."), Body(EverydayCategory, "The worst possible thing to find at the bottom of your school bag is ______.",
           ["a banana from a previous era", "last term's permission slip",
            "something damp and unexplained", "forty-one pens, none working",
            "a sandwich that has become a civilisation", "your missing homework, now historical",
-           "a small amount of sand", "someone else's entire lunch"], Difficulty.Medium),
-        P(EverydayCategory, "You can tell a grown-up is properly tired when they ______.",
+           "a small amount of sand", "someone else's entire lunch"]), Difficulty.Medium)
+            .Card(Title("You can tell a grown-up is properly tired when they ______."), Body(EverydayCategory, "You can tell a grown-up is properly tired when they ______.",
           ["put the milk in the cupboard", "say 'in a minute' for two hours",
            "sigh while standing up", "call you by the pet's name",
            "watch a programme with their eyes closed", "announce they're 'just resting'",
-           "lose the phone they are holding", "start a sentence and give up"], Difficulty.Medium),
+           "lose the phone they are holding", "start a sentence and give up"]), Difficulty.Medium)
 
         // ── SCHOOL ───────────────────────────────────────────────────────────
-        P(SchoolCategory, "The most terrifying words a teacher can say are ______.",
+            .Category(SchoolCategory)
+            .Card(Title("The most terrifying words a teacher can say are ______."), Body(SchoolCategory, "The most terrifying words a teacher can say are ______.",
           ["'Let's swap and mark each other's'", "'I've moved the seating plan'",
            "'Quick test — no notes'", "'Get into pairs'",
            "'I'll wait'", "'Read out what you wrote'",
-           "'This will count towards your report'", "'Where's your homework?'"], Difficulty.Easy),
-        P(SchoolCategory, "My homework is late because ______.",
+           "'This will count towards your report'", "'Where's your homework?'"]), Difficulty.Easy)
+            .Card(Title("My homework is late because ______."), Body(SchoolCategory, "My homework is late because ______.",
           ["time is a construct", "I did it perfectly in a dream",
            "it was too good and I panicked", "the printer sensed my fear",
            "I have been extremely busy thinking", "a bird was involved",
-           "it's still loading", "I finished it and then it left"], Difficulty.Easy),
-        P(SchoolCategory, "The school trip was ruined by ______.",
+           "it's still loading", "I finished it and then it left"]), Difficulty.Easy)
+            .Card(Title("The school trip was ruined by ______."), Body(SchoolCategory, "The school trip was ruined by ______.",
           ["a single unsupervised goose", "the coach driver's music taste",
            "someone's packed lunch exploding", "rain, immediately, all day",
            "a headcount that never worked", "the gift shop",
-           "one child who wandered off with confidence", "a very long queue for one small thing"], Difficulty.Medium),
-        P(SchoolCategory, "You know the lesson has gone off track when ______.",
+           "one child who wandered off with confidence", "a very long queue for one small thing"]), Difficulty.Medium)
+            .Card(Title("You know the lesson has gone off track when ______."), Body(SchoolCategory, "You know the lesson has gone off track when ______.",
           ["everyone is now debating pizza", "the smartboard has surrendered",
            "someone asks a question that breaks the teacher", "a wasp enters the room",
            "the video won't play and never will", "you're twenty minutes into a story about the teacher's dog",
-           "the class starts marking each other's handwriting", "somebody found the pencil sharpener"], Difficulty.Medium),
+           "the class starts marking each other's handwriting", "somebody found the pencil sharpener"]), Difficulty.Medium)
 
         // ── CREATURES ────────────────────────────────────────────────────────
-        P(CreaturesCategory, "If my pet could talk, the first thing it would say is ______.",
+            .Category(CreaturesCategory)
+            .Card(Title("If my pet could talk, the first thing it would say is ______."), Body(CreaturesCategory, "If my pet could talk, the first thing it would say is ______.",
           ["'We need to discuss the food situation'", "'I've been lying to you'",
            "'That was me. All of it was me.'", "'Who is a good boy? Be specific.'",
            "'I have been awake since four'", "'The postman and I have history'",
-           "'You sit in my chair'", "'I would like to renegotiate walks'"], Difficulty.Easy),
-        P(CreaturesCategory, "The animal least suited to running a restaurant is ______.",
+           "'You sit in my chair'", "'I would like to renegotiate walks'"]), Difficulty.Easy)
+            .Card(Title("The animal least suited to running a restaurant is ______."), Body(CreaturesCategory, "The animal least suited to running a restaurant is ______.",
           ["a seagull, for obvious reasons", "a sloth, on timing grounds",
            "a goldfish with no memory of the order", "an octopus doing eight jobs badly",
            "a raccoon who eats the stock", "a very loud parrot on front of house",
-           "a bear who samples everything", "a snail, in the delivery role"], Difficulty.Medium),
-        P(CreaturesCategory, "Scientists have discovered that dolphins are secretly ______.",
+           "a bear who samples everything", "a snail, in the delivery role"]), Difficulty.Medium)
+            .Card(Title("Scientists have discovered that dolphins are secretly ______."), Body(CreaturesCategory, "Scientists have discovered that dolphins are secretly ______.",
           ["extremely judgemental", "running a very successful business",
            "listening to all of it", "better at maths than us",
            "just wearing very good costumes", "in charge already",
-           "keeping detailed notes", "planning something for Tuesday"], Difficulty.Medium),
-        P(CreaturesCategory, "The worst superpower for an animal to have is ______.",
+           "keeping detailed notes", "planning something for Tuesday"]), Difficulty.Medium)
+            .Card(Title("The worst superpower for an animal to have is ______."), Body(CreaturesCategory, "The worst superpower for an animal to have is ______.",
           ["invisibility, for a very large horse", "flight, for something already smug",
            "telepathy, for a cat", "super speed, but only backwards",
            "the ability to open doors", "understanding money",
-           "immortality, for a wasp", "the power to send emails"], Difficulty.Hard),
+           "immortality, for a wasp", "the power to send emails"]), Difficulty.Hard)
 
         // ── ABSURD ───────────────────────────────────────────────────────────
-        P(AbsurdCategory, "The next big Olympic sport will be ______.",
+            .Category(AbsurdCategory)
+            .Card(Title("The next big Olympic sport will be ______."), Body(AbsurdCategory, "The next big Olympic sport will be ______.",
           ["competitive napping", "extreme umbrella wrestling",
            "synchronised sighing", "long-distance staring",
            "carrying too many bags in one trip", "professional queueing",
-           "getting the duvet into the cover, for time", "advanced tripping over nothing"], Difficulty.Medium),
-        P(AbsurdCategory, "I've invented a machine that finally ______.",
+           "getting the duvet into the cover, for time", "advanced tripping over nothing"]), Difficulty.Medium)
+            .Card(Title("I've invented a machine that finally ______."), Body(AbsurdCategory, "I've invented a machine that finally ______.",
           ["finds the other sock", "explains what the noise was",
            "tells you if you already washed your hair", "removes the last bit of stubborn packaging",
            "makes toast that is actually the right shade", "answers 'what do you want for dinner'",
-           "stops the plastic bag drawer", "puts things back where you found them"], Difficulty.Medium),
-        P(AbsurdCategory, "The moon landing was almost cancelled because of ______.",
+           "stops the plastic bag drawer", "puts things back where you found them"]), Difficulty.Medium)
+            .Card(Title("The moon landing was almost cancelled because of ______."), Body(AbsurdCategory, "The moon landing was almost cancelled because of ______.",
           ["a bee in the rocket", "someone forgetting the snacks",
            "a very long argument about the playlist", "one loose screw and a lot of denial",
            "a printer that would not connect", "a booking clash with a wedding",
-           "somebody's mum saying no", "the sheer amount of paperwork"], Difficulty.Hard),
-        P(AbsurdCategory, "You should never trust a person who ______.",
+           "somebody's mum saying no", "the sheer amount of paperwork"]), Difficulty.Hard)
+            .Card(Title("You should never trust a person who ______."), Body(AbsurdCategory, "You should never trust a person who ______.",
           ["claps when the plane lands, personally", "puts the milk in first, aggressively",
            "enjoys folding fitted sheets", "has zero photos on their phone",
            "says 'I'll be honest with you' too often", "reads the instructions all the way through",
-           "actually finishes the pot of yoghurt neatly", "has never once lost a pen"], Difficulty.Hard),
-        P(AbsurdCategory, "The instruction manual clearly said ______.",
+           "actually finishes the pot of yoghurt neatly", "has never once lost a pen"]), Difficulty.Hard)
+            .Card(Title("The instruction manual clearly said ______."), Body(AbsurdCategory, "The instruction manual clearly said ______.",
           ["'Do not do the obvious thing'", "'Part C does not exist. Good luck.'",
            "'You will need a second person and a better attitude'",
            "'Congratulations on your purchase. We're sorry.'",
            "'Tighten until it feels wrong'", "'This step is impossible. Continue.'",
-           "'If you hear a crack, that's normal'", "'Steps 4 to 9 have been removed'"], Difficulty.Extreme),
-    ];
+           "'If you hear a crack, that's normal'", "'Steps 4 to 9 have been removed'"]), Difficulty.Extreme)
+            .Build();
 
-    private static ICard P(string category, string prompt, string[] answers, Difficulty d) =>
-        StandardCard.Create(
-            prompt.Length > 42 ? prompt[..39].TrimEnd() + "…" : prompt,
-            "<b>🃏 " + category.ToUpperInvariant() + "</b>\n\n" +
-            "<b>" + prompt + "</b>\n\n" +
-            "<i>Judge reads it out. Everyone else secretly picks a number — or invents a better answer of their own.</i>\n\n" +
-            string.Join("\n", answers.Select((a, i) => $"{i + 1}. {a}")),
-            d, category);
+    private static string Title(string prompt) =>
+        prompt.Length > 42 ? prompt[..39].TrimEnd() + "…" : prompt;
+
+    private static string Body(string category, string prompt, string[] answers) =>
+        "<b>🃏 " + category.ToUpperInvariant() + "</b>\n\n<b>" + prompt + "</b>\n\n" +
+        "<i>Judge reads it out. Everyone else secretly picks a number — or invents a better answer of their own.</i>\n\n" +
+        string.Join("\n", answers.Select((a, i) => $"{i + 1}. {a}"));
 }
