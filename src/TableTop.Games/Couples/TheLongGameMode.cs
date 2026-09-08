@@ -77,142 +77,71 @@ public static class TheLongGameCardBank
     internal const string WeatheredCategory = "Weathered";
     internal const string VowsCategory = "Vows";
 
+    private const string Deck = "The Long Game";
+
     /// <summary>All cards, ordered by movement.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── NOTICING — small, recent, concrete ───────────────────────────────
-        N(NoticingCategory, "This Week",
-          "Name one specific moment THIS WEEK you were glad it was them beside you. Not a general feeling — the actual moment.",
-          Difficulty.Easy),
-        N(NoticingCategory, "The Unglamorous Thing",
-          "Thank them for something deeply unglamorous they do that keeps your shared life running. Be specific enough that they know you've noticed.",
-          Difficulty.Easy),
-        N(NoticingCategory, "A Way They Move",
-          "Describe one small physical habit of theirs — how they laugh, hold a mug, sleep — that you'd miss if it were gone.",
-          Difficulty.Easy),
-        N(NoticingCategory, "Better Because",
-          "Finish honestly: 'I'm better at ___ than I used to be, and it's partly because of you.' Name the actual skill or trait.",
-          Difficulty.Medium),
-        N(NoticingCategory, "The Thing You Almost Missed",
-          "Tell them one good thing about themselves they might not know you noticed.",
-          Difficulty.Medium),
-        N(NoticingCategory, "In A Room",
-          "Describe how you feel when they walk into a room you're already in. One honest sentence.",
-          Difficulty.Easy),
-        N(NoticingCategory, "Their Competence",
-          "Name a thing they are genuinely, impressively good at — and a specific time you watched them do it well.",
-          Difficulty.Medium),
-        N(NoticingCategory, "The Small Repair",
-          "Name one small thing they did this week that quietly fixed something — a job, a mood, a whole day.",
-          Difficulty.Easy),
-        N(NoticingCategory, "In A Room",
-          "Name something they do in company that you're proud to stand next to.",
-          Difficulty.Easy),
-        N(NoticingCategory, "The Change",
-          "Name one way they've changed for the better since you met — and say what you think it cost them.",
-          Difficulty.Medium),
+            .Category(NoticingCategory)
+            .Card("This Week", BodyN(NoticingCategory, "Name one specific moment THIS WEEK you were glad it was them beside you. Not a general feeling — the actual moment."), Difficulty.Easy)
+            .Card("The Unglamorous Thing", BodyN(NoticingCategory, "Thank them for something deeply unglamorous they do that keeps your shared life running. Be specific enough that they know you've noticed."), Difficulty.Easy)
+            .Card("A Way They Move", BodyN(NoticingCategory, "Describe one small physical habit of theirs — how they laugh, hold a mug, sleep — that you'd miss if it were gone."), Difficulty.Easy)
+            .Card("Better Because", BodyN(NoticingCategory, "Finish honestly: 'I'm better at ___ than I used to be, and it's partly because of you.' Name the actual skill or trait."), Difficulty.Medium)
+            .Card("The Thing You Almost Missed", BodyN(NoticingCategory, "Tell them one good thing about themselves they might not know you noticed."), Difficulty.Medium)
+            .Card("In A Room", BodyN(NoticingCategory, "Describe how you feel when they walk into a room you're already in. One honest sentence."), Difficulty.Easy)
+            .Card("Their Competence", BodyN(NoticingCategory, "Name a thing they are genuinely, impressively good at — and a specific time you watched them do it well."), Difficulty.Medium)
+            .Card("The Small Repair", BodyN(NoticingCategory, "Name one small thing they did this week that quietly fixed something — a job, a mood, a whole day."), Difficulty.Easy)
+            .Card("In A Room", BodyN(NoticingCategory, "Name something they do in company that you're proud to stand next to."), Difficulty.Easy)
+            .Card("The Change", BodyN(NoticingCategory, "Name one way they've changed for the better since you met — and say what you think it cost them."), Difficulty.Medium)
 
         // ── GRATITUDE — the harder-to-say thank-yous ─────────────────────────
-        G(GratitudeCategory, "The Sacrifice",
-          "Name something they gave up, changed, or carried for your sake — and thank them for it out loud, plainly.",
-          Difficulty.Hard),
-        G(GratitudeCategory, "When You Were Hard To Love",
-          "Think of a stretch when you were difficult to be with. Thank them for staying, and name what you know it cost them.",
-          Difficulty.Extreme),
-        G(GratitudeCategory, "The Ordinary Loyalty",
-          "Thank them for a small, repeated loyalty you've come to count on without saying so.",
-          Difficulty.Medium),
-        G(GratitudeCategory, "Something You've Never Said",
-          "Say one true thank-you you've meant for a long time but never actually put into words.",
-          Difficulty.Extreme),
-        G(GratitudeCategory, "The Rescue",
-          "Recall a time they quietly rescued a day, a plan, or you — and never made it a big deal. Make it one now.",
-          Difficulty.Hard),
-        G(GratitudeCategory, "For Your People",
-          "Thank them for how they treat someone YOU love — your family, a friend, a pet, your past self.",
-          Difficulty.Medium),
-        G(GratitudeCategory, "The Unasked Favour",
-          "Thank them for something they do that you have never once had to ask for.",
-          Difficulty.Medium),
-        G(GratitudeCategory, "The Cost",
-          "Name something in your life that is measurably better and exists only because of them.",
-          Difficulty.Hard),
-        G(GratitudeCategory, "The Person You Became",
-          "Name one way being with them made you a better person — and be specific about how it actually happened.",
-          Difficulty.Extreme),
+            .Category(GratitudeCategory)
+            .Card("The Sacrifice", BodyG(GratitudeCategory, "Name something they gave up, changed, or carried for your sake — and thank them for it out loud, plainly."), Difficulty.Hard)
+            .Card("When You Were Hard To Love", BodyG(GratitudeCategory, "Think of a stretch when you were difficult to be with. Thank them for staying, and name what you know it cost them."), Difficulty.Extreme)
+            .Card("The Ordinary Loyalty", BodyG(GratitudeCategory, "Thank them for a small, repeated loyalty you've come to count on without saying so."), Difficulty.Medium)
+            .Card("Something You've Never Said", BodyG(GratitudeCategory, "Say one true thank-you you've meant for a long time but never actually put into words."), Difficulty.Extreme)
+            .Card("The Rescue", BodyG(GratitudeCategory, "Recall a time they quietly rescued a day, a plan, or you — and never made it a big deal. Make it one now."), Difficulty.Hard)
+            .Card("For Your People", BodyG(GratitudeCategory, "Thank them for how they treat someone YOU love — your family, a friend, a pet, your past self."), Difficulty.Medium)
+            .Card("The Unasked Favour", BodyG(GratitudeCategory, "Thank them for something they do that you have never once had to ask for."), Difficulty.Medium)
+            .Card("The Cost", BodyG(GratitudeCategory, "Name something in your life that is measurably better and exists only because of them."), Difficulty.Hard)
+            .Card("The Person You Became", BodyG(GratitudeCategory, "Name one way being with them made you a better person — and be specific about how it actually happened."), Difficulty.Extreme)
 
         // ── WEATHERED — what you've survived, named honestly ─────────────────
-        W(WeatheredCategory, "The Hard Season",
-          "Name a genuinely hard season you came through together. What did they do then that you still carry?",
-          Difficulty.Hard),
-        W(WeatheredCategory, "The Old Fight",
-          "Recall an argument you're both past now. What did you learn about loving them from the other side of it?",
-          Difficulty.Hard),
-        W(WeatheredCategory, "Proof",
-          "Tell them about a moment that became your private proof that this is real and worth it.",
-          Difficulty.Hard),
-        W(WeatheredCategory, "What Changed In You",
-          "Name one way loving them has changed who you are — for the better — that you didn't expect going in.",
-          Difficulty.Extreme),
-        W(WeatheredCategory, "The Almost",
-          "Was there a moment things could have gone another way? Name it honestly, and why you're glad they didn't.",
-          Difficulty.Extreme),
-        W(WeatheredCategory, "Steady",
-          "Describe what they're like in a crisis, and what it means to have them beside you when things go wrong.",
-          Difficulty.Medium),
-        W(WeatheredCategory, "Carried",
-          "Name a stretch when they carried more than their share. Say that you noticed, and say what it looked like from where you stood.",
-          Difficulty.Medium),
-        W(WeatheredCategory, "The Night It Turned",
-          "Name a night that could have gone badly and didn't. What did one of you do?",
-          Difficulty.Hard),
-        W(WeatheredCategory, "The Argument We Survived",
-          "Name an argument you're glad you had. What did it settle that needed settling?",
-          Difficulty.Extreme),
+            .Category(WeatheredCategory)
+            .Card("The Hard Season", BodyW(WeatheredCategory, "Name a genuinely hard season you came through together. What did they do then that you still carry?"), Difficulty.Hard)
+            .Card("The Old Fight", BodyW(WeatheredCategory, "Recall an argument you're both past now. What did you learn about loving them from the other side of it?"), Difficulty.Hard)
+            .Card("Proof", BodyW(WeatheredCategory, "Tell them about a moment that became your private proof that this is real and worth it."), Difficulty.Hard)
+            .Card("What Changed In You", BodyW(WeatheredCategory, "Name one way loving them has changed who you are — for the better — that you didn't expect going in."), Difficulty.Extreme)
+            .Card("The Almost", BodyW(WeatheredCategory, "Was there a moment things could have gone another way? Name it honestly, and why you're glad they didn't."), Difficulty.Extreme)
+            .Card("Steady", BodyW(WeatheredCategory, "Describe what they're like in a crisis, and what it means to have them beside you when things go wrong."), Difficulty.Medium)
+            .Card("Carried", BodyW(WeatheredCategory, "Name a stretch when they carried more than their share. Say that you noticed, and say what it looked like from where you stood."), Difficulty.Medium)
+            .Card("The Night It Turned", BodyW(WeatheredCategory, "Name a night that could have gone badly and didn't. What did one of you do?"), Difficulty.Hard)
+            .Card("The Argument We Survived", BodyW(WeatheredCategory, "Name an argument you're glad you had. What did it settle that needed settling?"), Difficulty.Extreme)
 
         // ── VOWS — small, real, forward-facing ───────────────────────────────
-        V(VowsCategory, "One Small Promise",
-          "Make one small, specific, keepable promise for the coming month. Not grand — real. Say it as a promise.",
-          Difficulty.Medium),
-        V(VowsCategory, "I'll Keep Doing",
-          "Name one good thing you already do for them that you promise to keep doing, on purpose, even when it's hard.",
-          Difficulty.Medium),
-        V(VowsCategory, "The Repair",
-          "Name one thing you'll try to do better — and ask them, genuinely, how they'd like you to.",
-          Difficulty.Hard),
-        V(VowsCategory, "In Ten Years",
-          "Describe one thing you hope is still true about the two of you in ten years — and one thing you'll do to protect it.",
-          Difficulty.Hard),
-        V(VowsCategory, "The Standing Invitation",
-          "Offer them one standing 'you can always…' — a permission or a promise they can lean on anytime. Mean it.",
-          Difficulty.Extreme),
-        V(VowsCategory, "Choose Again",
-          "Knowing everything you now know, tell them plainly that you'd choose them again — and name the clearest reason why.",
-          Difficulty.Hard),
-        V(VowsCategory, "A Standing Appointment",
-          "Promise one recurring thing — weekly or monthly — that belongs to the two of you and nobody else. Name the day out loud.",
-          Difficulty.Medium),
-        V(VowsCategory, "The Thing I'll Stop",
-          "Name one thing you'll stop doing, starting now, because you know what it costs them. Say it as a promise, not an intention.",
-          Difficulty.Hard),
-        V(VowsCategory, "In Ten Years",
-          "Say one thing you promise will still be true of the two of you in ten years — then say what it'll take to keep it true.",
-          Difficulty.Hard),
-    ];
+            .Category(VowsCategory)
+            .Card("One Small Promise", BodyV(VowsCategory, "Make one small, specific, keepable promise for the coming month. Not grand — real. Say it as a promise."), Difficulty.Medium)
+            .Card("I'll Keep Doing", BodyV(VowsCategory, "Name one good thing you already do for them that you promise to keep doing, on purpose, even when it's hard."), Difficulty.Medium)
+            .Card("The Repair", BodyV(VowsCategory, "Name one thing you'll try to do better — and ask them, genuinely, how they'd like you to."), Difficulty.Hard)
+            .Card("In Ten Years", BodyV(VowsCategory, "Describe one thing you hope is still true about the two of you in ten years — and one thing you'll do to protect it."), Difficulty.Hard)
+            .Card("The Standing Invitation", BodyV(VowsCategory, "Offer them one standing 'you can always…' — a permission or a promise they can lean on anytime. Mean it."), Difficulty.Extreme)
+            .Card("Choose Again", BodyV(VowsCategory, "Knowing everything you now know, tell them plainly that you'd choose them again — and name the clearest reason why."), Difficulty.Hard)
+            .Card("A Standing Appointment", BodyV(VowsCategory, "Promise one recurring thing — weekly or monthly — that belongs to the two of you and nobody else. Name the day out loud."), Difficulty.Medium)
+            .Card("The Thing I'll Stop", BodyV(VowsCategory, "Name one thing you'll stop doing, starting now, because you know what it costs them. Say it as a promise, not an intention."), Difficulty.Hard)
+            .Card("In Ten Years", BodyV(VowsCategory, "Say one thing you promise will still be true of the two of you in ten years — then say what it'll take to keep it true."), Difficulty.Hard)
+            .Build();
 
     // Each movement gets its own emoji header; all share the "specific, out loud" ethos.
-    private static ICard N(string cat, string title, string prompt, Difficulty d) => Make("🌱", cat, title, prompt, d);
-    private static ICard G(string cat, string title, string prompt, Difficulty d) => Make("🕯️", cat, title, prompt, d);
-    private static ICard W(string cat, string title, string prompt, Difficulty d) => Make("⚓", cat, title, prompt, d);
-    private static ICard V(string cat, string title, string prompt, Difficulty d) => Make("💍", cat, title, prompt, d);
+    private static string BodyN(string category, string prompt) => Compose("🌱", category, prompt);
+    private static string BodyG(string category, string prompt) => Compose("🕯️", category, prompt);
+    private static string BodyW(string category, string prompt) => Compose("⚓", category, prompt);
+    private static string BodyV(string category, string prompt) => Compose("💍", category, prompt);
 
-    private static ICard Make(string emoji, string category, string title, string prompt, Difficulty d) =>
-        StandardCard.Create(
-            title,
-            "<b>" + emoji + " " + category.ToUpperInvariant() + "</b>\n\n" +
-            prompt + "\n\n" +
-            "<i>Be specific — the specific thing is the whole gift. If it lands, either of you can call \"Keeper\" and write it down.</i>",
-            d, category);
+    private static string Compose(string emoji, string category, string prompt) =>
+        "<b>" + emoji + " " + category.ToUpperInvariant() + "</b>\n\n" +
+        prompt + "\n\n" +
+        "<i>Be specific — the specific thing is the whole gift. If it lands, either of you can call \"Keeper\" and write it down.</i>";
 }
