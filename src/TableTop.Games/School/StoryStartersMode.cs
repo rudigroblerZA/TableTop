@@ -65,211 +65,190 @@ public static class StoryStartersCardBank
     internal const string TwistCategory = "Twist";
     internal const string ChallengeCategory = "Challenge";
 
+    private const string Deck = "Story Starters";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
+
+            .Category(StarterCategory)
+
         // ── STARTERS: Easy — vivid, accessible first lines ────────────────────
 
-        S("The Door at the End of the Garden",
-          StarterCategory, Difficulty.Easy,
+            .Card("The Door at the End of the Garden",
           "⏱ <b>90 seconds</b> — continue this story:\n\n" +
           "<b>\"The door had always been there, at the end of the garden, behind the old apple tree. Nobody ever talked about it. Nobody ever opened it. Until the morning Maya decided she would.\"</b>\n\n" +
-          "Continue the story from here. Where does the door lead? What does Maya find?"),
+          "Continue the story from here. Where does the door lead? What does Maya find?", Difficulty.Easy)
 
-        S("The Last Person on Earth",
-          StarterCategory, Difficulty.Easy,
+            .Card("The Last Person on Earth",
           "⏱ <b>90 seconds</b> — continue this story:\n\n" +
           "<b>\"Alex woke up on an ordinary Tuesday and realised, very slowly, that every other person on Earth had simply... gone.\"</b>\n\n" +
-          "Continue. What does Alex do first? What do they find?"),
+          "Continue. What does Alex do first? What do they find?", Difficulty.Easy)
 
-        S("The Letter",
-          StarterCategory, Difficulty.Easy,
+            .Card("The Letter",
           "⏱ <b>90 seconds</b> — continue this story:\n\n" +
           "<b>\"Inside the old book was a letter. The handwriting was her grandmother's. But her grandmother had been dead for twenty years. And the date at the top of the letter was yesterday.\"</b>\n\n" +
-          "What does the letter say? What does she do next?"),
+          "What does the letter say? What does she do next?", Difficulty.Easy)
 
-        S("Best Day",
-          StarterCategory, Difficulty.Easy,
+            .Card("Best Day",
           "⏱ <b>90 seconds</b> — continue this story:\n\n" +
           "<b>\"It started as the worst day of the year. By noon, it had become the best.\"</b>\n\n" +
-          "You decide what happens in between. Make us believe both halves."),
+          "You decide what happens in between. Make us believe both halves.", Difficulty.Easy)
 
-        S("The Stowaway",
-          StarterCategory, Difficulty.Easy,
+            .Card("The Stowaway",
           "⏱ <b>90 seconds</b> — continue this story:\n\n" +
           "<b>\"The spaceship had been travelling for three years when the captain heard the noise coming from Cargo Bay Seven — the one that was supposed to be empty.\"</b>\n\n" +
-          "What made the noise? What happens next?"),
+          "What made the noise? What happens next?", Difficulty.Easy)
 
-        S("The Gift",
-          StarterCategory, Difficulty.Easy,
+            .Card("The Gift",
           "⏱ <b>90 seconds</b> — continue this story:\n\n" +
           "<b>\"The box arrived with no return address, no postage, and no explanation. Inside was exactly what she had always wanted — something she had never told anyone about.\"</b>\n\n" +
-          "What is in the box? Where did it come from?"),
+          "What is in the box? Where did it come from?", Difficulty.Easy)
 
-        S("The Map",
-          StarterCategory, Difficulty.Easy,
+            .Card("The Map",
           "⏱ <b>90 seconds</b> — continue this story:\n\n" +
           "<b>\"The map showed a place that didn't exist on any other map in the world. And someone had drawn a red circle around exactly where they were standing right now.\"</b>\n\n" +
-          "What is marked on the map? What do they do?"),
+          "What is marked on the map? What do they do?", Difficulty.Easy)
 
-        S("The Apology",
-          StarterCategory, Difficulty.Easy,
+            .Card("The Apology",
           "⏱ <b>90 seconds</b> — continue this story:\n\n" +
           "<b>\"She had been practising the apology for days. But when she finally knocked on the door and it opened, the words completely disappeared.\"</b>\n\n" +
-          "What had happened? What does she say instead?"),
+          "What had happened? What does she say instead?", Difficulty.Easy)
 
         // ── STARTERS: Medium — more literary, require development ────────────
 
-        S("The Interview",
-          StarterCategory, Difficulty.Medium,
+            .Card("The Interview",
           "⏱ <b>90 seconds</b> — continue this story:\n\n" +
           "<b>\"The job interview was going perfectly until she asked the one question no one had ever asked before: 'What is the worst thing you have ever done?'\"</b>\n\n" +
-          "Continue. What does the character answer? What happens next?"),
+          "Continue. What does the character answer? What happens next?", Difficulty.Medium)
 
-        S("The Photograph",
-          StarterCategory, Difficulty.Medium,
+            .Card("The Photograph",
           "⏱ <b>90 seconds</b> — continue this story:\n\n" +
           "<b>\"The photograph showed him standing in a street in a city he had never visited, in a year before he was born, wearing his own face.\"</b>\n\n" +
-          "Continue the story. How do you explain it?"),
+          "Continue the story. How do you explain it?", Difficulty.Medium)
 
-        S("The Last Library",
-          StarterCategory, Difficulty.Medium,
+            .Card("The Last Library",
           "⏱ <b>90 seconds</b> — continue this story:\n\n" +
           "<b>\"In the year when books were made illegal, the last library was hidden underground. Only twelve people knew where it was. Tonight, someone had told a thirteenth.\"</b>\n\n" +
-          "Continue. What happens next? Who was the thirteenth person?"),
+          "Continue. What happens next? Who was the thirteenth person?", Difficulty.Medium)
 
-        S("Two Sides",
-          StarterCategory, Difficulty.Medium,
+            .Card("Two Sides",
           "⏱ <b>90 seconds</b> — tell a story with this rule:\n\n" +
           "Your character makes a choice. Tell the story <b>twice</b>: once for each possible outcome. Both outcomes must be equally believable.\n\n" +
-          "The choice can be anything — small or huge. You decide what it is."),
+          "The choice can be anything — small or huge. You decide what it is.", Difficulty.Medium)
 
-        S("The Unreliable Narrator",
-          StarterCategory, Difficulty.Medium,
+            .Card("The Unreliable Narrator",
           "⏱ <b>90 seconds</b> — tell a story from the point of view of a character who is <b>lying</b> or <b>mistaken</b> about something important.\n\n" +
           "The group must figure out what the narrator is getting wrong.\n\n" +
-          "You decide the scenario, the lie, and the truth beneath it."),
+          "You decide the scenario, the lie, and the truth beneath it.", Difficulty.Medium)
+
+            .Category(ConstraintCategory)
 
         // ── CONSTRAINTS: follow the rule while telling ───────────────────────
 
-        S("No Adjectives",
-          ConstraintCategory, Difficulty.Medium,
+            .Card("No Adjectives",
           "⏱ <b>60 seconds</b> — tell a story about any subject you choose.\n\n" +
           "<b>RULE: You may not use a single adjective.</b>\n\n" +
           "No describing words — only nouns, verbs, and adverbs.\n\n" +
-          "The group listens for adjectives. One slip = no bonus point."),
+          "The group listens for adjectives. One slip = no bonus point.", Difficulty.Medium)
 
-        S("Start with the End",
-          ConstraintCategory, Difficulty.Medium,
+            .Card("Start with the End",
           "⏱ <b>90 seconds</b> — tell a story.\n\n" +
           "<b>RULE: Begin with the final sentence, then work backwards.</b>\n\n" +
           "Your opening line is where the story ends. Then explain how you got there.\n\n" +
-          "You decide the final sentence."),
+          "You decide the final sentence.", Difficulty.Medium)
 
-        S("Every Sentence: New Character",
-          ConstraintCategory, Difficulty.Medium,
+            .Card("Every Sentence: New Character",
           "⏱ <b>60 seconds</b> — tell a story.\n\n" +
           "<b>RULE: Every new sentence must introduce a new named character.</b>\n\n" +
           "See how many characters you can weave in while keeping a coherent story.\n\n" +
-          "Minimum: four characters in 60 seconds."),
+          "Minimum: four characters in 60 seconds.", Difficulty.Medium)
 
-        S("The Rule of Three",
-          ConstraintCategory, Difficulty.Medium,
+            .Card("The Rule of Three",
           "⏱ <b>90 seconds</b> — tell a story.\n\n" +
           "<b>RULE: Every important thing in your story must happen exactly three times.</b>\n\n" +
           "Three characters, three attempts, three results — you decide how.\n\n" +
-          "If you only use something once or twice, the group calls it out."),
+          "If you only use something once or twice, the group calls it out.", Difficulty.Medium)
 
-        S("No Said",
-          ConstraintCategory, Difficulty.Hard,
+            .Card("No Said",
           "⏱ <b>90 seconds</b> — tell a story that includes at least three lines of dialogue.\n\n" +
           "<b>RULE: You may never use the word 'said' or 'says'.</b>\n\n" +
           "You must use a different dialogue verb every time a character speaks.\n\n" +
-          "The group tracks your verb choices — no repeats!"),
+          "The group tracks your verb choices — no repeats!", Difficulty.Hard)
 
-        S("All Senses",
-          ConstraintCategory, Difficulty.Hard,
+            .Card("All Senses",
           "⏱ <b>90 seconds</b> — tell a story about any scene.\n\n" +
           "<b>RULE: You must include at least one detail for each of the five senses:</b>\n" +
           "sight, sound, smell, touch, taste.\n\n" +
-          "The group checks off each sense as you use it. Missed one = no bonus."),
+          "The group checks off each sense as you use it. Missed one = no bonus.", Difficulty.Hard)
+
+            .Category(TwistCategory)
 
         // ── TWISTS: add these to an existing story or start fresh ─────────────
 
-        S("Unexpected Weather",
-          TwistCategory, Difficulty.Easy,
+            .Card("Unexpected Weather",
           "⚡ <b>TWIST</b> — drop this into any story, or start a new one:\n\n" +
           "<b>Suddenly, impossibly, it began to snow indoors.</b>\n\n" +
           "Either add this to the story in progress, or begin a new story that explains it.\n\n" +
-          "⏱ 60 seconds."),
+          "⏱ 60 seconds.", Difficulty.Easy)
 
-        S("The Wrong Person",
-          TwistCategory, Difficulty.Easy,
+            .Card("The Wrong Person",
           "⚡ <b>TWIST</b> — drop this into any story, or start a new one:\n\n" +
           "<b>The message was meant for someone else entirely.</b>\n\n" +
           "Either add this to the story in progress, or begin a new story that explains it.\n\n" +
-          "⏱ 60 seconds."),
+          "⏱ 60 seconds.", Difficulty.Easy)
 
-        S("The Secret Room",
-          TwistCategory, Difficulty.Medium,
+            .Card("The Secret Room",
           "⚡ <b>TWIST</b> — drop this into any story, or start a new one:\n\n" +
           "<b>Behind the bookcase was a room that hadn't existed this morning.</b>\n\n" +
           "Either add this to the story in progress, or begin a new story built around it.\n\n" +
-          "⏱ 60 seconds."),
+          "⏱ 60 seconds.", Difficulty.Medium)
 
-        S("The Villain Explains",
-          TwistCategory, Difficulty.Medium,
+            .Card("The Villain Explains",
           "⚡ <b>TWIST</b> — drop this into any story, or start a new one:\n\n" +
           "<b>The villain sat down and explained, very calmly and very reasonably, exactly why they were right.</b>\n\n" +
           "Tell the villain's side of the story. The group votes: are they right?\n\n" +
-          "⏱ 90 seconds."),
+          "⏱ 90 seconds.", Difficulty.Medium)
+
+            .Category(ChallengeCategory)
 
         // ── CHALLENGES: harder, literary, analytical ─────────────────────────
 
-        S("Change the Genre",
-          ChallengeCategory, Difficulty.Hard,
+            .Card("Change the Genre",
           "⏱ <b>90 seconds</b> — take a fairy tale you know (Cinderella, Little Red Riding Hood, Hansel & Gretel, etc.) and retell it in a <b>completely different genre</b>:\n\n" +
           "• Crime thriller  • Science fiction  • Dystopian  • Horror  • Comedy\n\n" +
-          "You choose the fairy tale AND the genre."),
+          "You choose the fairy tale AND the genre.", Difficulty.Hard)
 
-        S("The Unreliable Setting",
-          ChallengeCategory, Difficulty.Hard,
+            .Card("The Unreliable Setting",
           "⏱ <b>90 seconds</b> — tell a story where the setting itself cannot be trusted.\n\n" +
           "The character thinks they are somewhere — but the reader can tell they're wrong.\n\n" +
-          "Hint: The setting might be a dream, a memory, a simulation, or something else entirely. You decide."),
+          "Hint: The setting might be a dream, a memory, a simulation, or something else entirely. You decide.", Difficulty.Hard)
 
-        S("The Six-Word Story",
-          ChallengeCategory, Difficulty.Hard,
+            .Card("The Six-Word Story",
           "No time limit — create a <b>complete story in exactly six words</b>.\n\n" +
           "The most famous: <b>\"For sale: baby shoes, never worn.\"</b>  — Ernest Hemingway\n\n" +
           "Criteria: it must have an implied beginning, middle and end.\n" +
           "The group votes on whether it works as a complete story.\n\n" +
-          "🌟 Bonus: Explain what the story implies beyond the literal words."),
+          "🌟 Bonus: Explain what the story implies beyond the literal words.", Difficulty.Hard)
 
-        S("Perspective Swap",
-          ChallengeCategory, Difficulty.Hard,
+            .Card("Perspective Swap",
           "⏱ <b>90 seconds</b> — retell a famous story from a minor or unexpected perspective.\n\n" +
           "Examples: the third pig's builder, the wolf's defence lawyer, Juliet's nurse, the giant's wife.\n\n" +
-          "You choose the story AND the perspective. Make the familiar feel completely new."),
+          "You choose the story AND the perspective. Make the familiar feel completely new.", Difficulty.Hard)
 
-        S("The Unreliable Memory",
-          ChallengeCategory, Difficulty.Extreme,
+            .Card("The Unreliable Memory",
           "⏱ <b>90 seconds</b> — tell a true story (from your own life or a famous event) as if the narrator only half-remembers it.\n\n" +
           "Include at least three moments of genuine uncertainty:\n" +
           "<b>\"I think it was a Tuesday... or maybe a Wednesday.\"</b>\n" +
           "<b>\"She said something — I can't remember exactly what.\"</b>\n\n" +
-          "The group discusses: does unreliable memory make the story more or less powerful?"),
+          "The group discusses: does unreliable memory make the story more or less powerful?", Difficulty.Extreme)
 
-        S("The Letter Never Sent",
-          ChallengeCategory, Difficulty.Extreme,
+            .Card("The Letter Never Sent",
           "⏱ <b>90 seconds</b> — write and read a letter from one character to another — a letter that was <b>never sent</b>.\n\n" +
           "You choose the characters and the relationship. The letter must reveal something the speaker could never say out loud.\n\n" +
           "Criteria: Does it reveal character? Is there subtext beneath the words?\n\n" +
-          "🌟 Bonus: What literary term describes the gap between what is said and what is meant?"),
-    ];
-
-    private static ICard S(string title, string category, Difficulty d, string desc) =>
-        StandardCard.Create(title, desc, d, category);
+          "🌟 Bonus: What literary term describes the gap between what is said and what is meant?", Difficulty.Extreme)
+            .Build();
 }

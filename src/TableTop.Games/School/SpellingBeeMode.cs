@@ -64,93 +64,78 @@ public static class SpellingBeeCardBank
     internal const string TrickyCategory = "Tricky";
     internal const string ChallengeCategory = "Challenge";
 
+    private const string Deck = "Spelling Bee";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
-        // ── Easy: common everyday words ──────────────────────────────────────
-        W("Smile", Difficulty.Easy),
-        W("Climb", Difficulty.Easy),
-        W("Friend", Difficulty.Easy),
-        W("Bright", Difficulty.Easy),
-        W("Strange", Difficulty.Easy),
-        W("Castle", Difficulty.Easy, hint: "Hint: silent T!"),
-        W("Knife", Difficulty.Easy, hint: "Hint: silent K!"),
-        W("Caught", Difficulty.Easy),
-        W("Laugh", Difficulty.Easy),
-        W("Thought", Difficulty.Easy),
-        W("Island", Difficulty.Easy, hint: "Hint: silent S!"),
-        W("Doubt", Difficulty.Easy, hint: "Hint: silent B!"),
-        W("Whole", Difficulty.Easy),
-        W("Write", Difficulty.Easy, hint: "Hint: silent W!"),
-        W("Guard", Difficulty.Easy),
+        CardDeckBuilder.For(Deck)
 
-        // ── Medium: trickier patterns ─────────────────────────────────────────
-        W("Necessary", Difficulty.Medium, hint: "One C, two S!"),
-        W("Believe", Difficulty.Medium, hint: "I before E except after C!"),
-        W("Separate", Difficulty.Medium, hint: "There's a RAT in it!"),
-        W("Definitely", Difficulty.Medium,
-          desc: "Spell the word <b>DEFINITELY</b>. Use it in a sentence."),
-        W("Occasion", Difficulty.Medium, hint: "Two C's, one S!"),
-        W("Conscience", Difficulty.Medium),
-        W("Rhythm", Difficulty.Medium, hint: "No vowels in the main part!"),
-        W("Privilege", Difficulty.Medium,
-          desc: "Spell the word <b>PRIVILEGE</b>. Use it in a sentence."),
-        W("Mischievous", Difficulty.Medium, hint: "Three syllables: MIS-CHIE-VOUS!"),
-        W("Fluorescent", Difficulty.Medium),
-        W("Knowledge", Difficulty.Medium, hint: "Silent K!"),
-        W("Lightning", Difficulty.Medium, hint: "Not 'lightening'!"),
-        W("Embarrass", Difficulty.Medium, hint: "Two R's, two S's!"),
-        W("Exaggerate", Difficulty.Medium, hint: "Two G's!"),
-        W("Environment", Difficulty.Medium, hint: "Don't forget the N!"),
+            // ── Easy: common everyday words ──────────────────────────────────────
+            .Category(WordCategory)
+            .Card("Smile", Prompt("Smile", null), Difficulty.Easy)
+            .Card("Climb", Prompt("Climb", null), Difficulty.Easy)
+            .Card("Friend", Prompt("Friend", null), Difficulty.Easy)
+            .Card("Bright", Prompt("Bright", null), Difficulty.Easy)
+            .Card("Strange", Prompt("Strange", null), Difficulty.Easy)
+            .Card("Castle", Prompt("Castle", "Hint: silent T!"), Difficulty.Easy)
+            .Card("Knife", Prompt("Knife", "Hint: silent K!"), Difficulty.Easy)
+            .Card("Caught", Prompt("Caught", null), Difficulty.Easy)
+            .Card("Laugh", Prompt("Laugh", null), Difficulty.Easy)
+            .Card("Thought", Prompt("Thought", null), Difficulty.Easy)
+            .Card("Island", Prompt("Island", "Hint: silent S!"), Difficulty.Easy)
+            .Card("Doubt", Prompt("Doubt", "Hint: silent B!"), Difficulty.Easy)
+            .Card("Whole", Prompt("Whole", null), Difficulty.Easy)
+            .Card("Write", Prompt("Write", "Hint: silent W!"), Difficulty.Easy)
+            .Card("Guard", Prompt("Guard", null), Difficulty.Easy)
 
-        // ── Hard: subject vocabulary ──────────────────────────────────────────
-        W("Photosynthesis", Difficulty.Hard,
-          desc: "Spell the scientific word <b>PHOTOSYNTHESIS</b> and explain what it means."),
-        W("Miscellaneous", Difficulty.Hard),
-        W("Perseverance", Difficulty.Hard),
-        W("Catastrophe", Difficulty.Hard),
-        W("Phenomenon", Difficulty.Hard, hint: "PH = F sound!"),
-        W("Metamorphosis", Difficulty.Hard,
-          desc: "Spell the word <b>METAMORPHOSIS</b> and explain what it means."),
-        W("Archaeology", Difficulty.Hard),
-        W("Bureaucracy", Difficulty.Hard),
-        W("Pseudonym", Difficulty.Hard, hint: "Silent P!"),
-        W("Pneumonia", Difficulty.Hard, hint: "Silent P!"),
+            // ── Medium: trickier patterns ─────────────────────────────────────────
+            .Category(TrickyCategory)
+            .Card("Necessary", Prompt("Necessary", "One C, two S!"), Difficulty.Medium)
+            .Card("Believe", Prompt("Believe", "I before E except after C!"), Difficulty.Medium)
+            .Card("Separate", Prompt("Separate", "There's a RAT in it!"), Difficulty.Medium)
+            .Card("Definitely", "Spell the word <b>DEFINITELY</b>. Use it in a sentence.", Difficulty.Medium)
+            .Card("Occasion", Prompt("Occasion", "Two C's, one S!"), Difficulty.Medium)
+            .Card("Conscience", Prompt("Conscience", null), Difficulty.Medium)
+            .Card("Rhythm", Prompt("Rhythm", "No vowels in the main part!"), Difficulty.Medium)
+            .Card("Privilege", "Spell the word <b>PRIVILEGE</b>. Use it in a sentence.", Difficulty.Medium)
+            .Card("Mischievous", Prompt("Mischievous", "Three syllables: MIS-CHIE-VOUS!"), Difficulty.Medium)
+            .Card("Fluorescent", Prompt("Fluorescent", null), Difficulty.Medium)
+            .Card("Knowledge", Prompt("Knowledge", "Silent K!"), Difficulty.Medium)
+            .Card("Lightning", Prompt("Lightning", "Not 'lightening'!"), Difficulty.Medium)
+            .Card("Embarrass", Prompt("Embarrass", "Two R's, two S's!"), Difficulty.Medium)
+            .Card("Exaggerate", Prompt("Exaggerate", "Two G's!"), Difficulty.Medium)
+            .Card("Environment", Prompt("Environment", "Don't forget the N!"), Difficulty.Medium)
 
-        // ── Extreme: championship-level words ────────────────────────────────
-        W("Onomatopoeia", Difficulty.Extreme,
-          desc: "Spell the literary term <b>ONOMATOPOEIA</b> and give an example of it."),
-        W("Conscientious", Difficulty.Extreme),
-        W("Rhododendron", Difficulty.Extreme,
-          desc: "Spell the plant name <b>RHODODENDRON</b> and use it in a sentence."),
-        W("Supercilious", Difficulty.Extreme),
-        W("Idiosyncrasy", Difficulty.Extreme),
-    ];
+            // ── Hard: subject vocabulary ──────────────────────────────────────────
+            .Category(ChallengeCategory)
+            .Card("Photosynthesis", "Spell the scientific word <b>PHOTOSYNTHESIS</b> and explain what it means.", Difficulty.Hard)
+            .Card("Miscellaneous", Prompt("Miscellaneous", null), Difficulty.Hard)
+            .Card("Perseverance", Prompt("Perseverance", null), Difficulty.Hard)
+            .Card("Catastrophe", Prompt("Catastrophe", null), Difficulty.Hard)
+            .Card("Phenomenon", Prompt("Phenomenon", "PH = F sound!"), Difficulty.Hard)
+            .Card("Metamorphosis", "Spell the word <b>METAMORPHOSIS</b> and explain what it means.", Difficulty.Hard)
+            .Card("Archaeology", Prompt("Archaeology", null), Difficulty.Hard)
+            .Card("Bureaucracy", Prompt("Bureaucracy", null), Difficulty.Hard)
+            .Card("Pseudonym", Prompt("Pseudonym", "Silent P!"), Difficulty.Hard)
+            .Card("Pneumonia", Prompt("Pneumonia", "Silent P!"), Difficulty.Hard)
 
-    // Three defaults, for the three things every card was retyping.
-    //   cat  — each difficulty tier is a category (Hard and Extreme share
-    //          Challenge), so it derives from `d` unless a card passes its own.
-    //   hint — the parenthesised aside in "…</b>. (Silent K!) Use it in a
-    //          sentence." Pass the aside; the sentence around it is built here.
-    //   desc — the escape hatch for the six cards that ask for something other
-    //          than spell-and-use-in-a-sentence. Wins over `hint` when both are
-    //          given, since it replaces the whole prompt rather than filling a
-    //          slot in it.
-    private static ICard W(string word, Difficulty d, string? hint = null,
-                           string? cat = null, string? desc = null) =>
-        StandardCard.Create(word, desc ?? Prompt(word, hint), d, cat ?? CategoryFor(d));
+            // ── Extreme: championship-level words ────────────────────────────────
+            .Card("Onomatopoeia", "Spell the literary term <b>ONOMATOPOEIA</b> and give an example of it.", Difficulty.Extreme)
+            .Card("Conscientious", Prompt("Conscientious", null), Difficulty.Extreme)
+            .Card("Rhododendron", "Spell the plant name <b>RHODODENDRON</b> and use it in a sentence.", Difficulty.Extreme)
+            .Card("Supercilious", Prompt("Supercilious", null), Difficulty.Extreme)
+            .Card("Idiosyncrasy", Prompt("Idiosyncrasy", null), Difficulty.Extreme)
 
+            .Build();
+
+    // Hard and Extreme share the Challenge category, so the fluent chain sets
+    // it once and both tiers fall under it. `Prompt` builds the standard
+    // spell-and-use body; the six cards that ask for something else pass their
+    // description literally.
     private static string Prompt(string word, string? hint) =>
         hint is null
             ? $"Spell the word <b>{word.ToUpperInvariant()}</b> and use it in a sentence."
             : $"Spell the word <b>{word.ToUpperInvariant()}</b>. ({hint}) Use it in a sentence.";
-
-    private static string CategoryFor(Difficulty d) => d switch
-    {
-        Difficulty.Easy => WordCategory,
-        Difficulty.Medium => TrickyCategory,
-        _ => ChallengeCategory,
-    };
 }

@@ -70,101 +70,89 @@ public static class TheParadoxCardBank
     internal const string RiddleCategory = "Riddle";
     internal const string ImpossibleCategory = "Impossible";
 
+    private const string Deck = "The Paradox";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
-        // ── LOGIC ────────────────────────────────────────────────────────────
-        P(LogicCategory,
-            "A man goes to bed at 8pm, sets his alarm for 9am, and wakes up at 9pm. How is this possible?",
-            "Hint: It's not the next day.",
-            Difficulty.Medium),
-        P(LogicCategory,
-            "A man's wife pushes a car, and he pushes it from the inside. The car moves. Who pushed harder?",
-            "Hint: It's not about force.",
-            Difficulty.Hard),
-        P(LogicCategory,
-            "How can you go 10 days without sleep and not feel tired?",
-            "Hint: You're not breaking any laws of physics.",
-            Difficulty.Easy),
-        P(LogicCategory,
-            "If you're running a race and you pass the person in 2nd place, what place are you in now?",
-            "Hint: The obvious answer might be wrong.",
-            Difficulty.Easy),
+        CardDeckBuilder.For(Deck)
 
-        // ── PHILOSOPHY ────────────────────────────────────────────────────────
-        P(PhilosophyCategory,
-            "If a tree falls in a forest and nobody hears it, does it make a sound?",
-            "Is sound a physical wave or a conscious experience?",
-            Difficulty.Medium),
-        P(PhilosophyCategory,
-            "If you replace every part of a ship, is it still the same ship?",
-            "What defines identity?",
-            Difficulty.Hard),
-        P(PhilosophyCategory,
-            "Can God create a rock so heavy He can't lift it?",
-            "Explore the limits of omnipotence.",
-            Difficulty.Hard),
-        P(PhilosophyCategory,
-            "Is it morally worse to lie or to tell a harmful truth?",
-            "No right answer — just defend your position.",
-            Difficulty.Hard),
+            // ── LOGIC ────────────────────────────────────────────────────────────
+            .Category(LogicCategory)
+            .Card(LogicCategory, Body(
+                "A man goes to bed at 8pm, sets his alarm for 9am, and wakes up at 9pm. How is this possible?",
+                "Hint: It's not the next day."), Difficulty.Medium)
+            .Card(LogicCategory, Body(
+                "A man's wife pushes a car, and he pushes it from the inside. The car moves. Who pushed harder?",
+                "Hint: It's not about force."), Difficulty.Hard)
+            .Card(LogicCategory, Body(
+                "How can you go 10 days without sleep and not feel tired?",
+                "Hint: You're not breaking any laws of physics."), Difficulty.Easy)
+            .Card(LogicCategory, Body(
+                "If you're running a race and you pass the person in 2nd place, what place are you in now?",
+                "Hint: The obvious answer might be wrong."), Difficulty.Easy)
 
-        // ── PHYSICS ───────────────────────────────────────────────────────────
-        P(PhysicsCategory,
-            "How can mirrors reverse left and right, but not up and down?",
-            "Hint: They might not be reversing at all.",
-            Difficulty.Hard),
-        P(PhysicsCategory,
-            "If you're in a train moving at light speed and turn on the headlights, what do you see?",
-            "Hint: Einstein has something to say about this.",
-            Difficulty.Hard),
-        P(PhysicsCategory,
-            "What happens if an unstoppable force meets an immovable object?",
-            "Hint: They cannot both exist.",
-            Difficulty.Medium),
+            // ── PHILOSOPHY ────────────────────────────────────────────────────────
+            .Category(PhilosophyCategory)
+            .Card(PhilosophyCategory, Body(
+                "If a tree falls in a forest and nobody hears it, does it make a sound?",
+                "Is sound a physical wave or a conscious experience?"), Difficulty.Medium)
+            .Card(PhilosophyCategory, Body(
+                "If you replace every part of a ship, is it still the same ship?",
+                "What defines identity?"), Difficulty.Hard)
+            .Card(PhilosophyCategory, Body(
+                "Can God create a rock so heavy He can't lift it?",
+                "Explore the limits of omnipotence."), Difficulty.Hard)
+            .Card(PhilosophyCategory, Body(
+                "Is it morally worse to lie or to tell a harmful truth?",
+                "No right answer — just defend your position."), Difficulty.Hard)
 
-        // ── RIDDLE ────────────────────────────────────────────────────────────
-        P(RiddleCategory,
-            "I speak without a mouth and hear without ears. I have no body, but come alive with wind. What am I?",
-            "Hint: It's not a ghost.",
-            Difficulty.Easy),
-        P(RiddleCategory,
-            "What has a head and a tail but no body?",
-            "Hint: It's not an animal.",
-            Difficulty.Easy),
-        P(RiddleCategory,
-            "What can travel around the world while staying in a corner?",
-            "Hint: It's something you send.",
-            Difficulty.Medium),
-        P(RiddleCategory,
-            "If you have a bowl with six apples and you take away four, how many do you have?",
-            "Hint: The answer is not two.",
-            Difficulty.Easy),
+            // ── PHYSICS ───────────────────────────────────────────────────────────
+            .Category(PhysicsCategory)
+            .Card(PhysicsCategory, Body(
+                "How can mirrors reverse left and right, but not up and down?",
+                "Hint: They might not be reversing at all."), Difficulty.Hard)
+            .Card(PhysicsCategory, Body(
+                "If you're in a train moving at light speed and turn on the headlights, what do you see?",
+                "Hint: Einstein has something to say about this."), Difficulty.Hard)
+            .Card(PhysicsCategory, Body(
+                "What happens if an unstoppable force meets an immovable object?",
+                "Hint: They cannot both exist."), Difficulty.Medium)
 
-        // ── IMPOSSIBLE ────────────────────────────────────────────────────────
-        P(ImpossibleCategory,
-            "How can you be standing in front of me, standing behind me, and standing beside me, all at the same time?",
-            "Hint: No mirrors, no cloning, no portals.",
-            Difficulty.Hard),
-        P(ImpossibleCategory,
-            "If you're wearing a helmet made of glass and someone breaks it while it's on your head, you don't get hurt. How?",
-            "Hint: It's glass, not magic.",
-            Difficulty.Hard),
-        P(ImpossibleCategory,
-            "What word looks the same upside down and backward?",
-            "Hint: It's a real English word.",
-            Difficulty.Hard),
-    ];
+            // ── RIDDLE ────────────────────────────────────────────────────────────
+            .Category(RiddleCategory)
+            .Card(RiddleCategory, Body(
+                "I speak without a mouth and hear without ears. I have no body, but come alive with wind. What am I?",
+                "Hint: It's not a ghost."), Difficulty.Easy)
+            .Card(RiddleCategory, Body(
+                "What has a head and a tail but no body?",
+                "Hint: It's not an animal."), Difficulty.Easy)
+            .Card(RiddleCategory, Body(
+                "What can travel around the world while staying in a corner?",
+                "Hint: It's something you send."), Difficulty.Medium)
+            .Card(RiddleCategory, Body(
+                "If you have a bowl with six apples and you take away four, how many do you have?",
+                "Hint: The answer is not two."), Difficulty.Easy)
 
-    private static ICard P(string category, string paradox, string hint, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>2-MINUTE PARADOX</b>\n\n" +
-            paradox + "\n\n" +
-            hint + "\n\n" +
-            "<b>SOLVE IT:</b> Write your best answer, explanation, or wild guess.\n\n" +
-            "Vote on best: most logical, most creative, most hilarious, or closest to correct.",
-            d, category);
+            // ── IMPOSSIBLE ────────────────────────────────────────────────────────
+            .Category(ImpossibleCategory)
+            .Card(ImpossibleCategory, Body(
+                "How can you be standing in front of me, standing behind me, and standing beside me, all at the same time?",
+                "Hint: No mirrors, no cloning, no portals."), Difficulty.Hard)
+            .Card(ImpossibleCategory, Body(
+                "If you're wearing a helmet made of glass and someone breaks it while it's on your head, you don't get hurt. How?",
+                "Hint: It's glass, not magic."), Difficulty.Hard)
+            .Card(ImpossibleCategory, Body(
+                "What word looks the same upside down and backward?",
+                "Hint: It's a real English word."), Difficulty.Hard)
+
+            .Build();
+
+    private static string Body(string paradox, string hint) =>
+        "<b>2-MINUTE PARADOX</b>\n\n" +
+        paradox + "\n\n" +
+        hint + "\n\n" +
+        "<b>SOLVE IT:</b> Write your best answer, explanation, or wild guess.\n\n" +
+        "Vote on best: most logical, most creative, most hilarious, or closest to correct.";
 }

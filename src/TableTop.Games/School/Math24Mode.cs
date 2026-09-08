@@ -91,104 +91,75 @@ public static class Math24CardBank
     internal const string TrickyCategory = "Tricky";
     internal const string LegendaryCategory = "Legendary";
 
+    private const string Deck = "Math 24";
+
     /// <summary>All Math 24 puzzles, ordered easiest tier first.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
-        // ── WARM-UP — many routes in; good for building confidence ───────────
-        P(WarmUpCategory, "2 4 6 8", "2 4 6 8",
-          "((4 × 8) - 2) - 6 = 24", Difficulty.Easy),            // 53 solutions
-        P(WarmUpCategory, "2 3 4 6", "2 3 4 6",
-          "(2 + 4) + (3 × 6) = 24", Difficulty.Easy),            // 28 solutions
-        P(WarmUpCategory, "1 2 4 6", "1 2 4 6",
-          "(2 + 6) × (4 - 1) = 24", Difficulty.Easy),            // 11 solutions
-        P(WarmUpCategory, "3 4 6 8", "3 4 6 8",
-          "(3 × 4) × (8 - 6) = 24", Difficulty.Easy),            // 13 solutions
-        P(WarmUpCategory, "4 4 6 8", "4 4 6 8",
-          "(4 + 8) × (6 - 4) = 24", Difficulty.Easy),            // 7 solutions
-        P(WarmUpCategory, "3 3 4 8", "3 3 4 8",
-          "(3 + 3) × (8 - 4) = 24", Difficulty.Easy),            // 12 solutions
-        P(WarmUpCategory, "2 2 5 6", "2 2 5 6",
-          "(2 + 6) × (5 - 2) = 24", Difficulty.Easy),            // 4 solutions
-        P(WarmUpCategory, "1 5 6 8", "1 5 6 8",
-          "6 × ((1 + 8) - 5) = 24", Difficulty.Easy),            // 5 solutions
-        P(WarmUpCategory, "2 8 10 10", "2 8 10 10",
-          "(10 + 10) + (8 ÷ 2) = 24", Difficulty.Easy),          // 9 solutions
+        CardDeckBuilder.For(Deck)
 
-        // ── STEADY — a real search, but nothing exotic ───────────────────────
-        P(SteadyCategory, "1 3 4 5", "1 3 4 5",
-          "(1 + 3) + (4 × 5) = 24", Difficulty.Medium),          // 12 solutions
-        P(SteadyCategory, "2 3 5 7", "2 3 5 7",
-          "(2 + 7) + (3 × 5) = 24", Difficulty.Medium),          // 12 solutions
-        P(SteadyCategory, "5 6 7 8", "5 6 7 8",
-          "(5 + 7) × (8 - 6) = 24", Difficulty.Medium),          // 12 solutions
-        P(SteadyCategory, "4 5 6 7", "4 5 6 7",
-          "(5 + 7) × (6 - 4) = 24", Difficulty.Medium),          // 7 solutions
-        P(SteadyCategory, "1 4 8 9", "1 4 8 9",
-          "(1 + (4 × 8)) - 9 = 24", Difficulty.Medium),          // 12 solutions
-        P(SteadyCategory, "2 3 8 9", "2 3 8 9",
-          "(8 × (9 - 3)) ÷ 2 = 24", Difficulty.Medium),          // 7 solutions
-        P(SteadyCategory, "1 2 3 12", "1 2 3 12",
-          "(1 + 3) × (12 ÷ 2) = 24", Difficulty.Medium),         // 12 solutions
-        P(SteadyCategory, "3 5 7 8", "3 5 7 8",
-          "((5 × 7) - 3) - 8 = 24", Difficulty.Medium),          // 11 solutions
-        P(SteadyCategory, "2 5 8 11", "2 5 8 11",
-          "(11 - 5) × (8 ÷ 2) = 24", Difficulty.Medium),         // 7 solutions
-        P(SteadyCategory, "4 6 7 9", "4 6 7 9",
-          "(6 × (7 + 9)) ÷ 4 = 24", Difficulty.Medium),          // 6 solutions
+            // ── WARM-UP — many routes in; good for building confidence ───────────
+            .Category(WarmUpCategory)
+            .Card("2 4 6 8", Body(WarmUpCategory, "2 4 6 8", "((4 × 8) - 2) - 6 = 24"), Difficulty.Easy)            // 53 solutions
+            .Card("2 3 4 6", Body(WarmUpCategory, "2 3 4 6", "(2 + 4) + (3 × 6) = 24"), Difficulty.Easy)            // 28 solutions
+            .Card("1 2 4 6", Body(WarmUpCategory, "1 2 4 6", "(2 + 6) × (4 - 1) = 24"), Difficulty.Easy)            // 11 solutions
+            .Card("3 4 6 8", Body(WarmUpCategory, "3 4 6 8", "(3 × 4) × (8 - 6) = 24"), Difficulty.Easy)            // 13 solutions
+            .Card("4 4 6 8", Body(WarmUpCategory, "4 4 6 8", "(4 + 8) × (6 - 4) = 24"), Difficulty.Easy)            // 7 solutions
+            .Card("3 3 4 8", Body(WarmUpCategory, "3 3 4 8", "(3 + 3) × (8 - 4) = 24"), Difficulty.Easy)            // 12 solutions
+            .Card("2 2 5 6", Body(WarmUpCategory, "2 2 5 6", "(2 + 6) × (5 - 2) = 24"), Difficulty.Easy)            // 4 solutions
+            .Card("1 5 6 8", Body(WarmUpCategory, "1 5 6 8", "6 × ((1 + 8) - 5) = 24"), Difficulty.Easy)            // 5 solutions
+            .Card("2 8 10 10", Body(WarmUpCategory, "2 8 10 10", "(10 + 10) + (8 ÷ 2) = 24"), Difficulty.Easy)      // 9 solutions
 
-        // ── TRICKY — one or two routes, and they hide well ───────────────────
-        P(TrickyCategory, "1 2 7 12", "1 2 7 12",
-          "12 + (2 × (7 - 1)) = 24", Difficulty.Hard),           // 2 solutions
-        P(TrickyCategory, "1 6 7 9", "1 6 7 9",
-          "(1 + 7) × (9 - 6) = 24", Difficulty.Hard),            // 2 solutions
-        P(TrickyCategory, "1 5 9 13", "1 5 9 13",
-          "(1 + 5) × (13 - 9) = 24", Difficulty.Hard),           // 2 solutions
-        P(TrickyCategory, "1 7 9 11", "1 7 9 11",
-          "(1 + 11) × (9 - 7) = 24", Difficulty.Hard),           // 2 solutions
-        P(TrickyCategory, "5 7 8 10", "5 7 8 10",
-          "(10 - 8) × (5 + 7) = 24", Difficulty.Hard),           // 2 solutions
-        P(TrickyCategory, "3 4 4 10", "3 4 4 10",
-          "(4 × (10 - 3)) - 4 = 24", Difficulty.Hard),           // 1 solution
-        P(TrickyCategory, "3 8 8 10", "3 8 8 10",
-          "((8 × 10) - 8) ÷ 3 = 24", Difficulty.Hard),           // 1 solution
-        P(TrickyCategory, "All Sixes", "6 6 6 6",
-          "((6 × 6) - 6) - 6 = 24", Difficulty.Hard),            // 4 solutions
+            // ── STEADY — a real search, but nothing exotic ───────────────────────
+            .Category(SteadyCategory)
+            .Card("1 3 4 5", Body(SteadyCategory, "1 3 4 5", "(1 + 3) + (4 × 5) = 24"), Difficulty.Medium)          // 12 solutions
+            .Card("2 3 5 7", Body(SteadyCategory, "2 3 5 7", "(2 + 7) + (3 × 5) = 24"), Difficulty.Medium)          // 12 solutions
+            .Card("5 6 7 8", Body(SteadyCategory, "5 6 7 8", "(5 + 7) × (8 - 6) = 24"), Difficulty.Medium)          // 12 solutions
+            .Card("4 5 6 7", Body(SteadyCategory, "4 5 6 7", "(5 + 7) × (6 - 4) = 24"), Difficulty.Medium)          // 7 solutions
+            .Card("1 4 8 9", Body(SteadyCategory, "1 4 8 9", "(1 + (4 × 8)) - 9 = 24"), Difficulty.Medium)          // 12 solutions
+            .Card("2 3 8 9", Body(SteadyCategory, "2 3 8 9", "(8 × (9 - 3)) ÷ 2 = 24"), Difficulty.Medium)          // 7 solutions
+            .Card("1 2 3 12", Body(SteadyCategory, "1 2 3 12", "(1 + 3) × (12 ÷ 2) = 24"), Difficulty.Medium)       // 12 solutions
+            .Card("3 5 7 8", Body(SteadyCategory, "3 5 7 8", "((5 × 7) - 3) - 8 = 24"), Difficulty.Medium)          // 11 solutions
+            .Card("2 5 8 11", Body(SteadyCategory, "2 5 8 11", "(11 - 5) × (8 ÷ 2) = 24"), Difficulty.Medium)       // 7 solutions
+            .Card("4 6 7 9", Body(SteadyCategory, "4 6 7 9", "(6 × (7 + 9)) ÷ 4 = 24"), Difficulty.Medium)          // 6 solutions
 
-        // ── LEGENDARY — every route needs a fraction on the way ──────────────
-        // These are the ones that stop maths teachers. Whole-number thinking
-        // cannot reach 24 from any of them; you have to be willing to hold a
-        // third or a quarter mid-calculation.
-        P(LegendaryCategory, "The Famous One", "1 3 4 6",
-          "6 ÷ (1 - (3 ÷ 4)) = 24", Difficulty.Extreme),         // 1 solution, fractional
-        P(LegendaryCategory, "Almost a Whole", "1 4 5 6",
-          "4 ÷ (1 - (5 ÷ 6)) = 24", Difficulty.Extreme),         // 2 solutions, fractional
-        P(LegendaryCategory, "The Twelve Trap", "2 3 5 12",
-          "12 ÷ (3 - (5 ÷ 2)) = 24", Difficulty.Extreme),        // 1 solution, fractional
-        P(LegendaryCategory, "Twin Pairs", "3 3 8 8",
-          "8 ÷ (3 - (8 ÷ 3)) = 24", Difficulty.Extreme),         // 1 solution, fractional
-        P(LegendaryCategory, "2 4 10 10", "2 4 10 10",
-          "10 × (2 + (4 ÷ 10)) = 24", Difficulty.Extreme),       // 1 solution, fractional
-        P(LegendaryCategory, "5 5 7 11", "5 5 7 11",
-          "5 × (7 - (11 ÷ 5)) = 24", Difficulty.Extreme),        // 1 solution, fractional
-        P(LegendaryCategory, "Two Elevens", "2 2 11 11",
-          "11 × (2 + (2 ÷ 11)) = 24", Difficulty.Extreme),       // 1 solution, fractional
-    ];
+            // ── TRICKY — one or two routes, and they hide well ───────────────────
+            .Category(TrickyCategory)
+            .Card("1 2 7 12", Body(TrickyCategory, "1 2 7 12", "12 + (2 × (7 - 1)) = 24"), Difficulty.Hard)         // 2 solutions
+            .Card("1 6 7 9", Body(TrickyCategory, "1 6 7 9", "(1 + 7) × (9 - 6) = 24"), Difficulty.Hard)            // 2 solutions
+            .Card("1 5 9 13", Body(TrickyCategory, "1 5 9 13", "(1 + 5) × (13 - 9) = 24"), Difficulty.Hard)         // 2 solutions
+            .Card("1 7 9 11", Body(TrickyCategory, "1 7 9 11", "(1 + 11) × (9 - 7) = 24"), Difficulty.Hard)         // 2 solutions
+            .Card("5 7 8 10", Body(TrickyCategory, "5 7 8 10", "(10 - 8) × (5 + 7) = 24"), Difficulty.Hard)         // 2 solutions
+            .Card("3 4 4 10", Body(TrickyCategory, "3 4 4 10", "(4 × (10 - 3)) - 4 = 24"), Difficulty.Hard)         // 1 solution
+            .Card("3 8 8 10", Body(TrickyCategory, "3 8 8 10", "((8 × 10) - 8) ÷ 3 = 24"), Difficulty.Hard)         // 1 solution
+            .Card("All Sixes", Body(TrickyCategory, "6 6 6 6", "((6 × 6) - 6) - 6 = 24"), Difficulty.Hard)          // 4 solutions
+
+            // ── LEGENDARY — every route needs a fraction on the way ──────────────
+            // These are the ones that stop maths teachers. Whole-number thinking
+            // cannot reach 24 from any of them; you have to be willing to hold a
+            // third or a quarter mid-calculation.
+            .Category(LegendaryCategory)
+            .Card("The Famous One", Body(LegendaryCategory, "1 3 4 6", "6 ÷ (1 - (3 ÷ 4)) = 24"), Difficulty.Extreme)     // 1 solution, fractional
+            .Card("Almost a Whole", Body(LegendaryCategory, "1 4 5 6", "4 ÷ (1 - (5 ÷ 6)) = 24"), Difficulty.Extreme)     // 2 solutions, fractional
+            .Card("The Twelve Trap", Body(LegendaryCategory, "2 3 5 12", "12 ÷ (3 - (5 ÷ 2)) = 24"), Difficulty.Extreme)  // 1 solution, fractional
+            .Card("Twin Pairs", Body(LegendaryCategory, "3 3 8 8", "8 ÷ (3 - (8 ÷ 3)) = 24"), Difficulty.Extreme)         // 1 solution, fractional
+            .Card("2 4 10 10", Body(LegendaryCategory, "2 4 10 10", "10 × (2 + (4 ÷ 10)) = 24"), Difficulty.Extreme)      // 1 solution, fractional
+            .Card("5 5 7 11", Body(LegendaryCategory, "5 5 7 11", "5 × (7 - (11 ÷ 5)) = 24"), Difficulty.Extreme)         // 1 solution, fractional
+            .Card("Two Elevens", Body(LegendaryCategory, "2 2 11 11", "11 × (2 + (2 ÷ 11)) = 24"), Difficulty.Extreme)    // 1 solution, fractional
+
+            .Build();
 
     /// <summary>
-    /// Builds one puzzle card. The <c>Answer:</c> line is what
+    /// Composes one puzzle body. The <c>Answer:</c> line is what
     /// <c>CardFaces.Split</c> looks for, so the numbers show face-up and the
     /// worked solution lands on the flip side rather than spoiling the puzzle.
     /// </summary>
-    private static ICard P(string category, string title, string numbers, string solution, Difficulty d) =>
-        StandardCard.Create(
-            title,
-            "<b>🔢 MATH 24 — " + category.ToUpperInvariant() + "</b>\n\n" +
-            "<b>" + numbers + "</b>\n\n" +
-            "<i>Use all four numbers exactly once. Combine them with + − × ÷ and " +
-            "brackets, in any order, to make exactly 24.</i>\n\n" +
-            "Answer: " + solution +
-            "\n(Other routes may exist — any correct one scores.)",
-            d, category);
+    private static string Body(string category, string numbers, string solution) =>
+        "<b>🔢 MATH 24 — " + category.ToUpperInvariant() + "</b>\n\n" +
+        "<b>" + numbers + "</b>\n\n" +
+        "<i>Use all four numbers exactly once. Combine them with + − × ÷ and " +
+        "brackets, in any order, to make exactly 24.</i>\n\n" +
+        "Answer: " + solution +
+        "\n(Other routes may exist — any correct one scores.)";
 }
