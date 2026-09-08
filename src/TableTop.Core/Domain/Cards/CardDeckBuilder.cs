@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using TableTop.Core.Abstractions.Cards;
@@ -54,6 +55,7 @@ public sealed class CardDeckBuilder
 {
     private readonly string _deckName;
     private readonly List<ICard> _cards = [];
+    private readonly HashSet<string> _lastCardRewrites = [];
     private string _currentCategory = "";
 
     private CardDeckBuilder(string deckName) => _deckName = deckName;
@@ -100,6 +102,7 @@ public sealed class CardDeckBuilder
         _cards.Add(new StandardCard(
             StableId(_deckName, _currentCategory, title, description),
             title, description, difficulty, _currentCategory, tags, restriction));
+        _lastCardRewrites.Clear();
 
         return this;
     }
@@ -157,4 +160,79 @@ public sealed class CardDeckBuilder
     /// </summary>
     private static Guid StableId(string deckName, string category, string title, string description) =>
         new(SHA256.HashData(Encoding.UTF8.GetBytes($"{deckName}|{category}|{title}|{description}"))[..16]);
+
+    /// <summary>
+    /// Branch buttons <see cref="WithPreActions"/> accepts, in the order the
+    /// composed body must list them. Mirrors the <c>TRUTH:</c>/<c>DARE:</c>
+    /// markers <c>TableTop.Hosting.TruthOrDareCards</c> hard-codes — widen both
+    /// together. <c>CardDeckBuilderTests</c> pins that they stay in step.
+    /// </summary>
+    private static readonly string[] GateLabels = ["Truth", "Dare"];
+
+    /// <summary>
+    /// Reveal markers <see cref="WithPostActions"/> accepts. Mirrors
+    /// <c>TableTop.Hosting.CardFaces.BackMarkers</c> (minus the colon) — a
+    /// cross-check test keeps the two lists identical.
+    /// </summary>
+    private static readonly string[] RevealLabels = ["Answer", "The reading"];
+
+    /// <summary>
+    /// Replaces the most recently added card with a copy whose body is
+    /// <paramref name="rewrite"/> applied to the current body — re-deriving the
+    /// id, since the text (and therefore the card's identity) has changed.
+    /// At most one rewrite per card: <see cref="WithPreActions"/> and
+    /// <see cref="WithPostActions"/> are mutually exclusive on a single card
+    /// (a declare-gate and a flip-reveal on the same card would have their
+    /// markers step on each other), and neither may be applied twice.
+    /// </summary>
+    private void ReplaceLastCardBody(Func<string, string> rewrite, [CallerMemberName] string caller = "")
+    {
+        if (_cards.Count == 0)
+            throw new InvalidOperationException(
+                $"Call {nameof(Card)}(...) before {caller}(...) — it modifies the card just added.");
+        if (_cards[^1] is not StandardCard last)
+            throw new InvalidOperationException(
+                $"{caller}(...) only applies to a {nameof(Card)}(...) card, not {_cards[^1].GetType().Name}.");
+        if (_lastCardRewrites.Count > 0)
+            throw new InvalidOperationException(
+                $"'{last.Title}' already has {string.Join("/", _lastCardRewrites)} folded in. " +
+                $"{nameof(WithPreActions)} and {nameof(WithPostActions)} are one-per-card and mutually exclusive.");
+        _lastCardRewrites.Add(caller);
+
+        var body = rewrite(last.Description);
+        _cards[^1] = new StandardCard(
+            StableId(_deckName, last.Category, last.Title, body),
+            last.Title, body, last.Difficulty, last.Category, last.Tags, last.Restriction);
+    }
+}
+
+/// <summary>
+/// Collects the branch/reveal buttons for a <see cref="CardDeckBuilder.WithPreActions"/>
+/// or <see cref="CardDeckBuilder.WithPostActions"/> call. A button is a label
+/// plus the text shown once it is chosen; <see cref="AddFooter"/> is the single
+/// consequence line shown after any branch (Truth or Dare's chicken clause).
+/// </summary>
+public sealed class CardActionSet
+{
+    internal CardActionSet() { }
+
+    internal List<(string Label, string Text)> Buttons { get; } = [];
+    internal string? Footer { get; private set; }
+
+    /// <summary>Adds a button. <paramref name="revealText"/> is what the player sees after picking it.</summary>
+    public CardActionSet AddButton(string label, string revealText)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(label);
+        ArgumentException.ThrowIfNullOrWhiteSpace(revealText);
+        Buttons.Add((label.Trim(), revealText.Trim()));
+        return this;
+    }
+
+    /// <summary>Sets the consequence line shown after a branch is chosen. Pre-actions only.</summary>
+    public CardActionSet AddFooter(string text)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(text);
+        Footer = text.Trim();
+        return this;
+    }
 }
