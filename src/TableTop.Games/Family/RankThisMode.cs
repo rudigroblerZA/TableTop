@@ -67,78 +67,83 @@ public static class RankThisCardBank
     internal const string ScaryCategory = "Scary";
     internal const string WeirdCategory = "Weird";
 
+    private const string Deck = "Rank This";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── SILLY ─────────────────────────────────────────────────────────────
-        R(SillyCategory, "How much would you enjoy a sandwich made entirely of dessert?", Difficulty.Easy),
-        R(SillyCategory, "How entertaining would it be to narrate your own life like a nature documentary?", Difficulty.Easy),
-        R(SillyCategory, "How funny is a penguin in a top hat?", Difficulty.Easy),
-        R(SillyCategory, "How practical would it be if gravity worked sideways?", Difficulty.Medium),
-        R(SillyCategory, "How good an idea is it to have a pet that's just a sentient sock?", Difficulty.Easy),
-        R(SillyCategory, "How would you rate having spaghetti for hair instead of actual hair?", Difficulty.Easy),
-        R(SillyCategory, "How much fun is a bathroom that's secretly a water slide?", Difficulty.Medium),
-        R(SillyCategory, "How useful would a TV remote that controls your life be?", Difficulty.Medium),
-        R(SillyCategory, "How great would it be if squirrels could talk?", Difficulty.Easy),
-        R(SillyCategory, "How hilarious would it be if everyone walked backwards on Tuesdays?", Difficulty.Easy),
-        R(SillyCategory, "How good of a career choice is professional pillow fort architect?", Difficulty.Easy),
-        R(SillyCategory, "How much would you enjoy living in a house made entirely of cheese?", Difficulty.Medium),
-        R(SillyCategory, "How good an idea is a doorbell that only plays kazoo music?", Difficulty.Easy),
-        R(SillyCategory, "How chaotic would a world without knees be?", Difficulty.Medium),
+            .Category(SillyCategory)
+            .Card(SillyCategory, Body("How much would you enjoy a sandwich made entirely of dessert?"), Difficulty.Easy)
+            .Card(SillyCategory, Body("How entertaining would it be to narrate your own life like a nature documentary?"), Difficulty.Easy)
+            .Card(SillyCategory, Body("How funny is a penguin in a top hat?"), Difficulty.Easy)
+            .Card(SillyCategory, Body("How practical would it be if gravity worked sideways?"), Difficulty.Medium)
+            .Card(SillyCategory, Body("How good an idea is it to have a pet that's just a sentient sock?"), Difficulty.Easy)
+            .Card(SillyCategory, Body("How would you rate having spaghetti for hair instead of actual hair?"), Difficulty.Easy)
+            .Card(SillyCategory, Body("How much fun is a bathroom that's secretly a water slide?"), Difficulty.Medium)
+            .Card(SillyCategory, Body("How useful would a TV remote that controls your life be?"), Difficulty.Medium)
+            .Card(SillyCategory, Body("How great would it be if squirrels could talk?"), Difficulty.Easy)
+            .Card(SillyCategory, Body("How hilarious would it be if everyone walked backwards on Tuesdays?"), Difficulty.Easy)
+            .Card(SillyCategory, Body("How good of a career choice is professional pillow fort architect?"), Difficulty.Easy)
+            .Card(SillyCategory, Body("How much would you enjoy living in a house made entirely of cheese?"), Difficulty.Medium)
+            .Card(SillyCategory, Body("How good an idea is a doorbell that only plays kazoo music?"), Difficulty.Easy)
+            .Card(SillyCategory, Body("How chaotic would a world without knees be?"), Difficulty.Medium)
 
         // ── PREFERENCE ───────────────────────────────────────────────────────
-        R(PreferenceCategory, "How much do you like pineapple on pizza?", Difficulty.Easy),
-        R(PreferenceCategory, "How important is having a shower vs. taking a bath?", Difficulty.Easy),
-        R(PreferenceCategory, "How essential is coffee to your happiness?", Difficulty.Easy),
-        R(PreferenceCategory, "How much do you enjoy spicy food?", Difficulty.Easy),
-        R(PreferenceCategory, "How much would you want your job to be your passion?", Difficulty.Medium),
-        R(PreferenceCategory, "How much do you prefer mountains or beaches?", Difficulty.Easy),
-        R(PreferenceCategory, "How important is having a big group of friends vs. a few close ones?", Difficulty.Medium),
-        R(PreferenceCategory, "How much do you love the smell of fresh bread?", Difficulty.Easy),
-        R(PreferenceCategory, "How much do you enjoy early mornings?", Difficulty.Easy),
-        R(PreferenceCategory, "How much would you want to live in a big city?", Difficulty.Medium),
-        R(PreferenceCategory, "How much do you prefer window seats over aisle seats?", Difficulty.Easy),
-        R(PreferenceCategory, "How much would you rather text than call?", Difficulty.Easy),
+            .Category(PreferenceCategory)
+            .Card(PreferenceCategory, Body("How much do you like pineapple on pizza?"), Difficulty.Easy)
+            .Card(PreferenceCategory, Body("How important is having a shower vs. taking a bath?"), Difficulty.Easy)
+            .Card(PreferenceCategory, Body("How essential is coffee to your happiness?"), Difficulty.Easy)
+            .Card(PreferenceCategory, Body("How much do you enjoy spicy food?"), Difficulty.Easy)
+            .Card(PreferenceCategory, Body("How much would you want your job to be your passion?"), Difficulty.Medium)
+            .Card(PreferenceCategory, Body("How much do you prefer mountains or beaches?"), Difficulty.Easy)
+            .Card(PreferenceCategory, Body("How important is having a big group of friends vs. a few close ones?"), Difficulty.Medium)
+            .Card(PreferenceCategory, Body("How much do you love the smell of fresh bread?"), Difficulty.Easy)
+            .Card(PreferenceCategory, Body("How much do you enjoy early mornings?"), Difficulty.Easy)
+            .Card(PreferenceCategory, Body("How much would you want to live in a big city?"), Difficulty.Medium)
+            .Card(PreferenceCategory, Body("How much do you prefer window seats over aisle seats?"), Difficulty.Easy)
+            .Card(PreferenceCategory, Body("How much would you rather text than call?"), Difficulty.Easy)
 
         // ── VALUES ────────────────────────────────────────────────────────────
-        R(ValuesCategory, "How important is honesty, even when it hurts?", Difficulty.Hard),
-        R(ValuesCategory, "How much does winning matter to you?", Difficulty.Medium),
-        R(ValuesCategory, "How important is helping others before helping yourself?", Difficulty.Hard),
-        R(ValuesCategory, "How much do you believe in second chances?", Difficulty.Hard),
-        R(ValuesCategory, "How important is tradition in your life?", Difficulty.Medium),
-        R(ValuesCategory, "How much do you believe everything happens for a reason?", Difficulty.Hard),
-        R(ValuesCategory, "How important is ambition in living a good life?", Difficulty.Medium),
-        R(ValuesCategory, "How much do you think forgiveness is stronger than holding a grudge?", Difficulty.Hard),
-        R(ValuesCategory, "How important is keeping a promise, even a small one?", Difficulty.Medium),
-        R(ValuesCategory, "How much does loyalty matter to you over honesty?", Difficulty.Hard),
+            .Category(ValuesCategory)
+            .Card(ValuesCategory, Body("How important is honesty, even when it hurts?"), Difficulty.Hard)
+            .Card(ValuesCategory, Body("How much does winning matter to you?"), Difficulty.Medium)
+            .Card(ValuesCategory, Body("How important is helping others before helping yourself?"), Difficulty.Hard)
+            .Card(ValuesCategory, Body("How much do you believe in second chances?"), Difficulty.Hard)
+            .Card(ValuesCategory, Body("How important is tradition in your life?"), Difficulty.Medium)
+            .Card(ValuesCategory, Body("How much do you believe everything happens for a reason?"), Difficulty.Hard)
+            .Card(ValuesCategory, Body("How important is ambition in living a good life?"), Difficulty.Medium)
+            .Card(ValuesCategory, Body("How much do you think forgiveness is stronger than holding a grudge?"), Difficulty.Hard)
+            .Card(ValuesCategory, Body("How important is keeping a promise, even a small one?"), Difficulty.Medium)
+            .Card(ValuesCategory, Body("How much does loyalty matter to you over honesty?"), Difficulty.Hard)
 
         // ── SCARY ────────────────────────────────────────────────────────────
-        R(ScaryCategory, "How scary would it be to wake up with no memory?", Difficulty.Medium),
-        R(ScaryCategory, "How nervous would you be about public speaking at a huge event?", Difficulty.Medium),
-        R(ScaryCategory, "How terrifying would it be to see a ghost?", Difficulty.Easy),
-        R(ScaryCategory, "How scary is deep water?", Difficulty.Easy),
-        R(ScaryCategory, "How frightening would it be to make a huge mistake at work?", Difficulty.Medium),
-        R(ScaryCategory, "How scary is the idea of being truly alone?", Difficulty.Hard),
-        R(ScaryCategory, "How unsettling would it be to hear your own voice on an answering machine you don't remember leaving?", Difficulty.Medium),
-        R(ScaryCategory, "How scary is the idea of moving somewhere you know nobody?", Difficulty.Medium),
+            .Category(ScaryCategory)
+            .Card(ScaryCategory, Body("How scary would it be to wake up with no memory?"), Difficulty.Medium)
+            .Card(ScaryCategory, Body("How nervous would you be about public speaking at a huge event?"), Difficulty.Medium)
+            .Card(ScaryCategory, Body("How terrifying would it be to see a ghost?"), Difficulty.Easy)
+            .Card(ScaryCategory, Body("How scary is deep water?"), Difficulty.Easy)
+            .Card(ScaryCategory, Body("How frightening would it be to make a huge mistake at work?"), Difficulty.Medium)
+            .Card(ScaryCategory, Body("How scary is the idea of being truly alone?"), Difficulty.Hard)
+            .Card(ScaryCategory, Body("How unsettling would it be to hear your own voice on an answering machine you don't remember leaving?"), Difficulty.Medium)
+            .Card(ScaryCategory, Body("How scary is the idea of moving somewhere you know nobody?"), Difficulty.Medium)
 
         // ── WEIRD ────────────────────────────────────────────────────────────
-        R(WeirdCategory, "How weird would it be if mirrors showed your future instead of your reflection?", Difficulty.Medium),
-        R(WeirdCategory, "How strange would it be if everyone had to wear their dreams on a shirt?", Difficulty.Medium),
-        R(WeirdCategory, "How bizarre would it be if you could taste colours?", Difficulty.Medium),
-        R(WeirdCategory, "How odd would it be if plants could communicate with you?", Difficulty.Medium),
-        R(WeirdCategory, "How unusual would it be if your shadow had a mind of its own?", Difficulty.Medium),
-        R(WeirdCategory, "How strange would it be if every door led somewhere different each time?", Difficulty.Medium),
-        R(WeirdCategory, "How odd would it be if your reflection was always one second behind you?", Difficulty.Medium),
-    ];
+            .Category(WeirdCategory)
+            .Card(WeirdCategory, Body("How weird would it be if mirrors showed your future instead of your reflection?"), Difficulty.Medium)
+            .Card(WeirdCategory, Body("How strange would it be if everyone had to wear their dreams on a shirt?"), Difficulty.Medium)
+            .Card(WeirdCategory, Body("How bizarre would it be if you could taste colours?"), Difficulty.Medium)
+            .Card(WeirdCategory, Body("How odd would it be if plants could communicate with you?"), Difficulty.Medium)
+            .Card(WeirdCategory, Body("How unusual would it be if your shadow had a mind of its own?"), Difficulty.Medium)
+            .Card(WeirdCategory, Body("How strange would it be if every door led somewhere different each time?"), Difficulty.Medium)
+            .Card(WeirdCategory, Body("How odd would it be if your reflection was always one second behind you?"), Difficulty.Medium)
 
-    private static ICard R(string category, string prompt, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>Rank this on a scale of 1–5:</b>\n\n" + prompt +
-            "\n\n<i>1 = Not at all  ·  5 = Absolutely yes</i>\n\n" +
-            "Everyone writes down your ranking privately. Then reveal and discuss!",
-            d, category);
+            .Build();
+
+    private static string Body(string prompt) =>
+        "<b>Rank this on a scale of 1–5:</b>\n\n" + prompt +
+        "\n\n<i>1 = Not at all  ·  5 = Absolutely yes</i>\n\n" +
+        "Everyone writes down your ranking privately. Then reveal and discuss!";
 }

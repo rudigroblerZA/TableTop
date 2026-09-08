@@ -70,51 +70,56 @@ public static class DrawItCardBank
     internal const string PlacesCategory = "Places";
     internal const string IdiomsCategory = "Idioms";
 
+    private const string Deck = "Draw It";
+
     /// <summary>All cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── OBJECTS — easiest, for the youngest artists ──────────────────────
-        D(ObjectsCategory, "A house", Difficulty.Easy),
-        D(ObjectsCategory, "An umbrella", Difficulty.Easy),
-        D(ObjectsCategory, "A birthday cake", Difficulty.Easy),
-        D(ObjectsCategory, "A pair of glasses", Difficulty.Medium),
-        D(ObjectsCategory, "A washing machine", Difficulty.Medium),
+            .Category(ObjectsCategory)
+            .Card(ObjectsCategory + " sketch", Body(ObjectsCategory, "A house"), Difficulty.Easy)
+            .Card(ObjectsCategory + " sketch", Body(ObjectsCategory, "An umbrella"), Difficulty.Easy)
+            .Card(ObjectsCategory + " sketch", Body(ObjectsCategory, "A birthday cake"), Difficulty.Easy)
+            .Card(ObjectsCategory + " sketch", Body(ObjectsCategory, "A pair of glasses"), Difficulty.Medium)
+            .Card(ObjectsCategory + " sketch", Body(ObjectsCategory, "A washing machine"), Difficulty.Medium)
 
         // ── ANIMALS & NATURE ─────────────────────────────────────────────────
-        D(AnimalsNatureCategory, "A cat", Difficulty.Easy),
-        D(AnimalsNatureCategory, "A rainbow", Difficulty.Easy),
-        D(AnimalsNatureCategory, "An octopus", Difficulty.Medium),
-        D(AnimalsNatureCategory, "A volcano erupting", Difficulty.Medium),
-        D(AnimalsNatureCategory, "A hedgehog", Difficulty.Hard),
+            .Category(AnimalsNatureCategory)
+            .Card(AnimalsNatureCategory + " sketch", Body(AnimalsNatureCategory, "A cat"), Difficulty.Easy)
+            .Card(AnimalsNatureCategory + " sketch", Body(AnimalsNatureCategory, "A rainbow"), Difficulty.Easy)
+            .Card(AnimalsNatureCategory + " sketch", Body(AnimalsNatureCategory, "An octopus"), Difficulty.Medium)
+            .Card(AnimalsNatureCategory + " sketch", Body(AnimalsNatureCategory, "A volcano erupting"), Difficulty.Medium)
+            .Card(AnimalsNatureCategory + " sketch", Body(AnimalsNatureCategory, "A hedgehog"), Difficulty.Hard)
 
         // ── ACTIONS — harder to draw without words ───────────────────────────
-        D(ActionsCategory, "Sleeping", Difficulty.Medium),
-        D(ActionsCategory, "Juggling", Difficulty.Medium),
-        D(ActionsCategory, "Sneezing", Difficulty.Hard),
-        D(ActionsCategory, "Winning a race", Difficulty.Hard),
+            .Category(ActionsCategory)
+            .Card(ActionsCategory + " sketch", Body(ActionsCategory, "Sleeping"), Difficulty.Medium)
+            .Card(ActionsCategory + " sketch", Body(ActionsCategory, "Juggling"), Difficulty.Medium)
+            .Card(ActionsCategory + " sketch", Body(ActionsCategory, "Sneezing"), Difficulty.Hard)
+            .Card(ActionsCategory + " sketch", Body(ActionsCategory, "Winning a race"), Difficulty.Hard)
 
         // ── PLACES ───────────────────────────────────────────────────────────
-        D(PlacesCategory, "The beach", Difficulty.Easy),
-        D(PlacesCategory, "A farm", Difficulty.Medium),
-        D(PlacesCategory, "An airport", Difficulty.Hard),
-        D(PlacesCategory, "A haunted house", Difficulty.Hard),
+            .Category(PlacesCategory)
+            .Card(PlacesCategory + " sketch", Body(PlacesCategory, "The beach"), Difficulty.Easy)
+            .Card(PlacesCategory + " sketch", Body(PlacesCategory, "A farm"), Difficulty.Medium)
+            .Card(PlacesCategory + " sketch", Body(PlacesCategory, "An airport"), Difficulty.Hard)
+            .Card(PlacesCategory + " sketch", Body(PlacesCategory, "A haunted house"), Difficulty.Hard)
 
         // ── IDIOMS — the gloriously bad ones ─────────────────────────────────
-        D(IdiomsCategory, "Raining cats and dogs", Difficulty.Hard),
-        D(IdiomsCategory, "A piece of cake", Difficulty.Hard),
-        D(IdiomsCategory, "Butterflies in your stomach", Difficulty.Extreme),
-        D(IdiomsCategory, "The elephant in the room", Difficulty.Extreme),
-        D(IdiomsCategory, "Barking up the wrong tree", Difficulty.Extreme),
-        D(IdiomsCategory, "When pigs fly", Difficulty.Extreme),
-    ];
+            .Category(IdiomsCategory)
+            .Card(IdiomsCategory + " sketch", Body(IdiomsCategory, "Raining cats and dogs"), Difficulty.Hard)
+            .Card(IdiomsCategory + " sketch", Body(IdiomsCategory, "A piece of cake"), Difficulty.Hard)
+            .Card(IdiomsCategory + " sketch", Body(IdiomsCategory, "Butterflies in your stomach"), Difficulty.Extreme)
+            .Card(IdiomsCategory + " sketch", Body(IdiomsCategory, "The elephant in the room"), Difficulty.Extreme)
+            .Card(IdiomsCategory + " sketch", Body(IdiomsCategory, "Barking up the wrong tree"), Difficulty.Extreme)
+            .Card(IdiomsCategory + " sketch", Body(IdiomsCategory, "When pigs fly"), Difficulty.Extreme)
 
-    private static ICard D(string category, string answer, Difficulty d) =>
-        StandardCard.Create(
-            category + " sketch",
-            "<b>✏️ DRAW IT — " + category.ToUpperInvariant() + "</b>\n\n" +
-            "<i>Read silently, then draw — no words, letters, or numbers. 60 seconds. First to guess scores with you.</i>\n\n" +
-            "Answer: " + answer,
-            d, category);
+            .Build();
+
+    private static string Body(string category, string answer) =>
+        "<b>✏️ DRAW IT — " + category.ToUpperInvariant() + "</b>\n\n" +
+        "<i>Read silently, then draw — no words, letters, or numbers. 60 seconds. First to guess scores with you.</i>\n\n" +
+        "Answer: " + answer;
 }
