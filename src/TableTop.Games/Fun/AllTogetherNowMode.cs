@@ -96,12 +96,13 @@ public static class AllTogetherNowCardBank
     internal const string AgainstItCategory = "Against It";
     internal const string DebriefCategory = "Debrief";
 
+    private const string Deck = "All Together Now";
+
     /// <summary>All cards, in authored order.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
-    private static ICard C(string category, string title, string body, Difficulty difficulty) =>
-        StandardCard.Create(title, $"<b>{Emoji(category)} {category.ToUpperInvariant()}</b>\n\n{body}",
-            difficulty, category);
+    private static string Body(string category, string body) =>
+        $"<b>{Emoji(category)} {category.ToUpperInvariant()}</b>\n\n{body}";
 
     private static string Emoji(string category) => category switch
     {
@@ -115,93 +116,101 @@ public static class AllTogetherNowCardBank
     };
 
     private static IReadOnlyList<ICard> Build() =>
-    [
-        // ── BRIEF — agree the terms out loud before anything starts ───────────
-        C(BriefCategory, "Pick Your Number",
-          "Agree your target now, out loud, before anyone sees a card. Twelve cleared is a good first game. " +
-          "Fifteen is hard. Eighteen and you get to tell people about it.", Difficulty.Easy),
-        C(BriefCategory, "Nobody Sits Out",
-          "One rule for the whole game: every card needs everyone. If someone can't do the thing a card asks — " +
-          "can't stand, can't see it, can't hear it — the table adapts the card. Adapting is not cheating; " +
-          "leaving someone out is losing.", Difficulty.Easy),
-        C(BriefCategory, "The Deck Can Win",
-          "Say this part out loud: the deck is allowed to beat you. If it couldn't, clearing it wouldn't mean " +
-          "anything. Failed cards get set aside, not re-tried.", Difficulty.Easy),
+        CardDeckBuilder.For(Deck)
 
-        // ── EVERYONE IN — the whole table does the same thing at once ─────────
-        C(EveryoneInCategory, "Same Word",
-          "On three, everyone says one word that means 'happy'. If any two of you say the same word, the card " +
-          "is cleared. No conferring, no lip-reading.", Difficulty.Easy),
-        C(EveryoneInCategory, "Count To Ten",
-          "As a table, count aloud to ten. One voice per number, no order agreed in advance, and nobody may " +
-          "say two numbers in a row. Two people speak at once and you start again.", Difficulty.Medium),
-        C(EveryoneInCategory, "One Sentence, One Word Each",
-          "Build a single sentence, one word per person, going round until somebody ends it. It has to make " +
-          "grammatical sense when read back. The table decides whether it does.", Difficulty.Medium),
-        C(EveryoneInCategory, "Everybody Hum",
-          "Everyone hums a different song at the same time for ten seconds. Afterwards, name every song you " +
-          "heard. Get them all and it's cleared.", Difficulty.Hard),
-        C(EveryoneInCategory, "Unanimous Or Nothing",
-          "Someone names a category. Everyone writes one answer privately. Cleared only if all of you wrote " +
-          "something different.", Difficulty.Medium),
+            // ── BRIEF — agree the terms out loud before anything starts ───────────
+            .Category(BriefCategory)
+            .Card("Pick Your Number", Body(BriefCategory,
+                "Agree your target now, out loud, before anyone sees a card. Twelve cleared is a good first game. " +
+                "Fifteen is hard. Eighteen and you get to tell people about it."), Difficulty.Easy)
+            .Card("Nobody Sits Out", Body(BriefCategory,
+                "One rule for the whole game: every card needs everyone. If someone can't do the thing a card asks — " +
+                "can't stand, can't see it, can't hear it — the table adapts the card. Adapting is not cheating; " +
+                "leaving someone out is losing."), Difficulty.Easy)
+            .Card("The Deck Can Win", Body(BriefCategory,
+                "Say this part out loud: the deck is allowed to beat you. If it couldn't, clearing it wouldn't mean " +
+                "anything. Failed cards get set aside, not re-tried."), Difficulty.Easy)
 
-        // ── RELAY — it passes round and one break costs the card ──────────────
-        C(RelayCategory, "No Repeats",
-          "Someone names a category. Go round naming items in it, no repeats, no pauses longer than three " +
-          "seconds. Get all the way round the table twice and it's cleared.", Difficulty.Easy),
-        C(RelayCategory, "Alphabet Round",
-          "Round the table in A-to-Z order — first person names something starting with A, next with B, on you " +
-          "go. Reach the person who started A again and you've cleared it.", Difficulty.Medium),
-        C(RelayCategory, "Last Letter First",
-          "Each answer must start with the last letter of the previous one. Same category throughout. Ten in a " +
-          "row clears it.", Difficulty.Medium),
-        C(RelayCategory, "Story With A Rule",
-          "Tell a story one sentence each. Before you start, the table picks a word nobody may say. Get twice " +
-          "round without anyone saying it — and without the story collapsing — and it's cleared.", Difficulty.Hard),
-        C(RelayCategory, "Countdown Under Pressure",
-          "Count backwards from fifty as a table, one number each, going round. Anyone who hesitates or " +
-          "misspeaks and you start from fifty again. Three attempts, then it's the deck's card.", Difficulty.Hard),
+            // ── EVERYONE IN — the whole table does the same thing at once ─────────
+            .Category(EveryoneInCategory)
+            .Card("Same Word", Body(EveryoneInCategory,
+                "On three, everyone says one word that means 'happy'. If any two of you say the same word, the card " +
+                "is cleared. No conferring, no lip-reading."), Difficulty.Easy)
+            .Card("Count To Ten", Body(EveryoneInCategory,
+                "As a table, count aloud to ten. One voice per number, no order agreed in advance, and nobody may " +
+                "say two numbers in a row. Two people speak at once and you start again."), Difficulty.Medium)
+            .Card("One Sentence, One Word Each", Body(EveryoneInCategory,
+                "Build a single sentence, one word per person, going round until somebody ends it. It has to make " +
+                "grammatical sense when read back. The table decides whether it does."), Difficulty.Medium)
+            .Card("Everybody Hum", Body(EveryoneInCategory,
+                "Everyone hums a different song at the same time for ten seconds. Afterwards, name every song you " +
+                "heard. Get them all and it's cleared."), Difficulty.Hard)
+            .Card("Unanimous Or Nothing", Body(EveryoneInCategory,
+                "Someone names a category. Everyone writes one answer privately. Cleared only if all of you wrote " +
+                "something different."), Difficulty.Medium)
 
-        // ── IN SILENCE — no talking, which is much harder than it sounds ──────
-        C(InSilenceCategory, "Line Up By Birthday",
-          "Without speaking or writing, arrange yourselves in order of birthday — January at one end, December " +
-          "at the other. Check it out loud only when everyone has stopped moving.", Difficulty.Medium),
-        C(InSilenceCategory, "Pass The Face",
-          "First person makes an expression. It goes round, each person copying the one before as exactly as " +
-          "they can. If the last face still resembles the first, cleared.", Difficulty.Easy),
-        C(InSilenceCategory, "Silent Agreement",
-          "Without a word, the table must all point at the same person on the count of three. Cleared only if " +
-          "it's unanimous — and nobody may point at themselves.", Difficulty.Hard),
-        C(InSilenceCategory, "Order Without Words",
-          "Someone picks a category with an obvious order — height, alphabetical first names, distance from " +
-          "home. Get yourselves into that order in silence.", Difficulty.Medium),
+            // ── RELAY — it passes round and one break costs the card ──────────────
+            .Category(RelayCategory)
+            .Card("No Repeats", Body(RelayCategory,
+                "Someone names a category. Go round naming items in it, no repeats, no pauses longer than three " +
+                "seconds. Get all the way round the table twice and it's cleared."), Difficulty.Easy)
+            .Card("Alphabet Round", Body(RelayCategory,
+                "Round the table in A-to-Z order — first person names something starting with A, next with B, on you " +
+                "go. Reach the person who started A again and you've cleared it."), Difficulty.Medium)
+            .Card("Last Letter First", Body(RelayCategory,
+                "Each answer must start with the last letter of the previous one. Same category throughout. Ten in a " +
+                "row clears it."), Difficulty.Medium)
+            .Card("Story With A Rule", Body(RelayCategory,
+                "Tell a story one sentence each. Before you start, the table picks a word nobody may say. Get twice " +
+                "round without anyone saying it — and without the story collapsing — and it's cleared."), Difficulty.Hard)
+            .Card("Countdown Under Pressure", Body(RelayCategory,
+                "Count backwards from fifty as a table, one number each, going round. Anyone who hesitates or " +
+                "misspeaks and you start from fifty again. Three attempts, then it's the deck's card."), Difficulty.Hard)
 
-        // ── AGAINST IT — the hard ones, worth the most ────────────────────────
-        C(AgainstItCategory, "Everyone Knows Something",
-          "Every person at the table must state one fact nobody else here knew about them. All of them have to " +
-          "land — if the table already knew one, the card isn't cleared.", Difficulty.Hard),
-        C(AgainstItCategory, "Sixty Seconds, Twenty Things",
-          "One minute. As a table, name twenty things you can see from where you're sitting. Anyone may speak " +
-          "at any time; no repeats.", Difficulty.Hard),
-        C(AgainstItCategory, "Name Everyone's Everything",
-          "Go round: each person has to name something every single other person at the table likes. Not " +
-          "guesses — things they can be corrected on. One wrong and the card stands.", Difficulty.Extreme),
-        C(AgainstItCategory, "The Long Sentence",
-          "Build one sentence, one word each, that runs at least thirty words and still makes sense at the end. " +
-          "Somebody count. Somebody else adjudicate.", Difficulty.Extreme),
-        C(AgainstItCategory, "All Of You, One Voice",
-          "Pick a song everyone knows. Sing one line together, in time, in unison, from a standing start with " +
-          "no count-in. The table decides whether that was one voice or several.", Difficulty.Extreme),
+            // ── IN SILENCE — no talking, which is much harder than it sounds ──────
+            .Category(InSilenceCategory)
+            .Card("Line Up By Birthday", Body(InSilenceCategory,
+                "Without speaking or writing, arrange yourselves in order of birthday — January at one end, December " +
+                "at the other. Check it out loud only when everyone has stopped moving."), Difficulty.Medium)
+            .Card("Pass The Face", Body(InSilenceCategory,
+                "First person makes an expression. It goes round, each person copying the one before as exactly as " +
+                "they can. If the last face still resembles the first, cleared."), Difficulty.Easy)
+            .Card("Silent Agreement", Body(InSilenceCategory,
+                "Without a word, the table must all point at the same person on the count of three. Cleared only if " +
+                "it's unanimous — and nobody may point at themselves."), Difficulty.Hard)
+            .Card("Order Without Words", Body(InSilenceCategory,
+                "Someone picks a category with an obvious order — height, alphabetical first names, distance from " +
+                "home. Get yourselves into that order in silence."), Difficulty.Medium)
 
-        // ── DEBRIEF — it closes properly whichever way it went ────────────────
-        C(DebriefCategory, "Where It Turned",
-          "Whether you cleared it or not: agree on the single card where the game turned. There's usually one, " +
-          "and you usually all know which.", Difficulty.Easy),
-        C(DebriefCategory, "Who Carried It",
-          "Name the person who did the most to get you through — and say the specific thing they did. Not " +
-          "everyone gets named and that's fine; the point is that someone hears it.", Difficulty.Easy),
-        C(DebriefCategory, "One For Next Time",
-          "Agree one rule to bring to your next game. Write it down if you're the sort of table that keeps " +
-          "things. That's the end of the deck.", Difficulty.Easy),
-    ];
+            // ── AGAINST IT — the hard ones, worth the most ────────────────────────
+            .Category(AgainstItCategory)
+            .Card("Everyone Knows Something", Body(AgainstItCategory,
+                "Every person at the table must state one fact nobody else here knew about them. All of them have to " +
+                "land — if the table already knew one, the card isn't cleared."), Difficulty.Hard)
+            .Card("Sixty Seconds, Twenty Things", Body(AgainstItCategory,
+                "One minute. As a table, name twenty things you can see from where you're sitting. Anyone may speak " +
+                "at any time; no repeats."), Difficulty.Hard)
+            .Card("Name Everyone's Everything", Body(AgainstItCategory,
+                "Go round: each person has to name something every single other person at the table likes. Not " +
+                "guesses — things they can be corrected on. One wrong and the card stands."), Difficulty.Extreme)
+            .Card("The Long Sentence", Body(AgainstItCategory,
+                "Build one sentence, one word each, that runs at least thirty words and still makes sense at the end. " +
+                "Somebody count. Somebody else adjudicate."), Difficulty.Extreme)
+            .Card("All Of You, One Voice", Body(AgainstItCategory,
+                "Pick a song everyone knows. Sing one line together, in time, in unison, from a standing start with " +
+                "no count-in. The table decides whether that was one voice or several."), Difficulty.Extreme)
+
+            // ── DEBRIEF — it closes properly whichever way it went ────────────────
+            .Category(DebriefCategory)
+            .Card("Where It Turned", Body(DebriefCategory,
+                "Whether you cleared it or not: agree on the single card where the game turned. There's usually one, " +
+                "and you usually all know which."), Difficulty.Easy)
+            .Card("Who Carried It", Body(DebriefCategory,
+                "Name the person who did the most to get you through — and say the specific thing they did. Not " +
+                "everyone gets named and that's fine; the point is that someone hears it."), Difficulty.Easy)
+            .Card("One For Next Time", Body(DebriefCategory,
+                "Agree one rule to bring to your next game. Write it down if you're the sort of table that keeps " +
+                "things. That's the end of the deck."), Difficulty.Easy)
+
+            .Build();
 }
