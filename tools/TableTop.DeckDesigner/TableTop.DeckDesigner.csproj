@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!--
+      Developer tool, not a shipping UI head — see ARCHITECTURE.md's "What
+      genuinely doesn't exist here" entry on visual deck editors. Content
+      stays entirely compiled-in (1.21.0): this project never loads or saves
+      a deck file. It builds a deck in memory via the exact same
+      CardDeckBuilder every hand-written mode uses, and its only output is
+      the C# source of a card-bank class for a developer to paste into
+      src/TableTop.Games and rebuild — same as writing one by hand, minus the
+      typing.
+    -->
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>TableTop.DeckDesigner</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <UseWinUI>true</UseWinUI>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <WindowsPackageType>None</WindowsPackageType>
+  </PropertyGroup>
+
+  <!-- Same AnyCPU fallback as TableTop.WinUI.csproj — see that file's comment
+       for why this is needed even with WindowsPackageType=None. -->
+  <PropertyGroup Condition="'$(Platform)' == 'AnyCPU' And '$(RuntimeIdentifier)' == ''">
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Deck-compiling and code-generation logic, kept platform-neutral so it
+         is unit-testable without the WinUI SDK — see
+         tests/TableTop.DeckDesigner.Tests. -->
+    <ProjectReference Include="..\TableTop.DeckDesigner.Core\TableTop.DeckDesigner.Core.csproj" />
+    <!-- ViewModelBase / RelayCommand only — the same shared MVVM plumbing
+         TableTop.WinUI and TableTop.Maui already build on, reused rather
+         than re-written for a third head. -->
+    <ProjectReference Include="..\..\src\TableTop.Presentation\TableTop.Presentation.csproj" />
+  </ItemGroup>
+</Project>

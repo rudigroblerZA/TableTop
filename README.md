@@ -19,13 +19,17 @@ TableTop/
 │   ├── TableTop.Hosting/      ← Controllers, events, hints, persistence
 │   └── TableTop.Presentation/ ← ViewModels shared by WinUI + MAUI + Android (plain net10.0)
 ├── tests/
-│   ├── TableTop.Tests/        ← 1149 tests — engine only, no UI required, any OS
-│   └── TableTop.UiTests/      ← ViewModel tests     (Windows — references WinUI)
+│   ├── TableTop.Tests/               ← 1149 tests — engine only, no UI required, any OS
+│   ├── TableTop.UiTests/             ← ViewModel tests (Windows — references WinUI)
+│   └── TableTop.DeckDesigner.Tests/  ← DeckCompiler + CardBankCodeGenerator tests, any OS
 ├── ui/
 │   ├── TableTop.Console/      ← Terminal UI         (any OS, no extra installs)
 │   ├── TableTop.Android/      ← Native .NET for Android (Mono.Android, not MAUI; `android` workload)
 │   ├── TableTop.WinUI/        ← WinUI 3 desktop     (Windows App SDK, x64/x86/ARM64)
 │   └── TableTop.Maui/         ← Mobile/desktop      (requires MAUI workload)
+├── tools/
+│   ├── TableTop.DeckDesigner.Core/ ← Deck compiling + C# codegen (plain net10.0, any OS)
+│   └── TableTop.DeckDesigner/      ← WinUI shell around it — see "Deck Designer" below
 ├── TableTop.Engine.slnx       ← Engine + Tests + Console (recommended start)
 └── TableTop.slnx              ← Full solution — all projects
 ```
@@ -163,21 +167,46 @@ MSBuild's AnyCPU default, and the MSIX packaging targets reject AnyCPU even with
 
 ---
 
+## Deck Designer
+
+`tools/TableTop.DeckDesigner` is a WinUI developer tool for building a card
+bank visually and exporting it as C# — a code generator, not a way to add
+runtime content. It builds the deck through the real `CardDeckBuilder` (same
+validation, same deterministic ids as a hand-written mode), then renders a
+`.Card(...)`/`.ThisOrThatCard(...)` chain you paste into a new file under
+`src/TableTop.Games` and rebuild. See ARCHITECTURE.md's "What genuinely
+doesn't exist here" for why this stops at codegen: the engine loads no
+content files of any kind, and this tool doesn't change that.
+
+```bash
+dotnet build tools/TableTop.DeckDesigner/TableTop.DeckDesigner.csproj -c Release -p:Platform=x64
+```
+
+Same `<Platforms>`/AnyCPU note as WinUI above applies. Its compiling/codegen
+logic (`tools/TableTop.DeckDesigner.Core`) is plain net10.0 and builds on any
+OS — `dotnet build TableTop.Engine.slnx` covers it and its tests.
+
+---
+
 ## Dependency graph
 
 ```
 Core  ←  Games  ←  Hosting  ←  Console
                             ←  Android
-                            ←  WinUI   ←  UiTests
+                            ←  WinUI          ←  UiTests
                             ←  Maui
                             ←  Tests
+Core  ←  DeckDesigner.Core  ←  DeckDesigner.Tests
+                            ←  DeckDesigner (WinUI)
 ```
 
 No UI code ever reaches Core, Games, or Hosting. `TableTop.Tests` is
 deliberately engine-only and cross-platform; only `TableTop.UiTests` references
 a UI head, which is what confines it to Windows. `TableTop.Android` is a native
 .NET for Android head (Mono.Android bindings, not MAUI) that consumes the same
-`TableTop.Presentation` ViewModels as WinUI and MAUI.
+`TableTop.Presentation` ViewModels as WinUI and MAUI. `TableTop.DeckDesigner.Core`
+references only `TableTop.Core` — it never reaches `Games` or `Hosting`, since
+compiling and rendering a card bank needs neither.
 
 ---
 
@@ -191,7 +220,7 @@ and WinUI apps use the player repository; add players through their setup screen
 ## Versioning
 
 `VersionPrefix` in `Directory.Build.props` is the single place to bump; every
-project inherits it. Currently **1.42.0**. The public API of Core, Games and
+project inherits it. Currently **1.43.0**. The public API of Core, Games and
 Hosting is stable, so a breaking change to it needs a major bump;
 `AssemblyVersion` tracks the major only (1.0.0.0 across the whole 1.x line), so
 assemblies built against 1.0.0 keep binding without a rebuild.

@@ -30,11 +30,20 @@
   <!-- Tests -->
   <Folder Name="/Tests/">
     <Project Path="tests/TableTop.Tests/TableTop.Tests.csproj" />
+    <Project Path="tests/TableTop.DeckDesigner.Tests/TableTop.DeckDesigner.Tests.csproj" />
   </Folder>
 
   <!-- UI — Console only. Needs no workload, so it belongs in the solution
        that is meant to build anywhere. -->
   <Folder Name="/UI/">
     <Project Path="ui/TableTop.Console/TableTop.Console.csproj" />
+  </Folder>
+
+  <!-- Deck Designer's compiling/codegen logic — plain net10.0, same reasoning
+       as Console: no UI workload needed, so it builds and tests anywhere.
+       The WinUI shell around it (tools/TableTop.DeckDesigner) is Windows-only
+       and lives in TableTop.slnx instead, next to the other UI heads. -->
+  <Folder Name="/Tools/">
+    <Project Path="tools/TableTop.DeckDesigner.Core/TableTop.DeckDesigner.Core.csproj" />
   </Folder>
 </Solution>

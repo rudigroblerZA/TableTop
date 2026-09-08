@@ -46,6 +46,12 @@ jobs:
       - name: Check WinUI control properties
         run: python3 scripts/check-winui-xaml.py
 
+      # tools/TableTop.DeckDesigner is WinUI too, but lives outside ui/ (it's
+      # a developer tool, not a shipped head — see TableTop.slnx), so it needs
+      # its own explicit invocation rather than falling out of the default.
+      - name: Check WinUI control properties (Deck Designer)
+        run: python3 scripts/check-winui-xaml.py tools/TableTop.DeckDesigner
+
       # Catches a missing using for a shared type. check-ui-compiles.py was
       # written for this and structurally cannot do it: the compiler stops at
       # 100 errors, and an unresolvable framework type masks a first-party one
@@ -62,6 +68,11 @@ jobs:
 
       - name: Check XAML bindings resolve (all heads)
         run: python3 scripts/check-xaml-bindings.py
+
+      # Same reasoning as the WinUI-properties step above: this defaults to
+      # scanning ui/, and tools/TableTop.DeckDesigner sits outside it.
+      - name: Check XAML bindings resolve (Deck Designer)
+        run: python3 scripts/check-xaml-bindings.py tools/TableTop.DeckDesigner
 
       # Backlog item 12. HeadFamilyCoverageTests cannot reference the MAUI or
       # WinUI projects (both need SDKs this job doesn't have), so it keeps a
@@ -230,6 +241,14 @@ jobs:
              --no-restore -c Release
              -p:TreatWarningsAsErrors=true
 
+      # Deck Designer's compiling/codegen logic — plain net10.0, same as
+      # Console, so it builds on this job rather than needing the Windows
+      # runner its WinUI shell (tools/TableTop.DeckDesigner) does.
+      - name: Build Deck Designer Core
+        run: dotnet build tools/TableTop.DeckDesigner.Core/TableTop.DeckDesigner.Core.csproj
+             --no-restore -c Release
+             -p:TreatWarningsAsErrors=true
+
       # ── Tests ─────────────────────────────────────────────────────────────────
 
       - name: Run tests
@@ -240,6 +259,20 @@ jobs:
              --collect:"XPlat Code Coverage"
              --settings coverage.runsettings
              --results-directory tests/TableTop.Tests/TestResults
+
+      - name: Run Deck Designer tests
+        run: dotnet test tests/TableTop.DeckDesigner.Tests/TableTop.DeckDesigner.Tests.csproj
+             -c Release
+             --logger "trx;LogFileName=deck-designer-test-results.trx"
+             --logger "console;verbosity=normal"
+             --results-directory tests/TableTop.DeckDesigner.Tests/TestResults
+
+      - name: Upload Deck Designer test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deck-designer-test-results
+          path: tests/TableTop.DeckDesigner.Tests/TestResults/*.trx
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -352,6 +385,14 @@ jobs:
       - name: Build WinUI
         run: dotnet build ui/TableTop.WinUI/TableTop.WinUI.csproj -c Release -p:Platform=x64
              -p:TreatWarningsAsErrors=true
+
+      # Deck Designer's WinUI shell — same platform requirements as the head
+      # above. TreatWarningsAsErrors deliberately left off: unlike the heads
+      # above, this has never been measured with --no-incremental against a
+      # known-good baseline (see the note at the top of this job for why that
+      # measurement matters before flipping the flag on).
+      - name: Build Deck Designer
+        run: dotnet build tools/TableTop.DeckDesigner/TableTop.DeckDesigner.csproj -c Release -p:Platform=x64
 
       # Backlog G.4. The only tests that touch a ViewModel. They reference
       # TableTop.WinUI, so they run here rather than in the cross-platform job.
