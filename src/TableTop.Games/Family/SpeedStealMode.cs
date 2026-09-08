@@ -70,112 +70,57 @@ public static class SpeedStealCardBank
     internal const string StoryCategory = "Story";
     internal const string OpinionCategory = "Opinion";
 
+    private const string Deck = "Speed Steal";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── PERSONAL ──────────────────────────────────────────────────────────
-        S(PersonalCategory,
-            "What's your best meal ever?",
-            "Others challenge with THEIR best meal. Better answer steals your point.",
-            Difficulty.Easy),
-        S(PersonalCategory,
-            "Describe your perfect day in three words.",
-            "Others try to beat your description. Judges decide: who wins?",
-            Difficulty.Medium),
-        S(PersonalCategory,
-            "What skill do you wish you had?",
-            "Others counter with a skill that's more impressive or funny.",
-            Difficulty.Easy),
-        S(PersonalCategory,
-            "What's something nobody knows about you?",
-            "Others challenge: reveal something more shocking or weird.",
-            Difficulty.Hard),
+            .Category(PersonalCategory)
+            .Card(PersonalCategory, Body("What's your best meal ever?", "Others challenge with THEIR best meal. Better answer steals your point."), Difficulty.Easy)
+            .Card(PersonalCategory, Body("Describe your perfect day in three words.", "Others try to beat your description. Judges decide: who wins?"), Difficulty.Medium)
+            .Card(PersonalCategory, Body("What skill do you wish you had?", "Others counter with a skill that's more impressive or funny."), Difficulty.Easy)
+            .Card(PersonalCategory, Body("What's something nobody knows about you?", "Others challenge: reveal something more shocking or weird."), Difficulty.Hard)
 
         // ── CREATIVE ──────────────────────────────────────────────────────────
-        S(CreativeCategory,
-            "If you could invent one new thing, what would it be?",
-            "Others pitch inventions that sound more useful or hilarious.",
-            Difficulty.Medium),
-        S(CreativeCategory,
-            "Give your life a movie title.",
-            "Others create titles that better describe your actual life.",
-            Difficulty.Medium),
-        S(CreativeCategory,
-            "What's the worst superpower you could have?",
-            "Others come up with even worse superpowers. Funniest wins.",
-            Difficulty.Easy),
-        S(CreativeCategory,
-            "Describe a colour without naming it.",
-            "Others describe it better or more creatively.",
-            Difficulty.Medium),
+            .Category(CreativeCategory)
+            .Card(CreativeCategory, Body("If you could invent one new thing, what would it be?", "Others pitch inventions that sound more useful or hilarious."), Difficulty.Medium)
+            .Card(CreativeCategory, Body("Give your life a movie title.", "Others create titles that better describe your actual life."), Difficulty.Medium)
+            .Card(CreativeCategory, Body("What's the worst superpower you could have?", "Others come up with even worse superpowers. Funniest wins."), Difficulty.Easy)
+            .Card(CreativeCategory, Body("Describe a colour without naming it.", "Others describe it better or more creatively."), Difficulty.Medium)
 
         // ── PREFERENCE ────────────────────────────────────────────────────────
-        S(PreferenceCategory,
-            "Mountains or beaches — and why?",
-            "Others defend the opposite choice harder.",
-            Difficulty.Easy),
-        S(PreferenceCategory,
-            "What's your guilty pleasure that you're not guilty about?",
-            "Others claim a more shameless pleasure.",
-            Difficulty.Easy),
-        S(PreferenceCategory,
-            "Coffee or tea — and what does it say about you?",
-            "Others argue their choice reveals more about them.",
-            Difficulty.Medium),
-        S(PreferenceCategory,
-            "What would you eat if calories didn't exist?",
-            "Others propose something more interesting or ridiculous.",
-            Difficulty.Easy),
+            .Category(PreferenceCategory)
+            .Card(PreferenceCategory, Body("Mountains or beaches — and why?", "Others defend the opposite choice harder."), Difficulty.Easy)
+            .Card(PreferenceCategory, Body("What's your guilty pleasure that you're not guilty about?", "Others claim a more shameless pleasure."), Difficulty.Easy)
+            .Card(PreferenceCategory, Body("Coffee or tea — and what does it say about you?", "Others argue their choice reveals more about them."), Difficulty.Medium)
+            .Card(PreferenceCategory, Body("What would you eat if calories didn't exist?", "Others propose something more interesting or ridiculous."), Difficulty.Easy)
 
         // ── STORY ────────────────────────────────────────────────────────────
-        S(StoryCategory,
-            "Tell a story about your most embarrassing moment (3 sentences).",
-            "Others challenge with a more embarrassing moment.",
-            Difficulty.Hard),
-        S(StoryCategory,
-            "What's your biggest failure and why it was actually good?",
-            "Others describe a failure with a better silver lining.",
-            Difficulty.Hard),
-        S(StoryCategory,
-            "Describe a time someone surprised you.",
-            "Others share a better/funnier surprise story.",
-            Difficulty.Medium),
-        S(StoryCategory,
-            "What's the craziest thing you've ever done?",
-            "Others counter with something crazier.",
-            Difficulty.Hard),
+            .Category(StoryCategory)
+            .Card(StoryCategory, Body("Tell a story about your most embarrassing moment (3 sentences).", "Others challenge with a more embarrassing moment."), Difficulty.Hard)
+            .Card(StoryCategory, Body("What's your biggest failure and why it was actually good?", "Others describe a failure with a better silver lining."), Difficulty.Hard)
+            .Card(StoryCategory, Body("Describe a time someone surprised you.", "Others share a better/funnier surprise story."), Difficulty.Medium)
+            .Card(StoryCategory, Body("What's the craziest thing you've ever done?", "Others counter with something crazier."), Difficulty.Hard)
 
         // ── OPINION ───────────────────────────────────────────────────────────
-        S(OpinionCategory,
-            "Is cereal a soup? Defend your answer.",
-            "Others argue the opposite position harder.",
-            Difficulty.Easy),
-        S(OpinionCategory,
-            "What's overrated that everyone loves?",
-            "Others counter with something MORE overrated.",
-            Difficulty.Easy),
-        S(OpinionCategory,
-            "What's underrated that nobody appreciates?",
-            "Others argue their choice is MORE underrated.",
-            Difficulty.Medium),
-        S(OpinionCategory,
-            "What's the most annoying thing about people?",
-            "Others nominate something MORE annoying.",
-            Difficulty.Easy),
-    ];
+            .Category(OpinionCategory)
+            .Card(OpinionCategory, Body("Is cereal a soup? Defend your answer.", "Others argue the opposite position harder."), Difficulty.Easy)
+            .Card(OpinionCategory, Body("What's overrated that everyone loves?", "Others counter with something MORE overrated."), Difficulty.Easy)
+            .Card(OpinionCategory, Body("What's underrated that nobody appreciates?", "Others argue their choice is MORE underrated."), Difficulty.Medium)
+            .Card(OpinionCategory, Body("What's the most annoying thing about people?", "Others nominate something MORE annoying."), Difficulty.Easy)
 
-    private static ICard S(string category, string question, string stealMechanic, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>SPEED STEAL QUESTION</b>\n\n" +
-            question + "\n\n" +
-            "<b>PLAY:</b>\n" +
-            "1. Active player answers (5 seconds)\n" +
-            "2. Others shout 'STEAL!' to challenge\n" +
-            "3. " + stealMechanic + "\n" +
-            "4. Group votes: better answer wins the point\n\n" +
-            "<b>RULES:</b> Be fast. Be bold. Defend your answer. No half-measures.",
-            d, category);
+            .Build();
+
+    private static string Body(string question, string stealMechanic) =>
+        "<b>SPEED STEAL QUESTION</b>\n\n" +
+        question + "\n\n" +
+        "<b>PLAY:</b>\n" +
+        "1. Active player answers (5 seconds)\n" +
+        "2. Others shout 'STEAL!' to challenge\n" +
+        "3. " + stealMechanic + "\n" +
+        "4. Group votes: better answer wins the point\n\n" +
+        "<b>RULES:</b> Be fast. Be bold. Defend your answer. No half-measures.";
 }

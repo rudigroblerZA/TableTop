@@ -70,55 +70,60 @@ public static class RhymeBattleCardBank
     internal const string ImpossibleCategory = "Impossible";
     internal const string ChaosCategory = "Chaos";
 
+    private const string Deck = "Rhyme Battle";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── EASY ──────────────────────────────────────────────────────────────
-        R(EasyCategory, "CAT", "(mat, hat, sat, bat, fat, rat, splat, combat...)", Difficulty.Easy),
-        R(EasyCategory, "LIGHT", "(night, sight, bright, fight, might, flight...)", Difficulty.Easy),
-        R(EasyCategory, "TREE", "(free, bee, sea, key, spree, decree...)", Difficulty.Easy),
-        R(EasyCategory, "SONG", "(long, strong, wrong, along, belong...)", Difficulty.Easy),
-        R(EasyCategory, "BLUE", "(true, shoe, flew, new, drew, crew...)", Difficulty.Easy),
-        R(EasyCategory, "RING", "(sing, wing, thing, spring, sting, bring...)", Difficulty.Easy),
+            .Category(EasyCategory)
+            .Card(EasyCategory, Body("CAT", "(mat, hat, sat, bat, fat, rat, splat, combat...)"), Difficulty.Easy)
+            .Card(EasyCategory, Body("LIGHT", "(night, sight, bright, fight, might, flight...)"), Difficulty.Easy)
+            .Card(EasyCategory, Body("TREE", "(free, bee, sea, key, spree, decree...)"), Difficulty.Easy)
+            .Card(EasyCategory, Body("SONG", "(long, strong, wrong, along, belong...)"), Difficulty.Easy)
+            .Card(EasyCategory, Body("BLUE", "(true, shoe, flew, new, drew, crew...)"), Difficulty.Easy)
+            .Card(EasyCategory, Body("RING", "(sing, wing, thing, spring, sting, bring...)"), Difficulty.Easy)
 
         // ── MEDIUM ────────────────────────────────────────────────────────────
-        R(MediumCategory, "SILVER", "(quiver, shiver, deliver, river...)", Difficulty.Medium),
-        R(MediumCategory, "ORANGE", "(no good rhymes exist; people suggest 'door-hinge'...)", Difficulty.Hard),
-        R(MediumCategory, "HEART", "(part, start, smart, art, chart, dart...)", Difficulty.Medium),
-        R(MediumCategory, "DANCE", "(chance, glance, prance, trance, romance...)", Difficulty.Medium),
-        R(MediumCategory, "DRAGON", "(wagon, flagon... that's about it)", Difficulty.Medium),
-        R(MediumCategory, "CIRCLE", "(purple rhymes loosely; mostly just pain)", Difficulty.Hard),
+            .Category(MediumCategory)
+            .Card(MediumCategory, Body("SILVER", "(quiver, shiver, deliver, river...)"), Difficulty.Medium)
+            .Card(MediumCategory, Body("ORANGE", "(no good rhymes exist; people suggest 'door-hinge'...)"), Difficulty.Hard)
+            .Card(MediumCategory, Body("HEART", "(part, start, smart, art, chart, dart...)"), Difficulty.Medium)
+            .Card(MediumCategory, Body("DANCE", "(chance, glance, prance, trance, romance...)"), Difficulty.Medium)
+            .Card(MediumCategory, Body("DRAGON", "(wagon, flagon... that's about it)"), Difficulty.Medium)
+            .Card(MediumCategory, Body("CIRCLE", "(purple rhymes loosely; mostly just pain)"), Difficulty.Hard)
 
         // ── HARD ──────────────────────────────────────────────────────────────
-        R(HardCategory, "MONTH", "(nope)", Difficulty.Hard),
-        R(HardCategory, "PURPLE", "(circle sort of? nurple? this is brutal)", Difficulty.Hard),
-        R(HardCategory, "PINT", "(hint, tint, mint, stint, squint...)", Difficulty.Hard),
-        R(HardCategory, "ORANGE", "(still nothing)", Difficulty.Hard),
-        R(HardCategory, "STRENGTH", "(length, if you cheat)", Difficulty.Hard),
+            .Category(HardCategory)
+            .Card(HardCategory, Body("MONTH", "(nope)"), Difficulty.Hard)
+            .Card(HardCategory, Body("PURPLE", "(circle sort of? nurple? this is brutal)"), Difficulty.Hard)
+            .Card(HardCategory, Body("PINT", "(hint, tint, mint, stint, squint...)"), Difficulty.Hard)
+            .Card(HardCategory, Body("ORANGE", "(still nothing)"), Difficulty.Hard)
+            .Card(HardCategory, Body("STRENGTH", "(length, if you cheat)"), Difficulty.Hard)
 
         // ── IMPOSSIBLE ────────────────────────────────────────────────────────
-        R(ImpossibleCategory, "SYZYGY", "(good luck)", Difficulty.Hard),
-        R(ImpossibleCategory, "SIXTH", "(...seriously?)", Difficulty.Hard),
-        R(ImpossibleCategory, "RHYTHM", "(absolutely not)", Difficulty.Hard),
-        R(ImpossibleCategory, "WORCESTERSHIRE", "(this is psychological warfare)", Difficulty.Hard),
+            .Category(ImpossibleCategory)
+            .Card(ImpossibleCategory, Body("SYZYGY", "(good luck)"), Difficulty.Hard)
+            .Card(ImpossibleCategory, Body("SIXTH", "(...seriously?)"), Difficulty.Hard)
+            .Card(ImpossibleCategory, Body("RHYTHM", "(absolutely not)"), Difficulty.Hard)
+            .Card(ImpossibleCategory, Body("WORCESTERSHIRE", "(this is psychological warfare)"), Difficulty.Hard)
 
         // ── CHAOS ────────────────────────────────────────────────────────────
-        R(ChaosCategory, "DOOR", "(four, floor, more, core, score, whore, store...)", Difficulty.Medium),
-        R(ChaosCategory, "HAND", "(band, stand, land, grand, brand, strand...)", Difficulty.Easy),
-        R(ChaosCategory, "POWER", "(flower, tower, hour, shower, sour...)", Difficulty.Medium),
-        R(ChaosCategory, "MONEY", "(honey, sunny, funny, runny...)", Difficulty.Easy),
-        R(ChaosCategory, "LOVE", "(dove, above, shove, glove, thereof...)", Difficulty.Medium),
-    ];
+            .Category(ChaosCategory)
+            .Card(ChaosCategory, Body("DOOR", "(four, floor, more, core, score, whore, store...)"), Difficulty.Medium)
+            .Card(ChaosCategory, Body("HAND", "(band, stand, land, grand, brand, strand...)"), Difficulty.Easy)
+            .Card(ChaosCategory, Body("POWER", "(flower, tower, hour, shower, sour...)"), Difficulty.Medium)
+            .Card(ChaosCategory, Body("MONEY", "(honey, sunny, funny, runny...)"), Difficulty.Easy)
+            .Card(ChaosCategory, Body("LOVE", "(dove, above, shove, glove, thereof...)"), Difficulty.Medium)
 
-    private static ICard R(string category, string word, string helpfulHint, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>5-SECOND RHYME BATTLE</b>\n\n" +
-            "Starting word: <b>" + word + "</b>\n\n" +
-            "SHOUT rhyming words. You have 5 seconds. Cannot repeat words already said.\n\n" +
-            "Last person to say a valid rhyme wins the round. Everyone else is out.\n\n" +
-            helpfulHint,
-            d, category);
+            .Build();
+
+    private static string Body(string word, string helpfulHint) =>
+        "<b>5-SECOND RHYME BATTLE</b>\n\n" +
+        "Starting word: <b>" + word + "</b>\n\n" +
+        "SHOUT rhyming words. You have 5 seconds. Cannot repeat words already said.\n\n" +
+        "Last person to say a valid rhyme wins the round. Everyone else is out.\n\n" +
+        helpfulHint;
 }

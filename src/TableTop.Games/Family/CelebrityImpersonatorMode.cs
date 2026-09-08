@@ -69,59 +69,64 @@ public static class CelebrityImpersonatorCardBank
     internal const string AbsurdCategory = "Absurd";
     internal const string CulturalCategory = "Cultural";
 
+    private const string Deck = "Celebrity Impersonator";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── CELEBRITY ────────────────────────────────────────────────────────
-        I(CelebrityCategory, "Elvis Presley", "Sneer, hip swivel, deep voice, 'Uh huh'", Difficulty.Easy),
-        I(CelebrityCategory, "Marilyn Monroe", "Breathy voice, blonde glamour, sultry whisper", Difficulty.Medium),
-        I(CelebrityCategory, "James Bond", "Suave, posh British accent, martini hand gesture", Difficulty.Medium),
-        I(CelebrityCategory, "Darth Vader", "Heavy breathing, cape swish, deep menacing voice", Difficulty.Easy),
-        I(CelebrityCategory, "Arnold Schwarzenegger", "Austrian accent, 'I'll be back', flexing", Difficulty.Easy),
-        I(CelebrityCategory, "Marilyn Monroe", "High-pitched giggle, breathy voice, hair flip", Difficulty.Medium),
+            .Category(CelebrityCategory)
+            .Card(CelebrityCategory, Body("Elvis Presley", "Sneer, hip swivel, deep voice, 'Uh huh'"), Difficulty.Easy)
+            .Card(CelebrityCategory, Body("Marilyn Monroe", "Breathy voice, blonde glamour, sultry whisper"), Difficulty.Medium)
+            .Card(CelebrityCategory, Body("James Bond", "Suave, posh British accent, martini hand gesture"), Difficulty.Medium)
+            .Card(CelebrityCategory, Body("Darth Vader", "Heavy breathing, cape swish, deep menacing voice"), Difficulty.Easy)
+            .Card(CelebrityCategory, Body("Arnold Schwarzenegger", "Austrian accent, 'I'll be back', flexing"), Difficulty.Easy)
+            .Card(CelebrityCategory, Body("Marilyn Monroe", "High-pitched giggle, breathy voice, hair flip"), Difficulty.Medium)
 
         // ── HISTORICAL ───────────────────────────────────────────────────────
-        I(HistoricalCategory, "Winston Churchill", "Cigar, growl, stern disapproving look, posh British accent", Difficulty.Hard),
-        I(HistoricalCategory, "Napoleon Bonaparte", "Hand in jacket, stern military gaze, French accent", Difficulty.Medium),
-        I(HistoricalCategory, "Albert Einstein", "Wild hair touching, tongue out, thoughtful genius", Difficulty.Medium),
-        I(HistoricalCategory, "Cleopatra", "Regal, dramatic gestures, ancient Egyptian flair", Difficulty.Hard),
-        I(HistoricalCategory, "Leonardo da Vinci", "Painting gestures, thoughtful beard stroking, mystery", Difficulty.Hard),
+            .Category(HistoricalCategory)
+            .Card(HistoricalCategory, Body("Winston Churchill", "Cigar, growl, stern disapproving look, posh British accent"), Difficulty.Hard)
+            .Card(HistoricalCategory, Body("Napoleon Bonaparte", "Hand in jacket, stern military gaze, French accent"), Difficulty.Medium)
+            .Card(HistoricalCategory, Body("Albert Einstein", "Wild hair touching, tongue out, thoughtful genius"), Difficulty.Medium)
+            .Card(HistoricalCategory, Body("Cleopatra", "Regal, dramatic gestures, ancient Egyptian flair"), Difficulty.Hard)
+            .Card(HistoricalCategory, Body("Leonardo da Vinci", "Painting gestures, thoughtful beard stroking, mystery"), Difficulty.Hard)
 
         // ── FICTIONAL ────────────────────────────────────────────────────────
-        I(FictionalCategory, "Sherlock Holmes", "Deerstalker, analytical frown, 'Elementary'", Difficulty.Medium),
-        I(FictionalCategory, "Yoda", "Backwards sentence structure, 'Hmmmm', small creature mannerisms", Difficulty.Medium),
-        I(FictionalCategory, "SpongeBob SquarePants", "High-pitched laugh, innocent enthusiasm, nautical references", Difficulty.Easy),
-        I(FictionalCategory, "Shrek", "Ogre accent (vaguely Scottish), gruffness, 'I'm an ogre'", Difficulty.Medium),
-        I(FictionalCategory, "Gollum", "Hissy voice, 'my precious', weird head movements", Difficulty.Medium),
+            .Category(FictionalCategory)
+            .Card(FictionalCategory, Body("Sherlock Holmes", "Deerstalker, analytical frown, 'Elementary'"), Difficulty.Medium)
+            .Card(FictionalCategory, Body("Yoda", "Backwards sentence structure, 'Hmmmm', small creature mannerisms"), Difficulty.Medium)
+            .Card(FictionalCategory, Body("SpongeBob SquarePants", "High-pitched laugh, innocent enthusiasm, nautical references"), Difficulty.Easy)
+            .Card(FictionalCategory, Body("Shrek", "Ogre accent (vaguely Scottish), gruffness, 'I'm an ogre'"), Difficulty.Medium)
+            .Card(FictionalCategory, Body("Gollum", "Hissy voice, 'my precious', weird head movements"), Difficulty.Medium)
 
         // ── ABSURD ───────────────────────────────────────────────────────────
-        I(AbsurdCategory, "A sentient anxiety disorder with a British accent", "Nervous, apologetic, overthinking everything constantly", Difficulty.Hard),
-        I(AbsurdCategory, "A self-aware houseplant with trust issues", "Slow movements, dramatic sighs, 'I've been watered twice this month'", Difficulty.Hard),
-        I(AbsurdCategory, "An existential crisis in human form", "Stares into nothing, asks 'what's the point', confused gestures", Difficulty.Hard),
-        I(AbsurdCategory, "A motivational poster that became sentient and is now regretful", "Aggressive positivity mixed with despair, jazz hands", Difficulty.Hard),
-        I(AbsurdCategory, "A sentient WiFi router from 2005", "Confused beeping, dies randomly, complains about being replaced", Difficulty.Hard),
+            .Category(AbsurdCategory)
+            .Card(AbsurdCategory, Body("A sentient anxiety disorder with a British accent", "Nervous, apologetic, overthinking everything constantly"), Difficulty.Hard)
+            .Card(AbsurdCategory, Body("A self-aware houseplant with trust issues", "Slow movements, dramatic sighs, 'I've been watered twice this month'"), Difficulty.Hard)
+            .Card(AbsurdCategory, Body("An existential crisis in human form", "Stares into nothing, asks 'what's the point', confused gestures"), Difficulty.Hard)
+            .Card(AbsurdCategory, Body("A motivational poster that became sentient and is now regretful", "Aggressive positivity mixed with despair, jazz hands"), Difficulty.Hard)
+            .Card(AbsurdCategory, Body("A sentient WiFi router from 2005", "Confused beeping, dies randomly, complains about being replaced"), Difficulty.Hard)
 
         // ── CULTURAL ─────────────────────────────────────────────────────────
-        I(CulturalCategory, "A pirate", "Arr matey, pirate accent, hand gestures, ship movements", Difficulty.Easy),
-        I(CulturalCategory, "A strict teacher", "Disappointed look, red pen, stern voice, finger pointing", Difficulty.Easy),
-        I(CulturalCategory, "A mad scientist", "Wild hair, mad laugh, explosive hand gestures", Difficulty.Easy),
-        I(CulturalCategory, "A cheerleader from the 80s", "Pom-poms, high energy, 'Go team!', enthusiastic attitude", Difficulty.Easy),
-        I(CulturalCategory, "A conspiracy theorist", "Wide eyes, 'they're listening', pointing, connecting dots", Difficulty.Medium),
-    ];
+            .Category(CulturalCategory)
+            .Card(CulturalCategory, Body("A pirate", "Arr matey, pirate accent, hand gestures, ship movements"), Difficulty.Easy)
+            .Card(CulturalCategory, Body("A strict teacher", "Disappointed look, red pen, stern voice, finger pointing"), Difficulty.Easy)
+            .Card(CulturalCategory, Body("A mad scientist", "Wild hair, mad laugh, explosive hand gestures"), Difficulty.Easy)
+            .Card(CulturalCategory, Body("A cheerleader from the 80s", "Pom-poms, high energy, 'Go team!', enthusiastic attitude"), Difficulty.Easy)
+            .Card(CulturalCategory, Body("A conspiracy theorist", "Wide eyes, 'they're listening', pointing, connecting dots"), Difficulty.Medium)
 
-    private static ICard I(string category, string character, string hints, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>30-SECOND IMPERSONATION</b>\n\n" +
-            "You are: <b>" + character + "</b>\n\n" +
-            "Act like them. Voice, mannerisms, catchphrases, attitude.\n\n" +
-            "Tips: " + hints + "\n\n" +
-            "Hints to remember:\n" +
-            "• Commit fully to the bit\n" +
-            "• Use voice/accent if you can\n" +
-            "• Physical mannerisms count\n" +
-            "• Everyone else guesses who you are",
-            d, category);
+            .Build();
+
+    private static string Body(string character, string hints) =>
+        "<b>30-SECOND IMPERSONATION</b>\n\n" +
+        "You are: <b>" + character + "</b>\n\n" +
+        "Act like them. Voice, mannerisms, catchphrases, attitude.\n\n" +
+        "Tips: " + hints + "\n\n" +
+        "Hints to remember:\n" +
+        "• Commit fully to the bit\n" +
+        "• Use voice/accent if you can\n" +
+        "• Physical mannerisms count\n" +
+        "• Everyone else guesses who you are";
 }

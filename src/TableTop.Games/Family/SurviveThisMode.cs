@@ -69,109 +69,60 @@ public static class SurviveThisCardBank
     internal const string WeirdCategory = "Weird";
     internal const string SocialCategory = "Social";
 
+    private const string Deck = "Survive This";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── INCONVENIENT ──────────────────────────────────────────────────────
-        S(InconvenientCategory,
-            "Stuck on an elevator with a mime. It's broken. Could take hours.",
-            Difficulty.Easy),
-        S(InconvenientCategory,
-            "Your phone dies right before you were about to open your boarding pass.",
-            Difficulty.Easy),
-        S(InconvenientCategory,
-            "You're alone at a dinner party where you know nobody and can't find the bathroom.",
-            Difficulty.Easy),
-        S(InconvenientCategory,
-            "Coffee shop has the wrong order but your name sounds exactly like someone else's.",
-            Difficulty.Easy),
-        S(InconvenientCategory,
-            "You're stuck next to someone on a plane who won't stop talking.",
-            Difficulty.Easy),
+            .Category(InconvenientCategory)
+            .Card(InconvenientCategory, Body("Stuck on an elevator with a mime. It's broken. Could take hours."), Difficulty.Easy)
+            .Card(InconvenientCategory, Body("Your phone dies right before you were about to open your boarding pass."), Difficulty.Easy)
+            .Card(InconvenientCategory, Body("You're alone at a dinner party where you know nobody and can't find the bathroom."), Difficulty.Easy)
+            .Card(InconvenientCategory, Body("Coffee shop has the wrong order but your name sounds exactly like someone else's."), Difficulty.Easy)
+            .Card(InconvenientCategory, Body("You're stuck next to someone on a plane who won't stop talking."), Difficulty.Easy)
 
         // ── RIDICULOUS ────────────────────────────────────────────────────────
-        S(RidiculousCategory,
-            "You can only communicate through interpretive dance for the next 24 hours.",
-            Difficulty.Medium),
-        S(RidiculousCategory,
-            "You've been cursed to tell the absolute truth no matter what.",
-            Difficulty.Medium),
-        S(RidiculousCategory,
-            "Suddenly you can only speak in rhyme. Forever.",
-            Difficulty.Medium),
-        S(RidiculousCategory,
-            "Everything you say comes out in dramatic Shakespearean English.",
-            Difficulty.Medium),
-        S(RidiculousCategory,
-            "You're now three inches tall. Society doesn't change. Discuss.",
-            Difficulty.Hard),
-        S(RidiculousCategory,
-            "Everyone around you speaks in movie quotes only. You can't break character.",
-            Difficulty.Medium),
+            .Category(RidiculousCategory)
+            .Card(RidiculousCategory, Body("You can only communicate through interpretive dance for the next 24 hours."), Difficulty.Medium)
+            .Card(RidiculousCategory, Body("You've been cursed to tell the absolute truth no matter what."), Difficulty.Medium)
+            .Card(RidiculousCategory, Body("Suddenly you can only speak in rhyme. Forever."), Difficulty.Medium)
+            .Card(RidiculousCategory, Body("Everything you say comes out in dramatic Shakespearean English."), Difficulty.Medium)
+            .Card(RidiculousCategory, Body("You're now three inches tall. Society doesn't change. Discuss."), Difficulty.Hard)
+            .Card(RidiculousCategory, Body("Everyone around you speaks in movie quotes only. You can't break character."), Difficulty.Medium)
 
         // ── IMPOSSIBLE ────────────────────────────────────────────────────────
-        S(ImpossibleCategory,
-            "You are now made entirely of pasta. Spaghetti, to be specific.",
-            Difficulty.Hard),
-        S(ImpossibleCategory,
-            "Gravity is backwards. The sky is now below you.",
-            Difficulty.Hard),
-        S(ImpossibleCategory,
-            "You are now the size of a building. Buildings haven't been resized. Survive.",
-            Difficulty.Hard),
-        S(ImpossibleCategory,
-            "Time now moves backwards but your memories go forward. Discuss.",
-            Difficulty.Hard),
-        S(ImpossibleCategory,
-            "Everything is made of jello. Including you. Including the ground.",
-            Difficulty.Hard),
+            .Category(ImpossibleCategory)
+            .Card(ImpossibleCategory, Body("You are now made entirely of pasta. Spaghetti, to be specific."), Difficulty.Hard)
+            .Card(ImpossibleCategory, Body("Gravity is backwards. The sky is now below you."), Difficulty.Hard)
+            .Card(ImpossibleCategory, Body("You are now the size of a building. Buildings haven't been resized. Survive."), Difficulty.Hard)
+            .Card(ImpossibleCategory, Body("Time now moves backwards but your memories go forward. Discuss."), Difficulty.Hard)
+            .Card(ImpossibleCategory, Body("Everything is made of jello. Including you. Including the ground."), Difficulty.Hard)
 
         // ── WEIRD ────────────────────────────────────────────────────────────
-        S(WeirdCategory,
-            "You've switched bodies with your pet. You're now your pet. Your pet is you.",
-            Difficulty.Medium),
-        S(WeirdCategory,
-            "You discover that pigeons are sentient and they're angry.",
-            Difficulty.Easy),
-        S(WeirdCategory,
-            "All plants have declared war on humanity. They're very slow but very angry.",
-            Difficulty.Medium),
-        S(WeirdCategory,
-            "Your shadow has achieved sentience and wants independence.",
-            Difficulty.Medium),
-        S(WeirdCategory,
-            "All cats have secretly been running society this whole time. They reveal themselves.",
-            Difficulty.Easy),
-        S(WeirdCategory,
-            "Inanimate objects are now mildly sentient. They're judging you.",
-            Difficulty.Medium),
+            .Category(WeirdCategory)
+            .Card(WeirdCategory, Body("You've switched bodies with your pet. You're now your pet. Your pet is you."), Difficulty.Medium)
+            .Card(WeirdCategory, Body("You discover that pigeons are sentient and they're angry."), Difficulty.Easy)
+            .Card(WeirdCategory, Body("All plants have declared war on humanity. They're very slow but very angry."), Difficulty.Medium)
+            .Card(WeirdCategory, Body("Your shadow has achieved sentience and wants independence."), Difficulty.Medium)
+            .Card(WeirdCategory, Body("All cats have secretly been running society this whole time. They reveal themselves."), Difficulty.Easy)
+            .Card(WeirdCategory, Body("Inanimate objects are now mildly sentient. They're judging you."), Difficulty.Medium)
 
         // ── SOCIAL ────────────────────────────────────────────────────────────
-        S(SocialCategory,
-            "You've just realized you've been mispronouncing someone's name for three years.",
-            Difficulty.Easy),
-        S(SocialCategory,
-            "You sent a text meant for your friend to your boss. It was unflattering.",
-            Difficulty.Easy),
-        S(SocialCategory,
-            "You've waved back at someone who was waving at the person behind you. Very awkwardly.",
-            Difficulty.Easy),
-        S(SocialCategory,
-            "You're at a party and someone keeps trying to hug you but you're not a hugger.",
-            Difficulty.Easy),
-        S(SocialCategory,
-            "Your mom finds your secret social media account and starts commenting on everything.",
-            Difficulty.Medium),
-    ];
+            .Category(SocialCategory)
+            .Card(SocialCategory, Body("You've just realized you've been mispronouncing someone's name for three years."), Difficulty.Easy)
+            .Card(SocialCategory, Body("You sent a text meant for your friend to your boss. It was unflattering."), Difficulty.Easy)
+            .Card(SocialCategory, Body("You've waved back at someone who was waving at the person behind you. Very awkwardly."), Difficulty.Easy)
+            .Card(SocialCategory, Body("You're at a party and someone keeps trying to hug you but you're not a hugger."), Difficulty.Easy)
+            .Card(SocialCategory, Body("Your mom finds your secret social media account and starts commenting on everything."), Difficulty.Medium)
 
-    private static ICard S(string category, string scenario, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>RATE YOUR SURVIVAL CHANCES:</b>\n\n" +
-            scenario + "\n\n" +
-            "<b>1 = Dead instantly  ·  5 = Thriving</b>\n\n" +
-            "Vote privately, then explain your strategy or why you'd perish spectacularly.",
-            d, category);
+            .Build();
+
+    private static string Body(string scenario) =>
+        "<b>RATE YOUR SURVIVAL CHANCES:</b>\n\n" +
+        scenario + "\n\n" +
+        "<b>1 = Dead instantly  ·  5 = Thriving</b>\n\n" +
+        "Vote privately, then explain your strategy or why you'd perish spectacularly.";
 }

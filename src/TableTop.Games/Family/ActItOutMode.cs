@@ -70,52 +70,58 @@ public static class ActItOutCardBank
     internal const string MoviesShowsCategory = "Movies & Shows";
     internal const string WholeScenesCategory = "Whole Scenes";
 
+    private const string Deck = "Act It Out";
+
     /// <summary>All cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
-        // ── ANIMALS — easiest, great for the youngest ────────────────────────
-        A(AnimalsCategory, "A monkey", Difficulty.Easy),
-        A(AnimalsCategory, "A snake", Difficulty.Easy),
-        A(AnimalsCategory, "A kangaroo", Difficulty.Easy),
-        A(AnimalsCategory, "A chicken laying an egg", Difficulty.Medium),
-        A(AnimalsCategory, "A cat knocking things off a table", Difficulty.Medium),
-        A(AnimalsCategory, "A sloth trying to catch a bus", Difficulty.Hard),
+        CardDeckBuilder.For(Deck)
 
-        // ── ACTIONS — verbs and everyday doings ──────────────────────────────
-        A(ActionsCategory, "Brushing your teeth", Difficulty.Easy),
-        A(ActionsCategory, "Swimming", Difficulty.Easy),
-        A(ActionsCategory, "Tiptoeing past someone asleep", Difficulty.Medium),
-        A(ActionsCategory, "Trying to open a jar that won't budge", Difficulty.Medium),
-        A(ActionsCategory, "Stepping on a plug in bare feet", Difficulty.Hard),
-        A(ActionsCategory, "Pretending you knew the answer all along", Difficulty.Hard),
+            // ── ANIMALS — easiest, great for the youngest ────────────────────────
+            .Category(AnimalsCategory)
+            .Card(AnimalsCategory + " charade", Body(AnimalsCategory, "A monkey"), Difficulty.Easy)
+            .Card(AnimalsCategory + " charade", Body(AnimalsCategory, "A snake"), Difficulty.Easy)
+            .Card(AnimalsCategory + " charade", Body(AnimalsCategory, "A kangaroo"), Difficulty.Easy)
+            .Card(AnimalsCategory + " charade", Body(AnimalsCategory, "A chicken laying an egg"), Difficulty.Medium)
+            .Card(AnimalsCategory + " charade", Body(AnimalsCategory, "A cat knocking things off a table"), Difficulty.Medium)
+            .Card(AnimalsCategory + " charade", Body(AnimalsCategory, "A sloth trying to catch a bus"), Difficulty.Hard)
 
-        // ── JOBS — occupations to mime ───────────────────────────────────────
-        A(JobsCategory, "A chef", Difficulty.Easy),
-        A(JobsCategory, "A firefighter", Difficulty.Easy),
-        A(JobsCategory, "A hairdresser", Difficulty.Medium),
-        A(JobsCategory, "A traffic officer directing cars", Difficulty.Medium),
-        A(JobsCategory, "A very unenthusiastic tour guide", Difficulty.Hard),
+            // ── ACTIONS — verbs and everyday doings ──────────────────────────────
+            .Category(ActionsCategory)
+            .Card(ActionsCategory + " charade", Body(ActionsCategory, "Brushing your teeth"), Difficulty.Easy)
+            .Card(ActionsCategory + " charade", Body(ActionsCategory, "Swimming"), Difficulty.Easy)
+            .Card(ActionsCategory + " charade", Body(ActionsCategory, "Tiptoeing past someone asleep"), Difficulty.Medium)
+            .Card(ActionsCategory + " charade", Body(ActionsCategory, "Trying to open a jar that won't budge"), Difficulty.Medium)
+            .Card(ActionsCategory + " charade", Body(ActionsCategory, "Stepping on a plug in bare feet"), Difficulty.Hard)
+            .Card(ActionsCategory + " charade", Body(ActionsCategory, "Pretending you knew the answer all along"), Difficulty.Hard)
 
-        // ── MOVIES & SHOWS — mime the title/idea, no words ───────────────────
-        A(MoviesShowsCategory, "A superhero movie", Difficulty.Medium),
-        A(MoviesShowsCategory, "A nature documentary", Difficulty.Medium),
-        A(MoviesShowsCategory, "A cooking competition show", Difficulty.Hard),
-        A(MoviesShowsCategory, "A horror film where nothing works out", Difficulty.Hard),
+            // ── JOBS — occupations to mime ───────────────────────────────────────
+            .Category(JobsCategory)
+            .Card(JobsCategory + " charade", Body(JobsCategory, "A chef"), Difficulty.Easy)
+            .Card(JobsCategory + " charade", Body(JobsCategory, "A firefighter"), Difficulty.Easy)
+            .Card(JobsCategory + " charade", Body(JobsCategory, "A hairdresser"), Difficulty.Medium)
+            .Card(JobsCategory + " charade", Body(JobsCategory, "A traffic officer directing cars"), Difficulty.Medium)
+            .Card(JobsCategory + " charade", Body(JobsCategory, "A very unenthusiastic tour guide"), Difficulty.Hard)
 
-        // ── WHOLE SCENES — the absurd showstoppers ───────────────────────────
-        A(WholeScenesCategory, "A penguin realising it left the oven on", Difficulty.Extreme),
-        A(WholeScenesCategory, "A robot slowly running out of battery", Difficulty.Extreme),
-        A(WholeScenesCategory, "Someone winning the lottery on the bus, quietly", Difficulty.Extreme),
-        A(WholeScenesCategory, "A wizard whose spell went slightly wrong", Difficulty.Extreme),
-    ];
+            // ── MOVIES & SHOWS — mime the title/idea, no words ───────────────────
+            .Category(MoviesShowsCategory)
+            .Card(MoviesShowsCategory + " charade", Body(MoviesShowsCategory, "A superhero movie"), Difficulty.Medium)
+            .Card(MoviesShowsCategory + " charade", Body(MoviesShowsCategory, "A nature documentary"), Difficulty.Medium)
+            .Card(MoviesShowsCategory + " charade", Body(MoviesShowsCategory, "A cooking competition show"), Difficulty.Hard)
+            .Card(MoviesShowsCategory + " charade", Body(MoviesShowsCategory, "A horror film where nothing works out"), Difficulty.Hard)
 
-    private static ICard A(string category, string answer, Difficulty d) =>
-        StandardCard.Create(
-            category + " charade",
-            "<b>🎭 ACT IT OUT — " + category.ToUpperInvariant() + "</b>\n\n" +
-            "<i>Read silently, then act it out — no words, no sounds. 60 seconds. First to guess scores with you.</i>\n\n" +
-            "Answer: " + answer,
-            d, category);
+            // ── WHOLE SCENES — the absurd showstoppers ───────────────────────────
+            .Category(WholeScenesCategory)
+            .Card(WholeScenesCategory + " charade", Body(WholeScenesCategory, "A penguin realising it left the oven on"), Difficulty.Extreme)
+            .Card(WholeScenesCategory + " charade", Body(WholeScenesCategory, "A robot slowly running out of battery"), Difficulty.Extreme)
+            .Card(WholeScenesCategory + " charade", Body(WholeScenesCategory, "Someone winning the lottery on the bus, quietly"), Difficulty.Extreme)
+            .Card(WholeScenesCategory + " charade", Body(WholeScenesCategory, "A wizard whose spell went slightly wrong"), Difficulty.Extreme)
+
+            .Build();
+
+    private static string Body(string category, string answer) =>
+        "<b>🎭 ACT IT OUT — " + category.ToUpperInvariant() + "</b>\n\n" +
+        "<i>Read silently, then act it out — no words, no sounds. 60 seconds. First to guess scores with you.</i>\n\n" +
+        "Answer: " + answer;
 }
