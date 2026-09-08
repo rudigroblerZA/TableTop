@@ -139,6 +139,47 @@ public sealed class CardDeckBuilderTests
     }
 
     [Fact]
+    public void ThisOrThatCard_EmitsATwoOptionCard_InTheCurrentCategory()
+    {
+        var deck = CardDeckBuilder.For("Deck")
+            .Category("Choices")
+            .ThisOrThatCard("Morning", "Which morning?",
+                new("Sunrise walk", "img-a", "detail a"),
+                new("Lie-in", "img-b", "detail b"))
+            .Build();
+
+        deck.Should().HaveCount(1);
+        var card = deck[0].Should().BeAssignableTo<Core.Abstractions.Cards.IThisOrThatCard>().Subject;
+        card.Category.Should().Be("Choices");
+        card.Title.Should().Be("Morning");
+        card.Description.Should().Be("Which morning?");
+        card.OptionA.Label.Should().Be("Sunrise walk");
+        card.OptionB.ImageKey.Should().Be("img-b");
+    }
+
+    [Fact]
+    public void ThisOrThatCard_MixesFreelyWithStandardCards_AndKeepsDeterministicIds()
+    {
+        static IReadOnlyList<Core.Abstractions.Cards.ICard> Deck() =>
+            CardDeckBuilder.For("Mixed")
+                .Category("Rules").Card("How To", "Body.", Difficulty.Easy)
+                .Category("Play").ThisOrThatCard("A vs B", "Pick.",
+                    new("A", Detail: "a"), new("B", Detail: "b"))
+                .Build();
+
+        Deck().Select(c => c.Id).Should().Equal(Deck().Select(c => c.Id));
+    }
+
+    [Fact]
+    public void ThisOrThatCard_BeforeAnyCategory_Throws()
+    {
+        var act = () => CardDeckBuilder.For("Deck")
+            .ThisOrThatCard("T", "Q", new("A"), new("B"));
+
+        act.Should().Throw<InvalidOperationException>().WithMessage("*Category*");
+    }
+
+    [Fact]
     public void Category_CanBeCalledAgain_ToStartANewGroupOfCards()
     {
         // Re-entering a category name already used earlier is legal — it just

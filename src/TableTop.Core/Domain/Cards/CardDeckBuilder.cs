@@ -6,7 +6,10 @@ using TableTop.Core.Abstractions.Restrictions;
 namespace TableTop.Core.Domain.Cards;
 
 /// <summary>
-/// A fluent DSL for authoring a mode's card bank in C#.
+/// A fluent DSL for authoring a mode's card bank in C#. <see cref="Card"/>
+/// emits <see cref="StandardCard"/>s; <see cref="ThisOrThatCard"/> emits
+/// two-option <see cref="TableTop.Core.Domain.Cards.ThisOrThatCard"/>s in the
+/// same chain.
 ///
 /// <para>
 /// <b>Why this exists.</b> Twelve mode files independently define the same
@@ -97,6 +100,39 @@ public sealed class CardDeckBuilder
         _cards.Add(new StandardCard(
             StableId(_deckName, _currentCategory, title, description),
             title, description, difficulty, _currentCategory, tags, restriction));
+
+        return this;
+    }
+
+    /// <summary>
+    /// Adds one two-option comparison card
+    /// (<see cref="TableTop.Core.Domain.Cards.ThisOrThatCard"/>) to the current
+    /// category — the overload that makes this builder more than
+    /// StandardCard-only. Same deterministic-id guarantee as <see cref="Card"/>,
+    /// with the two option labels folded into the seed as well. A distinct name
+    /// rather than a <see cref="Card"/> overload so a target-typed
+    /// <c>new(...)</c> option argument stays unambiguous at the call site.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">No <see cref="Category"/> has been set yet.</exception>
+    public CardDeckBuilder ThisOrThatCard(
+        string title,
+        string question,
+        ThisOrThatOption optionA,
+        ThisOrThatOption optionB,
+        Difficulty difficulty = Difficulty.Easy)
+    {
+        if (_currentCategory.Length == 0)
+            throw new InvalidOperationException(
+                $"Call {nameof(Category)}(...) before the first {nameof(ThisOrThatCard)}(...) — " +
+                "every card needs one, and there is no sensible default to fall back to.");
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(title);
+        ArgumentException.ThrowIfNullOrWhiteSpace(question);
+
+        // ThisOrThatCard.Create already derives a stable id from
+        // deck|category|title|body|labelA|labelB and validates the options.
+        _cards.Add(TableTop.Core.Domain.Cards.ThisOrThatCard.Create(
+            _deckName, title, question, difficulty, _currentCategory, optionA, optionB));
 
         return this;
     }
