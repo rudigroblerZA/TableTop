@@ -71,97 +71,107 @@ public static class ForbiddenWordsCardBank
     internal const string PeopleCategory = "People";
     internal const string HardModeCategory = "Hard Mode";
 
+    private const string Deck = "Forbidden Words";
+
     /// <summary>All forbidden-words cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── FOOD ──────────────────────────────────────────────────────────────
-        F(FoodCategory, "PIZZA",      "cheese", "Italy", "slice", Difficulty.Easy),
-        F(FoodCategory, "BANANA",     "yellow", "monkey", "peel", Difficulty.Easy),
-        F(FoodCategory, "CHOCOLATE",  "sweet", "brown", "cocoa", Difficulty.Easy),
-        F(FoodCategory, "SPAGHETTI",  "pasta", "long", "noodle", Difficulty.Medium),
-        F(FoodCategory, "POPCORN",    "cinema", "kernel", "butter", Difficulty.Medium),
-        F(FoodCategory, "SUSHI",      "fish", "rice", "Japan", Difficulty.Medium),
-        F(FoodCategory, "PANCAKE",    "flip", "flat", "syrup", Difficulty.Medium),
-        F(FoodCategory, "ICE CREAM",  "cold", "cone", "scoop", Difficulty.Easy),
+            .Category(FoodCategory)
+            .Card(FoodCategory, Body("PIZZA", "cheese", "Italy", "slice"), Difficulty.Easy)
+            .Card(FoodCategory, Body("BANANA", "yellow", "monkey", "peel"), Difficulty.Easy)
+            .Card(FoodCategory, Body("CHOCOLATE", "sweet", "brown", "cocoa"), Difficulty.Easy)
+            .Card(FoodCategory, Body("SPAGHETTI", "pasta", "long", "noodle"), Difficulty.Medium)
+            .Card(FoodCategory, Body("POPCORN", "cinema", "kernel", "butter"), Difficulty.Medium)
+            .Card(FoodCategory, Body("SUSHI", "fish", "rice", "Japan"), Difficulty.Medium)
+            .Card(FoodCategory, Body("PANCAKE", "flip", "flat", "syrup"), Difficulty.Medium)
+            .Card(FoodCategory, Body("ICE CREAM", "cold", "cone", "scoop"), Difficulty.Easy)
 
         // ── PLACES ────────────────────────────────────────────────────────────
-        F(PlacesCategory, "BEACH",    "sand", "sea", "sun", Difficulty.Easy),
-        F(PlacesCategory, "LIBRARY",  "books", "quiet", "borrow", Difficulty.Easy),
-        F(PlacesCategory, "AIRPORT",  "plane", "fly", "luggage", Difficulty.Medium),
-        F(PlacesCategory, "HOSPITAL", "doctor", "sick", "nurse", Difficulty.Medium),
-        F(PlacesCategory, "DESERT",   "sand", "hot", "camel", Difficulty.Medium),
-        F(PlacesCategory, "CINEMA",   "film", "screen", "popcorn", Difficulty.Easy),
-        F(PlacesCategory, "FARM",     "animals", "tractor", "field", Difficulty.Easy),
-        F(PlacesCategory, "VOLCANO",  "lava", "erupt", "mountain", Difficulty.Hard),
+            .Category(PlacesCategory)
+            .Card(PlacesCategory, Body("BEACH", "sand", "sea", "sun"), Difficulty.Easy)
+            .Card(PlacesCategory, Body("LIBRARY", "books", "quiet", "borrow"), Difficulty.Easy)
+            .Card(PlacesCategory, Body("AIRPORT", "plane", "fly", "luggage"), Difficulty.Medium)
+            .Card(PlacesCategory, Body("HOSPITAL", "doctor", "sick", "nurse"), Difficulty.Medium)
+            .Card(PlacesCategory, Body("DESERT", "sand", "hot", "camel"), Difficulty.Medium)
+            .Card(PlacesCategory, Body("CINEMA", "film", "screen", "popcorn"), Difficulty.Easy)
+            .Card(PlacesCategory, Body("FARM", "animals", "tractor", "field"), Difficulty.Easy)
+            .Card(PlacesCategory, Body("VOLCANO", "lava", "erupt", "mountain"), Difficulty.Hard)
 
         // ── THINGS ────────────────────────────────────────────────────────────
-        F(ThingsCategory, "UMBRELLA",   "rain", "wet", "open", Difficulty.Easy),
-        F(ThingsCategory, "TOOTHBRUSH", "teeth", "clean", "paste", Difficulty.Easy),
-        F(ThingsCategory, "PILLOW",     "sleep", "soft", "head", Difficulty.Medium),
-        F(ThingsCategory, "MIRROR",     "reflection", "look", "glass", Difficulty.Medium),
-        F(ThingsCategory, "CANDLE",     "wax", "flame", "birthday", Difficulty.Medium),
-        F(ThingsCategory, "KEYBOARD",   "type", "computer", "keys", Difficulty.Medium),
-        F(ThingsCategory, "TRAMPOLINE", "jump", "bounce", "springs", Difficulty.Hard),
-        F(ThingsCategory, "COMPASS",    "north", "direction", "needle", Difficulty.Hard),
+            .Category(ThingsCategory)
+            .Card(ThingsCategory, Body("UMBRELLA", "rain", "wet", "open"), Difficulty.Easy)
+            .Card(ThingsCategory, Body("TOOTHBRUSH", "teeth", "clean", "paste"), Difficulty.Easy)
+            .Card(ThingsCategory, Body("PILLOW", "sleep", "soft", "head"), Difficulty.Medium)
+            .Card(ThingsCategory, Body("MIRROR", "reflection", "look", "glass"), Difficulty.Medium)
+            .Card(ThingsCategory, Body("CANDLE", "wax", "flame", "birthday"), Difficulty.Medium)
+            .Card(ThingsCategory, Body("KEYBOARD", "type", "computer", "keys"), Difficulty.Medium)
+            .Card(ThingsCategory, Body("TRAMPOLINE", "jump", "bounce", "springs"), Difficulty.Hard)
+            .Card(ThingsCategory, Body("COMPASS", "north", "direction", "needle"), Difficulty.Hard)
 
         // ── ACTIONS ───────────────────────────────────────────────────────────
-        F(ActionsCategory, "SNEEZE",   "achoo", "nose", "bless", Difficulty.Medium),
-        F(ActionsCategory, "WHISPER",  "quiet", "secret", "ear", Difficulty.Medium),
-        F(ActionsCategory, "JUGGLE",   "balls", "throw", "circus", Difficulty.Medium),
-        F(ActionsCategory, "YAWN",     "tired", "mouth", "sleepy", Difficulty.Easy),
-        F(ActionsCategory, "SWIM",     "water", "pool", "stroke", Difficulty.Easy),
-        F(ActionsCategory, "HICCUP",   "sound", "scare", "water", Difficulty.Hard),
-        F(ActionsCategory, "APPLAUD",  "clap", "hands", "audience", Difficulty.Medium),
-        F(ActionsCategory, "SHIVER",   "cold", "shake", "goosebumps", Difficulty.Hard),
+            .Category(ActionsCategory)
+            .Card(ActionsCategory, Body("SNEEZE", "achoo", "nose", "bless"), Difficulty.Medium)
+            .Card(ActionsCategory, Body("WHISPER", "quiet", "secret", "ear"), Difficulty.Medium)
+            .Card(ActionsCategory, Body("JUGGLE", "balls", "throw", "circus"), Difficulty.Medium)
+            .Card(ActionsCategory, Body("YAWN", "tired", "mouth", "sleepy"), Difficulty.Easy)
+            .Card(ActionsCategory, Body("SWIM", "water", "pool", "stroke"), Difficulty.Easy)
+            .Card(ActionsCategory, Body("HICCUP", "sound", "scare", "water"), Difficulty.Hard)
+            .Card(ActionsCategory, Body("APPLAUD", "clap", "hands", "audience"), Difficulty.Medium)
+            .Card(ActionsCategory, Body("SHIVER", "cold", "shake", "goosebumps"), Difficulty.Hard)
 
         // ── PEOPLE ────────────────────────────────────────────────────────────
-        F(PeopleCategory, "FIREFIGHTER", "fire", "hose", "ladder", Difficulty.Easy),
-        F(PeopleCategory, "MAGICIAN",    "trick", "rabbit", "hat", Difficulty.Medium),
-        F(PeopleCategory, "ASTRONAUT",   "space", "rocket", "moon", Difficulty.Easy),
-        F(PeopleCategory, "REFEREE",     "whistle", "sport", "rules", Difficulty.Medium),
-        F(PeopleCategory, "PIRATE",      "ship", "treasure", "parrot", Difficulty.Easy),
-        F(PeopleCategory, "DENTIST",     "teeth", "drill", "mouth", Difficulty.Medium),
-        F(PeopleCategory, "DETECTIVE",   "mystery", "clues", "solve", Difficulty.Hard),
-        F(PeopleCategory, "LIFEGUARD",   "pool", "rescue", "whistle", Difficulty.Medium),
+            .Category(PeopleCategory)
+            .Card(PeopleCategory, Body("FIREFIGHTER", "fire", "hose", "ladder"), Difficulty.Easy)
+            .Card(PeopleCategory, Body("MAGICIAN", "trick", "rabbit", "hat"), Difficulty.Medium)
+            .Card(PeopleCategory, Body("ASTRONAUT", "space", "rocket", "moon"), Difficulty.Easy)
+            .Card(PeopleCategory, Body("REFEREE", "whistle", "sport", "rules"), Difficulty.Medium)
+            .Card(PeopleCategory, Body("PIRATE", "ship", "treasure", "parrot"), Difficulty.Easy)
+            .Card(PeopleCategory, Body("DENTIST", "teeth", "drill", "mouth"), Difficulty.Medium)
+            .Card(PeopleCategory, Body("DETECTIVE", "mystery", "clues", "solve"), Difficulty.Hard)
+            .Card(PeopleCategory, Body("LIFEGUARD", "pool", "rescue", "whistle"), Difficulty.Medium)
 
         // ── HARD MODE ─────────────────────────────────────────────────────────
-        F(HardModeCategory, "GRAVITY",     "fall", "Earth", "Newton", Difficulty.Extreme),
-        F(HardModeCategory, "ECHO",        "sound", "repeat", "cave", Difficulty.Extreme),
-        F(HardModeCategory, "SHADOW",      "dark", "light", "sun", Difficulty.Extreme),
-        F(HardModeCategory, "DÉJÀ VU",     "before", "feeling", "again", Difficulty.Extreme),
-        F(HardModeCategory, "WIFI",        "internet", "signal", "router", Difficulty.Extreme),
-        F(HardModeCategory, "MIDNIGHT",    "twelve", "night", "clock", Difficulty.Extreme),
-        F(HardModeCategory, "NOSTALGIA",   "past", "memory", "miss", Difficulty.Extreme),
-        F(HardModeCategory, "SARCASM",     "joke", "tone", "mean", Difficulty.Extreme),
+            .Category(HardModeCategory)
+            .Card(HardModeCategory, Body("GRAVITY", "fall", "Earth", "Newton"), Difficulty.Extreme)
+            .Card(HardModeCategory, Body("ECHO", "sound", "repeat", "cave"), Difficulty.Extreme)
+            .Card(HardModeCategory, Body("SHADOW", "dark", "light", "sun"), Difficulty.Extreme)
+            .Card(HardModeCategory, Body("DÉJÀ VU", "before", "feeling", "again"), Difficulty.Extreme)
+            .Card(HardModeCategory, Body("WIFI", "internet", "signal", "router"), Difficulty.Extreme)
+            .Card(HardModeCategory, Body("MIDNIGHT", "twelve", "night", "clock"), Difficulty.Extreme)
+            .Card(HardModeCategory, Body("NOSTALGIA", "past", "memory", "miss"), Difficulty.Extreme)
+            .Card(HardModeCategory, Body("SARCASM", "joke", "tone", "mean"), Difficulty.Extreme)
 
         // ── EXPANSION: FAN FAVOURITES ─────────────────────────────────────────
-        F(ThingsCategory, "SELFIE",       "photo", "phone", "yourself", Difficulty.Medium),
-        F(ThingsCategory, "ALARM CLOCK",  "wake", "morning", "ring", Difficulty.Easy),
-        F(ThingsCategory, "GLITTER",      "sparkle", "craft", "everywhere", Difficulty.Hard),
-        F(ThingsCategory, "SOCKS",        "feet", "pair", "missing", Difficulty.Easy),
-        F(ActionsCategory, "PROCRASTINATE", "later", "delay", "tomorrow", Difficulty.Hard),
-        F(ActionsCategory, "BINGE-WATCH", "episodes", "series", "one more", Difficulty.Medium),
-        F(ActionsCategory, "GHOSTING",    "reply", "disappear", "message", Difficulty.Hard),
-        F(ActionsCategory, "EAVESDROP",   "listen", "secret", "conversation", Difficulty.Medium),
-        F(PeopleCategory, "INFLUENCER",   "followers", "post", "sponsored", Difficulty.Medium),
-        F(PeopleCategory, "VILLAIN",      "evil", "hero", "plan", Difficulty.Medium),
-        F(PeopleCategory, "TODDLER",      "small", "tantrum", "nap", Difficulty.Easy),
-        F(PeopleCategory, "CONSPIRACY THEORIST", "government", "secret", "truth", Difficulty.Hard),
-        F(HardModeCategory, "AWKWARD SILENCE", "quiet", "uncomfortable", "conversation", Difficulty.Extreme),
-        F(HardModeCategory, "REVENGE",   "payback", "hurt", "even", Difficulty.Extreme),
-        F(HardModeCategory, "PASSWORD",  "secret", "login", "forgot", Difficulty.Extreme),
-        F(HardModeCategory, "MONDAY",    "week", "work", "morning", Difficulty.Extreme),
-    ];
+            .Category(ThingsCategory)
+            .Card(ThingsCategory, Body("SELFIE", "photo", "phone", "yourself"), Difficulty.Medium)
+            .Card(ThingsCategory, Body("ALARM CLOCK", "wake", "morning", "ring"), Difficulty.Easy)
+            .Card(ThingsCategory, Body("GLITTER", "sparkle", "craft", "everywhere"), Difficulty.Hard)
+            .Card(ThingsCategory, Body("SOCKS", "feet", "pair", "missing"), Difficulty.Easy)
+            .Category(ActionsCategory)
+            .Card(ActionsCategory, Body("PROCRASTINATE", "later", "delay", "tomorrow"), Difficulty.Hard)
+            .Card(ActionsCategory, Body("BINGE-WATCH", "episodes", "series", "one more"), Difficulty.Medium)
+            .Card(ActionsCategory, Body("GHOSTING", "reply", "disappear", "message"), Difficulty.Hard)
+            .Card(ActionsCategory, Body("EAVESDROP", "listen", "secret", "conversation"), Difficulty.Medium)
+            .Category(PeopleCategory)
+            .Card(PeopleCategory, Body("INFLUENCER", "followers", "post", "sponsored"), Difficulty.Medium)
+            .Card(PeopleCategory, Body("VILLAIN", "evil", "hero", "plan"), Difficulty.Medium)
+            .Card(PeopleCategory, Body("TODDLER", "small", "tantrum", "nap"), Difficulty.Easy)
+            .Card(PeopleCategory, Body("CONSPIRACY THEORIST", "government", "secret", "truth"), Difficulty.Hard)
+            .Category(HardModeCategory)
+            .Card(HardModeCategory, Body("AWKWARD SILENCE", "quiet", "uncomfortable", "conversation"), Difficulty.Extreme)
+            .Card(HardModeCategory, Body("REVENGE", "payback", "hurt", "even"), Difficulty.Extreme)
+            .Card(HardModeCategory, Body("PASSWORD", "secret", "login", "forgot"), Difficulty.Extreme)
+            .Card(HardModeCategory, Body("MONDAY", "week", "work", "morning"), Difficulty.Extreme)
 
-    private static ICard F(string category, string target, string ban1, string ban2, string ban3, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>Your word: " + target + "</b>\n\n" +
-            "<b>FORBIDDEN:</b> " + ban1 + " · " + ban2 + " · " + ban3 + "\n\n" +
-            "Describe it out loud without saying your word, any forbidden word, or any form of them. " +
-            "Everyone else shouts guesses — first correct guess scores for both of you.\n\n" +
-            "<i>Slip up and say a forbidden word? Round over. The table decides. The table is merciless.</i>",
-            d, category);
+            .Build();
+
+    private static string Body(string target, string ban1, string ban2, string ban3) =>
+        "<b>Your word: " + target + "</b>\n\n" +
+        "<b>FORBIDDEN:</b> " + ban1 + " · " + ban2 + " · " + ban3 + "\n\n" +
+        "Describe it out loud without saying your word, any forbidden word, or any form of them. " +
+        "Everyone else shouts guesses — first correct guess scores for both of you.\n\n" +
+        "<i>Slip up and say a forbidden word? Round over. The table decides. The table is merciless.</i>";
 }

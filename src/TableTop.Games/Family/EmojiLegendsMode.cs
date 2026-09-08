@@ -68,68 +68,73 @@ public static class EmojiLegendsCardBank
     internal const string TVShowCategory = "TV Show";
     internal const string MixedCategory = "Mixed";
 
+    private const string Deck = "Emoji Legends";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── FILM ──────────────────────────────────────────────────────────────
-        E(FilmCategory, "🧊👑", "Frozen", Difficulty.Easy),
-        E(FilmCategory, "🚗💨⚡", "Cars", Difficulty.Easy),
-        E(FilmCategory, "🦁👑🌍", "The Lion King", Difficulty.Easy),
-        E(FilmCategory, "🎬📽️🎞️", "The Truman Show", Difficulty.Medium),
-        E(FilmCategory, "🏴\u200D☠️💀🌊", "Pirates of the Caribbean", Difficulty.Easy),
-        E(FilmCategory, "🔥🐉⚔️", "Game of Thrones", Difficulty.Easy),
-        E(FilmCategory, "🎒🌍✈️", "Up", Difficulty.Easy),
-        E(FilmCategory, "👶💼🎩", "Boss Baby", Difficulty.Easy),
-        E(FilmCategory, "🕷️🦸\u200D♂️💫", "Spider-Man", Difficulty.Easy),
-        E(FilmCategory, "🧙\u200D♂️⚡🪄", "Harry Potter", Difficulty.Easy),
-        E(FilmCategory, "🌊🧜\u200D♀️👑", "The Little Mermaid", Difficulty.Easy),
-        E(FilmCategory, "🐘👂💔", "Dumbo", Difficulty.Medium),
-        E(FilmCategory, "💍⚔️🗻", "The Lord of the Rings", Difficulty.Easy),
+            .Category(FilmCategory)
+            .Card(FilmCategory, Body("🧊👑", "Frozen"), Difficulty.Easy)
+            .Card(FilmCategory, Body("🚗💨⚡", "Cars"), Difficulty.Easy)
+            .Card(FilmCategory, Body("🦁👑🌍", "The Lion King"), Difficulty.Easy)
+            .Card(FilmCategory, Body("🎬📽️🎞️", "The Truman Show"), Difficulty.Medium)
+            .Card(FilmCategory, Body("🏴\u200D☠️💀🌊", "Pirates of the Caribbean"), Difficulty.Easy)
+            .Card(FilmCategory, Body("🔥🐉⚔️", "Game of Thrones"), Difficulty.Easy)
+            .Card(FilmCategory, Body("🎒🌍✈️", "Up"), Difficulty.Easy)
+            .Card(FilmCategory, Body("👶💼🎩", "Boss Baby"), Difficulty.Easy)
+            .Card(FilmCategory, Body("🕷️🦸\u200D♂️💫", "Spider-Man"), Difficulty.Easy)
+            .Card(FilmCategory, Body("🧙\u200D♂️⚡🪄", "Harry Potter"), Difficulty.Easy)
+            .Card(FilmCategory, Body("🌊🧜\u200D♀️👑", "The Little Mermaid"), Difficulty.Easy)
+            .Card(FilmCategory, Body("🐘👂💔", "Dumbo"), Difficulty.Medium)
+            .Card(FilmCategory, Body("💍⚔️🗻", "The Lord of the Rings"), Difficulty.Easy)
 
         // ── SONG ──────────────────────────────────────────────────────────────
-        E(SongCategory, "🎵🐝🐦", "Let It Be (Beatles)", Difficulty.Medium),
-        E(SongCategory, "🌧️☂️👨", "Singin' in the Rain", Difficulty.Medium),
-        E(SongCategory, "🚀🌙⭐", "Rocket Man (Elton John)", Difficulty.Hard),
-        E(SongCategory, "💔🎵", "Someone Like You (Adele)", Difficulty.Medium),
-        E(SongCategory, "🐕🎵", "Hound Dog (Elvis)", Difficulty.Hard),
-        E(SongCategory, "⛰️💬", "The Hills (The Weeknd)", Difficulty.Medium),
-        E(SongCategory, "👸💎", "Royals (Lorde)", Difficulty.Medium),
-        E(SongCategory, "💔🎹🔥", "Rolling in the Deep", Difficulty.Medium),
+            .Category(SongCategory)
+            .Card(SongCategory, Body("🎵🐝🐦", "Let It Be (Beatles)"), Difficulty.Medium)
+            .Card(SongCategory, Body("🌧️☂️👨", "Singin' in the Rain"), Difficulty.Medium)
+            .Card(SongCategory, Body("🚀🌙⭐", "Rocket Man (Elton John)"), Difficulty.Hard)
+            .Card(SongCategory, Body("💔🎵", "Someone Like You (Adele)"), Difficulty.Medium)
+            .Card(SongCategory, Body("🐕🎵", "Hound Dog (Elvis)"), Difficulty.Hard)
+            .Card(SongCategory, Body("⛰️💬", "The Hills (The Weeknd)"), Difficulty.Medium)
+            .Card(SongCategory, Body("👸💎", "Royals (Lorde)"), Difficulty.Medium)
+            .Card(SongCategory, Body("💔🎹🔥", "Rolling in the Deep"), Difficulty.Medium)
 
         // ── BOOK ──────────────────────────────────────────────────────────────
-        E(BookCategory, "📚❄️🏔️", "The Hobbit", Difficulty.Medium),
-        E(BookCategory, "🔮🔬", "Invisible Woman", Difficulty.Hard),
-        E(BookCategory, "🧛💔", "Twilight", Difficulty.Easy),
-        E(BookCategory, "💀💀💀📚", "Macbeth (Shakespeare)", Difficulty.Hard),
-        E(BookCategory, "🏃\u200D♂️🏃\u200D♀️💫", "The Hunger Games", Difficulty.Easy),
-        E(BookCategory, "🎪🎡🌙", "The Phantom of the Opera", Difficulty.Medium),
-        E(BookCategory, "🐅📗", "The Tiger That Came to Tea", Difficulty.Medium),
+            .Category(BookCategory)
+            .Card(BookCategory, Body("📚❄️🏔️", "The Hobbit"), Difficulty.Medium)
+            .Card(BookCategory, Body("🔮🔬", "Invisible Woman"), Difficulty.Hard)
+            .Card(BookCategory, Body("🧛💔", "Twilight"), Difficulty.Easy)
+            .Card(BookCategory, Body("💀💀💀📚", "Macbeth (Shakespeare)"), Difficulty.Hard)
+            .Card(BookCategory, Body("🏃\u200D♂️🏃\u200D♀️💫", "The Hunger Games"), Difficulty.Easy)
+            .Card(BookCategory, Body("🎪🎡🌙", "The Phantom of the Opera"), Difficulty.Medium)
+            .Card(BookCategory, Body("🐅📗", "The Tiger That Came to Tea"), Difficulty.Medium)
 
         // ── TV SHOW ───────────────────────────────────────────────────────────
-        E(TVShowCategory, "👨\u200D👩\u200D👧\u200D👦🏘️☕", "Friends", Difficulty.Easy),
-        E(TVShowCategory, "🧛🏰🩸", "The Vampire Diaries", Difficulty.Medium),
-        E(TVShowCategory, "🚗🏃\u200D♂️", "Breaking Bad", Difficulty.Easy),
-        E(TVShowCategory, "🖤💀🔮", "Wednesday", Difficulty.Easy),
-        E(TVShowCategory, "🎬🎭📺", "Curb Your Enthusiasm", Difficulty.Hard),
-        E(TVShowCategory, "🧋🧟", "Squid Game", Difficulty.Easy),
+            .Category(TVShowCategory)
+            .Card(TVShowCategory, Body("👨\u200D👩\u200D👧\u200D👦🏘️☕", "Friends"), Difficulty.Easy)
+            .Card(TVShowCategory, Body("🧛🏰🩸", "The Vampire Diaries"), Difficulty.Medium)
+            .Card(TVShowCategory, Body("🚗🏃\u200D♂️", "Breaking Bad"), Difficulty.Easy)
+            .Card(TVShowCategory, Body("🖤💀🔮", "Wednesday"), Difficulty.Easy)
+            .Card(TVShowCategory, Body("🎬🎭📺", "Curb Your Enthusiasm"), Difficulty.Hard)
+            .Card(TVShowCategory, Body("🧋🧟", "Squid Game"), Difficulty.Easy)
 
         // ── MIXED ────────────────────────────────────────────────────────────
-        E(MixedCategory, "🍎👩\u200D🦱", "Snow White", Difficulty.Easy),
-        E(MixedCategory, "🐢🐢🐢🍕", "Teenage Mutant Ninja Turtles", Difficulty.Easy),
-        E(MixedCategory, "🌹👸🐺", "Beauty and the Beast", Difficulty.Easy),
-        E(MixedCategory, "⚡🪄✨", "Harry Potter (franchise)", Difficulty.Easy),
-        E(MixedCategory, "🦸\u200D♂️🛡️💫", "Captain America", Difficulty.Easy),
-        E(MixedCategory, "🌳🗿🌍", "Lord of the Rings (extended)", Difficulty.Medium),
-    ];
+            .Category(MixedCategory)
+            .Card(MixedCategory, Body("🍎👩\u200D🦱", "Snow White"), Difficulty.Easy)
+            .Card(MixedCategory, Body("🐢🐢🐢🍕", "Teenage Mutant Ninja Turtles"), Difficulty.Easy)
+            .Card(MixedCategory, Body("🌹👸🐺", "Beauty and the Beast"), Difficulty.Easy)
+            .Card(MixedCategory, Body("⚡🪄✨", "Harry Potter (franchise)"), Difficulty.Easy)
+            .Card(MixedCategory, Body("🦸\u200D♂️🛡️💫", "Captain America"), Difficulty.Easy)
+            .Card(MixedCategory, Body("🌳🗿🌍", "Lord of the Rings (extended)"), Difficulty.Medium)
 
-    private static ICard E(string category, string emojis, string answer, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>What film, song, or book is this?</b>\n\n" +
-            emojis + "\n\n" +
-            "<b>Write your guess.</b> Film, song, book, or TV show?\n\n" +
-            "<b>Answer:</b> " + answer,
-            d, category);
+            .Build();
+
+    private static string Body(string emojis, string answer) =>
+        "<b>What film, song, or book is this?</b>\n\n" +
+        emojis + "\n\n" +
+        "<b>Write your guess.</b> Film, song, book, or TV show?\n\n" +
+        "<b>Answer:</b> " + answer;
 }
