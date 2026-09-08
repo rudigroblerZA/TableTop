@@ -75,6 +75,8 @@ public static class TwoTruthsOneWishCardBank
     internal const string TheFutureCategory = "The Future";
     internal const string BigQuestionsCategory = "Big Questions";
 
+    private const string Deck = "Two Truths, One Wish";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -82,142 +84,142 @@ public static class TwoTruthsOneWishCardBank
     {
         var couplesOnly = new CoupleOnlyRestriction();
 
-        return
-        [
+        return CardDeckBuilder.For(Deck)
             // ════════════════════════════════════════════════════════════════
             // ABOUT ME — individual truths + personal wish
             // ════════════════════════════════════════════════════════════════
 
-            W("What I'm Proud Of",
-              "Give two things you are genuinely proud of about yourself right now, and one thing you wish you could be proud of — something you haven't achieved yet but want to.",
-              AboutMeCategory, Difficulty.Easy, couplesOnly),
+            .Category(AboutMeCategory)
+            .Card("What I'm Proud Of",
+                "Give two things you are genuinely proud of about yourself right now, and one thing you wish you could be proud of — something you haven't achieved yet but want to.",
+                Difficulty.Easy, restriction: couplesOnly)
 
-            W("What I'm Afraid Of",
-              "Give two real fears — not the easy ones you always say, but ones that actually keep you up — and one fear you <i>wish</i> you had instead (because it would mean something important to you).",
-              AboutMeCategory, Difficulty.Medium, couplesOnly),
+            .Card("What I'm Afraid Of",
+                "Give two real fears — not the easy ones you always say, but ones that actually keep you up — and one fear you <i>wish</i> you had instead (because it would mean something important to you).",
+                Difficulty.Medium, restriction: couplesOnly)
 
-            W("What I Want for Myself",
-              "Give two things you genuinely want for your own life in the next five years, and one thing you wish you wanted — something you think you <i>should</i> want but aren't sure you do.",
-              AboutMeCategory, Difficulty.Medium, couplesOnly),
+            .Card("What I Want for Myself",
+                "Give two things you genuinely want for your own life in the next five years, and one thing you wish you wanted — something you think you <i>should</i> want but aren't sure you do.",
+                Difficulty.Medium, restriction: couplesOnly)
 
-            W("How I Show Up",
-              "Give two true things about how you behave in relationships — habits, tendencies, patterns you know about yourself. And one thing you wish you could change about how you show up.",
-              AboutMeCategory, Difficulty.Hard, couplesOnly),
+            .Card("How I Show Up",
+                "Give two true things about how you behave in relationships — habits, tendencies, patterns you know about yourself. And one thing you wish you could change about how you show up.",
+                Difficulty.Hard, restriction: couplesOnly)
 
-            W("What I'm Good At",
-              "Give two things you know you are genuinely good at — not modestly, actually good. And one thing you wish you were good at.",
-              AboutMeCategory, Difficulty.Easy, couplesOnly),
+            .Card("What I'm Good At",
+                "Give two things you know you are genuinely good at — not modestly, actually good. And one thing you wish you were good at.",
+                Difficulty.Easy, restriction: couplesOnly)
 
-            W("What I Miss",
-              "Give two things from your past life — places, people, habits, a version of yourself — that you genuinely miss. And one thing you wish you missed more than you actually do.",
-              AboutMeCategory, Difficulty.Medium, couplesOnly),
+            .Card("What I Miss",
+                "Give two things from your past life — places, people, habits, a version of yourself — that you genuinely miss. And one thing you wish you missed more than you actually do.",
+                Difficulty.Medium, restriction: couplesOnly)
 
-            W("How I Handle Difficulty",
-              "Give two true things about how you cope when life is hard — strategies you actually use. And one thing you wish you did instead.",
-              AboutMeCategory, Difficulty.Hard, couplesOnly),
+            .Card("How I Handle Difficulty",
+                "Give two true things about how you cope when life is hard — strategies you actually use. And one thing you wish you did instead.",
+                Difficulty.Hard, restriction: couplesOnly)
 
-            W("My Relationship With My Body",
-              "Give two true things about how you relate to your body — things you accept, things that are complicated. And one thing you wish were different.",
-              AboutMeCategory, Difficulty.Hard, couplesOnly),
+            .Card("My Relationship With My Body",
+                "Give two true things about how you relate to your body — things you accept, things that are complicated. And one thing you wish were different.",
+                Difficulty.Hard, restriction: couplesOnly)
 
-            W("What I Believe",
-              "Give two things you believe genuinely and deeply — not politically, but about life or people. And one thing you wish you believed.",
-              AboutMeCategory, Difficulty.Medium, couplesOnly),
+            .Card("What I Believe",
+                "Give two things you believe genuinely and deeply — not politically, but about life or people. And one thing you wish you believed.",
+                Difficulty.Medium, restriction: couplesOnly)
 
-            W("What I Need",
-              "Give two things you know you need in life to function well. And one thing you wish you needed less.",
-              AboutMeCategory, Difficulty.Hard, couplesOnly),
+            .Card("What I Need",
+                "Give two things you know you need in life to function well. And one thing you wish you needed less.",
+                Difficulty.Hard, restriction: couplesOnly)
 
             // ════════════════════════════════════════════════════════════════
             // ABOUT US — the relationship itself
             // ════════════════════════════════════════════════════════════════
 
-            W("What I Love About Us",
-              "Give two specific things you love about your relationship — not your partner in general, but things about what you two are together. And one thing you wish were true of us that isn't yet.",
-              AboutUsCategory, Difficulty.Easy, couplesOnly),
+            .Category(AboutUsCategory)
+            .Card("What I Love About Us",
+                "Give two specific things you love about your relationship — not your partner in general, but things about what you two are together. And one thing you wish were true of us that isn't yet.",
+                Difficulty.Easy, restriction: couplesOnly)
 
-            W("What We're Good At Together",
-              "Give two things you do well as a couple — actual strengths. And one thing you wish we were better at.",
-              AboutUsCategory, Difficulty.Medium, couplesOnly),
+            .Card("What We're Good At Together",
+                "Give two things you do well as a couple — actual strengths. And one thing you wish we were better at.",
+                Difficulty.Medium, restriction: couplesOnly)
 
-            W("How We Fight",
-              "Give two true things about how arguments go between you — patterns you've noticed, things that happen. And one thing you wish were different about how you fight.",
-              AboutUsCategory, Difficulty.Hard, couplesOnly),
+            .Card("How We Fight",
+                "Give two true things about how arguments go between you — patterns you've noticed, things that happen. And one thing you wish were different about how you fight.",
+                Difficulty.Hard, restriction: couplesOnly)
 
-            W("What I Take for Granted",
-              "Give two things about your partner or your relationship that you probably take for granted — things you rely on without always acknowledging. And one thing you wish your partner took for granted (that they don't).",
-              AboutUsCategory, Difficulty.Hard, couplesOnly),
+            .Card("What I Take for Granted",
+                "Give two things about your partner or your relationship that you probably take for granted — things you rely on without always acknowledging. And one thing you wish your partner took for granted (that they don't).",
+                Difficulty.Hard, restriction: couplesOnly)
 
-            W("What We Don't Talk About",
-              "Give two things you don't talk about enough as a couple — topics, feelings, or parts of life that go mostly unaddressed. And one thing you wish we talked about more.",
-              AboutUsCategory, Difficulty.Hard, couplesOnly),
+            .Card("What We Don't Talk About",
+                "Give two things you don't talk about enough as a couple — topics, feelings, or parts of life that go mostly unaddressed. And one thing you wish we talked about more.",
+                Difficulty.Hard, restriction: couplesOnly)
 
-            W("How We Show Love",
-              "Give two specific ways you know you show love to your partner — things you actually do, not just intend. And one way you wish you showed it more.",
-              AboutUsCategory, Difficulty.Medium, couplesOnly),
+            .Card("How We Show Love",
+                "Give two specific ways you know you show love to your partner — things you actually do, not just intend. And one way you wish you showed it more.",
+                Difficulty.Medium, restriction: couplesOnly)
 
-            W("Our Best Period",
-              "Give two true things about what our best period together felt like — specific qualities. And one thing you wish could come back from that time.",
-              AboutUsCategory, Difficulty.Medium, couplesOnly),
+            .Card("Our Best Period",
+                "Give two true things about what our best period together felt like — specific qualities. And one thing you wish could come back from that time.",
+                Difficulty.Medium, restriction: couplesOnly)
 
-            W("What I Think We Need",
-              "Give two things you genuinely think your relationship needs more of. And one thing you wish you wanted for us that you're not sure you do.",
-              AboutUsCategory, Difficulty.Hard, couplesOnly),
+            .Card("What I Think We Need",
+                "Give two things you genuinely think your relationship needs more of. And one thing you wish you wanted for us that you're not sure you do.",
+                Difficulty.Hard, restriction: couplesOnly)
 
             // ════════════════════════════════════════════════════════════════
             // THE FUTURE — what each person wants
             // ════════════════════════════════════════════════════════════════
 
-            W("Where I Want to Be in Ten Years",
-              "Give two true things about where you want to be in ten years — specific enough to be meaningful. And one wish for us in ten years that feels vulnerable to say.",
-              TheFutureCategory, Difficulty.Medium, couplesOnly),
+            .Category(TheFutureCategory)
+            .Card("Where I Want to Be in Ten Years",
+                "Give two true things about where you want to be in ten years — specific enough to be meaningful. And one wish for us in ten years that feels vulnerable to say.",
+                Difficulty.Medium, restriction: couplesOnly)
 
-            W("What I Want Our Life to Look Like",
-              "Give two true things about what you want your everyday life to look like — not dreams, but actual preferences for how life should feel. And one thing you wish you wanted that would make our lives easier to align.",
-              TheFutureCategory, Difficulty.Medium, couplesOnly),
+            .Card("What I Want Our Life to Look Like",
+                "Give two true things about what you want your everyday life to look like — not dreams, but actual preferences for how life should feel. And one thing you wish you wanted that would make our lives easier to align.",
+                Difficulty.Medium, restriction: couplesOnly)
 
-            W("What Scares Me About the Future",
-              "Give two real things about the future that genuinely worry you — specific, not vague. And one thing you wish you were more afraid of (because being afraid of it would mean you cared about it more).",
-              TheFutureCategory, Difficulty.Hard, couplesOnly),
+            .Card("What Scares Me About the Future",
+                "Give two real things about the future that genuinely worry you — specific, not vague. And one thing you wish you were more afraid of (because being afraid of it would mean you cared about it more).",
+                Difficulty.Hard, restriction: couplesOnly)
 
-            W("What I Want to Have Done",
-              "Give two things you want to have done — lived, experienced, achieved — before you die. And one thing you wish mattered more to you than it currently does.",
-              TheFutureCategory, Difficulty.Medium, couplesOnly),
+            .Card("What I Want to Have Done",
+                "Give two things you want to have done — lived, experienced, achieved — before you die. And one thing you wish mattered more to you than it currently does.",
+                Difficulty.Medium, restriction: couplesOnly)
 
-            W("What I Hope For Us",
-              "Give two specific hopes for your relationship — not vague ones, but something concrete. And one hope you've never said out loud.",
-              TheFutureCategory, Difficulty.Extreme, couplesOnly),
+            .Card("What I Hope For Us",
+                "Give two specific hopes for your relationship — not vague ones, but something concrete. And one hope you've never said out loud.",
+                Difficulty.Extreme, restriction: couplesOnly)
 
             // ════════════════════════════════════════════════════════════════
             // BIG QUESTIONS — the difficult ones
             // ════════════════════════════════════════════════════════════════
 
-            W("What I Know About Love",
-              "Give two true things you know about love — things experience has taught you. And one thing you wish you knew.",
-              BigQuestionsCategory, Difficulty.Hard, couplesOnly),
+            .Category(BigQuestionsCategory)
+            .Card("What I Know About Love",
+                "Give two true things you know about love — things experience has taught you. And one thing you wish you knew.",
+                Difficulty.Hard, restriction: couplesOnly)
 
-            W("What I Think About Death",
-              "Give two honest things about how you think about death — how often, in what terms. And one thing you wish you could believe about it.",
-              BigQuestionsCategory, Difficulty.Hard, couplesOnly),
+            .Card("What I Think About Death",
+                "Give two honest things about how you think about death — how often, in what terms. And one thing you wish you could believe about it.",
+                Difficulty.Hard, restriction: couplesOnly)
 
-            W("What I Think Happiness Is",
-              "Give two true things about what happiness actually is for you — not what it's supposed to be. And one thing you wish made you happier than it does.",
-              BigQuestionsCategory, Difficulty.Hard, couplesOnly),
+            .Card("What I Think Happiness Is",
+                "Give two true things about what happiness actually is for you — not what it's supposed to be. And one thing you wish made you happier than it does.",
+                Difficulty.Hard, restriction: couplesOnly)
 
-            W("What I Believe About Us",
-              "Give two things you genuinely believe about your relationship — true beliefs, held now. And one thing you wish you could believe that you're not sure you do.",
-              BigQuestionsCategory, Difficulty.Extreme, couplesOnly),
+            .Card("What I Believe About Us",
+                "Give two things you genuinely believe about your relationship — true beliefs, held now. And one thing you wish you could believe that you're not sure you do.",
+                Difficulty.Extreme, restriction: couplesOnly)
 
-            W("What I Think About Regret",
-              "Give two specific things you regret — genuinely, not performatively. And one thing you wish you regretted more than you do.",
-              BigQuestionsCategory, Difficulty.Extreme, couplesOnly),
+            .Card("What I Think About Regret",
+                "Give two specific things you regret — genuinely, not performatively. And one thing you wish you regretted more than you do.",
+                Difficulty.Extreme, restriction: couplesOnly)
 
-            W("What I Want You to Know",
-              "Give two true things you want your partner to know about you — things you're not sure they fully understand. And one thing you wish you wanted them to know that you're still holding back.",
-              BigQuestionsCategory, Difficulty.Extreme, couplesOnly),
-        ];
+            .Card("What I Want You to Know",
+                "Give two true things you want your partner to know about you — things you're not sure they fully understand. And one thing you wish you wanted them to know that you're still holding back.",
+                Difficulty.Extreme, restriction: couplesOnly)
+            .Build();
     }
-
-    private static ICard W(string title, string text, string category, Difficulty d, IRestriction restriction) =>
-        StandardCard.Create(title, text, d, category, restriction: restriction);
 }
