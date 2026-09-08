@@ -69,108 +69,56 @@ public static class PredictThisCardBank
     internal const string SecretsCategory = "Secrets";
     internal const string LiesCategory = "Lies";
 
+    private const string Deck = "Predict This";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── PREFERENCES ───────────────────────────────────────────────────────
-        P(PreferencesCategory,
-            "What's their favourite food?",
-            "Everyone bets points on what they'll say. They answer. Correct bets double their points.",
-            Difficulty.Easy),
-        P(PreferencesCategory,
-            "If they could only drink one beverage forever, what would it be?",
-            "Everyone bets on the answer. Winner takes the pot plus bonus.",
-            Difficulty.Medium),
-        P(PreferencesCategory,
-            "What's their guilty pleasure movie or show?",
-            "Everyone predicts. Correct predictions get rewarded double.",
-            Difficulty.Medium),
-        P(PreferencesCategory,
-            "What music artist would they never admit to liking?",
-            "Bet on the answer. Get it right, get the points.",
-            Difficulty.Hard),
-        P(PreferencesCategory,
-            "What food do they claim to hate but secretly love?",
-            "Everyone bets. Correct bets win big.",
-            Difficulty.Hard),
+            .Category(PreferencesCategory)
+            .Card(PreferencesCategory, Body("What's their favourite food?", "Everyone bets points on what they'll say. They answer. Correct bets double their points."), Difficulty.Easy)
+            .Card(PreferencesCategory, Body("If they could only drink one beverage forever, what would it be?", "Everyone bets on the answer. Winner takes the pot plus bonus."), Difficulty.Medium)
+            .Card(PreferencesCategory, Body("What's their guilty pleasure movie or show?", "Everyone predicts. Correct predictions get rewarded double."), Difficulty.Medium)
+            .Card(PreferencesCategory, Body("What music artist would they never admit to liking?", "Bet on the answer. Get it right, get the points."), Difficulty.Hard)
+            .Card(PreferencesCategory, Body("What food do they claim to hate but secretly love?", "Everyone bets. Correct bets win big."), Difficulty.Hard)
 
         // ── CHOICES ───────────────────────────────────────────────────────────
-        P(ChoicesCategory,
-            "In a zombie apocalypse, what would be their first tool?",
-            "Everyone bets on their choice. Correct predictions win.",
-            Difficulty.Medium),
-        P(ChoicesCategory,
-            "If stuck on an island, what one item would they take?",
-            "Bet on the answer. Predictions win double.",
-            Difficulty.Medium),
-        P(ChoicesCategory,
-            "They find $100. What's their first purchase?",
-            "Everyone predicts. Win big if you're right.",
-            Difficulty.Easy),
-        P(ChoicesCategory,
-            "Given a time machine, which era would they visit?",
-            "Bet on their answer. Correct bets doubled.",
-            Difficulty.Hard),
+            .Category(ChoicesCategory)
+            .Card(ChoicesCategory, Body("In a zombie apocalypse, what would be their first tool?", "Everyone bets on their choice. Correct predictions win."), Difficulty.Medium)
+            .Card(ChoicesCategory, Body("If stuck on an island, what one item would they take?", "Bet on the answer. Predictions win double."), Difficulty.Medium)
+            .Card(ChoicesCategory, Body("They find $100. What's their first purchase?", "Everyone predicts. Win big if you're right."), Difficulty.Easy)
+            .Card(ChoicesCategory, Body("Given a time machine, which era would they visit?", "Bet on their answer. Correct bets doubled."), Difficulty.Hard)
 
         // ── PERSONALITY ───────────────────────────────────────────────────────
-        P(PersonalityCategory,
-            "How would they describe themselves in one word?",
-            "Everyone bets. Closest answer wins.",
-            Difficulty.Hard),
-        P(PersonalityCategory,
-            "What's a trait they secretly don't like about themselves?",
-            "Bet on the confession. Predictions win.",
-            Difficulty.Hard),
-        P(PersonalityCategory,
-            "What's their biggest fear?",
-            "Everyone predicts. Correct bets win double.",
-            Difficulty.Hard),
-        P(PersonalityCategory,
-            "If they could change one thing about their life, what would it be?",
-            "Bet on the answer. Get it right, win big.",
-            Difficulty.Hard),
+            .Category(PersonalityCategory)
+            .Card(PersonalityCategory, Body("How would they describe themselves in one word?", "Everyone bets. Closest answer wins."), Difficulty.Hard)
+            .Card(PersonalityCategory, Body("What's a trait they secretly don't like about themselves?", "Bet on the confession. Predictions win."), Difficulty.Hard)
+            .Card(PersonalityCategory, Body("What's their biggest fear?", "Everyone predicts. Correct bets win double."), Difficulty.Hard)
+            .Card(PersonalityCategory, Body("If they could change one thing about their life, what would it be?", "Bet on the answer. Get it right, win big."), Difficulty.Hard)
 
         // ── SECRETS ───────────────────────────────────────────────────────────
-        P(SecretsCategory,
-            "What's a secret they've never told anyone in this group?",
-            "Everyone bets on what they'll reveal. Correct predictions win.",
-            Difficulty.Hard),
-        P(SecretsCategory,
-            "What's the most embarrassing thing that's happened to them?",
-            "Bet on their confession. Predictions get rewarded.",
-            Difficulty.Hard),
-        P(SecretsCategory,
-            "What's one thing they're ashamed of?",
-            "Everyone predicts. Correct bets doubled.",
-            Difficulty.Hard),
+            .Category(SecretsCategory)
+            .Card(SecretsCategory, Body("What's a secret they've never told anyone in this group?", "Everyone bets on what they'll reveal. Correct predictions win."), Difficulty.Hard)
+            .Card(SecretsCategory, Body("What's the most embarrassing thing that's happened to them?", "Bet on their confession. Predictions get rewarded."), Difficulty.Hard)
+            .Card(SecretsCategory, Body("What's one thing they're ashamed of?", "Everyone predicts. Correct bets doubled."), Difficulty.Hard)
 
         // ── LIES ──────────────────────────────────────────────────────────────
-        P(LiesCategory,
-            "They will tell one lie mixed with truths. What's the lie?",
-            "Everyone bets on which answer is false. Correct predictions win big.",
-            Difficulty.Hard),
-        P(LiesCategory,
-            "They will describe a fake memory. Can you predict which one is the lie?",
-            "Bet on the false memory. Win if you're right.",
-            Difficulty.Hard),
-        P(LiesCategory,
-            "They will give fake credentials. Which one is the lie?",
-            "Everyone predicts the false claim. Correct bets doubled.",
-            Difficulty.Hard),
-    ];
+            .Category(LiesCategory)
+            .Card(LiesCategory, Body("They will tell one lie mixed with truths. What's the lie?", "Everyone bets on which answer is false. Correct predictions win big."), Difficulty.Hard)
+            .Card(LiesCategory, Body("They will describe a fake memory. Can you predict which one is the lie?", "Bet on the false memory. Win if you're right."), Difficulty.Hard)
+            .Card(LiesCategory, Body("They will give fake credentials. Which one is the lie?", "Everyone predicts the false claim. Correct bets doubled."), Difficulty.Hard)
 
-    private static ICard P(string category, string question, string mechanics, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>PREDICTION BET</b>\n\n" +
-            "Question for [chosen player]: " + question + "\n\n" +
-            mechanics + "\n\n" +
-            "<b>RULES:</b>\n" +
-            "• Everyone starts with 5 points to bet\n" +
-            "• Bet privately on what they'll say\n" +
-            "• They answer truthfully (unless it's a Lies round)\n" +
-            "• Correct predictions double the bet points",
-            d, category);
+            .Build();
+
+    private static string Body(string question, string mechanics) =>
+        "<b>PREDICTION BET</b>\n\n" +
+        "Question for [chosen player]: " + question + "\n\n" +
+        mechanics + "\n\n" +
+        "<b>RULES:</b>\n" +
+        "• Everyone starts with 5 points to bet\n" +
+        "• Bet privately on what they'll say\n" +
+        "• They answer truthfully (unless it's a Lies round)\n" +
+        "• Correct predictions double the bet points";
 }
