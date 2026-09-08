@@ -84,133 +84,79 @@ public static class AllInCardBank
     internal const string BluffCategory = "Bluff";
     internal const string JackpotCategory = "Jackpot";
 
+    private const string Deck = "All In";
+
     /// <summary>All all-in cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── ♠ ANTE — everyone can afford these stakes ────────────────────────
-        N("Compliment their hands. Specifically their hands. You have never thought this hard about hands.",
-          Difficulty.Easy),
-        N("Look at them the way you looked at them the very first time. Hold it until they notice the difference.",
-          Difficulty.Easy),
-        N("Tell them one thing they're wearing right now that's working. Even pyjamas contain multitudes.",
-          Difficulty.Easy),
-        N("Refill or fetch their drink unasked — and deliver it with a completely unnecessary bow, wink, or hand-kiss. Dealer's choice.",
-          Difficulty.Easy),
-        N("Whisper the pet name you've never dared use. If they laugh, you still win the hand — the house respects courage.",
-          Difficulty.Medium),
-        N("Rearrange your seating so that some part of you is touching some part of them. Announce 'house rules' as you do it.",
-          Difficulty.Easy),
-        N("Give the toast this evening deserves — two sentences, glasses or mugs raised, sincerity mandatory.",
-          Difficulty.Medium),
-        N("Tuck their hair, straighten their collar, or fix nothing at all — the point is the two-second excuse to be that close.",
-          Difficulty.Medium),
-        N(
-          "Compliment the way they say your name. You had four seconds to think about this and you are already out of time.",
-          Difficulty.Easy),
-        N(
-          "Name the item of their clothing you'd remove first, and give exactly one reason. Committee of one. No appeal.",
-          Difficulty.Medium),
+            .Category(AnteCategory)
+            .Card(AnteCategory, BodyN("Compliment their hands. Specifically their hands. You have never thought this hard about hands."), Difficulty.Easy)
+            .Card(AnteCategory, BodyN("Look at them the way you looked at them the very first time. Hold it until they notice the difference."), Difficulty.Easy)
+            .Card(AnteCategory, BodyN("Tell them one thing they're wearing right now that's working. Even pyjamas contain multitudes."), Difficulty.Easy)
+            .Card(AnteCategory, BodyN("Refill or fetch their drink unasked — and deliver it with a completely unnecessary bow, wink, or hand-kiss. Dealer's choice."), Difficulty.Easy)
+            .Card(AnteCategory, BodyN("Whisper the pet name you've never dared use. If they laugh, you still win the hand — the house respects courage."), Difficulty.Medium)
+            .Card(AnteCategory, BodyN("Rearrange your seating so that some part of you is touching some part of them. Announce 'house rules' as you do it."), Difficulty.Easy)
+            .Card(AnteCategory, BodyN("Give the toast this evening deserves — two sentences, glasses or mugs raised, sincerity mandatory."), Difficulty.Medium)
+            .Card(AnteCategory, BodyN("Tuck their hair, straighten their collar, or fix nothing at all — the point is the two-second excuse to be that close."), Difficulty.Medium)
+            .Card(AnteCategory, BodyN("Compliment the way they say your name. You had four seconds to think about this and you are already out of time."), Difficulty.Easy)
+            .Card(AnteCategory, BodyN("Name the item of their clothing you'd remove first, and give exactly one reason. Committee of one. No appeal."), Difficulty.Medium)
 
         // ── ♥ RAISE — base move + a raise your partner may call ─────────────
-        S("BASE: kiss them once, anywhere above the collarbone.",
-          "RAISE: same kiss — but you take ten full seconds to choose the spot, out loud, narrating the shortlist.",
-          Difficulty.Medium),
-        S("BASE: give a 20-second shoulder massage.",
-          "RAISE: two minutes, and they get to direct — pressure, place, and pace — like a spa critic.",
-          Difficulty.Medium),
-        S("BASE: tell them one thing you find irresistible about them.",
-          "RAISE: three things, escalating, and the third must be something you've never said out loud.",
-          Difficulty.Hard),
-        S("BASE: slow dance for thirty seconds to music or none.",
-          "RAISE: the same dance, but foreheads touching the whole time and you hum the song.",
-          Difficulty.Medium),
-        S("BASE: hold eye contact for thirty seconds without talking.",
-          "RAISE: sixty seconds — and the last ten are spent an inch closer than is reasonable.",
-          Difficulty.Hard),
-        S("BASE: trace one shape on the back of their hand; they guess it.",
-          "RAISE: trace one WORD on their back instead. They guess it or you whisper it.",
-          Difficulty.Hard),
-        S("BASE: describe your favourite evening you've ever spent together.",
-          "RAISE: describe the evening you two haven't had yet — the one you're planning right now, apparently.",
-          Difficulty.Hard),
-        S("BASE: kiss their hand like visiting royalty.",
-          "RAISE: work your way up to the inside of the wrist, at a pace the house can only describe as 'legally slow'.",
-          Difficulty.Extreme),
-        S("BASE: swap one accessory or item of clothing, your pick.",
-          "RAISE: they pick. Both items. No explanations owed to anyone, ever.",
-          Difficulty.Extreme),
-        S("BASE: whisper what you first noticed about them.",
-          "RAISE: whisper what you noticed about them TONIGHT — updated inventory, full candour, minimum distance.",
-          Difficulty.Extreme),
-        S(
-          "BASE: hold their hand across the table for a full thirty seconds.",
-          "RAISE: the same thirty seconds — eye contact throughout, and neither of you may smile.",
-          Difficulty.Medium),
-        S(
-          "BASE: tell them one thing you want to do later.",
-          "RAISE: the same sentence, whispered, close enough that they feel it — and then you don't mention it again all game.",
-          Difficulty.Hard),
+            .Category(RaiseCategory)
+            .Card(RaiseCategory, BodyS("BASE: kiss them once, anywhere above the collarbone.", "RAISE: same kiss — but you take ten full seconds to choose the spot, out loud, narrating the shortlist."), Difficulty.Medium)
+            .Card(RaiseCategory, BodyS("BASE: give a 20-second shoulder massage.", "RAISE: two minutes, and they get to direct — pressure, place, and pace — like a spa critic."), Difficulty.Medium)
+            .Card(RaiseCategory, BodyS("BASE: tell them one thing you find irresistible about them.", "RAISE: three things, escalating, and the third must be something you've never said out loud."), Difficulty.Hard)
+            .Card(RaiseCategory, BodyS("BASE: slow dance for thirty seconds to music or none.", "RAISE: the same dance, but foreheads touching the whole time and you hum the song."), Difficulty.Medium)
+            .Card(RaiseCategory, BodyS("BASE: hold eye contact for thirty seconds without talking.", "RAISE: sixty seconds — and the last ten are spent an inch closer than is reasonable."), Difficulty.Hard)
+            .Card(RaiseCategory, BodyS("BASE: trace one shape on the back of their hand; they guess it.", "RAISE: trace one WORD on their back instead. They guess it or you whisper it."), Difficulty.Hard)
+            .Card(RaiseCategory, BodyS("BASE: describe your favourite evening you've ever spent together.", "RAISE: describe the evening you two haven't had yet — the one you're planning right now, apparently."), Difficulty.Hard)
+            .Card(RaiseCategory, BodyS("BASE: kiss their hand like visiting royalty.", "RAISE: work your way up to the inside of the wrist, at a pace the house can only describe as 'legally slow'."), Difficulty.Extreme)
+            .Card(RaiseCategory, BodyS("BASE: swap one accessory or item of clothing, your pick.", "RAISE: they pick. Both items. No explanations owed to anyone, ever."), Difficulty.Extreme)
+            .Card(RaiseCategory, BodyS("BASE: whisper what you first noticed about them.", "RAISE: whisper what you noticed about them TONIGHT — updated inventory, full candour, minimum distance."), Difficulty.Extreme)
+            .Card(RaiseCategory, BodyS("BASE: hold their hand across the table for a full thirty seconds.", "RAISE: the same thirty seconds — eye contact throughout, and neither of you may smile."), Difficulty.Medium)
+            .Card(RaiseCategory, BodyS("BASE: tell them one thing you want to do later.", "RAISE: the same sentence, whispered, close enough that they feel it — and then you don't mention it again all game."), Difficulty.Hard)
 
         // ── ♣ BLUFF — poker face on; partner calls TRUE or BLUFF ────────────
-        B("'I have thought about kissing you at least once today before this game started.'", Difficulty.Easy),
-        B("'There is a photo of you on my phone that I look at more often than I'd admit.'", Difficulty.Medium),
-        B("'I remember exactly what you were wearing on our first date.' (If called TRUE, you must prove it.)", Difficulty.Medium),
-        B("'I have practised saying something to you in the mirror.' (If TRUE, tonight you finally say it.)", Difficulty.Hard),
-        B("'I once pretended to be asleep so you'd stay close a little longer.'", Difficulty.Hard),
-        B("'I know your exact coffee/tea order well enough to write it down right now.' (Calls of TRUE demand the written proof.)", Difficulty.Medium),
-        B("'I have a favourite freckle, scar, or line of yours, and I know precisely where it is.' (TRUE = point to it.)", Difficulty.Hard),
-        B("'Something about tonight was my plan all along.' (If TRUE, reveal the plan. The house loves a schemer.)", Difficulty.Extreme),
-        B(
-          "'I noticed what you were wearing tonight before you'd finished walking into the room.'",
-          Difficulty.Medium),
-        B(
-          "'There is something I have wanted to do since this game started, and I still haven't done it.'",
-          Difficulty.Hard),
+            .Category(BluffCategory)
+            .Card(BluffCategory, BodyB("'I have thought about kissing you at least once today before this game started.'"), Difficulty.Easy)
+            .Card(BluffCategory, BodyB("'There is a photo of you on my phone that I look at more often than I'd admit.'"), Difficulty.Medium)
+            .Card(BluffCategory, BodyB("'I remember exactly what you were wearing on our first date.' (If called TRUE, you must prove it.)"), Difficulty.Medium)
+            .Card(BluffCategory, BodyB("'I have practised saying something to you in the mirror.' (If TRUE, tonight you finally say it.)"), Difficulty.Hard)
+            .Card(BluffCategory, BodyB("'I once pretended to be asleep so you'd stay close a little longer.'"), Difficulty.Hard)
+            .Card(BluffCategory, BodyB("'I know your exact coffee/tea order well enough to write it down right now.' (Calls of TRUE demand the written proof.)"), Difficulty.Medium)
+            .Card(BluffCategory, BodyB("'I have a favourite freckle, scar, or line of yours, and I know precisely where it is.' (TRUE = point to it.)"), Difficulty.Hard)
+            .Card(BluffCategory, BodyB("'Something about tonight was my plan all along.' (If TRUE, reveal the plan. The house loves a schemer.)"), Difficulty.Extreme)
+            .Card(BluffCategory, BodyB("'I noticed what you were wearing tonight before you'd finished walking into the room.'"), Difficulty.Medium)
+            .Card(BluffCategory, BodyB("'There is something I have wanted to do since this game started, and I still haven't done it.'"), Difficulty.Hard)
 
         // ── ♦ JACKPOT — expensive, unforgettable ─────────────────────────────
-        J("Recreate — right now, furniture permitting — the exact moment you knew you were in trouble with this person. Director's commentary encouraged.",
-          Difficulty.Extreme),
-        J("Write a two-line note, seal it, and hide it somewhere they'll find it within a week. When they find it, this card pays out again: one bonus kiss, redeemable on sight.",
-          Difficulty.Hard),
-        J("The Silent Hand: set a timer for two minutes. No words allowed. Communicate exactly one complete message using anything else. They state the message; if they're right, you BOTH win the hand.",
-          Difficulty.Extreme),
-        J("Give them sixty seconds of your best undivided flirting as if you'd just met tonight and everything was still to play for. No history allowed — earn it from scratch.",
-          Difficulty.Extreme),
-        J("Trade phones for one minute. Each may set ONE reminder on the other's phone for a random day next month. The message: something that will make them blush in a meeting.",
-          Difficulty.Hard),
-        J("The House Round: invent one brand-new card for this deck, together, right now — and then play it. If it's good, it gets played every time you play All In. You're legends now.",
-          Difficulty.Extreme),
-        J(
-          "Re-enact your first kiss with full historical accuracy — same positions, same hesitation, same appalling soundtrack. Then perform the version you'd do now.",
-          Difficulty.Hard),
-        J(
-          "Say out loud the one thing about them you've never quite managed to put into words. Take as long as you need. The table waits.",
-          Difficulty.Extreme),
-    ];
+            .Category(JackpotCategory)
+            .Card(JackpotCategory, BodyJ("Recreate — right now, furniture permitting — the exact moment you knew you were in trouble with this person. Director's commentary encouraged."), Difficulty.Extreme)
+            .Card(JackpotCategory, BodyJ("Write a two-line note, seal it, and hide it somewhere they'll find it within a week. When they find it, this card pays out again: one bonus kiss, redeemable on sight."), Difficulty.Hard)
+            .Card(JackpotCategory, BodyJ("The Silent Hand: set a timer for two minutes. No words allowed. Communicate exactly one complete message using anything else. They state the message; if they're right, you BOTH win the hand."), Difficulty.Extreme)
+            .Card(JackpotCategory, BodyJ("Give them sixty seconds of your best undivided flirting as if you'd just met tonight and everything was still to play for. No history allowed — earn it from scratch."), Difficulty.Extreme)
+            .Card(JackpotCategory, BodyJ("Trade phones for one minute. Each may set ONE reminder on the other's phone for a random day next month. The message: something that will make them blush in a meeting."), Difficulty.Hard)
+            .Card(JackpotCategory, BodyJ("The House Round: invent one brand-new card for this deck, together, right now — and then play it. If it's good, it gets played every time you play All In. You're legends now."), Difficulty.Extreme)
+            .Card(JackpotCategory, BodyJ("Re-enact your first kiss with full historical accuracy — same positions, same hesitation, same appalling soundtrack. Then perform the version you'd do now."), Difficulty.Hard)
+            .Card(JackpotCategory, BodyJ("Say out loud the one thing about them you've never quite managed to put into words. Take as long as you need. The table waits."), Difficulty.Extreme)
+            .Build();
 
-    private static ICard N(string text, Difficulty d) =>
-        StandardCard.Create(AnteCategory,
-            "<b>♠ ANTE — play it, score it:</b>\n\n" + text,
-            d, AnteCategory);
+    private static string BodyN(string text) =>
+        "<b>♠ ANTE — play it, score it:</b>\n\n" + text;
 
-    private static ICard S(string baseMove, string raise, Difficulty d) =>
-        StandardCard.Create(RaiseCategory,
-            "<b>♥ THE HAND:</b>\n\n" + baseMove + "\n\n" + raise + "\n\n" +
-            "<i>Play the base, then your partner may call the raise: deliver it and this hand pays double (you also win the next Ante automatically). Fold a called raise and the chip is theirs — paid with a kiss on the hand.</i>",
-            d, RaiseCategory);
+    private static string BodyS(string baseMove, string raise) =>
+        "<b>♥ THE HAND:</b>\n\n" + baseMove + "\n\n" + raise + "\n\n" +
+        "<i>Play the base, then your partner may call the raise: deliver it and this hand pays double (you also win the next Ante automatically). Fold a called raise and the chip is theirs — paid with a kiss on the hand.</i>";
 
-    private static ICard B(string statement, Difficulty d) =>
-        StandardCard.Create(BluffCategory,
-            "<b>♣ POKER FACE. Deliver this line, then they call TRUE or BLUFF:</b>\n\n" +
-            statement + "\n\n" +
-            "<i>Right call: their chip. Wrong call: yours. All debts settle in kisses, immediately — house rules.</i>",
-            d, BluffCategory);
+    private static string BodyB(string statement) =>
+        "<b>♣ POKER FACE. Deliver this line, then they call TRUE or BLUFF:</b>\n\n" +
+        statement + "\n\n" +
+        "<i>Right call: their chip. Wrong call: yours. All debts settle in kisses, immediately — house rules.</i>";
 
-    private static ICard J(string text, Difficulty d) =>
-        StandardCard.Create(JackpotCategory,
-            "<b>♦ JACKPOT HAND — expensive, unforgettable:</b>\n\n" + text + "\n\n" +
-            "<i>Play it and the chip is yours; fold it and one chip slides across the table. The house never shames a fold.</i>",
-            d, JackpotCategory);
+    private static string BodyJ(string text) =>
+        "<b>♦ JACKPOT HAND — expensive, unforgettable:</b>\n\n" + text + "\n\n" +
+        "<i>Play it and the chip is yours; fold it and one chip slides across the table. The house never shames a fold.</i>";
 }

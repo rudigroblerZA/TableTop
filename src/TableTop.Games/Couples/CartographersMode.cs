@@ -123,172 +123,71 @@ public static class CartographersCardBank
     internal const string LegendCategory = "Legend";
     internal const string TerraIncognitaCategory = "Terra Incognita";
 
+    private const string Deck = "Cartographers";
+
     /// <summary>All cartographers cards, ordered by age.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── SURVEY — the blank page becomes a country ─────────────────────────
-        C(SurveyCategory,
-          "Draw the coastline. One continuous line, no lifting the pen, both hands on the pen at once.",
-          "That wobbly shape is now the official border of your relationship. It is not negotiable and it is slightly ridiculous. Good.",
-          Difficulty.Easy),
-        C(SurveyCategory,
-          "Mark NORTH with an arrow — but first agree what 'north' means here. Ambition? Calm? The future?",
-          "Whatever you pick orients every other thing you draw tonight. Choose before you draw the arrow.",
-          Difficulty.Medium),
-        C(SurveyCategory,
-          "Put a dot where the two of you are standing RIGHT NOW on this map. Just one dot, for both of you.",
-          "If you argued about where the dot goes, that argument is more interesting than the dot. Draw it where you settled.",
-          Difficulty.Medium),
-        C(SurveyCategory,
-          "Draw the border you share with the outside world — and label who or what is on the other side of it.",
-          "Family, work, the group chat, the past. Everyone's map has neighbours.",
-          Difficulty.Hard),
-        C(SurveyCategory,
-          "Somewhere on this map is the exact spot where it started. Mark it with an X and write the year beside it.",
-          "Every map needs an origin. Yours has a date.",
-          Difficulty.Easy),
-        C(SurveyCategory,
-          "Draw the scale bar. Decide together: one centimetre equals how much time?",
-          "This determines whether your map is a week or a decade. It also determines how much room you left for later.",
-          Difficulty.Medium),
+            .Category(SurveyCategory)
+            .Card(SurveyCategory, BodyC("Draw the coastline. One continuous line, no lifting the pen, both hands on the pen at once.", "That wobbly shape is now the official border of your relationship. It is not negotiable and it is slightly ridiculous. Good."), Difficulty.Easy)
+            .Card(SurveyCategory, BodyC("Mark NORTH with an arrow — but first agree what 'north' means here. Ambition? Calm? The future?", "Whatever you pick orients every other thing you draw tonight. Choose before you draw the arrow."), Difficulty.Medium)
+            .Card(SurveyCategory, BodyC("Put a dot where the two of you are standing RIGHT NOW on this map. Just one dot, for both of you.", "If you argued about where the dot goes, that argument is more interesting than the dot. Draw it where you settled."), Difficulty.Medium)
+            .Card(SurveyCategory, BodyC("Draw the border you share with the outside world — and label who or what is on the other side of it.", "Family, work, the group chat, the past. Everyone's map has neighbours."), Difficulty.Hard)
+            .Card(SurveyCategory, BodyC("Somewhere on this map is the exact spot where it started. Mark it with an X and write the year beside it.", "Every map needs an origin. Yours has a date."), Difficulty.Easy)
+            .Card(SurveyCategory, BodyC("Draw the scale bar. Decide together: one centimetre equals how much time?", "This determines whether your map is a week or a decade. It also determines how much room you left for later."), Difficulty.Medium)
 
         // ── TERRAIN — the features you actually crossed ───────────────────────
-        C(TerrainCategory,
-          "Draw the highest mountain on the map. It is the hardest thing you have crossed together. Do not name it yet.",
-          "Naming comes later, and it will be easier once the shape is on the page.",
-          Difficulty.Hard),
-        C(TerrainCategory,
-          "Add a river. Rivers are the things that keep moving through your relationship whether you tend them or not.",
-          "Money, health, someone's family, the commute. Draw where it runs and where it floods.",
-          Difficulty.Hard),
-        C(TerrainCategory,
-          "Somewhere there is a swamp — a season that was just slow and unpleasant to walk through. Draw it. Give it an honest size.",
-          "Understating the swamp is the most common cartographic error couples make.",
-          Difficulty.Hard),
-        C(TerrainCategory,
-          "Draw the forest: the part of your life together that is dense, private, and belongs to nobody else.",
-          "You do not have to explain to the map what is in the forest.",
-          Difficulty.Medium),
-        C(TerrainCategory,
-          "Which direction does your weather come from? Draw the clouds at that edge, and write what the storms are usually about.",
-          "Most couples can name their prevailing wind in under ten seconds. The speed of the answer is the point.",
-          Difficulty.Hard),
-        C(TerrainCategory,
-          "Add one hot spring, oasis, or beach — the reliable place you go to recover. Draw it generously.",
-          "If you struggled to find one, that is the single most useful thing this map has told you tonight.",
-          Difficulty.Medium),
-        C(TerrainCategory,
-          "There is a bridge somewhere on this map. Draw it, and mark whether it is currently in good repair.",
-          "Bridges connect two things that would otherwise be separate. You both know which two.",
-          Difficulty.Hard),
-        C(TerrainCategory,
-          "Draw a valley — somewhere low you have both been, and come up out of.",
-          "Mark the path out of it. Someone found that path first; put their initial at the trailhead.",
-          Difficulty.Extreme),
+            .Category(TerrainCategory)
+            .Card(TerrainCategory, BodyC("Draw the highest mountain on the map. It is the hardest thing you have crossed together. Do not name it yet.", "Naming comes later, and it will be easier once the shape is on the page."), Difficulty.Hard)
+            .Card(TerrainCategory, BodyC("Add a river. Rivers are the things that keep moving through your relationship whether you tend them or not.", "Money, health, someone's family, the commute. Draw where it runs and where it floods."), Difficulty.Hard)
+            .Card(TerrainCategory, BodyC("Somewhere there is a swamp — a season that was just slow and unpleasant to walk through. Draw it. Give it an honest size.", "Understating the swamp is the most common cartographic error couples make."), Difficulty.Hard)
+            .Card(TerrainCategory, BodyC("Draw the forest: the part of your life together that is dense, private, and belongs to nobody else.", "You do not have to explain to the map what is in the forest."), Difficulty.Medium)
+            .Card(TerrainCategory, BodyC("Which direction does your weather come from? Draw the clouds at that edge, and write what the storms are usually about.", "Most couples can name their prevailing wind in under ten seconds. The speed of the answer is the point."), Difficulty.Hard)
+            .Card(TerrainCategory, BodyC("Add one hot spring, oasis, or beach — the reliable place you go to recover. Draw it generously.", "If you struggled to find one, that is the single most useful thing this map has told you tonight."), Difficulty.Medium)
+            .Card(TerrainCategory, BodyC("There is a bridge somewhere on this map. Draw it, and mark whether it is currently in good repair.", "Bridges connect two things that would otherwise be separate. You both know which two."), Difficulty.Hard)
+            .Card(TerrainCategory, BodyC("Draw a valley — somewhere low you have both been, and come up out of.", "Mark the path out of it. Someone found that path first; put their initial at the trailhead."), Difficulty.Extreme)
 
         // ── SETTLEMENT — where you live on it ────────────────────────────────
-        C(SettlementCategory,
-          "Draw your capital city. It is the thing your relationship is actually organised around.",
-          "It is not always romance. Sometimes it's a kid, a business, a dog, or Tuesday nights.",
-          Difficulty.Hard),
-        C(SettlementCategory,
-          "Add the road you travel most. Draw it thick and worn between the two places it connects.",
-          "Every couple has one route they wear a groove into. Yours is now permanent record.",
-          Difficulty.Medium),
-        C(SettlementCategory,
-          "Draw a small town neither of you has visited in a long time, but which is definitely still there.",
-          "An old hobby, a set of friends, a version of one of you. Put it on the map anyway. It exists.",
-          Difficulty.Hard),
-        C(SettlementCategory,
-          "Mark the lighthouse: the thing that keeps you off the rocks when it is dark.",
-          "It might be a person, a rule you keep, or one specific sentence one of you says.",
-          Difficulty.Extreme),
-        C(SettlementCategory,
-          "Add a monument to something you survived. Sketch it and put the year on the plinth.",
-          "Monuments are for the things that were hard and are over. Make sure it's over before you build it.",
-          Difficulty.Hard),
-        C(SettlementCategory,
-          "Draw the harbour — where new things arrive into your life from outside.",
-          "Then mark whether it is currently busy or quiet. Both are legitimate seasons.",
-          Difficulty.Medium),
-        C(SettlementCategory,
-          "Somewhere on this map, draw the room you are sitting in right now. To scale, if you dare.",
-          "The most local possible landmark. It will be the most dated part of the map in ten years, which is exactly why it goes on.",
-          Difficulty.Easy),
+            .Category(SettlementCategory)
+            .Card(SettlementCategory, BodyC("Draw your capital city. It is the thing your relationship is actually organised around.", "It is not always romance. Sometimes it's a kid, a business, a dog, or Tuesday nights."), Difficulty.Hard)
+            .Card(SettlementCategory, BodyC("Add the road you travel most. Draw it thick and worn between the two places it connects.", "Every couple has one route they wear a groove into. Yours is now permanent record."), Difficulty.Medium)
+            .Card(SettlementCategory, BodyC("Draw a small town neither of you has visited in a long time, but which is definitely still there.", "An old hobby, a set of friends, a version of one of you. Put it on the map anyway. It exists."), Difficulty.Hard)
+            .Card(SettlementCategory, BodyC("Mark the lighthouse: the thing that keeps you off the rocks when it is dark.", "It might be a person, a rule you keep, or one specific sentence one of you says."), Difficulty.Extreme)
+            .Card(SettlementCategory, BodyC("Add a monument to something you survived. Sketch it and put the year on the plinth.", "Monuments are for the things that were hard and are over. Make sure it's over before you build it."), Difficulty.Hard)
+            .Card(SettlementCategory, BodyC("Draw the harbour — where new things arrive into your life from outside.", "Then mark whether it is currently busy or quiet. Both are legitimate seasons."), Difficulty.Medium)
+            .Card(SettlementCategory, BodyC("Somewhere on this map, draw the room you are sitting in right now. To scale, if you dare.", "The most local possible landmark. It will be the most dated part of the map in ten years, which is exactly why it goes on."), Difficulty.Easy)
 
         // ── LEGEND — naming, and the key at the bottom ───────────────────────
-        C(LegendCategory,
-          "Go back to your highest mountain. Name it now. Write the name on the map in your best handwriting.",
-          "You have been looking at it for half an hour. The name should be obvious by now — and if it's a joke, even better.",
-          Difficulty.Hard),
-        C(LegendCategory,
-          "Name your country. One word or several. Write it across the top in the largest letters that will fit.",
-          "This is the title of the object you are making. Take the extra thirty seconds.",
-          Difficulty.Hard),
-        C(LegendCategory,
-          "Every map has a key. Draw a box in a corner and invent a symbol for 'here we laugh a lot'. Mark three places with it.",
-          "Symbols are cheap and the map is yours. Invent freely.",
-          Difficulty.Medium),
-        C(LegendCategory,
-          "Invent a symbol for 'handle with care' and place it honestly — on at least one spot, at most three.",
-          "Placing this one takes negotiation. That negotiation is the card.",
-          Difficulty.Extreme),
-        C(LegendCategory,
-          "Name the river. Then name the swamp. The swamp name should make at least one of you laugh.",
-          "Naming a hard thing is how you stop being afraid of it, and cartography has known this for centuries.",
-          Difficulty.Hard),
-        C(LegendCategory,
-          "Add a compass rose, and in place of N/S/E/W write four words that describe the four directions of your life together.",
-          "Four words, agreed by both. This is the hardest small thing on the card list.",
-          Difficulty.Extreme),
-        C(LegendCategory,
-          "Write the map's motto along the bottom edge — the sentence a stranger would need in order to read this country correctly.",
-          "Mottos are traditionally in Latin. Yours may be in whatever you actually say to each other.",
-          Difficulty.Extreme),
-        C(LegendCategory,
-          "Sign it. Both of you. Corner of your choosing, and add today's date.",
-          "This is the moment it becomes a document rather than a drawing.",
-          Difficulty.Easy),
+            .Category(LegendCategory)
+            .Card(LegendCategory, BodyC("Go back to your highest mountain. Name it now. Write the name on the map in your best handwriting.", "You have been looking at it for half an hour. The name should be obvious by now — and if it's a joke, even better."), Difficulty.Hard)
+            .Card(LegendCategory, BodyC("Name your country. One word or several. Write it across the top in the largest letters that will fit.", "This is the title of the object you are making. Take the extra thirty seconds."), Difficulty.Hard)
+            .Card(LegendCategory, BodyC("Every map has a key. Draw a box in a corner and invent a symbol for 'here we laugh a lot'. Mark three places with it.", "Symbols are cheap and the map is yours. Invent freely."), Difficulty.Medium)
+            .Card(LegendCategory, BodyC("Invent a symbol for 'handle with care' and place it honestly — on at least one spot, at most three.", "Placing this one takes negotiation. That negotiation is the card."), Difficulty.Extreme)
+            .Card(LegendCategory, BodyC("Name the river. Then name the swamp. The swamp name should make at least one of you laugh.", "Naming a hard thing is how you stop being afraid of it, and cartography has known this for centuries."), Difficulty.Hard)
+            .Card(LegendCategory, BodyC("Add a compass rose, and in place of N/S/E/W write four words that describe the four directions of your life together.", "Four words, agreed by both. This is the hardest small thing on the card list."), Difficulty.Extreme)
+            .Card(LegendCategory, BodyC("Write the map's motto along the bottom edge — the sentence a stranger would need in order to read this country correctly.", "Mottos are traditionally in Latin. Yours may be in whatever you actually say to each other."), Difficulty.Extreme)
+            .Card(LegendCategory, BodyC("Sign it. Both of you. Corner of your choosing, and add today's date.", "This is the moment it becomes a document rather than a drawing."), Difficulty.Easy)
 
         // ── TERRA INCOGNITA — the edges, and what comes next ─────────────────
-        C(TerraIncognitaCategory,
-          "Find an empty area of the map. Write 'HERE BE DRAGONS' across it, and then say out loud what the dragon actually is.",
-          "The writing is a joke. The saying-out-loud is not, and it is the reason this card is in the deck.",
-          Difficulty.Extreme),
-        C(TerraIncognitaCategory,
-          "Mark one place on this map that only ONE of you has ever been. Let the other ask three questions about it.",
-          "Three questions, honestly answered. Then draw whatever the answers suggest.",
-          Difficulty.Extreme),
-        C(TerraIncognitaCategory,
-          "Draw a dotted line heading off the edge of the paper — a route you have not taken yet but might.",
-          "Dotted, not solid. Nobody is committing to anything by drawing a dotted line, which is what makes it safe to draw.",
-          Difficulty.Hard),
-        C(TerraIncognitaCategory,
-          "There is a region on this map neither of you has drawn anything in. Leave it blank on purpose, and outline it.",
-          "A deliberate blank is the most honest thing a map can contain. Do not fill it in tonight.",
-          Difficulty.Hard),
-        C(TerraIncognitaCategory,
-          "Pick a spot you both want to reach within a year. Mark it with a star and write the date you'd like to arrive.",
-          "This is the only card on the map that points forward with a deadline. Choose something real.",
-          Difficulty.Extreme),
-        C(TerraIncognitaCategory,
-          "Draw the edge of the map — and agree out loud what you'd want this map to look like the next time you draw one.",
-          "Then put it somewhere you will both see it. The fridge is traditional. The map is finished; the country is not.",
-          Difficulty.Extreme),
-    ];
+            .Category(TerraIncognitaCategory)
+            .Card(TerraIncognitaCategory, BodyC("Find an empty area of the map. Write 'HERE BE DRAGONS' across it, and then say out loud what the dragon actually is.", "The writing is a joke. The saying-out-loud is not, and it is the reason this card is in the deck."), Difficulty.Extreme)
+            .Card(TerraIncognitaCategory, BodyC("Mark one place on this map that only ONE of you has ever been. Let the other ask three questions about it.", "Three questions, honestly answered. Then draw whatever the answers suggest."), Difficulty.Extreme)
+            .Card(TerraIncognitaCategory, BodyC("Draw a dotted line heading off the edge of the paper — a route you have not taken yet but might.", "Dotted, not solid. Nobody is committing to anything by drawing a dotted line, which is what makes it safe to draw."), Difficulty.Hard)
+            .Card(TerraIncognitaCategory, BodyC("There is a region on this map neither of you has drawn anything in. Leave it blank on purpose, and outline it.", "A deliberate blank is the most honest thing a map can contain. Do not fill it in tonight."), Difficulty.Hard)
+            .Card(TerraIncognitaCategory, BodyC("Pick a spot you both want to reach within a year. Mark it with a star and write the date you'd like to arrive.", "This is the only card on the map that points forward with a deadline. Choose something real."), Difficulty.Extreme)
+            .Card(TerraIncognitaCategory, BodyC("Draw the edge of the map — and agree out loud what you'd want this map to look like the next time you draw one.", "Then put it somewhere you will both see it. The fridge is traditional. The map is finished; the country is not."), Difficulty.Extreme)
+            .Build();
 
     /// <summary>
-    /// Builds one cartography card: the instruction, then the note underneath
-    /// it. The note is separated deliberately — the instruction is what you do,
-    /// the note is why it is worth doing, and several notes only make sense
-    /// after the drawing has started.
+    /// Builds one cartography card body: the instruction, then the note
+    /// underneath it. The note is separated deliberately — the instruction is
+    /// what you do, the note is why it is worth doing, and several notes only
+    /// make sense after the drawing has started.
     /// </summary>
-    private static ICard C(string category, string instruction, string note, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>Add to the map:</b>\n\n" + instruction +
-            "\n\n<i>" + note + "</i>",
-            d, category);
+    private static string BodyC(string instruction, string note) =>
+        "<b>Add to the map:</b>\n\n" + instruction +
+        "\n\n<i>" + note + "</i>";
 }
