@@ -69,106 +69,58 @@ public static class BackwardsStoryCardBank
     internal const string HeartfeltCategory = "Heartfelt";
     internal const string ChaoticCategory = "Chaotic";
 
+    private const string Deck = "Backwards Story";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── DRAMATIC ──────────────────────────────────────────────────────────
-        B(DramaticCategory,
-            "...so that's why we never speak to the zookeeper anymore.",
-            Difficulty.Medium),
-        B(DramaticCategory,
-            "...and that's how I ended up married to a mime.",
-            Difficulty.Hard),
-        B(DramaticCategory,
-            "...which explains why the city banned squirrels from the library.",
-            Difficulty.Hard),
-        B(DramaticCategory,
-            "...so now every Tuesday is dedicated to apologizing to the neighbours.",
-            Difficulty.Medium),
-        B(DramaticCategory,
-            "...and that's why I can never show my face at the supermarket again.",
-            Difficulty.Medium),
-        B(DramaticCategory,
-            "...so the city council had to make it illegal just for us.",
-            Difficulty.Hard),
+            .Category(DramaticCategory)
+            .Card(DramaticCategory, Body("...so that's why we never speak to the zookeeper anymore."), Difficulty.Medium)
+            .Card(DramaticCategory, Body("...and that's how I ended up married to a mime."), Difficulty.Hard)
+            .Card(DramaticCategory, Body("...which explains why the city banned squirrels from the library."), Difficulty.Hard)
+            .Card(DramaticCategory, Body("...so now every Tuesday is dedicated to apologizing to the neighbours."), Difficulty.Medium)
+            .Card(DramaticCategory, Body("...and that's why I can never show my face at the supermarket again."), Difficulty.Medium)
+            .Card(DramaticCategory, Body("...so the city council had to make it illegal just for us."), Difficulty.Hard)
 
         // ── SILLY ────────────────────────────────────────────────────────────
-        B(SillyCategory,
-            "...which is why we now have seventeen ducks living in our garage.",
-            Difficulty.Easy),
-        B(SillyCategory,
-            "...and that's the story of how I became allergic to spaghetti.",
-            Difficulty.Medium),
-        B(SillyCategory,
-            "...so now the only thing my dog will eat is lobster bisque.",
-            Difficulty.Easy),
-        B(SillyCategory,
-            "...which explains why we legally changed our family name to 'Potato'.",
-            Difficulty.Easy),
-        B(SillyCategory,
-            "...and that's why I can only communicate through interpretive dance now.",
-            Difficulty.Hard),
-        B(SillyCategory,
-            "...so we're moving to the moon next month.",
-            Difficulty.Medium),
+            .Category(SillyCategory)
+            .Card(SillyCategory, Body("...which is why we now have seventeen ducks living in our garage."), Difficulty.Easy)
+            .Card(SillyCategory, Body("...and that's the story of how I became allergic to spaghetti."), Difficulty.Medium)
+            .Card(SillyCategory, Body("...so now the only thing my dog will eat is lobster bisque."), Difficulty.Easy)
+            .Card(SillyCategory, Body("...which explains why we legally changed our family name to 'Potato'."), Difficulty.Easy)
+            .Card(SillyCategory, Body("...and that's why I can only communicate through interpretive dance now."), Difficulty.Hard)
+            .Card(SillyCategory, Body("...so we're moving to the moon next month."), Difficulty.Medium)
 
         // ── MYSTERIOUS ──────────────────────────────────────────────────────
-        B(MysteriousCategory,
-            "...and I still don't know who left the mysterious note under my pillow.",
-            Difficulty.Hard),
-        B(MysteriousCategory,
-            "...which is how I discovered the secret door in the library.",
-            Difficulty.Medium),
-        B(MysteriousCategory,
-            "...and nobody has ever been able to explain what happened that night.",
-            Difficulty.Hard),
-        B(MysteriousCategory,
-            "...so I buried the evidence in the garden and haven't spoken of it since.",
-            Difficulty.Medium),
-        B(MysteriousCategory,
-            "...which led me to discover that my best friend isn't even human.",
-            Difficulty.Hard),
+            .Category(MysteriousCategory)
+            .Card(MysteriousCategory, Body("...and I still don't know who left the mysterious note under my pillow."), Difficulty.Hard)
+            .Card(MysteriousCategory, Body("...which is how I discovered the secret door in the library."), Difficulty.Medium)
+            .Card(MysteriousCategory, Body("...and nobody has ever been able to explain what happened that night."), Difficulty.Hard)
+            .Card(MysteriousCategory, Body("...so I buried the evidence in the garden and haven't spoken of it since."), Difficulty.Medium)
+            .Card(MysteriousCategory, Body("...which led me to discover that my best friend isn't even human."), Difficulty.Hard)
 
         // ── HEARTFELT ────────────────────────────────────────────────────────
-        B(HeartfeltCategory,
-            "...and that's when I realized what family really means.",
-            Difficulty.Medium),
-        B(HeartfeltCategory,
-            "...so I finally told them the truth, and everything changed for the better.",
-            Difficulty.Medium),
-        B(HeartfeltCategory,
-            "...and I've never been happier in my entire life.",
-            Difficulty.Easy),
-        B(HeartfeltCategory,
-            "...which is why I'm grateful for every single day with them.",
-            Difficulty.Medium),
-        B(HeartfeltCategory,
-            "...and we both learned that forgiveness is the greatest gift.",
-            Difficulty.Medium),
+            .Category(HeartfeltCategory)
+            .Card(HeartfeltCategory, Body("...and that's when I realized what family really means."), Difficulty.Medium)
+            .Card(HeartfeltCategory, Body("...so I finally told them the truth, and everything changed for the better."), Difficulty.Medium)
+            .Card(HeartfeltCategory, Body("...and I've never been happier in my entire life."), Difficulty.Easy)
+            .Card(HeartfeltCategory, Body("...which is why I'm grateful for every single day with them."), Difficulty.Medium)
+            .Card(HeartfeltCategory, Body("...and we both learned that forgiveness is the greatest gift."), Difficulty.Medium)
 
         // ── CHAOTIC ──────────────────────────────────────────────────────────
-        B(ChaoticCategory,
-            "...and that's how we ended up on national news three times in one week.",
-            Difficulty.Hard),
-        B(ChaoticCategory,
-            "...so the fire department now has our house memorized.",
-            Difficulty.Medium),
-        B(ChaoticCategory,
-            "...which is why we've been banned from four different venues.",
-            Difficulty.Medium),
-        B(ChaoticCategory,
-            "...and somehow we all survived with only minor injuries.",
-            Difficulty.Medium),
-    ];
+            .Category(ChaoticCategory)
+            .Card(ChaoticCategory, Body("...and that's how we ended up on national news three times in one week."), Difficulty.Hard)
+            .Card(ChaoticCategory, Body("...so the fire department now has our house memorized."), Difficulty.Medium)
+            .Card(ChaoticCategory, Body("...which is why we've been banned from four different venues."), Difficulty.Medium)
+            .Card(ChaoticCategory, Body("...and somehow we all survived with only minor injuries."), Difficulty.Medium)
+            .Build();
 
-    private static ICard B(string category, string ending, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>How did we get here?</b>\n\n" +
-            "That's the ENDING of the story: \"" + ending + "\"\n\n" +
-            "<b>Your turn:</b> You have 90 seconds to write the FULL story that leads to this ending.\n\n" +
-            "Then everyone reads their story aloud, and vote on which one is best: funniest, most creative, or most logical.",
-            d, category);
+    private static string Body(string ending) =>
+        "<b>How did we get here?</b>\n\n" +
+        "That's the ENDING of the story: \"" + ending + "\"\n\n" +
+        "<b>Your turn:</b> You have 90 seconds to write the FULL story that leads to this ending.\n\n" +
+        "Then everyone reads their story aloud, and vote on which one is best: funniest, most creative, or most logical.";
 }
