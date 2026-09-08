@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!--
+      Plain net10.0 on purpose, same reasoning as TableTop.Presentation: the
+      deck-compiling and code-generation logic has nothing platform-specific
+      in it, so keeping it off net10.0-windows is what lets it be unit-tested
+      here (tests/TableTop.DeckDesigner.Tests) without the WinUI SDK, and
+      built by TableTop.Engine.slnx on any OS.
+    -->
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RootNamespace>TableTop.DeckDesigner.Core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- CardDeckBuilder is the single source of truth for how a card bank is
+         assembled and how ids are derived — compiling a draft through it
+         (rather than re-implementing that logic here) guarantees the tool's
+         preview and generated code match what the real engine would build. -->
+    <ProjectReference Include="..\..\src\TableTop.Core\TableTop.Core.csproj" />
+  </ItemGroup>
+</Project>

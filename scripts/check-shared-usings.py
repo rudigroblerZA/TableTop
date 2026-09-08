@@ -62,7 +62,7 @@ SHARED = {
     ],
 }
 
-SEARCH_ROOTS = ["ui"]
+SEARCH_ROOTS = ["ui", "tools"]
 
 
 def main() -> int:
