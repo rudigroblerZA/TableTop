@@ -50,6 +50,7 @@
   <Folder Name="/Tests/">
     <Project Path="tests/TableTop.Tests/TableTop.Tests.csproj" />
     <Project Path="tests/TableTop.UiTests/TableTop.UiTests.csproj" />
+    <Project Path="tests/TableTop.DeckDesigner.Tests/TableTop.DeckDesigner.Tests.csproj" />
   </Folder>
 
   <!--
@@ -64,6 +65,18 @@
     <Project Path="ui/TableTop.Android/TableTop.Android.csproj" />
     <Project Path="ui/TableTop.Maui/TableTop.Maui.csproj" />
     <Project Path="ui/TableTop.WinUI/TableTop.WinUI.csproj">
+      <Platform Solution="Debug|*" Project="x64" />
+    </Project>
+  </Folder>
+
+  <!--
+    Developer tools — not shipped as part of the game, so kept out of /UI/.
+    TableTop.DeckDesigner is WinUI, same platform requirements as
+    ui/TableTop.WinUI above (Windows App SDK, x86/x64/ARM64, no AnyCPU).
+  -->
+  <Folder Name="/Tools/">
+    <Project Path="tools/TableTop.DeckDesigner.Core/TableTop.DeckDesigner.Core.csproj" />
+    <Project Path="tools/TableTop.DeckDesigner/TableTop.DeckDesigner.csproj">
       <Platform Solution="Debug|*" Project="x64" />
     </Project>
   </Folder>

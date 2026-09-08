@@ -146,7 +146,10 @@ def bindings_in(path: Path):
 
 def main() -> int:
     repo = Path(__file__).resolve().parent.parent
-    target = Path(sys.argv[1]) if len(sys.argv) > 1 else repo / "ui"
+    # .resolve(): an explicit relative arg (e.g. "tools/TableTop.DeckDesigner")
+    # must become absolute here, or xf.relative_to(repo) below throws — repo
+    # is always absolute, and relative_to() requires both sides to agree.
+    target = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else repo / "ui"
     if not target.exists():
         print(f"no such directory: {target}")
         return 2

@@ -1,0 +1,97 @@
+<Window x:Class="TableTop.DeckDesigner.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid x:Name="RootGrid" Padding="16" ColumnSpacing="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="380"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ══ LEFT: deck info + card list ══════════════════════════════ -->
+        <Grid Grid.Column="0" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Spacing="8">
+                <TextBlock Text="Deck Designer" FontSize="24" FontWeight="SemiBold"/>
+                <TextBlock Text="Builds a deck through the real CardDeckBuilder, then generates the C# card-bank class to paste into src/TableTop.Games."
+                           TextWrapping="Wrap" Opacity="0.7"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Spacing="8">
+                <TextBox Header="Deck name" Text="{Binding DeckName, Mode=TwoWay}"/>
+                <TextBox Header="Namespace" Text="{Binding NamespaceName, Mode=TwoWay}"/>
+                <TextBox Header="Class name" Text="{Binding ClassName, Mode=TwoWay}"/>
+            </StackPanel>
+
+            <ListView Grid.Row="2" ItemsSource="{Binding Cards}" SelectedItem="{Binding SelectedCard, Mode=TwoWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Summary}" TextTrimming="CharacterEllipsis"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="6">
+                <Button Content="Add card" Command="{Binding AddCardCommand}"/>
+                <Button Content="Add this-or-that" Command="{Binding AddThisOrThatCardCommand}"/>
+                <Button Content="Remove" Command="{Binding RemoveSelectedCommand}"/>
+                <Button Content="Move up" Command="{Binding MoveUpCommand}"/>
+                <Button Content="Move down" Command="{Binding MoveDownCommand}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- ══ RIGHT: card editor + generated output ═══════════════════ -->
+        <Grid Grid.Column="1" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <ScrollViewer Grid.Row="0" MaxHeight="420"
+                          Visibility="{Binding SelectedCard, Converter={StaticResource BoolToVis}}">
+                <StackPanel Spacing="10" MaxWidth="680" HorizontalAlignment="Left">
+                    <TextBox Header="Category" Text="{Binding SelectedCard.Category, Mode=TwoWay}"/>
+                    <TextBox Header="Title" Text="{Binding SelectedCard.Title, Mode=TwoWay}"/>
+                    <TextBox Header="Description / question" Text="{Binding SelectedCard.Description, Mode=TwoWay}"
+                             AcceptsReturn="True" TextWrapping="Wrap" Height="100"/>
+                    <ComboBox Header="Difficulty" ItemsSource="{Binding DifficultyOptions}"
+                              SelectedIndex="{Binding SelectedCard.DifficultyIndex, Mode=TwoWay}"/>
+                    <TextBox Header="Tags (comma-separated)" Text="{Binding SelectedCard.Tags, Mode=TwoWay}"/>
+                    <ToggleSwitch Header="This-or-that card" IsOn="{Binding SelectedCard.IsThisOrThat, Mode=TwoWay}"/>
+
+                    <StackPanel Spacing="10" Visibility="{Binding SelectedCard.IsThisOrThat, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="Option A" FontWeight="SemiBold"/>
+                        <TextBox Header="Label" Text="{Binding SelectedCard.OptionALabel, Mode=TwoWay}"/>
+                        <TextBox Header="Revealed detail (optional)" Text="{Binding SelectedCard.OptionADetail, Mode=TwoWay}"/>
+
+                        <TextBlock Text="Option B" FontWeight="SemiBold"/>
+                        <TextBox Header="Label" Text="{Binding SelectedCard.OptionBLabel, Mode=TwoWay}"/>
+                        <TextBox Header="Revealed detail (optional)" Text="{Binding SelectedCard.OptionBDetail, Mode=TwoWay}"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="1" Spacing="6">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Content="Generate C#" Command="{Binding GenerateCommand}"/>
+                    <Button Content="Copy" Command="{Binding CopyToClipboardCommand}"/>
+                    <Button Content="Save to file..." Click="SaveButton_Click" IsEnabled="{Binding HasGeneratedCode}"/>
+                </StackPanel>
+                <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"
+                           Foreground="{Binding StatusIsError, Converter={StaticResource StatusToBrush}}"/>
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="2">
+                <TextBox Text="{Binding GeneratedCode, Mode=OneWay}" IsReadOnly="True"
+                         AcceptsReturn="True" TextWrapping="NoWrap" FontFamily="Consolas"
+                         VerticalAlignment="Stretch"/>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

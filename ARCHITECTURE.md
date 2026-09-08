@@ -1685,12 +1685,79 @@ async work to block on, a different shape rather than a template to copy.
   (1149 pass; the hotfix bumped the README test count 1137 → 1149 in the same
   commit to satisfy `DocumentationAccuracyTests`).
 
+- **1.43.0 added the Deck Designer developer tool: three new projects, zero
+  change to any existing engine assembly's public surface.** No `api/*.api.txt`
+  regeneration — this is new capability at the *tool* layer, not a signature
+  change to Core, Games or Hosting. MINOR under the versioning rule at the top
+  of this file ("new modes, new decks, new capability").
+
+  `tools/TableTop.DeckDesigner.Core` (plain net10.0, referencing only
+  `TableTop.Core`) holds three pieces: `CardDraft`/`DeckDraft` — plain data for
+  a deck being authored — `DeckCompiler`, which drives the actual
+  `CardDeckBuilder` rather than re-implementing its rules (so a card that
+  fails to compile here would fail exactly the same way in a hand-written mode
+  file, and one that succeeds gets exactly the id a hand-written bank would
+  assign), and `CardBankCodeGenerator`, which renders a compiled-clean draft
+  as the C# source of a static `*CardBank` class in the same shape the
+  `ChronologyChallengeCardBank`-style migration (1.41.0–1.42.0) left across
+  `TableTop.Games`.
+
+  `tools/TableTop.DeckDesigner` is the WinUI shell: one window, no navigation,
+  reusing `TableTop.Presentation.Infrastructure.ViewModelBase`/`RelayCommand`
+  rather than a third hand-rolled MVVM base. A card list on the left, an
+  editor on the right, a Generate button that calls `DeckCompiler` then
+  `CardBankCodeGenerator` and shows either the error list or the generated
+  source, with Copy-to-clipboard and Save-to-file (`FileSavePicker`, HWND via
+  `WinRT.Interop.WindowNative`, kept in code-behind rather than the ViewModel
+  for the same "no WinUI type in the ViewModel" reason `TableTop.Presentation`
+  stays platform-neutral).
+
+  **Why this doesn't contradict "no visual deck editor, ever" from the section
+  below.** That note is about runtime content authoring — a file format, a
+  loader, a way to change what a shipped app plays without a rebuild — and
+  1.21.0 deleted the last of that on purpose. This tool produces nothing a
+  build reads at runtime: its output is C# text for a developer to paste into
+  `src/TableTop.Games` and compile in, same as writing a card bank by hand.
+  Kept out of `ui/` and out of `SupportedFamilies`/`ControllerFamilies`
+  entirely — it implements no capability interface and renders no game, so
+  `HeadFamilyCoverageTests` and the family-coverage script have nothing to say
+  about it, correctly.
+
+  Own test project (`tests/TableTop.DeckDesigner.Tests`, 17 `[Fact]`s across
+  `DeckCompilerTests` and `CardBankCodeGeneratorTests`) rather than a fifth
+  reference on `TableTop.Tests` — CLAUDE.md documents that project's four
+  engine references as what keeps it cross-platform and engine-only, and this
+  didn't need to be what blurred that.
+
+  Not verified by a local build — this sandbox has no `dotnet` (see CLAUDE.md's
+  "Environment reality check"). Checked by reading: brace/paren balance in
+  every new file, every call site of `CardDeckBuilder`/`ThisOrThatCard.Create`/
+  `ThisOrThatOption` against their actual signatures in
+  `src/TableTop.Core/Domain/Cards/CardDeckBuilder.cs` and
+  `src/TableTop.Core/Abstractions/Cards/IThisOrThatCard.cs`, and the
+  `FileSavePicker`/`InitializeWithWindow` pattern against current Microsoft
+  Learn documentation rather than from memory. `check-winui-xaml.py` and
+  `check-xaml-bindings.py` were run by hand against `tools/TableTop.DeckDesigner`
+  reasoning through their regexes rather than executing Python — the CI job
+  now runs both for real.
+
 ## What genuinely doesn't exist here
 
-- **A visual deck editor, or any content authoring at all outside the repo.**
-  Not resurrected after WPF's removal, and as of 1.21.0 there is no file format
-  left to author against. Adding a mode means writing a C# card bank, ideally
-  via `CardDeckBuilder`, and rebuilding.
+- **Runtime content authoring, or any file format to author against.** Still
+  true as of 1.21.0's removal of the entire user-supplied content stack — the
+  engine loads no content files of any kind, full stop.
+
+  What changed in 1.43.0: `tools/TableTop.DeckDesigner` is a WinUI *code
+  generator*, not the resurrection of the old WPF deck editor this note used
+  to describe as permanently gone. It builds a deck through the real
+  `CardDeckBuilder` (`tools/TableTop.DeckDesigner.Core` drives it directly, so
+  validation and ids match a hand-written mode exactly) and its only output is
+  the C# source of a `*CardBank` class — text a developer pastes into
+  `src/TableTop.Games` and rebuilds. Nothing it produces is ever loaded at
+  runtime; the tool has no save/load of its own deck format, no player-facing
+  screen, and ships with none of the four UI heads. Adding a mode is still
+  "write a C# card bank and rebuild" — this tool just writes the typing-heavy
+  part of that C# for you.
 - **Real Xbox controller support.** Needs `Windows.Gaming.Input` polling — a
   genuinely separate input subsystem that cannot be written responsibly
   without a Windows machine and a physical controller. Keyboard bindings
