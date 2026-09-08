@@ -694,6 +694,8 @@ sealed class TableTop.Core.Domain.Cards.CardDeckBuilder
     CardDeckBuilder Category(String name)
     CardDeckBuilder For(String deckName)
     CardDeckBuilder ThisOrThatCard(String title, String question, ThisOrThatOption optionA, ThisOrThatOption optionB, Difficulty difficulty = default)
+    CardDeckBuilder WithPostActions(Action<CardActionSet> configure)
+    CardDeckBuilder WithPreActions(Action<CardActionSet> configure)
     IReadOnlyList<ICard> Build()
 sealed class TableTop.Core.Domain.Cards.GenderDirectedTextResolver
     .ctor(String defaultText, IDictionary<String, String> variantsByGender)
