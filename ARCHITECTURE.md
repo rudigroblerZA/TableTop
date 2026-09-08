@@ -1630,6 +1630,61 @@ async work to block on, a different shape rather than a template to copy.
   (1137 pass, up 3: new `CardDeckBuilderTests` for the two-option method).
   `api/TableTop.Core.api.txt` regenerated via `TABLETOP_UPDATE_API=1`.
 
+  **1.42.0 also carried the rest of the sweep the 1.41.0 and 1.42.0 notes
+  above keep promising "one mode later".** No further `VersionPrefix` bump —
+  the whole migration shipped as 1.42.0 — but it landed as a run of separate
+  PRs after the `ThisOrThatCard` change, and it is large enough to record.
+
+  **Two more members on `CardDeckBuilder`, and a new public `CardActionSet`.**
+  `WithPreActions(Action<CardActionSet>)` and `WithPostActions(Action<CardActionSet>)`
+  are post-`Card(...)` modifiers that recompose the card just added:
+  `WithPreActions` folds its `CardActionSet.AddButton`/`AddFooter` calls into
+  the intro + `TRUTH:` line + `DARE:` line + `Chicken clause:` footer shape
+  `TruthOrDareCards` parses; `WithPostActions` appends a single `Answer:` /
+  `The reading:` reveal line `CardFaces` splits onto the back. Same "lexical,
+  not a new card type" call as 1.41.0 — no `ICard` member, no
+  `ControllerFactory` arm. They are one-per-card and mutually exclusive
+  (a declare-gate and a flip-reveal on one card would have their markers
+  collide), tracked by a `_lastCardRewrites` set cleared on each `Card(...)`.
+  Core cannot reference Hosting, so the accepted labels are duplicated here as
+  `GateLabels` / `RevealLabels` and a `CardDeckBuilderTests` cross-check pins
+  them to `TruthOrDareCards` / `CardFaces`. Two members added to a class plus
+  one new public class: MINOR. `TruthOrDareCardBank` then moved onto
+  `WithPreActions`, retiring the last hand-written `T(...)` in that file.
+
+  **Then every remaining `StandardCard` bank in `TableTop.Games`.** Nine more
+  single-mode migrations (Fact or Fiction, Wrong Answers Only, Useless
+  Superpowers, Relationship Dares, Heat Check, Slow Burn, Afterglow, Undivided,
+  Out Loud), then five folder-wide passes — Party, Fun, School, Family,
+  Couples — taking roughly a hundred card banks off the
+  collection-expression-plus-`private static ICard X(...)` pattern and onto the
+  fluent chain, each local helper becoming a `private static string Body*(...)`
+  composer so the card bodies stay byte-for-byte identical. Because the
+  `deck|category|title|description` SHA seed is unchanged, every card keeps its
+  id; `DocumentationAccuracyTests`' card-count assertion and
+  `PublicApiSurfaceTests` are what would have caught a slip. `DayOneMode` is
+  the one bank left alone — it is an `IDailyDeckProvider` on the bespoke
+  DayOne controller family, outside the `CardTurn` sweep, as are the modes
+  that use `MonogamyCard` / `HerdCard` / `ClaimedCard` / trait-assessment
+  card types rather than `StandardCard`.
+
+  **One self-inflicted outage worth remembering.** The `WithPreActions` /
+  `WithPostActions` feature branch was cut before `ThisOrThatCard` reached
+  `main`; the "Merge branch 'main'" that reconciled them resolved the
+  `CardDeckBuilder.cs` conflict by dropping the two new method *bodies* while
+  keeping every consumer — the `nameof(WithPreActions)` references, the
+  `CardActionSet` class, the tests, and `TruthOrDareMode`'s `.WithPreActions(...)`
+  calls. `main` stopped compiling (`CS0103`, "does not exist in the current
+  context") and stayed broken across the merge and one more PR before a hotfix
+  restored both methods verbatim from the pre-merge tip and re-added them to
+  `api/TableTop.Core.api.txt`. `nameof(Member)` on a member that no longer
+  exists is a hard compile error, not a warning, so the drop was loud — but
+  only at build time on CI, not at merge time.
+
+  Verified by a local `dotnet build` + `dotnet test TableTop.Engine.slnx`
+  (1149 pass; the hotfix bumped the README test count 1137 → 1149 in the same
+  commit to satisfy `DocumentationAccuracyTests`).
+
 ## What genuinely doesn't exist here
 
 - **A visual deck editor, or any content authoring at all outside the repo.**
