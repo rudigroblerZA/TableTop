@@ -69,120 +69,50 @@ public static class SoundDetectiveCardBank
     internal const string AnimalCategory = "Animal";
     internal const string AbstractCategory = "Abstract";
 
+    private const string Deck = "Sound Detective";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── NATURE ────────────────────────────────────────────────────────────
-        D(NatureCategory,
-            "A persistent watery rush from above during storms.",
-            "Nature's percussion section having a very emotional day.",
-            "The sound of the sky crying aggressively.",
-            "Answer: RAIN",
-            Difficulty.Easy),
-        D(NatureCategory,
-            "Leaves being destroyed en masse by wind.",
-            "A thousand tiny betrayals happening simultaneously.",
-            "Autumn's violent panic attack.",
-            "Answer: RUSTLING LEAVES",
-            Difficulty.Medium),
-        D(NatureCategory,
-            "The ocean forcefully hitting the shore.",
-            "Liquid violence in rhythmic waves.",
-            "The earth's way of punching water.",
-            "Answer: CRASHING WAVES",
-            Difficulty.Easy),
+            .Category(NatureCategory)
+            .Card(NatureCategory, Body("A persistent watery rush from above during storms.", "Nature's percussion section having a very emotional day.", "The sound of the sky crying aggressively.", "Answer: RAIN"), Difficulty.Easy)
+            .Card(NatureCategory, Body("Leaves being destroyed en masse by wind.", "A thousand tiny betrayals happening simultaneously.", "Autumn's violent panic attack.", "Answer: RUSTLING LEAVES"), Difficulty.Medium)
+            .Card(NatureCategory, Body("The ocean forcefully hitting the shore.", "Liquid violence in rhythmic waves.", "The earth's way of punching water.", "Answer: CRASHING WAVES"), Difficulty.Easy)
 
         // ── HUMAN ────────────────────────────────────────────────────────────
-        D(HumanCategory,
-            "Air being pushed through your mouth quickly and forcefully.",
-            "Angry nasal expression of frustration.",
-            "The sound of 'yeah, whatever' without words.",
-            "Answer: SIGH",
-            Difficulty.Easy),
-        D(HumanCategory,
-            "Your hands hitting together repeatedly in appreciation.",
-            "The physical manifestation of 'good job'.",
-            "Rhythmic hand violence out of respect.",
-            "Answer: CLAPPING",
-            Difficulty.Easy),
-        D(HumanCategory,
-            "Vocal cords vibrating at high speed due to joy overload.",
-            "The sound of chaos coming from your face.",
-            "What happens when your brain breaks from happiness.",
-            "Answer: LAUGHING",
-            Difficulty.Easy),
+            .Category(HumanCategory)
+            .Card(HumanCategory, Body("Air being pushed through your mouth quickly and forcefully.", "Angry nasal expression of frustration.", "The sound of 'yeah, whatever' without words.", "Answer: SIGH"), Difficulty.Easy)
+            .Card(HumanCategory, Body("Your hands hitting together repeatedly in appreciation.", "The physical manifestation of 'good job'.", "Rhythmic hand violence out of respect.", "Answer: CLAPPING"), Difficulty.Easy)
+            .Card(HumanCategory, Body("Vocal cords vibrating at high speed due to joy overload.", "The sound of chaos coming from your face.", "What happens when your brain breaks from happiness.", "Answer: LAUGHING"), Difficulty.Easy)
 
         // ── MECHANICAL ────────────────────────────────────────────────────────
-        D(MechanicalCategory,
-            "Metal striking metal with force and purpose.",
-            "Angry percussion in the construction department.",
-            "What happens when two pieces of metal disagree violently.",
-            "Answer: HAMMER",
-            Difficulty.Medium),
-        D(MechanicalCategory,
-            "A rubber wheel rolling quickly across pavement.",
-            "The sound of a vehicle aggressively abandoning a location.",
-            "The dying scream of pavement under assault.",
-            "Answer: SCREECHING TIRES",
-            Difficulty.Medium),
-        D(MechanicalCategory,
-            "Electric device requesting your attention repeatedly.",
-            "A robot's way of saying 'um, excuse me?'",
-            "The sound of impatience coming from your pocket.",
-            "Answer: PHONE NOTIFICATION",
-            Difficulty.Easy),
+            .Category(MechanicalCategory)
+            .Card(MechanicalCategory, Body("Metal striking metal with force and purpose.", "Angry percussion in the construction department.", "What happens when two pieces of metal disagree violently.", "Answer: HAMMER"), Difficulty.Medium)
+            .Card(MechanicalCategory, Body("A rubber wheel rolling quickly across pavement.", "The sound of a vehicle aggressively abandoning a location.", "The dying scream of pavement under assault.", "Answer: SCREECHING TIRES"), Difficulty.Medium)
+            .Card(MechanicalCategory, Body("Electric device requesting your attention repeatedly.", "A robot's way of saying 'um, excuse me?'", "The sound of impatience coming from your pocket.", "Answer: PHONE NOTIFICATION"), Difficulty.Easy)
 
         // ── ANIMAL ────────────────────────────────────────────────────────────
-        D(AnimalCategory,
-            "A four-legged creature with sharp teeth expressing unhappiness.",
-            "Nature's way of saying 'personal space, buddy'.",
-            "The angry voice of a creature that could eat you.",
-            "Answer: DOG GROWL",
-            Difficulty.Easy),
-        D(AnimalCategory,
-            "A feline mammal in supreme judgment of you.",
-            "The sound of disdain from a creature that owns your house.",
-            "What happens when a cat's soul leaves its body out of annoyance.",
-            "Answer: CAT HISS",
-            Difficulty.Easy),
-        D(AnimalCategory,
-            "A bird enthusiastically declaring the morning's arrival.",
-            "Nature's alarm clock with a superiority complex.",
-            "The sound of 'wake up you lazy humans' set to music.",
-            "Answer: BIRD SONG/CHIRPING",
-            Difficulty.Easy),
+            .Category(AnimalCategory)
+            .Card(AnimalCategory, Body("A four-legged creature with sharp teeth expressing unhappiness.", "Nature's way of saying 'personal space, buddy'.", "The angry voice of a creature that could eat you.", "Answer: DOG GROWL"), Difficulty.Easy)
+            .Card(AnimalCategory, Body("A feline mammal in supreme judgment of you.", "The sound of disdain from a creature that owns your house.", "What happens when a cat's soul leaves its body out of annoyance.", "Answer: CAT HISS"), Difficulty.Easy)
+            .Card(AnimalCategory, Body("A bird enthusiastically declaring the morning's arrival.", "Nature's alarm clock with a superiority complex.", "The sound of 'wake up you lazy humans' set to music.", "Answer: BIRD SONG/CHIRPING"), Difficulty.Easy)
 
         // ── ABSTRACT ──────────────────────────────────────────────────────────
-        D(AbstractCategory,
-            "Something heavy hitting something solid.",
-            "An object expressing its regrets to the ground.",
-            "Gravity's victory lap.",
-            "Answer: THUD",
-            Difficulty.Medium),
-        D(AbstractCategory,
-            "Air escaping from a small opening rapidly.",
-            "Pressure deciding it's had enough.",
-            "The sound of 'I'm outta here' but physical.",
-            "Answer: WHOOSH/AIR ESCAPE",
-            Difficulty.Hard),
-        D(AbstractCategory,
-            "Friction happening at extremely close range.",
-            "Two surfaces in direct conflict about their existence.",
-            "The sound of 'stop touching me' in material form.",
-            "Answer: SCRAPING/SCRATCHING",
-            Difficulty.Hard),
-    ];
+            .Category(AbstractCategory)
+            .Card(AbstractCategory, Body("Something heavy hitting something solid.", "An object expressing its regrets to the ground.", "Gravity's victory lap.", "Answer: THUD"), Difficulty.Medium)
+            .Card(AbstractCategory, Body("Air escaping from a small opening rapidly.", "Pressure deciding it's had enough.", "The sound of 'I'm outta here' but physical.", "Answer: WHOOSH/AIR ESCAPE"), Difficulty.Hard)
+            .Card(AbstractCategory, Body("Friction happening at extremely close range.", "Two surfaces in direct conflict about their existence.", "The sound of 'stop touching me' in material form.", "Answer: SCRAPING/SCRATCHING"), Difficulty.Hard)
 
-    private static ICard D(string category, string clue1, string clue2, string clue3, string answer, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>GUESS THE SOUND</b>\n\n" +
-            "<b>Clue 1 (most obvious):</b> " + clue1 + "\n\n" +
-            "<b>Clue 2 (more abstract):</b> " + clue2 + "\n\n" +
-            "<b>Clue 3 (very abstract):</b> " + clue3 + "\n\n" +
-            "<b>Read one clue at a time. Everyone guesses. First correct answer wins.</b>\n\n" +
-            answer,
-            d, category);
+            .Build();
+
+    private static string Body(string clue1, string clue2, string clue3, string answer) =>
+        "<b>GUESS THE SOUND</b>\n\n" +
+        "<b>Clue 1 (most obvious):</b> " + clue1 + "\n\n" +
+        "<b>Clue 2 (more abstract):</b> " + clue2 + "\n\n" +
+        "<b>Clue 3 (very abstract):</b> " + clue3 + "\n\n" +
+        "<b>Read one clue at a time. Everyone guesses. First correct answer wins.</b>\n\n" +
+        answer;
 }

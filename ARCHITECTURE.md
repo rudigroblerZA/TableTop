@@ -1600,44 +1600,35 @@ async work to block on, a different shape rather than a template to copy.
   `TABLETOP_UPDATE_API=1 dotnet test --filter PublicApiSurfaceTests` once a
   real SDK is available and diff before trusting it.
 
-- **1.42.0** gave `CardDeckBuilder` two post-`Card(...)` modifiers,
-  `WithPreActions` and `WithPostActions`, plus the `CardActionSet` collector
-  they hand to their callback. `WithPreActions(a => a.AddButton("Truth", …)
-  .AddButton("Dare", …).AddFooter(…))` folds a declare-before-reveal gate into
-  the card just added; `WithPostActions(a => a.AddButton("Answer", …))` appends
-  a flip-to-reveal back face. One new type and four new members in Core, no
-  removals: MINOR, "added to a class."
+- **1.42.0** moved `ThisOrThatCardBank` onto `CardDeckBuilder`, the same
+  migration 1.41.0 did for Truth or Dare — one mode later, one more of the
+  twelve-file `private static ICard C(...)` duplication `CardDeckBuilder`
+  exists to end. This deck needed the builder to stop being StandardCard-only,
+  so `CardDeckBuilder` gained a `ThisOrThatCard(title, question, optionA,
+  optionB, difficulty)` method that emits `ThisOrThatCard`s into the same
+  fluent chain. One member added to a class: MINOR, "added to a class," same
+  call as 1.41.0's `TruthOrDareCards`.
 
-  **Sugar over the existing text conventions, not a new card model.** This is
-  the same call `TruthOrDareCards` and `ChoiceCards` and `CardFaces` all make
-  (recorded under 1.41.0 and earlier): the interactive behaviour lives in a
-  lexical convention on the card body, detected at play time, so no head needs
-  per-mode code. `WithPreActions` composes exactly the intro / `TRUTH:` /
-  `DARE:` / `Chicken clause:` shape `TruthOrDareCards.TryParse` already splits;
-  `WithPostActions` composes the trailing `Answer:` / `The reading:` line
-  `CardFaces.Split` already peels onto the back. The builder just writes that
-  text from structured input instead of the author hand-formatting it (the
-  `Pair(...)` string helper in `TruthOrDareCardBank` is the pattern it
-  replaces).
+  **A distinct method, not a `Card` overload.** A second `Card` overload
+  taking two `ThisOrThatOption`s compiles, but every call site that passes a
+  target-typed `new(...)` for an option then fails to resolve — `new(...)` is
+  considered convertible to both the `Difficulty` of the existing overload and
+  the `ThisOrThatOption` of the new one, and the two are equally good. Naming
+  it `ThisOrThatCard` keeps `new("Sunrise walk", "tot-sunrise", "…")` at the
+  call site unambiguous, and keeps the `Card` doc honest that `Card` means a
+  `StandardCard`.
 
-  **Kept honest about the narrowness.** Because the shared gameplay screen
-  gates only on the `Truth`/`Dare` pair, `WithPreActions` *requires* those two
-  labels in that order and throws otherwise — widening it means teaching
-  `TruthOrDareCards` new markers first, then the `GateLabels` array in
-  `CardDeckBuilder` to match. `WithPostActions` likewise only accepts the
-  markers `CardFaces` splits on (`RevealLabels`, mirroring
-  `CardFaces.BackMarkers`). `CardDeckBuilderTests` round-trips every composed
-  body back through the real `TruthOrDareCards` / `CardFaces` parsers rather
-  than asserting on raw strings, so a convention change breaks the tests
-  loudly. Pre- and post-actions are one-per-card and mutually exclusive — a
-  gate and a flip on the same card would have their markers collide.
+  **Card ids are unchanged.** `ThisOrThatCard.Create` already derived a stable
+  id from `deck|category|title|body|labelA|labelB`; the builder method calls
+  straight through to it with the same arguments the old `C(...)` helper
+  passed, so every comparison card keeps its id. Only the "How This Works"
+  rules card's id moves — it was a hand-rolled `…|How To Play|rules` seed and
+  is now a normal `CardDeckBuilder` `Card`, seeded `…|How To Play|How This
+  Works|<body>` like every other StandardCard in the codebase.
 
-  No consumer migrated yet: `TruthOrDareCardBank` is the intended first, in a
-  follow-up. Verified by a local `dotnet build` + `dotnet test` (1146 pass, up
-  12 for the new tests); `api/TableTop.Core.api.txt` regenerated via
-  `TABLETOP_UPDATE_API=1`. Numbered 1.42.0 from `develop`; overlaps with the
-  still-open This-Or-That builder PR, also 1.42.0 and also "added to
-  `CardDeckBuilder`" — whichever lands second folds into a shared entry.
+  Verified by a local `dotnet build` + `dotnet test TableTop.Engine.slnx`
+  (1137 pass, up 3: new `CardDeckBuilderTests` for the two-option method).
+  `api/TableTop.Core.api.txt` regenerated via `TABLETOP_UPDATE_API=1`.
 
 ## What genuinely doesn't exist here
 

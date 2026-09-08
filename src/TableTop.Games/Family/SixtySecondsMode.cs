@@ -80,69 +80,79 @@ public static class SixtySecondsCardBank
     internal const string WordsCategory = "Words";
     internal const string WildcardCategory = "Wildcard";
 
+    private const string Deck = "60 Seconds";
+
     /// <summary>All 60-second category cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── EVERYDAY THINGS ──────────────────────────────────────────────────
-        S(EverydayThingsCategory, "Things you'd find in a kitchen", 10, Difficulty.Easy),
-        S(EverydayThingsCategory, "Things that are round", 10, Difficulty.Easy),
-        S(EverydayThingsCategory, "Things you charge with a cable", 8, Difficulty.Medium),
-        S(EverydayThingsCategory, "Things you'd pack for a beach day", 8, Difficulty.Medium),
-        S(EverydayThingsCategory, "Things that come in pairs", 6, Difficulty.Hard),
-        S(EverydayThingsCategory, "Things you'd find specifically in a junk drawer", 5, Difficulty.Extreme),
+            .Category(EverydayThingsCategory)
+            .Card("60 Seconds: " + "Things you'd find in a kitchen", Body("Things you'd find in a kitchen", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "Things that are round", Body("Things that are round", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "Things you charge with a cable", Body("Things you charge with a cable", 8), Difficulty.Medium)
+            .Card("60 Seconds: " + "Things you'd pack for a beach day", Body("Things you'd pack for a beach day", 8), Difficulty.Medium)
+            .Card("60 Seconds: " + "Things that come in pairs", Body("Things that come in pairs", 6), Difficulty.Hard)
+            .Card("60 Seconds: " + "Things you'd find specifically in a junk drawer", Body("Things you'd find specifically in a junk drawer", 5), Difficulty.Extreme)
 
         // ── NATURE ───────────────────────────────────────────────────────────
-        S(NatureCategory, "Animals", 10, Difficulty.Easy),
-        S(NatureCategory, "Birds", 10, Difficulty.Easy),
-        S(NatureCategory, "Animals that live in the ocean", 8, Difficulty.Medium),
-        S(NatureCategory, "Trees", 8, Difficulty.Medium),
-        S(NatureCategory, "Animals with stripes", 6, Difficulty.Hard),
-        S(NatureCategory, "Venomous creatures", 5, Difficulty.Extreme),
-        S(NatureCategory, "Extinct animals", 5, Difficulty.Extreme),
+            .Category(NatureCategory)
+            .Card("60 Seconds: " + "Animals", Body("Animals", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "Birds", Body("Birds", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "Animals that live in the ocean", Body("Animals that live in the ocean", 8), Difficulty.Medium)
+            .Card("60 Seconds: " + "Trees", Body("Trees", 8), Difficulty.Medium)
+            .Card("60 Seconds: " + "Animals with stripes", Body("Animals with stripes", 6), Difficulty.Hard)
+            .Card("60 Seconds: " + "Venomous creatures", Body("Venomous creatures", 5), Difficulty.Extreme)
+            .Card("60 Seconds: " + "Extinct animals", Body("Extinct animals", 5), Difficulty.Extreme)
 
         // ── FOOD & DRINK ─────────────────────────────────────────────────────
-        S(FoodDrinkCategory, "Fruits", 10, Difficulty.Easy),
-        S(FoodDrinkCategory, "Pizza toppings", 10, Difficulty.Easy),
-        S(FoodDrinkCategory, "Breakfast foods", 8, Difficulty.Medium),
-        S(FoodDrinkCategory, "Types of pasta", 8, Difficulty.Medium),
-        S(FoodDrinkCategory, "Cheeses", 6, Difficulty.Hard),
-        S(FoodDrinkCategory, "Spices", 6, Difficulty.Hard),
-        S(FoodDrinkCategory, "Foods that are technically berries", 5, Difficulty.Extreme),
+            .Category(FoodDrinkCategory)
+            .Card("60 Seconds: " + "Fruits", Body("Fruits", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "Pizza toppings", Body("Pizza toppings", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "Breakfast foods", Body("Breakfast foods", 8), Difficulty.Medium)
+            .Card("60 Seconds: " + "Types of pasta", Body("Types of pasta", 8), Difficulty.Medium)
+            .Card("60 Seconds: " + "Cheeses", Body("Cheeses", 6), Difficulty.Hard)
+            .Card("60 Seconds: " + "Spices", Body("Spices", 6), Difficulty.Hard)
+            .Card("60 Seconds: " + "Foods that are technically berries", Body("Foods that are technically berries", 5), Difficulty.Extreme)
 
         // ── PLACES ───────────────────────────────────────────────────────────
-        S(PlacesCategory, "Countries", 10, Difficulty.Easy),
-        S(PlacesCategory, "US states", 10, Difficulty.Easy),
-        S(PlacesCategory, "European capitals", 8, Difficulty.Medium),
-        S(PlacesCategory, "Islands", 8, Difficulty.Medium),
-        S(PlacesCategory, "Countries that border France", 6, Difficulty.Hard),
-        S(PlacesCategory, "Landlocked countries", 5, Difficulty.Extreme),
+            .Category(PlacesCategory)
+            .Card("60 Seconds: " + "Countries", Body("Countries", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "US states", Body("US states", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "European capitals", Body("European capitals", 8), Difficulty.Medium)
+            .Card("60 Seconds: " + "Islands", Body("Islands", 8), Difficulty.Medium)
+            .Card("60 Seconds: " + "Countries that border France", Body("Countries that border France", 6), Difficulty.Hard)
+            .Card("60 Seconds: " + "Landlocked countries", Body("Landlocked countries", 5), Difficulty.Extreme)
 
         // ── ENTERTAINMENT ────────────────────────────────────────────────────
-        S(EntertainmentCategory, "Disney movies", 10, Difficulty.Easy),
-        S(EntertainmentCategory, "Superheroes", 10, Difficulty.Easy),
-        S(EntertainmentCategory, "TV shows with one-word titles", 8, Difficulty.Medium),
-        S(EntertainmentCategory, "Board games", 8, Difficulty.Medium),
-        S(EntertainmentCategory, "Oscar-winning actors", 6, Difficulty.Hard),
-        S(EntertainmentCategory, "Shakespeare plays", 5, Difficulty.Extreme),
+            .Category(EntertainmentCategory)
+            .Card("60 Seconds: " + "Disney movies", Body("Disney movies", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "Superheroes", Body("Superheroes", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "TV shows with one-word titles", Body("TV shows with one-word titles", 8), Difficulty.Medium)
+            .Card("60 Seconds: " + "Board games", Body("Board games", 8), Difficulty.Medium)
+            .Card("60 Seconds: " + "Oscar-winning actors", Body("Oscar-winning actors", 6), Difficulty.Hard)
+            .Card("60 Seconds: " + "Shakespeare plays", Body("Shakespeare plays", 5), Difficulty.Extreme)
 
         // ── WORDS ────────────────────────────────────────────────────────────
-        S(WordsCategory, "Words that start with 'S'", 10, Difficulty.Easy),
-        S(WordsCategory, "Colours", 10, Difficulty.Easy),
-        S(WordsCategory, "Words that rhyme with 'day'", 8, Difficulty.Medium),
-        S(WordsCategory, "Compound words containing 'sun'", 6, Difficulty.Hard),
-        S(WordsCategory, "Words ending in '-ology'", 5, Difficulty.Extreme),
-        S(WordsCategory, "Palindromes", 5, Difficulty.Extreme),
+            .Category(WordsCategory)
+            .Card("60 Seconds: " + "Words that start with 'S'", Body("Words that start with 'S'", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "Colours", Body("Colours", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "Words that rhyme with 'day'", Body("Words that rhyme with 'day'", 8), Difficulty.Medium)
+            .Card("60 Seconds: " + "Compound words containing 'sun'", Body("Compound words containing 'sun'", 6), Difficulty.Hard)
+            .Card("60 Seconds: " + "Words ending in '-ology'", Body("Words ending in '-ology'", 5), Difficulty.Extreme)
+            .Card("60 Seconds: " + "Palindromes", Body("Palindromes", 5), Difficulty.Extreme)
 
         // ── WILDCARD ─────────────────────────────────────────────────────────
-        S(WildcardCategory, "Things that are sticky", 10, Difficulty.Easy),
-        S(WildcardCategory, "Things you'd find at a birthday party", 10, Difficulty.Easy),
-        S(WildcardCategory, "Excuses for being late", 8, Difficulty.Medium),
-        S(WildcardCategory, "Things that are surprisingly heavy", 8, Difficulty.Medium),
-        S(WildcardCategory, "Things you'd never want to find in your shoe", 6, Difficulty.Hard),
-        S(WildcardCategory, "Things banned on an airplane", 5, Difficulty.Extreme),
-    ];
+            .Category(WildcardCategory)
+            .Card("60 Seconds: " + "Things that are sticky", Body("Things that are sticky", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "Things you'd find at a birthday party", Body("Things you'd find at a birthday party", 10), Difficulty.Easy)
+            .Card("60 Seconds: " + "Excuses for being late", Body("Excuses for being late", 8), Difficulty.Medium)
+            .Card("60 Seconds: " + "Things that are surprisingly heavy", Body("Things that are surprisingly heavy", 8), Difficulty.Medium)
+            .Card("60 Seconds: " + "Things you'd never want to find in your shoe", Body("Things you'd never want to find in your shoe", 6), Difficulty.Hard)
+            .Card("60 Seconds: " + "Things banned on an airplane", Body("Things banned on an airplane", 5), Difficulty.Extreme)
+
+            .Build();
 
     /// <summary>
     /// Lowercases only the FIRST letter of the prompt, so it reads naturally
@@ -152,11 +162,8 @@ public static class SixtySecondsCardBank
     private static string LowerFirstLetterOnly(string s) =>
         s.Length == 0 ? s : char.ToLowerInvariant(s[0]) + s[1..];
 
-    private static ICard S(string category, string prompt, int target, Difficulty d) =>
-        StandardCard.Create(
-            "60 Seconds: " + prompt,
-            "<b>⏱️ SIXTY SECONDS. GO.</b>\n\n" +
-            "Name as many <b>" + LowerFirstLetterOnly(prompt) + "</b> as you can before time's up.\n\n" +
-            "<i>Target: " + target + " or more to hit it. Table judges any dubious answers — majority rules.</i>",
-            d, category);
+    private static string Body(string prompt, int target) =>
+        "<b>⏱️ SIXTY SECONDS. GO.</b>\n\n" +
+        "Name as many <b>" + LowerFirstLetterOnly(prompt) + "</b> as you can before time's up.\n\n" +
+        "<i>Target: " + target + " or more to hit it. Table judges any dubious answers — majority rules.</i>";
 }

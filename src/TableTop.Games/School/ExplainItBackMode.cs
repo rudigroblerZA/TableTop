@@ -95,134 +95,132 @@ internal static class ExplainItBackCardBank
     internal const string GeographyCategory = "Geography";
     internal const string LogicCategory = "Logic";
 
-    private static ICard C(string category, string body, Difficulty difficulty) =>
-        new StandardCard(
-            id: StableId(category, body),
-            title: category,
-            description: body,
-            difficulty: difficulty,
-            category: category);
-
-    private static Guid StableId(string category, string body) =>
-        new(System.Security.Cryptography.SHA256.HashData(
-            System.Text.Encoding.UTF8.GetBytes($"explain-it-back|{category}|{body}"))[..16]);
+    private const string Deck = "Explain It Back";
 
     public static IReadOnlyList<ICard> All { get; } =
-    [
-        // ── Maths ──────────────────────────────────────────────────────────────
-        C(MathsCategory,
-            "Teach: why you flip the second fraction when you divide by a fraction.\n\n" +
-            "Check: 3 ÷ 1/2 — what's the answer, and why did flipping and multiplying give it to you?",
-            Difficulty.Medium),
-        C(MathsCategory,
-            "Teach: what a percentage actually is — not the rule for finding one, the idea itself.\n\n" +
-            "Check: which is bigger, 30% of 200 or 60% of 90 — without a calculator, how do they know?",
-            Difficulty.Easy),
-        C(MathsCategory,
-            "Teach: why a negative number times a negative number is positive.\n\n" +
-            "Check: what is -4 × -3, and can they say why in their own words, not just recite the rule?",
-            Difficulty.Hard),
-        C(MathsCategory,
-            "Teach: the difference between area and perimeter, using something in the room.\n\n" +
-            "Check: point to something and ask which one changed and which one didn't when you moved to a bigger example.",
-            Difficulty.Easy),
-        C(MathsCategory,
-            "Teach: what a prime number is, and why 1 isn't one.\n\n" +
-            "Check: is 21 prime? What about 23? They have to explain why, not just answer yes or no.",
-            Difficulty.Medium),
+        CardDeckBuilder.For(Deck)
 
-        // ── Science ────────────────────────────────────────────────────────────
-        C(ScienceCategory,
-            "Teach: why the sky is blue.\n\n" +
-            "Check: using only what you just taught them, why is a sunset orange instead?",
-            Difficulty.Hard),
-        C(ScienceCategory,
-            "Teach: the difference between weather and climate.\n\n" +
-            "Check: \"it snowed today so climate change isn't real\" — what's wrong with that sentence?",
-            Difficulty.Medium),
-        C(ScienceCategory,
-            "Teach: why we have seasons — it isn't distance from the sun.\n\n" +
-            "Check: why are Australia's seasons opposite to ours at the same time of year?",
-            Difficulty.Medium),
-        C(ScienceCategory,
-            "Teach: what actually happens when something dissolves.\n\n" +
-            "Check: does the sugar disappear when it dissolves in tea? Where did it go?",
-            Difficulty.Easy),
-        C(ScienceCategory,
-            "Teach: why astronauts float in the space station — it isn't \"no gravity up there.\"\n\n" +
-            "Check: is there gravity at the space station's altitude? Why does everything still float?",
-            Difficulty.Hard),
+            // ── Maths ──────────────────────────────────────────────────────────────
+            .Category(MathsCategory)
+            .Card(MathsCategory,
+                "Teach: why you flip the second fraction when you divide by a fraction.\n\n" +
+                "Check: 3 ÷ 1/2 — what's the answer, and why did flipping and multiplying give it to you?",
+                Difficulty.Medium)
+            .Card(MathsCategory,
+                "Teach: what a percentage actually is — not the rule for finding one, the idea itself.\n\n" +
+                "Check: which is bigger, 30% of 200 or 60% of 90 — without a calculator, how do they know?",
+                Difficulty.Easy)
+            .Card(MathsCategory,
+                "Teach: why a negative number times a negative number is positive.\n\n" +
+                "Check: what is -4 × -3, and can they say why in their own words, not just recite the rule?",
+                Difficulty.Hard)
+            .Card(MathsCategory,
+                "Teach: the difference between area and perimeter, using something in the room.\n\n" +
+                "Check: point to something and ask which one changed and which one didn't when you moved to a bigger example.",
+                Difficulty.Easy)
+            .Card(MathsCategory,
+                "Teach: what a prime number is, and why 1 isn't one.\n\n" +
+                "Check: is 21 prime? What about 23? They have to explain why, not just answer yes or no.",
+                Difficulty.Medium)
 
-        // ── English ────────────────────────────────────────────────────────────
-        C(EnglishCategory,
-            "Teach: the difference between a metaphor and a simile.\n\n" +
-            "Check: \"the exam was a mountain\" and \"the exam was like a mountain\" — which is which, and does it matter?",
-            Difficulty.Easy),
-        C(EnglishCategory,
-            "Teach: what makes a sentence a run-on, and one way to fix one.\n\n" +
-            "Check: give them a run-on sentence out loud — can they name the problem and fix it?",
-            Difficulty.Medium),
-        C(EnglishCategory,
-            "Teach: the difference between its and it's.\n\n" +
-            "Check: \"the dog wagged ___ tail\" — which one, and can they say the rule that got them there?",
-            Difficulty.Easy),
-        C(EnglishCategory,
-            "Teach: what irony actually is — not just \"a coincidence\" or \"bad luck.\"\n\n" +
-            "Check: is a fire station burning down ironic? What would make it actually ironic instead of just unlucky?",
-            Difficulty.Hard),
+            // ── Science ────────────────────────────────────────────────────────────
+            .Category(ScienceCategory)
+            .Card(ScienceCategory,
+                "Teach: why the sky is blue.\n\n" +
+                "Check: using only what you just taught them, why is a sunset orange instead?",
+                Difficulty.Hard)
+            .Card(ScienceCategory,
+                "Teach: the difference between weather and climate.\n\n" +
+                "Check: \"it snowed today so climate change isn't real\" — what's wrong with that sentence?",
+                Difficulty.Medium)
+            .Card(ScienceCategory,
+                "Teach: why we have seasons — it isn't distance from the sun.\n\n" +
+                "Check: why are Australia's seasons opposite to ours at the same time of year?",
+                Difficulty.Medium)
+            .Card(ScienceCategory,
+                "Teach: what actually happens when something dissolves.\n\n" +
+                "Check: does the sugar disappear when it dissolves in tea? Where did it go?",
+                Difficulty.Easy)
+            .Card(ScienceCategory,
+                "Teach: why astronauts float in the space station — it isn't \"no gravity up there.\"\n\n" +
+                "Check: is there gravity at the space station's altitude? Why does everything still float?",
+                Difficulty.Hard)
 
-        // ── History ────────────────────────────────────────────────────────────
-        C(HistoryCategory,
-            "Teach: why the Roman Empire is usually split into a Republic and an Empire — what changed.\n\n" +
-            "Check: what's one thing that was true under the Republic that wasn't true under the Empire?",
-            Difficulty.Hard),
-        C(HistoryCategory,
-            "Teach: what the printing press actually changed, beyond \"books got cheaper.\"\n\n" +
-            "Check: name one effect it had on the world that had nothing to do with the price of books.",
-            Difficulty.Medium),
-        C(HistoryCategory,
-            "Teach: the real reason for time zones — what problem they were invented to solve.\n\n" +
-            "Check: why couldn't every town just keep using local noon, the way they used to?",
-            Difficulty.Medium),
-        C(HistoryCategory,
-            "Teach: what the Silk Road actually was — not a single road, and not just for silk.\n\n" +
-            "Check: name one non-silk thing that moved along it, in either direction.",
-            Difficulty.Easy),
+            // ── English ────────────────────────────────────────────────────────────
+            .Category(EnglishCategory)
+            .Card(EnglishCategory,
+                "Teach: the difference between a metaphor and a simile.\n\n" +
+                "Check: \"the exam was a mountain\" and \"the exam was like a mountain\" — which is which, and does it matter?",
+                Difficulty.Easy)
+            .Card(EnglishCategory,
+                "Teach: what makes a sentence a run-on, and one way to fix one.\n\n" +
+                "Check: give them a run-on sentence out loud — can they name the problem and fix it?",
+                Difficulty.Medium)
+            .Card(EnglishCategory,
+                "Teach: the difference between its and it's.\n\n" +
+                "Check: \"the dog wagged ___ tail\" — which one, and can they say the rule that got them there?",
+                Difficulty.Easy)
+            .Card(EnglishCategory,
+                "Teach: what irony actually is — not just \"a coincidence\" or \"bad luck.\"\n\n" +
+                "Check: is a fire station burning down ironic? What would make it actually ironic instead of just unlucky?",
+                Difficulty.Hard)
 
-        // ── Geography ──────────────────────────────────────────────────────────
-        C(GeographyCategory,
-            "Teach: why it's colder at the top of a mountain than at sea level, even though it's closer to the sun.\n\n" +
-            "Check: so why doesn't getting closer to the sun make it warmer?",
-            Difficulty.Medium),
-        C(GeographyCategory,
-            "Teach: the difference between weather-driven erosion and a river carving a canyon.\n\n" +
-            "Check: which one made the Grand Canyon, and roughly how long does that kind of thing take?",
-            Difficulty.Medium),
-        C(GeographyCategory,
-            "Teach: why some countries are landlocked and why that actually matters economically.\n\n" +
-            "Check: name one real disadvantage a landlocked country has that a coastal one doesn't.",
-            Difficulty.Hard),
-        C(GeographyCategory,
-            "Teach: what makes a peninsula a peninsula — and name a real one.\n\n" +
-            "Check: is an island a peninsula? What's the actual difference?",
-            Difficulty.Easy),
+            // ── History ────────────────────────────────────────────────────────────
+            .Category(HistoryCategory)
+            .Card(HistoryCategory,
+                "Teach: why the Roman Empire is usually split into a Republic and an Empire — what changed.\n\n" +
+                "Check: what's one thing that was true under the Republic that wasn't true under the Empire?",
+                Difficulty.Hard)
+            .Card(HistoryCategory,
+                "Teach: what the printing press actually changed, beyond \"books got cheaper.\"\n\n" +
+                "Check: name one effect it had on the world that had nothing to do with the price of books.",
+                Difficulty.Medium)
+            .Card(HistoryCategory,
+                "Teach: the real reason for time zones — what problem they were invented to solve.\n\n" +
+                "Check: why couldn't every town just keep using local noon, the way they used to?",
+                Difficulty.Medium)
+            .Card(HistoryCategory,
+                "Teach: what the Silk Road actually was — not a single road, and not just for silk.\n\n" +
+                "Check: name one non-silk thing that moved along it, in either direction.",
+                Difficulty.Easy)
 
-        // ── Logic ──────────────────────────────────────────────────────────────
-        C(LogicCategory,
-            "Teach: the difference between correlation and causation, with an everyday example.\n\n" +
-            "Check: \"ice cream sales and drowning deaths both rise in summer\" — does ice cream cause drowning? Why not?",
-            Difficulty.Hard),
-        C(LogicCategory,
-            "Teach: what a logical fallacy is, using one specific example (not the word itself).\n\n" +
-            "Check: give a new example of the SAME fallacy you just taught, from a totally different topic.",
-            Difficulty.Hard),
-        C(LogicCategory,
-            "Teach: the difference between \"possible\" and \"likely.\"\n\n" +
-            "Check: is it possible to flip a coin and get heads ten times in a row? Is it likely? Why isn't the answer the same for both?",
-            Difficulty.Medium),
-        C(LogicCategory,
-            "Teach: what a counter-example is and why just one of them can break a rule.\n\n" +
-            "Check: \"all birds can fly\" — what's the counter-example, and why does one exception really break the whole rule?",
-            Difficulty.Easy),
-    ];
+            // ── Geography ──────────────────────────────────────────────────────────
+            .Category(GeographyCategory)
+            .Card(GeographyCategory,
+                "Teach: why it's colder at the top of a mountain than at sea level, even though it's closer to the sun.\n\n" +
+                "Check: so why doesn't getting closer to the sun make it warmer?",
+                Difficulty.Medium)
+            .Card(GeographyCategory,
+                "Teach: the difference between weather-driven erosion and a river carving a canyon.\n\n" +
+                "Check: which one made the Grand Canyon, and roughly how long does that kind of thing take?",
+                Difficulty.Medium)
+            .Card(GeographyCategory,
+                "Teach: why some countries are landlocked and why that actually matters economically.\n\n" +
+                "Check: name one real disadvantage a landlocked country has that a coastal one doesn't.",
+                Difficulty.Hard)
+            .Card(GeographyCategory,
+                "Teach: what makes a peninsula a peninsula — and name a real one.\n\n" +
+                "Check: is an island a peninsula? What's the actual difference?",
+                Difficulty.Easy)
+
+            // ── Logic ──────────────────────────────────────────────────────────────
+            .Category(LogicCategory)
+            .Card(LogicCategory,
+                "Teach: the difference between correlation and causation, with an everyday example.\n\n" +
+                "Check: \"ice cream sales and drowning deaths both rise in summer\" — does ice cream cause drowning? Why not?",
+                Difficulty.Hard)
+            .Card(LogicCategory,
+                "Teach: what a logical fallacy is, using one specific example (not the word itself).\n\n" +
+                "Check: give a new example of the SAME fallacy you just taught, from a totally different topic.",
+                Difficulty.Hard)
+            .Card(LogicCategory,
+                "Teach: the difference between \"possible\" and \"likely.\"\n\n" +
+                "Check: is it possible to flip a coin and get heads ten times in a row? Is it likely? Why isn't the answer the same for both?",
+                Difficulty.Medium)
+            .Card(LogicCategory,
+                "Teach: what a counter-example is and why just one of them can break a rule.\n\n" +
+                "Check: \"all birds can fly\" — what's the counter-example, and why does one exception really break the whole rule?",
+                Difficulty.Easy)
+
+            .Build();
 }

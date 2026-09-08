@@ -91,13 +91,13 @@ public static class SplitTheRoomCardBank
     internal const string RaceCategory = "Race";
     internal const string DeciderCategory = "Decider";
 
+    private const string Deck = "Split the Room";
+
     /// <summary>All cards, in authored order.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
-    private static ICard C(string category, string title, string body, Difficulty difficulty, int points) =>
-        StandardCard.Create(title,
-            $"<b>{Emoji(category)} {category.ToUpperInvariant()}  ·  {points} point{(points == 1 ? "" : "s")}</b>\n\n{body}",
-            difficulty, category);
+    private static string Body(string category, int points, string body) =>
+        $"<b>{Emoji(category)} {category.ToUpperInvariant()}  ·  {points} point{(points == 1 ? "" : "s")}</b>\n\n{body}";
 
     private static string Emoji(string category) => category switch
     {
@@ -111,83 +111,91 @@ public static class SplitTheRoomCardBank
     };
 
     private static IReadOnlyList<ICard> Build() =>
-    [
-        // ── SETUP ─────────────────────────────────────────────────────────────
-        C(SetupCategory, "Pick Your Sides",
-          "Split into two teams. Uneven is fine — the smaller team goes first every time, which is the whole " +
-          "handicap system and it works. Name your teams. Bad names are traditional.", Difficulty.Easy, 0),
-        C(SetupCategory, "Who's Keeping Score",
-          "One person, from either team, keeps score on paper where everyone can see it. Each card says what " +
-          "it's worth. Arguments about the score are settled by whoever is holding the pen.", Difficulty.Easy, 0),
+        CardDeckBuilder.For(Deck)
 
-        // ── DESCRIBE — talk, without the obvious words ────────────────────────
-        C(DescribeCategory, "Without The Word",
-          "Your team picks a person in the room. Describe them to the other team without naming any part of " +
-          "their appearance. They get three guesses.", Difficulty.Medium, 2),
-        C(DescribeCategory, "Explain Your Job Badly",
-          "One of you explains their job — or their day — as unhelpfully as possible while staying strictly " +
-          "truthful. Other team guesses what it is.", Difficulty.Easy, 1),
-        C(DescribeCategory, "Three Clues Only",
-          "Think of a film, book or song. You get exactly three clues, one word each. Other team gets one " +
-          "guess. Land it and take three points.", Difficulty.Hard, 3),
-        C(DescribeCategory, "The Long Way Round",
-          "Describe a common object without using its name or what it's for. Other team guesses. If they get " +
-          "it in under ten seconds, they take the point instead.", Difficulty.Medium, 2),
+            // ── SETUP ─────────────────────────────────────────────────────────────
+            .Category(SetupCategory)
+            .Card("Pick Your Sides", Body(SetupCategory, 0,
+                "Split into two teams. Uneven is fine — the smaller team goes first every time, which is the whole " +
+                "handicap system and it works. Name your teams. Bad names are traditional."), Difficulty.Easy)
+            .Card("Who's Keeping Score", Body(SetupCategory, 0,
+                "One person, from either team, keeps score on paper where everyone can see it. Each card says what " +
+                "it's worth. Arguments about the score are settled by whoever is holding the pen."), Difficulty.Easy)
 
-        // ── PERFORM — act, sing, draw ─────────────────────────────────────────
-        C(PerformCategory, "One Of You Acts",
-          "Nominate an actor. They get thirty seconds to act out something the other team has to name. No " +
-          "sounds, no words, no pointing at objects in the room.", Difficulty.Medium, 2),
-        C(PerformCategory, "Two Of You, One Thing",
-          "Two of your team act out a single thing together — a machine, an animal, a situation. Other team " +
-          "names it. Worth double because coordinating this is genuinely hard.", Difficulty.Hard, 3),
-        C(PerformCategory, "Hum It",
-          "One of you hums a tune. Nothing else. Other team names it. If they can't, someone from their team " +
-          "may hum their guess back for a consolation point.", Difficulty.Easy, 1),
-        C(PerformCategory, "Draw It Blind",
-          "One of you draws something with your eyes shut while your team calls instructions. Other team has " +
-          "to name it from the drawing alone once you stop.", Difficulty.Hard, 3),
-        C(PerformCategory, "The Reenactment",
-          "Reenact something that actually happened to your team tonight — or on the way here. Other team " +
-          "guesses what it was.", Difficulty.Medium, 2),
+            // ── DESCRIBE — talk, without the obvious words ────────────────────────
+            .Category(DescribeCategory)
+            .Card("Without The Word", Body(DescribeCategory, 2,
+                "Your team picks a person in the room. Describe them to the other team without naming any part of " +
+                "their appearance. They get three guesses."), Difficulty.Medium)
+            .Card("Explain Your Job Badly", Body(DescribeCategory, 1,
+                "One of you explains their job — or their day — as unhelpfully as possible while staying strictly " +
+                "truthful. Other team guesses what it is."), Difficulty.Easy)
+            .Card("Three Clues Only", Body(DescribeCategory, 3,
+                "Think of a film, book or song. You get exactly three clues, one word each. Other team gets one " +
+                "guess. Land it and take three points."), Difficulty.Hard)
+            .Card("The Long Way Round", Body(DescribeCategory, 2,
+                "Describe a common object without using its name or what it's for. Other team guesses. If they get " +
+                "it in under ten seconds, they take the point instead."), Difficulty.Medium)
 
-        // ── GUESS US — the other team predicts your team ───────────────────────
-        C(GuessUsCategory, "How Would We Answer",
-          "The other team reads out a question. Every one of your team answers privately in writing. The other " +
-          "team then predicts how many of you gave the same answer — exact match, they score.", Difficulty.Medium, 2),
-        C(GuessUsCategory, "Rank Us",
-          "Other team ranks your team on something harmless — most likely to be late, worst at directions, " +
-          "first to cry at a film. Your team privately agrees the real order. Points for how close they got.", Difficulty.Medium, 2),
-        C(GuessUsCategory, "Who Said It",
-          "Each of your team writes down an opinion nobody would guess was theirs. Read them out shuffled. " +
-          "Other team matches statements to people. One point each correct.", Difficulty.Hard, 3),
-        C(GuessUsCategory, "Odd One Out",
-          "Your team states three facts about itself; two true of everyone on the team, one true of only one " +
-          "person. Other team finds the odd one and names who.", Difficulty.Hard, 3),
+            // ── PERFORM — act, sing, draw ─────────────────────────────────────────
+            .Category(PerformCategory)
+            .Card("One Of You Acts", Body(PerformCategory, 2,
+                "Nominate an actor. They get thirty seconds to act out something the other team has to name. No " +
+                "sounds, no words, no pointing at objects in the room."), Difficulty.Medium)
+            .Card("Two Of You, One Thing", Body(PerformCategory, 3,
+                "Two of your team act out a single thing together — a machine, an animal, a situation. Other team " +
+                "names it. Worth double because coordinating this is genuinely hard."), Difficulty.Hard)
+            .Card("Hum It", Body(PerformCategory, 1,
+                "One of you hums a tune. Nothing else. Other team names it. If they can't, someone from their team " +
+                "may hum their guess back for a consolation point."), Difficulty.Easy)
+            .Card("Draw It Blind", Body(PerformCategory, 3,
+                "One of you draws something with your eyes shut while your team calls instructions. Other team has " +
+                "to name it from the drawing alone once you stop."), Difficulty.Hard)
+            .Card("The Reenactment", Body(PerformCategory, 2,
+                "Reenact something that actually happened to your team tonight — or on the way here. Other team " +
+                "guesses what it was."), Difficulty.Medium)
 
-        // ── RACE — both teams at once ─────────────────────────────────────────
-        C(RaceCategory, "Both Teams, Same Category",
-          "Someone neutral names a category. Both teams write as many items as they can in sixty seconds. " +
-          "Longest valid list takes two points; anything on both lists gets struck off first.", Difficulty.Medium, 2),
-        C(RaceCategory, "First To Find It",
-          "Someone names an object that plausibly exists in this room or in somebody's bag. First team to " +
-          "produce it takes the point. No breaking anything and no going outside.", Difficulty.Easy, 1),
-        C(RaceCategory, "Twenty Questions, Both Sides",
-          "One team thinks of something. The other asks yes/no questions and gets twenty. Guess it and they " +
-          "take three; run out and the thinking team takes two.", Difficulty.Hard, 3),
-        C(RaceCategory, "Alphabet Sprint",
-          "A category, and both teams race to name something for every letter A to J. First team to finish " +
-          "reads their list; anything the table rejects hands the round to the other side.", Difficulty.Extreme, 4),
+            // ── GUESS US — the other team predicts your team ───────────────────────
+            .Category(GuessUsCategory)
+            .Card("How Would We Answer", Body(GuessUsCategory, 2,
+                "The other team reads out a question. Every one of your team answers privately in writing. The other " +
+                "team then predicts how many of you gave the same answer — exact match, they score."), Difficulty.Medium)
+            .Card("Rank Us", Body(GuessUsCategory, 2,
+                "Other team ranks your team on something harmless — most likely to be late, worst at directions, " +
+                "first to cry at a film. Your team privately agrees the real order. Points for how close they got."), Difficulty.Medium)
+            .Card("Who Said It", Body(GuessUsCategory, 3,
+                "Each of your team writes down an opinion nobody would guess was theirs. Read them out shuffled. " +
+                "Other team matches statements to people. One point each correct."), Difficulty.Hard)
+            .Card("Odd One Out", Body(GuessUsCategory, 3,
+                "Your team states three facts about itself; two true of everyone on the team, one true of only one " +
+                "person. Other team finds the odd one and names who."), Difficulty.Hard)
 
-        // ── DECIDER — for a level score ───────────────────────────────────────
-        C(DeciderCategory, "Sudden Death",
-          "Level scores only. One representative from each team. A category is named; you alternate answers " +
-          "with no repeats and no hesitation. First to falter loses the whole game.", Difficulty.Extreme, 5),
-        C(DeciderCategory, "One Question Each",
-          "Level scores only. Each team writes one question they believe the other cannot answer about them. " +
-          "Swap. Answer correctly and you win; both right or both wrong and you go again.", Difficulty.Extreme, 5),
-        C(DeciderCategory, "Call It A Draw",
-          "If you're level and nobody wants sudden death, this card ends it as a draw and says so out loud, " +
-          "which is a better ending than an argument. That's the deck.", Difficulty.Easy, 0),
-    ];
+            // ── RACE — both teams at once ─────────────────────────────────────────
+            .Category(RaceCategory)
+            .Card("Both Teams, Same Category", Body(RaceCategory, 2,
+                "Someone neutral names a category. Both teams write as many items as they can in sixty seconds. " +
+                "Longest valid list takes two points; anything on both lists gets struck off first."), Difficulty.Medium)
+            .Card("First To Find It", Body(RaceCategory, 1,
+                "Someone names an object that plausibly exists in this room or in somebody's bag. First team to " +
+                "produce it takes the point. No breaking anything and no going outside."), Difficulty.Easy)
+            .Card("Twenty Questions, Both Sides", Body(RaceCategory, 3,
+                "One team thinks of something. The other asks yes/no questions and gets twenty. Guess it and they " +
+                "take three; run out and the thinking team takes two."), Difficulty.Hard)
+            .Card("Alphabet Sprint", Body(RaceCategory, 4,
+                "A category, and both teams race to name something for every letter A to J. First team to finish " +
+                "reads their list; anything the table rejects hands the round to the other side."), Difficulty.Extreme)
+
+            // ── DECIDER — for a level score ───────────────────────────────────────
+            .Category(DeciderCategory)
+            .Card("Sudden Death", Body(DeciderCategory, 5,
+                "Level scores only. One representative from each team. A category is named; you alternate answers " +
+                "with no repeats and no hesitation. First to falter loses the whole game."), Difficulty.Extreme)
+            .Card("One Question Each", Body(DeciderCategory, 5,
+                "Level scores only. Each team writes one question they believe the other cannot answer about them. " +
+                "Swap. Answer correctly and you win; both right or both wrong and you go again."), Difficulty.Extreme)
+            .Card("Call It A Draw", Body(DeciderCategory, 0,
+                "If you're level and nobody wants sudden death, this card ends it as a draw and says so out loud, " +
+                "which is a better ending than an argument. That's the deck."), Difficulty.Easy)
+
+            .Build();
 }

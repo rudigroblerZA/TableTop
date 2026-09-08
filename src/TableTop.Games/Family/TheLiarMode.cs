@@ -70,78 +70,53 @@ public static class TheLiarCardBank
     internal const string RelationshipCategory = "Relationship";
     internal const string DisasterCategory = "Disaster";
 
+    private const string Deck = "The Liar";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── EVERYDAY ──────────────────────────────────────────────────────────
-        L(EverydayCategory,
-            "Three roommates tell the story of whose turn it was to do the dishes — and the disaster that followed.",
-            "One roommate is completely lying about their part. Two are truthful."),
-        L(EverydayCategory,
-            "Three coworkers recount what happened at last night's team happy hour.",
-            "One person's story about what they were doing is totally made up."),
-        L(EverydayCategory,
-            "Three friends describe the night they lost someone's wallet.",
-            "One of them didn't actually lose it — they're making their part up entirely."),
+            .Category(EverydayCategory)
+            .Card(EverydayCategory, Body("Three roommates tell the story of whose turn it was to do the dishes — and the disaster that followed.", "One roommate is completely lying about their part. Two are truthful."), Difficulty.Medium)
+            .Card(EverydayCategory, Body("Three coworkers recount what happened at last night's team happy hour.", "One person's story about what they were doing is totally made up."), Difficulty.Medium)
+            .Card(EverydayCategory, Body("Three friends describe the night they lost someone's wallet.", "One of them didn't actually lose it — they're making their part up entirely."), Difficulty.Medium)
 
         // ── ADVENTURE ────────────────────────────────────────────────────────
-        L(AdventureCategory,
-            "Three hikers describe getting lost on a trail and how they found their way back.",
-            "One hiker is inventing their part of the story completely. What actually happened vs what they're claiming?"),
-        L(AdventureCategory,
-            "Three people tell the story of a road trip that had one major breakdown.",
-            "One person's version of events is completely fabricated. Two are accurate."),
-        L(AdventureCategory,
-            "Three vacationers recount an unexpected encounter with wildlife.",
-            "One person's story about the animal is pure fiction. The others are telling the truth."),
+            .Category(AdventureCategory)
+            .Card(AdventureCategory, Body("Three hikers describe getting lost on a trail and how they found their way back.", "One hiker is inventing their part of the story completely. What actually happened vs what they're claiming?"), Difficulty.Medium)
+            .Card(AdventureCategory, Body("Three people tell the story of a road trip that had one major breakdown.", "One person's version of events is completely fabricated. Two are accurate."), Difficulty.Medium)
+            .Card(AdventureCategory, Body("Three vacationers recount an unexpected encounter with wildlife.", "One person's story about the animal is pure fiction. The others are telling the truth."), Difficulty.Medium)
 
         // ── WORKPLACE ────────────────────────────────────────────────────────
-        L(WorkplaceCategory,
-            "Three employees describe a meeting that went catastrophically wrong.",
-            "One person is lying about what was said or what happened. The others are truthful."),
-        L(WorkplaceCategory,
-            "Three people recount the day someone accidentally deleted an important file.",
-            "One of them is lying about their involvement. Two are telling the truth."),
-        L(WorkplaceCategory,
-            "Three coworkers describe a client interaction that became awkward.",
-            "One person's version of events is completely invented. Two are accurate."),
+            .Category(WorkplaceCategory)
+            .Card(WorkplaceCategory, Body("Three employees describe a meeting that went catastrophically wrong.", "One person is lying about what was said or what happened. The others are truthful."), Difficulty.Medium)
+            .Card(WorkplaceCategory, Body("Three people recount the day someone accidentally deleted an important file.", "One of them is lying about their involvement. Two are telling the truth."), Difficulty.Medium)
+            .Card(WorkplaceCategory, Body("Three coworkers describe a client interaction that became awkward.", "One person's version of events is completely invented. Two are accurate."), Difficulty.Medium)
 
         // ── RELATIONSHIP ──────────────────────────────────────────────────────
-        L(RelationshipCategory,
-            "Three people describe the argument that led to someone sleeping on the couch.",
-            "One person is completely lying about what they said. Two are truthful."),
-        L(RelationshipCategory,
-            "Three friends recount the night one of them got caught in an embarrassing situation.",
-            "One friend is fabricating their part of the story entirely."),
-        L(RelationshipCategory,
-            "Three people tell the story of someone meeting their partner's parents for the first time.",
-            "One person's account of what happened is completely made up. Two are accurate."),
+            .Category(RelationshipCategory)
+            .Card(RelationshipCategory, Body("Three people describe the argument that led to someone sleeping on the couch.", "One person is completely lying about what they said. Two are truthful."), Difficulty.Medium)
+            .Card(RelationshipCategory, Body("Three friends recount the night one of them got caught in an embarrassing situation.", "One friend is fabricating their part of the story entirely."), Difficulty.Medium)
+            .Card(RelationshipCategory, Body("Three people tell the story of someone meeting their partner's parents for the first time.", "One person's account of what happened is completely made up. Two are accurate."), Difficulty.Medium)
 
         // ── DISASTER ──────────────────────────────────────────────────────────
-        L(DisasterCategory,
-            "Three people describe the day someone's phone was stolen from a restaurant.",
-            "One person is completely lying about where they were or what they saw."),
-        L(DisasterCategory,
-            "Three witnesses recount a car accident at an intersection.",
-            "One witness is inventing their version of events entirely. Two saw what actually happened."),
-        L(DisasterCategory,
-            "Three people describe the house fire that destroyed a neighbor's home.",
-            "One person is lying about the circumstances completely. Two are truthful."),
-    ];
+            .Category(DisasterCategory)
+            .Card(DisasterCategory, Body("Three people describe the day someone's phone was stolen from a restaurant.", "One person is completely lying about where they were or what they saw."), Difficulty.Medium)
+            .Card(DisasterCategory, Body("Three witnesses recount a car accident at an intersection.", "One witness is inventing their version of events entirely. Two saw what actually happened."), Difficulty.Medium)
+            .Card(DisasterCategory, Body("Three people describe the house fire that destroyed a neighbor's home.", "One person is lying about the circumstances completely. Two are truthful."), Difficulty.Medium)
 
-    private static ICard L(string category, string scenario, string detail) =>
-        StandardCard.Create(
-            category,
-            "<b>THE LIAR SETUP</b>\n\n" +
-            scenario + "\n\n" +
-            detail + "\n\n" +
-            "<b>HOW TO PLAY:</b>\n" +
-            "• Ask 3 volunteers to leave the room\n" +
-            "• Tell them the scenario (one knows they're the liar)\n" +
-            "• Each tells their part (30 seconds each)\n" +
-            "• Group votes: who's lying?\n" +
-            "• Correct votes = 1 point. Liar fools everyone = 3 points.",
-            Difficulty.Medium, category);
+            .Build();
+
+    private static string Body(string scenario, string detail) =>
+        "<b>THE LIAR SETUP</b>\n\n" +
+        scenario + "\n\n" +
+        detail + "\n\n" +
+        "<b>HOW TO PLAY:</b>\n" +
+        "• Ask 3 volunteers to leave the room\n" +
+        "• Tell them the scenario (one knows they're the liar)\n" +
+        "• Each tells their part (30 seconds each)\n" +
+        "• Group votes: who's lying?\n" +
+        "• Correct votes = 1 point. Liar fools everyone = 3 points.";
 }

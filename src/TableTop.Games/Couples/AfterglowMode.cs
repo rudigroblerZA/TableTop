@@ -104,143 +104,115 @@ public static class AfterglowCardBank
 
     internal const string WarmUpCategory = "Warm Up";
 
+    private const string Deck = "Afterglow";
+
     /// <summary>All cards, in intended play order.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
-        // ── CONSENT — the opening ritual (do not skip; the game rests on this) ──
-        C("Before Anything — Your Safeword",
-          "Stop here and choose a safeword together — one word either of you can say to halt EVERYTHING instantly, no explanation owed, no mood-killing guilt. Pick something you'd never say by accident (\"pineapple\" beats \"stop\"). Say it out loud now, twice, so it's real.\n\n" +
-          "A tap-out gesture too, in case words are hard in the moment. When either of you uses it, the game is over the second it's said — that's the deal that makes everything else safe.",
-          Difficulty.Easy),
-        C("Before Anything — Tonight's Edges",
-          "Take turns. Each of you names at least one thing that is OFF the table tonight — a no-go, a not-in-the-mood, a hard limit, anything. No reasons required, and \"I don't know yet\" is a valid edge that means don't go there.\n\n" +
-          "Then each name one thing you're genuinely curious about or hoping for. Nothing here is a promise — it's a map, so nobody has to guess in the dark.",
-          Difficulty.Easy),
-        C("Before Anything — How We'll Check In",
-          "Agree on a quick check-in you'll actually use: a simple \"colour?\" where green means more, yellow means slow down or stay here, red means stop. Either of you can call for a colour anytime, and either can offer one unasked.\n\n" +
-          "Rule for the whole game: enthusiasm is the only yes. A maybe, a wince, a nervous laugh, silence — all mean no, and no is always free. Ready? Turn the next card only when you both are.",
-          Difficulty.Easy),
+        CardDeckBuilder.For(Deck)
 
-        // ── WARM UP — clothed, close, building ───────────────────────────────
-        M(WarmUpCategory, "Slow Kiss",
-          "Kiss — unhurried, the kind you'd give if you had nowhere else to be for an hour. Let it be the only thing happening.",
-          Difficulty.Easy),
-        M(WarmUpCategory, "Where To Start",
-          "Tell your partner one place you'd love to be kissed or touched first tonight — then let them start exactly there.",
-          Difficulty.Easy),
-        M(WarmUpCategory, "Hands, Slowly",
-          "One of you: run your hands over your partner — still clothed — everywhere you're welcome, slow enough to make them wait. Ask \"here?\" as you go.",
-          Difficulty.Easy),
-        M(WarmUpCategory, "The Whisper",
-          "Whisper one honest thing you want tonight into your partner's ear. Watch what it does to them.",
-          Difficulty.Medium),
-        M(WarmUpCategory, "Undress One Layer",
-          "Take one item of clothing off your partner — their choice which — and take your time. Stop there.",
-          Difficulty.Medium),
-        M(WarmUpCategory, "Ask First",
-              "Ask your partner one question — what would you like more of tonight? Listen to the whole answer before you touch them at all. Then begin there.",
-          Difficulty.Easy),
-        M(WarmUpCategory, "One Thing",
-              "Remove one item of your partner's clothing, slowly, and only that one. Then go back to kissing as though nothing had happened.",
-          Difficulty.Medium),
+            // ── CONSENT — the opening ritual (do not skip; the game rests on this) ──
+            .Category(ConsentCategory)
+            .Card("Before Anything — Your Safeword", ConsentBody(
+                "Stop here and choose a safeword together — one word either of you can say to halt EVERYTHING instantly, no explanation owed, no mood-killing guilt. Pick something you'd never say by accident (\"pineapple\" beats \"stop\"). Say it out loud now, twice, so it's real.\n\n" +
+                "A tap-out gesture too, in case words are hard in the moment. When either of you uses it, the game is over the second it's said — that's the deal that makes everything else safe."), Difficulty.Easy)
+            .Card("Before Anything — Tonight's Edges", ConsentBody(
+                "Take turns. Each of you names at least one thing that is OFF the table tonight — a no-go, a not-in-the-mood, a hard limit, anything. No reasons required, and \"I don't know yet\" is a valid edge that means don't go there.\n\n" +
+                "Then each name one thing you're genuinely curious about or hoping for. Nothing here is a promise — it's a map, so nobody has to guess in the dark."), Difficulty.Easy)
+            .Card("Before Anything — How We'll Check In", ConsentBody(
+                "Agree on a quick check-in you'll actually use: a simple \"colour?\" where green means more, yellow means slow down or stay here, red means stop. Either of you can call for a colour anytime, and either can offer one unasked.\n\n" +
+                "Rule for the whole game: enthusiasm is the only yes. A maybe, a wince, a nervous laugh, silence — all mean no, and no is always free. Ready? Turn the next card only when you both are."), Difficulty.Easy)
 
-        // ── TURN UP — skin, heat rising ──────────────────────────────────────
-        M(TurnUpCategory, "Trace",
-          "With fingertips or mouth, trace a slow path from your partner's neck downward — pausing anywhere their breath changes. Follow the reactions, not a script.",
-          Difficulty.Medium),
-        M(TurnUpCategory, "Tell Me What You Like",
-          "Partner in front: describe out loud exactly how you like to be touched right now. Partner behind or beside: do precisely that, and adjust as they talk.",
-          Difficulty.Medium),
-        M(TurnUpCategory, "Skin",
-          "Undress each other the rest of the way — or as far as you both want — trading one piece at a time, kissing whatever you reveal.",
-          Difficulty.Hard),
-        M(TurnUpCategory, "Hold The Line",
-          "Kiss and touch anywhere you like above the waist for two full minutes — and agree not to go lower until the timer's up. Making each other wait is the game.",
-          Difficulty.Hard),
-        M(TurnUpCategory, "Show Me",
-          "Take your partner's hand and show them exactly how you like to be touched, guiding the pace and pressure. Let them take over when they've got it.",
-          Difficulty.Hard),
-        M(TurnUpCategory, "Somewhere Unobvious",
-              "Kiss somewhere your partner wouldn't have guessed — the inside of an elbow, the back of a knee, the base of the spine. Stay there longer than seems necessary.",
-          Difficulty.Medium),
-        M(TurnUpCategory, "Hands Away",
-              "One of you: hands behind your back, no touching allowed. The other: two minutes, do as you like. The one who can't touch says when the two minutes are up.",
-          Difficulty.Hard),
+            // ── WARM UP — clothed, close, building ───────────────────────────────
+            .Category(WarmUpCategory)
+            .Card("Slow Kiss", MoveBody(WarmUpCategory,
+                "Kiss — unhurried, the kind you'd give if you had nowhere else to be for an hour. Let it be the only thing happening."), Difficulty.Easy)
+            .Card("Where To Start", MoveBody(WarmUpCategory,
+                "Tell your partner one place you'd love to be kissed or touched first tonight — then let them start exactly there."), Difficulty.Easy)
+            .Card("Hands, Slowly", MoveBody(WarmUpCategory,
+                "One of you: run your hands over your partner — still clothed — everywhere you're welcome, slow enough to make them wait. Ask \"here?\" as you go."), Difficulty.Easy)
+            .Card("The Whisper", MoveBody(WarmUpCategory,
+                "Whisper one honest thing you want tonight into your partner's ear. Watch what it does to them."), Difficulty.Medium)
+            .Card("Undress One Layer", MoveBody(WarmUpCategory,
+                "Take one item of clothing off your partner — their choice which — and take your time. Stop there."), Difficulty.Medium)
+            .Card("Ask First", MoveBody(WarmUpCategory,
+                "Ask your partner one question — what would you like more of tonight? Listen to the whole answer before you touch them at all. Then begin there."), Difficulty.Easy)
+            .Card("One Thing", MoveBody(WarmUpCategory,
+                "Remove one item of your partner's clothing, slowly, and only that one. Then go back to kissing as though nothing had happened."), Difficulty.Medium)
 
-        // ── HEAT — explicit, still opt-in every step ─────────────────────────
-        M(HeatCategory, "Down",
-          "One partner: kiss a slow path downward and use your mouth on your partner however they like — check in with a \"colour?\" partway, keep going only on green.",
-          Difficulty.Hard),
-        M(HeatCategory, "Hands On",
-          "Touch each other where you most want to be touched, at the same time — watching each other's faces, matching the rhythm they set.",
-          Difficulty.Hard),
-        M(HeatCategory, "Say It",
-          "Tell your partner, out loud and explicit, exactly what you want next. If you both want it and you're both enthusiastic — do that.",
-          Difficulty.Extreme),
-        M(HeatCategory, "Take The Lead",
-          "One of you takes the lead completely for the next few minutes; the other simply receives and says yes, slow, or colour. Then swap if you both want to.",
-          Difficulty.Extreme),
-        M(HeatCategory, "Together Now",
-          "If you both want to and you've got whatever you need to be safe, come together however you like best — staying close, staying vocal about what feels good. Green means more; anything else means pause.",
-          Difficulty.Extreme),
-        M(HeatCategory, "Say It While It Happens",
-              "One partner: keep your hands or mouth busy. The other: say out loud what you want next, as it occurs to you. Instructions get followed exactly.",
-          Difficulty.Hard),
-        M(HeatCategory, "Half Speed",
-              "Whatever is happening, halve the speed of it. Stay at half speed for as long as you can both stand — then check in before you change anything.",
-          Difficulty.Extreme),
-        M(UndoneCategory, "Your Way",
-          "No card knows the two of you better than you do. Set this one aside and do exactly what you both want — this is your night, not the deck's.",
-          Difficulty.Extreme),
-        M(UndoneCategory, "Again, Slower",
-          "Whatever just happened — do a piece of it again, slower, with your eyes open and on each other.",
-          Difficulty.Extreme),
-        M(UndoneCategory, "The Unsaid Thing",
-              "Tell your partner the thing you've been thinking about all evening and haven't said. Then decide together, out loud, whether tonight is the night for it. Either answer is a good one.",
-          Difficulty.Extreme),
-        M(UndoneCategory, "Nothing New",
-              "No new ideas on this card. Do the thing that has always worked for the two of you — the old reliable — and give it your whole attention, as though it were the first time.",
-          Difficulty.Extreme),
-        M(UndoneCategory, "Stay Here",
-              "Don't move on to anything else. Whatever this is, stay in it — no escalating, no switching — until one of you says otherwise.",
-          Difficulty.Extreme),
+            // ── TURN UP — skin, heat rising ──────────────────────────────────────
+            .Category(TurnUpCategory)
+            .Card("Trace", MoveBody(TurnUpCategory,
+                "With fingertips or mouth, trace a slow path from your partner's neck downward — pausing anywhere their breath changes. Follow the reactions, not a script."), Difficulty.Medium)
+            .Card("Tell Me What You Like", MoveBody(TurnUpCategory,
+                "Partner in front: describe out loud exactly how you like to be touched right now. Partner behind or beside: do precisely that, and adjust as they talk."), Difficulty.Medium)
+            .Card("Skin", MoveBody(TurnUpCategory,
+                "Undress each other the rest of the way — or as far as you both want — trading one piece at a time, kissing whatever you reveal."), Difficulty.Hard)
+            .Card("Hold The Line", MoveBody(TurnUpCategory,
+                "Kiss and touch anywhere you like above the waist for two full minutes — and agree not to go lower until the timer's up. Making each other wait is the game."), Difficulty.Hard)
+            .Card("Show Me", MoveBody(TurnUpCategory,
+                "Take your partner's hand and show them exactly how you like to be touched, guiding the pace and pressure. Let them take over when they've got it."), Difficulty.Hard)
+            .Card("Somewhere Unobvious", MoveBody(TurnUpCategory,
+                "Kiss somewhere your partner wouldn't have guessed — the inside of an elbow, the back of a knee, the base of the spine. Stay there longer than seems necessary."), Difficulty.Medium)
+            .Card("Hands Away", MoveBody(TurnUpCategory,
+                "One of you: hands behind your back, no touching allowed. The other: two minutes, do as you like. The one who can't touch says when the two minutes are up."), Difficulty.Hard)
 
-        // ── AFTERCARE — the closing ritual (how you land matters) ────────────
-        A("Come Back Down",
-          "Stop, breathe, and come back to each other. Lie close, catch your breath together. No rush to move or talk — just be here, tangled up, for a minute.",
-          Difficulty.Easy),
-        A("The Kind Thing",
-          "Tell your partner one genuine thing you loved about the last while — something they did, something you felt, something you're glad you shared.",
-          Difficulty.Easy),
-        A("Water & Warmth",
-          "Get your partner whatever makes the landing soft — water, a blanket, a snack, a warm cloth. Take care of the body you just enjoyed.",
-          Difficulty.Easy),
-        A("Anything To Say?",
-          "Gently check in: anything felt great and you'd want again? Anything you'd change, or that you'd rather not repeat? No defensiveness — just two people getting to know each other better. Then hold each other and let the game be over.",
-          Difficulty.Medium),
-        A("One Thing That Landed",
-              "Tell each other one specific moment from tonight you'll still be thinking about tomorrow. Be precise — the exact moment, not the general idea.",
-          Difficulty.Medium),
-    ];
+            // ── HEAT — explicit, still opt-in every step ─────────────────────────
+            .Category(HeatCategory)
+            .Card("Down", MoveBody(HeatCategory,
+                "One partner: kiss a slow path downward and use your mouth on your partner however they like — check in with a \"colour?\" partway, keep going only on green."), Difficulty.Hard)
+            .Card("Hands On", MoveBody(HeatCategory,
+                "Touch each other where you most want to be touched, at the same time — watching each other's faces, matching the rhythm they set."), Difficulty.Hard)
+            .Card("Say It", MoveBody(HeatCategory,
+                "Tell your partner, out loud and explicit, exactly what you want next. If you both want it and you're both enthusiastic — do that."), Difficulty.Extreme)
+            .Card("Take The Lead", MoveBody(HeatCategory,
+                "One of you takes the lead completely for the next few minutes; the other simply receives and says yes, slow, or colour. Then swap if you both want to."), Difficulty.Extreme)
+            .Card("Together Now", MoveBody(HeatCategory,
+                "If you both want to and you've got whatever you need to be safe, come together however you like best — staying close, staying vocal about what feels good. Green means more; anything else means pause."), Difficulty.Extreme)
+            .Card("Say It While It Happens", MoveBody(HeatCategory,
+                "One partner: keep your hands or mouth busy. The other: say out loud what you want next, as it occurs to you. Instructions get followed exactly."), Difficulty.Hard)
+            .Card("Half Speed", MoveBody(HeatCategory,
+                "Whatever is happening, halve the speed of it. Stay at half speed for as long as you can both stand — then check in before you change anything."), Difficulty.Extreme)
 
-    private static ICard C(string title, string body, Difficulty d) =>
-        StandardCard.Create(title,
-            "<b>🛟 CONSENT — set this up before you play on</b>\n\n" + body,
-            d, ConsentCategory);
+            // ── UNDONE — no script; the two of you know best ─────────────────────
+            .Category(UndoneCategory)
+            .Card("Your Way", MoveBody(UndoneCategory,
+                "No card knows the two of you better than you do. Set this one aside and do exactly what you both want — this is your night, not the deck's."), Difficulty.Extreme)
+            .Card("Again, Slower", MoveBody(UndoneCategory,
+                "Whatever just happened — do a piece of it again, slower, with your eyes open and on each other."), Difficulty.Extreme)
+            .Card("The Unsaid Thing", MoveBody(UndoneCategory,
+                "Tell your partner the thing you've been thinking about all evening and haven't said. Then decide together, out loud, whether tonight is the night for it. Either answer is a good one."), Difficulty.Extreme)
+            .Card("Nothing New", MoveBody(UndoneCategory,
+                "No new ideas on this card. Do the thing that has always worked for the two of you — the old reliable — and give it your whole attention, as though it were the first time."), Difficulty.Extreme)
+            .Card("Stay Here", MoveBody(UndoneCategory,
+                "Don't move on to anything else. Whatever this is, stay in it — no escalating, no switching — until one of you says otherwise."), Difficulty.Extreme)
 
-    private static ICard M(string category, string title, string body, Difficulty d) =>
-        StandardCard.Create(title,
-            "<b>" + Emoji(category) + " " + category.ToUpperInvariant() + "</b>\n\n" +
-            body + "\n\n" +
-            "<i>An invitation, never an order. Take it, soften it, trade it, or pass — pass is always free. Enthusiasm is the only yes; call \"colour?\" anytime.</i>",
-            d, category);
+            // ── AFTERCARE — the closing ritual (how you land matters) ────────────
+            .Category(AftercareCategory)
+            .Card("Come Back Down", AftercareBody(
+                "Stop, breathe, and come back to each other. Lie close, catch your breath together. No rush to move or talk — just be here, tangled up, for a minute."), Difficulty.Easy)
+            .Card("The Kind Thing", AftercareBody(
+                "Tell your partner one genuine thing you loved about the last while — something they did, something you felt, something you're glad you shared."), Difficulty.Easy)
+            .Card("Water & Warmth", AftercareBody(
+                "Get your partner whatever makes the landing soft — water, a blanket, a snack, a warm cloth. Take care of the body you just enjoyed."), Difficulty.Easy)
+            .Card("Anything To Say?", AftercareBody(
+                "Gently check in: anything felt great and you'd want again? Anything you'd change, or that you'd rather not repeat? No defensiveness — just two people getting to know each other better. Then hold each other and let the game be over."), Difficulty.Medium)
+            .Card("One Thing That Landed", AftercareBody(
+                "Tell each other one specific moment from tonight you'll still be thinking about tomorrow. Be precise — the exact moment, not the general idea."), Difficulty.Medium)
 
-    private static ICard A(string title, string body, Difficulty d) =>
-        StandardCard.Create(title,
-            "<b>💜 AFTERCARE</b>\n\n" + body,
-            d, AftercareCategory);
+            .Build();
+
+    private static string ConsentBody(string body) =>
+        "<b>🛟 CONSENT — set this up before you play on</b>\n\n" + body;
+
+    private static string MoveBody(string category, string body) =>
+        "<b>" + Emoji(category) + " " + category.ToUpperInvariant() + "</b>\n\n" +
+        body + "\n\n" +
+        "<i>An invitation, never an order. Take it, soften it, trade it, or pass — pass is always free. Enthusiasm is the only yes; call \"colour?\" anytime.</i>";
+
+    private static string AftercareBody(string body) =>
+        "<b>💜 AFTERCARE</b>\n\n" + body;
 
     private static string Emoji(string category) => category switch
     {

@@ -1,7 +1,6 @@
 using TableTop.Core.Abstractions.Cards;
 using TableTop.Core.Abstractions.Game;
 using TableTop.Core.Abstractions.Players;
-using TableTop.Core.Abstractions.Restrictions;
 using TableTop.Core.Abstractions.Scoring;
 using TableTop.Core.Domain.Cards;
 using TableTop.Core.Domain.Restrictions;
@@ -104,6 +103,8 @@ public static class LastOrdersCardBank
     internal const string PartyTricksCategory = "Party Tricks";
     internal const string LastRoundCategory = "Last Round";
 
+    private const string Deck = "Last Orders";
+
     /// <summary>All cards, in intended play order.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
@@ -113,142 +114,133 @@ public static class LastOrdersCardBank
         // social dares are open to everyone at the table.
         var drinkingAge = new MinimumAgeRestriction(18);
 
-        return
-        [
+        return CardDeckBuilder.For(Deck)
+
             // ── HOUSE RULES — pinned first, and worth reading aloud ──────────
-            H("House Rules — Before Anything",
-              "Read this out before you start.\n\n" +
-              "• A sip means a sip. Nothing in this deck asks anyone to down a drink, race, or keep up.\n" +
-              "• The soft option counts exactly the same. Water, a soft drink, or a mimed sip all score the point. Nobody explains why.\n" +
-              "• Pass is always free, on any card, with no reason and no forfeit.\n" +
-              "• Local law applies — the legal drinking age is 18 in some countries and 21 in others. Everyone here should be over whichever applies."),
-            H("House Rules — The Night Itself",
-              "Agree these now, while everyone is sober enough to mean it.\n\n" +
-              "• Who is driving, and what are they drinking? Answer: something soft, all night.\n" +
-              "• Water between rounds. Put a jug on the table before the first card.\n" +
-              "• Food happens. Order it early rather than at midnight.\n" +
-              "• If someone has had enough, that's the end of it for them — no persuading, no jokes about it.\n" +
-              "• Anyone can call last orders on the whole game at any point."),
+            .Category(HouseRulesCategory)
+            .Card("House Rules — Before Anything", HouseRulesBody(
+                "Read this out before you start.\n\n" +
+                "• A sip means a sip. Nothing in this deck asks anyone to down a drink, race, or keep up.\n" +
+                "• The soft option counts exactly the same. Water, a soft drink, or a mimed sip all score the point. Nobody explains why.\n" +
+                "• Pass is always free, on any card, with no reason and no forfeit.\n" +
+                "• Local law applies — the legal drinking age is 18 in some countries and 21 in others. Everyone here should be over whichever applies."), Difficulty.Easy)
+            .Card("House Rules — The Night Itself", HouseRulesBody(
+                "Agree these now, while everyone is sober enough to mean it.\n\n" +
+                "• Who is driving, and what are they drinking? Answer: something soft, all night.\n" +
+                "• Water between rounds. Put a jug on the table before the first card.\n" +
+                "• Food happens. Order it early rather than at midnight.\n" +
+                "• If someone has had enough, that's the end of it for them — no persuading, no jokes about it.\n" +
+                "• Anyone can call last orders on the whole game at any point."), Difficulty.Easy)
 
             // ── WARM UP — social, no drinking at all ─────────────────────────
-            S(WarmUpCategory, "Round of Introductions",
-              "Introduce the person on your left as though they are a minor celebrity and you are their long-suffering agent."),
-            S(WarmUpCategory, "The Group Photo",
-              "Direct everyone into a group photo in the style of a very serious album cover. You have thirty seconds."),
-            S(WarmUpCategory, "Terrible Toast",
-              "Propose a toast to something gloriously unimportant. Everyone raises whatever they're drinking."),
-            S(WarmUpCategory, "Accent Roulette",
-              "Order your next drink — real or imaginary — in an accent of the table's choosing."),
-            S(WarmUpCategory, "Two Truths",
-              "Two truths and a lie about your worst night out. The table guesses."),
-            S(WarmUpCategory, "The Nickname",
-              "Give everyone at the table a nickname based on the first thing you noticed about them tonight. They're keeping it for the rest of the game."),
-            S(WarmUpCategory, "Two Minutes' Notice",
-              "You've been asked to give a two-minute speech at this table's wedding. You don't know whose. Begin."),
+            .Category(WarmUpCategory)
+            .Card("Round of Introductions", SocialBody(WarmUpCategory,
+                "Introduce the person on your left as though they are a minor celebrity and you are their long-suffering agent."), Difficulty.Easy)
+            .Card("The Group Photo", SocialBody(WarmUpCategory,
+                "Direct everyone into a group photo in the style of a very serious album cover. You have thirty seconds."), Difficulty.Easy)
+            .Card("Terrible Toast", SocialBody(WarmUpCategory,
+                "Propose a toast to something gloriously unimportant. Everyone raises whatever they're drinking."), Difficulty.Easy)
+            .Card("Accent Roulette", SocialBody(WarmUpCategory,
+                "Order your next drink — real or imaginary — in an accent of the table's choosing."), Difficulty.Easy)
+            .Card("Two Truths", SocialBody(WarmUpCategory,
+                "Two truths and a lie about your worst night out. The table guesses."), Difficulty.Easy)
+            .Card("The Nickname", SocialBody(WarmUpCategory,
+                "Give everyone at the table a nickname based on the first thing you noticed about them tonight. They're keeping it for the rest of the game."), Difficulty.Easy)
+            .Card("Two Minutes' Notice", SocialBody(WarmUpCategory,
+                "You've been asked to give a two-minute speech at this table's wedding. You don't know whose. Begin."), Difficulty.Easy)
 
             // ── PARTY TRICKS — performative, still no drinking ───────────────
-            S(PartyTricksCategory, "The Impression",
-              "Do your best impression of someone at this table. They get to rate it out of ten."),
-            S(PartyTricksCategory, "Sixty-Second Rant",
-              "Rant passionately for sixty seconds about something trivial that genuinely annoys you."),
-            S(PartyTricksCategory, "The Dance Move",
-              "Invent a dance move, name it, and teach it to the person on your right."),
-            S(PartyTricksCategory, "Sing It Badly",
-              "Sing the chorus of any song, deliberately in the wrong style. Opera, sea shanty, lullaby — table picks."),
-            S(PartyTricksCategory, "The Statue",
-              "Hold a dramatic pose until someone else draws a card. Commit to it."),
-            S(PartyTricksCategory, "Accent Relay",
-              "Say the same sentence in three different accents. The table picks which one you're keeping for the next round."),
-            S(PartyTricksCategory, "Genuinely Useless Talent",
-              "Demonstrate the most useless skill you possess. It must be genuinely useless and genuinely yours."),
+            .Category(PartyTricksCategory)
+            .Card("The Impression", SocialBody(PartyTricksCategory,
+                "Do your best impression of someone at this table. They get to rate it out of ten."), Difficulty.Easy)
+            .Card("Sixty-Second Rant", SocialBody(PartyTricksCategory,
+                "Rant passionately for sixty seconds about something trivial that genuinely annoys you."), Difficulty.Easy)
+            .Card("The Dance Move", SocialBody(PartyTricksCategory,
+                "Invent a dance move, name it, and teach it to the person on your right."), Difficulty.Easy)
+            .Card("Sing It Badly", SocialBody(PartyTricksCategory,
+                "Sing the chorus of any song, deliberately in the wrong style. Opera, sea shanty, lullaby — table picks."), Difficulty.Easy)
+            .Card("The Statue", SocialBody(PartyTricksCategory,
+                "Hold a dramatic pose until someone else draws a card. Commit to it."), Difficulty.Easy)
+            .Card("Accent Relay", SocialBody(PartyTricksCategory,
+                "Say the same sentence in three different accents. The table picks which one you're keeping for the next round."), Difficulty.Easy)
+            .Card("Genuinely Useless Talent", SocialBody(PartyTricksCategory,
+                "Demonstrate the most useless skill you possess. It must be genuinely useless and genuinely yours."), Difficulty.Easy)
 
             // ── CONFESSIONS — truth-style, no drinking ───────────────────────
-            S(ConfessionsCategory, "The Group Chat",
-              "What is the most recent thing you sent to a group chat and immediately regretted?"),
-            S(ConfessionsCategory, "Worst Purchase",
-              "What's the most money you've spent on something you used precisely once?"),
-            S(ConfessionsCategory, "The White Lie",
-              "Name a small lie you tell regularly. Nothing serious — just the everyday kind."),
-            S(ConfessionsCategory, "Unpopular Opinion",
-              "Share a genuinely unpopular opinion and defend it for thirty seconds."),
-            S(ConfessionsCategory, "The Text You Didn't Send",
-              "Describe — don't read — a message you typed out and then deleted."),
-            S(ConfessionsCategory, "Left On Read",
-              "What's the message you've left unanswered the longest, and what's the real reason?"),
-            S(ConfessionsCategory, "Worst Money",
-              "What is the worst thing you have ever spent money on — and would you do it again?"),
+            .Category(ConfessionsCategory)
+            .Card("The Group Chat", SocialBody(ConfessionsCategory,
+                "What is the most recent thing you sent to a group chat and immediately regretted?"), Difficulty.Easy)
+            .Card("Worst Purchase", SocialBody(ConfessionsCategory,
+                "What's the most money you've spent on something you used precisely once?"), Difficulty.Easy)
+            .Card("The White Lie", SocialBody(ConfessionsCategory,
+                "Name a small lie you tell regularly. Nothing serious — just the everyday kind."), Difficulty.Easy)
+            .Card("Unpopular Opinion", SocialBody(ConfessionsCategory,
+                "Share a genuinely unpopular opinion and defend it for thirty seconds."), Difficulty.Easy)
+            .Card("The Text You Didn't Send", SocialBody(ConfessionsCategory,
+                "Describe — don't read — a message you typed out and then deleted."), Difficulty.Easy)
+            .Card("Left On Read", SocialBody(ConfessionsCategory,
+                "What's the message you've left unanswered the longest, and what's the real reason?"), Difficulty.Easy)
+            .Card("Worst Money", SocialBody(ConfessionsCategory,
+                "What is the worst thing you have ever spent money on — and would you do it again?"), Difficulty.Easy)
 
             // ── FORFEITS — the drink-or-soft cards, age-gated ────────────────
-            D(ForfeitsCategory, "Cheers To That",
-              "Take a sip — or a soft sip, they're the same here — and say what you're actually toasting.",
-              drinkingAge),
-            D(ForfeitsCategory, "The Last Person Who…",
-              "Last person to laugh takes a sip. Soft counts. Nobody keeps score of who's drinking what.",
-              drinkingAge),
-            D(ForfeitsCategory, "Categories",
-              "Name a category. Go round the table. First to stumble takes a sip — or a soft one — and picks the next category.",
-              drinkingAge),
-            D(ForfeitsCategory, "Never Have I Ever, Gently",
-              "Say something you've never done. Anyone who has takes a sip, or the soft equivalent, and may explain — or may not.",
-              drinkingAge),
-            D(ForfeitsCategory, "Toast the Room",
-              "Raise your glass to someone at the table and say one true nice thing. Everyone sips with you, soft or otherwise.",
-              drinkingAge),
-            D(ForfeitsCategory, "Swap Rounds",
-              "Buy or fetch the next round for the person opposite — including finding out what soft option they'd actually enjoy.",
-              drinkingAge),
-            D(ForfeitsCategory, "Toast the Absent",
-              "Take a sip — soft counts, same as ever — and toast someone who isn't here tonight. Say why them.",
-              drinkingAge),
-            D(ForfeitsCategory, "The Round You Owe",
-              "Take a sip, soft or otherwise, and name the person at this table you'd most like to buy a drink for, and what it would be.",
-              drinkingAge),
+            .Category(ForfeitsCategory)
+            .Card("Cheers To That", DrinkBody(ForfeitsCategory,
+                "Take a sip — or a soft sip, they're the same here — and say what you're actually toasting."), Difficulty.Easy, restriction: drinkingAge)
+            .Card("The Last Person Who…", DrinkBody(ForfeitsCategory,
+                "Last person to laugh takes a sip. Soft counts. Nobody keeps score of who's drinking what."), Difficulty.Easy, restriction: drinkingAge)
+            .Card("Categories", DrinkBody(ForfeitsCategory,
+                "Name a category. Go round the table. First to stumble takes a sip — or a soft one — and picks the next category."), Difficulty.Easy, restriction: drinkingAge)
+            .Card("Never Have I Ever, Gently", DrinkBody(ForfeitsCategory,
+                "Say something you've never done. Anyone who has takes a sip, or the soft equivalent, and may explain — or may not."), Difficulty.Easy, restriction: drinkingAge)
+            .Card("Toast the Room", DrinkBody(ForfeitsCategory,
+                "Raise your glass to someone at the table and say one true nice thing. Everyone sips with you, soft or otherwise."), Difficulty.Easy, restriction: drinkingAge)
+            .Card("Swap Rounds", DrinkBody(ForfeitsCategory,
+                "Buy or fetch the next round for the person opposite — including finding out what soft option they'd actually enjoy."), Difficulty.Easy, restriction: drinkingAge)
+            .Card("Toast the Absent", DrinkBody(ForfeitsCategory,
+                "Take a sip — soft counts, same as ever — and toast someone who isn't here tonight. Say why them."), Difficulty.Easy, restriction: drinkingAge)
+            .Card("The Round You Owe", DrinkBody(ForfeitsCategory,
+                "Take a sip, soft or otherwise, and name the person at this table you'd most like to buy a drink for, and what it would be."), Difficulty.Easy, restriction: drinkingAge)
 
             // ── LAST ROUND — pinned last ─────────────────────────────────────
-            L("Water Round",
-              "Everyone gets a glass of water. All of you, now, before the next thing. This card is not optional and not a joke."),
-            L("Something To Eat",
-              "Food. Order it, raid the kitchen, walk somewhere that sells chips. Whatever's easiest — just eat something."),
-            L("Getting Home",
-              "Sort out how everyone is getting home, and check that the plan is the one you agreed at the start. " +
-              "Confirm nobody who's been drinking is driving. Wait with anyone who's on their own."),
-            L("Last Orders",
-              "That's the deck. Check in with each other before you drift off — anyone quiet, anyone who's had more than they meant to, anyone who needs a lift or a sofa. " +
-              "Good nights end with everyone accounted for."),
-            L("The Good Bit",
-              "Everyone names the best moment of the night so far. No repeats, so the slow ones have to think."),
-            L("Tomorrow",
-              "Everyone says one thing they're doing tomorrow. It's a good way to remember there's a tomorrow."),
-        ];
+            .Category(LastRoundCategory)
+            .Card("Water Round", LastRoundBody(
+                "Everyone gets a glass of water. All of you, now, before the next thing. This card is not optional and not a joke."), Difficulty.Easy)
+            .Card("Something To Eat", LastRoundBody(
+                "Food. Order it, raid the kitchen, walk somewhere that sells chips. Whatever's easiest — just eat something."), Difficulty.Easy)
+            .Card("Getting Home", LastRoundBody(
+                "Sort out how everyone is getting home, and check that the plan is the one you agreed at the start. " +
+                "Confirm nobody who's been drinking is driving. Wait with anyone who's on their own."), Difficulty.Easy)
+            .Card("Last Orders", LastRoundBody(
+                "That's the deck. Check in with each other before you drift off — anyone quiet, anyone who's had more than they meant to, anyone who needs a lift or a sofa. " +
+                "Good nights end with everyone accounted for."), Difficulty.Easy)
+            .Card("The Good Bit", LastRoundBody(
+                "Everyone names the best moment of the night so far. No repeats, so the slow ones have to think."), Difficulty.Easy)
+            .Card("Tomorrow", LastRoundBody(
+                "Everyone says one thing they're doing tomorrow. It's a good way to remember there's a tomorrow."), Difficulty.Easy)
+
+            .Build();
     }
 
     // House rules: teal header, no gate — everyone reads these.
-    private static ICard H(string title, string body) =>
-        StandardCard.Create(title,
-            "<b>📋 HOUSE RULES</b>\n\n" + body,
-            Difficulty.Easy, HouseRulesCategory);
+    private static string HouseRulesBody(string body) =>
+        "<b>📋 HOUSE RULES</b>\n\n" + body;
 
     // Social dares: no alcohol, so no age gate.
-    private static ICard S(string category, string title, string body) =>
-        StandardCard.Create(title,
-            "<b>" + Emoji(category) + " " + category.ToUpperInvariant() + "</b>\n\n" +
-            body + "\n\n" +
-            "<i>Pass is always free.</i>",
-            Difficulty.Easy, category);
+    private static string SocialBody(string category, string body) =>
+        "<b>" + Emoji(category) + " " + category.ToUpperInvariant() + "</b>\n\n" +
+        body + "\n\n" +
+        "<i>Pass is always free.</i>";
 
-    // Drink cards: age-gated, and the soft option is stated on every one.
-    private static ICard D(string category, string title, string body, IRestriction gate) =>
-        StandardCard.Create(title,
-            "<b>🍻 " + category.ToUpperInvariant() + "</b>\n\n" +
-            body + "\n\n" +
-            "<i>A sip is a sip — never a shot, never the whole glass. Soft drinks count the same and score the same. " +
-            "Pass is always free.</i>",
-            Difficulty.Easy, category, restriction: gate);
+    // Drink cards: age-gated (by the caller), and the soft option is stated on every one.
+    private static string DrinkBody(string category, string body) =>
+        "<b>🍻 " + category.ToUpperInvariant() + "</b>\n\n" +
+        body + "\n\n" +
+        "<i>A sip is a sip — never a shot, never the whole glass. Soft drinks count the same and score the same. " +
+        "Pass is always free.</i>";
 
-    private static ICard L(string title, string body) =>
-        StandardCard.Create(title,
-            "<b>🌙 LAST ROUND</b>\n\n" + body,
-            Difficulty.Easy, LastRoundCategory);
+    private static string LastRoundBody(string body) =>
+        "<b>🌙 LAST ROUND</b>\n\n" + body;
 
     private static string Emoji(string category) => category switch
     {

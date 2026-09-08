@@ -70,106 +70,59 @@ public static class MonologueMadnessCardBank
     internal const string CorporateCategory = "Corporate";
     internal const string ConfessionsCategory = "Confessions";
 
+    private const string Deck = "Monologue Madness";
+
     /// <summary>All.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
+        CardDeckBuilder.For(Deck)
         // ── POLITICS ──────────────────────────────────────────────────────────
-        M(PoliticsCategory,
-            "You are campaigning to be elected Mayor of Pigeons. What's your opening statement?",
-            Difficulty.Medium),
-        M(PoliticsCategory,
-            "You are a senator defending why socks disappear in the dryer.",
-            Difficulty.Medium),
-        M(PoliticsCategory,
-            "Give a presidential address about why pizza is a vegetable.",
-            Difficulty.Easy),
-        M(PoliticsCategory,
-            "You're running for Town Council on a platform of mandatory nap time.",
-            Difficulty.Easy),
-        M(PoliticsCategory,
-            "Deliver a speech convincing everyone that birds aren't real.",
-            Difficulty.Hard),
+            .Category(PoliticsCategory)
+            .Card(PoliticsCategory, Body("You are campaigning to be elected Mayor of Pigeons. What's your opening statement?"), Difficulty.Medium)
+            .Card(PoliticsCategory, Body("You are a senator defending why socks disappear in the dryer."), Difficulty.Medium)
+            .Card(PoliticsCategory, Body("Give a presidential address about why pizza is a vegetable."), Difficulty.Easy)
+            .Card(PoliticsCategory, Body("You're running for Town Council on a platform of mandatory nap time."), Difficulty.Easy)
+            .Card(PoliticsCategory, Body("Deliver a speech convincing everyone that birds aren't real."), Difficulty.Hard)
 
         // ── PHILOSOPHY ───────────────────────────────────────────────────────
-        M(PhilosophyCategory,
-            "Give a TED Talk on the Secret Life of Household Objects.",
-            Difficulty.Medium),
-        M(PhilosophyCategory,
-            "Explain the meaning of life to a confused potato.",
-            Difficulty.Hard),
-        M(PhilosophyCategory,
-            "Defend the philosophical importance of doing absolutely nothing.",
-            Difficulty.Medium),
-        M(PhilosophyCategory,
-            "Give an opening statement as if you're accepting a Nobel Prize for Sleeping.",
-            Difficulty.Easy),
-        M(PhilosophyCategory,
-            "Present your argument: Procrastination is Actually a Superpower.",
-            Difficulty.Easy),
+            .Category(PhilosophyCategory)
+            .Card(PhilosophyCategory, Body("Give a TED Talk on the Secret Life of Household Objects."), Difficulty.Medium)
+            .Card(PhilosophyCategory, Body("Explain the meaning of life to a confused potato."), Difficulty.Hard)
+            .Card(PhilosophyCategory, Body("Defend the philosophical importance of doing absolutely nothing."), Difficulty.Medium)
+            .Card(PhilosophyCategory, Body("Give an opening statement as if you're accepting a Nobel Prize for Sleeping."), Difficulty.Easy)
+            .Card(PhilosophyCategory, Body("Present your argument: Procrastination is Actually a Superpower."), Difficulty.Easy)
 
         // ── RIDICULOUS ────────────────────────────────────────────────────────
-        M(RidiculousCategory,
-            "You are a tour guide showing tourists around your kitchen.",
-            Difficulty.Easy),
-        M(RidiculousCategory,
-            "Deliver a eulogy for your favorite pair of socks.",
-            Difficulty.Medium),
-        M(RidiculousCategory,
-            "Give a survival speech as if you're stuck on a deserted island with only cheese.",
-            Difficulty.Medium),
-        M(RidiculousCategory,
-            "You are a sports commentator narrating someone eating a sandwich.",
-            Difficulty.Easy),
-        M(RidiculousCategory,
-            "Give a dramatic opening monologue as a Victorian ghost haunting a gas station.",
-            Difficulty.Hard),
-        M(RidiculousCategory,
-            "Convince us why you should be the next Bachelor/Bachelorette. (You're a houseplant.)",
-            Difficulty.Medium),
+            .Category(RidiculousCategory)
+            .Card(RidiculousCategory, Body("You are a tour guide showing tourists around your kitchen."), Difficulty.Easy)
+            .Card(RidiculousCategory, Body("Deliver a eulogy for your favorite pair of socks."), Difficulty.Medium)
+            .Card(RidiculousCategory, Body("Give a survival speech as if you're stuck on a deserted island with only cheese."), Difficulty.Medium)
+            .Card(RidiculousCategory, Body("You are a sports commentator narrating someone eating a sandwich."), Difficulty.Easy)
+            .Card(RidiculousCategory, Body("Give a dramatic opening monologue as a Victorian ghost haunting a gas station."), Difficulty.Hard)
+            .Card(RidiculousCategory, Body("Convince us why you should be the next Bachelor/Bachelorette. (You're a houseplant.)"), Difficulty.Medium)
 
         // ── CORPORATE ────────────────────────────────────────────────────────
-        M(CorporateCategory,
-            "You're presenting the quarterly report. Business is chaos. Stay professional.",
-            Difficulty.Medium),
-        M(CorporateCategory,
-            "Give a motivational speech to your team about synergizing paradigm shifts.",
-            Difficulty.Hard),
-        M(CorporateCategory,
-            "Present your innovative startup idea: An app for something completely useless.",
-            Difficulty.Medium),
-        M(CorporateCategory,
-            "Deliver a safety briefing at an office where everything is slightly wrong.",
-            Difficulty.Medium),
-        M(CorporateCategory,
-            "Give a professional apology for something you definitely did.",
-            Difficulty.Easy),
+            .Category(CorporateCategory)
+            .Card(CorporateCategory, Body("You're presenting the quarterly report. Business is chaos. Stay professional."), Difficulty.Medium)
+            .Card(CorporateCategory, Body("Give a motivational speech to your team about synergizing paradigm shifts."), Difficulty.Hard)
+            .Card(CorporateCategory, Body("Present your innovative startup idea: An app for something completely useless."), Difficulty.Medium)
+            .Card(CorporateCategory, Body("Deliver a safety briefing at an office where everything is slightly wrong."), Difficulty.Medium)
+            .Card(CorporateCategory, Body("Give a professional apology for something you definitely did."), Difficulty.Easy)
 
         // ── CONFESSIONS ───────────────────────────────────────────────────────
-        M(ConfessionsCategory,
-            "Confess to something you definitely didn't do, and defend it passionately.",
-            Difficulty.Hard),
-        M(ConfessionsCategory,
-            "You are finally revealing your true feelings about pineapple on pizza.",
-            Difficulty.Easy),
-        M(ConfessionsCategory,
-            "Admit to something everyone suspects but nobody's said out loud.",
-            Difficulty.Medium),
-        M(ConfessionsCategory,
-            "Give your controversial opinion about something everyone cares about.",
-            Difficulty.Hard),
-        M(ConfessionsCategory,
-            "Confess to being secretly in love with something inanimate.",
-            Difficulty.Medium),
-    ];
+            .Category(ConfessionsCategory)
+            .Card(ConfessionsCategory, Body("Confess to something you definitely didn't do, and defend it passionately."), Difficulty.Hard)
+            .Card(ConfessionsCategory, Body("You are finally revealing your true feelings about pineapple on pizza."), Difficulty.Easy)
+            .Card(ConfessionsCategory, Body("Admit to something everyone suspects but nobody's said out loud."), Difficulty.Medium)
+            .Card(ConfessionsCategory, Body("Give your controversial opinion about something everyone cares about."), Difficulty.Hard)
+            .Card(ConfessionsCategory, Body("Confess to being secretly in love with something inanimate."), Difficulty.Medium)
 
-    private static ICard M(string category, string topic, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>60-SECOND MONOLOGUE</b>\n\n" +
-            topic + "\n\n" +
-            "<b>GO:</b> No preparation. No notes. No stopping. Improvise for the full 60 seconds.\n\n" +
-            "Everyone else votes: who was funniest, most convincing, or most unhinged?",
-            d, category);
+            .Build();
+
+    private static string Body(string topic) =>
+        "<b>60-SECOND MONOLOGUE</b>\n\n" +
+        topic + "\n\n" +
+        "<b>GO:</b> No preparation. No notes. No stopping. Improvise for the full 60 seconds.\n\n" +
+        "Everyone else votes: who was funniest, most convincing, or most unhinged?";
 }

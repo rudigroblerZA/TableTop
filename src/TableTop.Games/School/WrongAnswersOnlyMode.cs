@@ -63,7 +63,12 @@ public sealed class WrongAnswersOnlyMode : BaseGameModeDefinition
     public static IReadOnlyList<ICard> GetCards() => WrongAnswersOnlyCardBank.All;
 }
 
-/// <summary>Built-in card bank for Wrong Answers Only.</summary>
+/// <summary>
+/// Built-in card bank for Wrong Answers Only, authored with
+/// <see cref="CardDeckBuilder"/>'s fluent DSL. Each card's body is composed by
+/// <see cref="Body"/> in the shape the gameplay tests pin — the question, then
+/// the real answer for the reader to announce, then the wrong-answer prompt.
+/// </summary>
 public static class WrongAnswersOnlyCardBank
 {
     internal const string ScienceCategory = "Science";
@@ -73,161 +78,176 @@ public static class WrongAnswersOnlyCardBank
     internal const string HowItWorksCategory = "How It Works";
     internal const string WordOriginsCategory = "Word Origins";
 
+    private const string Deck = "Wrong Answers Only";
+
     /// <summary>All wrong-answers cards, ordered by category.</summary>
     public static IReadOnlyList<ICard> All { get; } = Build();
 
     private static IReadOnlyList<ICard> Build() =>
-    [
-        // ── SCIENCE ───────────────────────────────────────────────────────────
-        W(ScienceCategory, "Why is the sky blue?",
-          "Sunlight scatters off air molecules, and blue light scatters most.", Difficulty.Easy),
-        W(ScienceCategory, "Why do we have day and night?",
-          "The Earth rotates once every 24 hours, turning us toward and away from the Sun.", Difficulty.Easy),
-        W(ScienceCategory, "Why does ice float on water?",
-          "Frozen water is less dense — its molecules lock into a roomy crystal.", Difficulty.Medium),
-        W(ScienceCategory, "Why do helium balloons rise?",
-          "Helium is lighter than the surrounding air, so the air pushes the balloon up.", Difficulty.Easy),
-        W(ScienceCategory, "What causes thunder?",
-          "Lightning superheats the air, which expands explosively — that shockwave is the boom.", Difficulty.Medium),
-        W(ScienceCategory, "Why do stars twinkle?",
-          "Their light wobbles as it passes through Earth's moving atmosphere.", Difficulty.Medium),
-        W(ScienceCategory, "Why is the ocean salty?",
-          "Rivers wash tiny amounts of mineral salts off the land into the sea, and it accumulates.", Difficulty.Medium),
-        W(ScienceCategory, "Why do we see our breath on cold days?",
-          "Warm moist breath hits cold air and condenses into tiny visible droplets.", Difficulty.Easy),
+        CardDeckBuilder.For(Deck)
 
-        // ── HISTORY ───────────────────────────────────────────────────────────
-        W(HistoryCategory, "Why did ancient Egyptians build the pyramids?",
-          "As monumental tombs for their pharaohs.", Difficulty.Easy),
-        W(HistoryCategory, "What was the Great Wall of China built for?",
-          "To defend the northern borders against raids and invasions.", Difficulty.Easy),
-        W(HistoryCategory, "Why did knights wear armour?",
-          "Protection from swords, arrows, and other weapons in battle.", Difficulty.Easy),
-        W(HistoryCategory, "What did the printing press change?",
-          "Books could be copied by machine instead of by hand — ideas spread massively faster.", Difficulty.Medium),
-        W(HistoryCategory, "Why were castles built with moats?",
-          "Water made walls hard to reach, tunnel under, or roll siege towers against.", Difficulty.Medium),
-        W(HistoryCategory, "What were Roman roads for?",
-          "Moving armies, trade, and messages quickly across the empire.", Difficulty.Medium),
-        W(HistoryCategory, "Why did sailors get scurvy on long voyages?",
-          "No fresh fruit or vegetables — months without vitamin C.", Difficulty.Hard),
-        W(HistoryCategory, "What was the Silk Road?",
-          "A network of trade routes linking China with the Middle East and Europe.", Difficulty.Medium),
+            // ── SCIENCE ───────────────────────────────────────────────────────────
+            .Category(ScienceCategory)
+            .Card(ScienceCategory, Body("Why is the sky blue?",
+                "Sunlight scatters off air molecules, and blue light scatters most."), Difficulty.Easy)
+            .Card(ScienceCategory, Body("Why do we have day and night?",
+                "The Earth rotates once every 24 hours, turning us toward and away from the Sun."), Difficulty.Easy)
+            .Card(ScienceCategory, Body("Why does ice float on water?",
+                "Frozen water is less dense — its molecules lock into a roomy crystal."), Difficulty.Medium)
+            .Card(ScienceCategory, Body("Why do helium balloons rise?",
+                "Helium is lighter than the surrounding air, so the air pushes the balloon up."), Difficulty.Easy)
+            .Card(ScienceCategory, Body("What causes thunder?",
+                "Lightning superheats the air, which expands explosively — that shockwave is the boom."), Difficulty.Medium)
+            .Card(ScienceCategory, Body("Why do stars twinkle?",
+                "Their light wobbles as it passes through Earth's moving atmosphere."), Difficulty.Medium)
+            .Card(ScienceCategory, Body("Why is the ocean salty?",
+                "Rivers wash tiny amounts of mineral salts off the land into the sea, and it accumulates."), Difficulty.Medium)
+            .Card(ScienceCategory, Body("Why do we see our breath on cold days?",
+                "Warm moist breath hits cold air and condenses into tiny visible droplets."), Difficulty.Easy)
 
-        // ── GEOGRAPHY ─────────────────────────────────────────────────────────
-        W(GeographyCategory, "Why do rivers flow to the sea?",
-          "Gravity — water runs downhill, and the sea is as low as it gets.", Difficulty.Easy),
-        W(GeographyCategory, "Why is it hot at the equator?",
-          "Sunlight hits it most directly, concentrating the energy.", Difficulty.Easy),
-        W(GeographyCategory, "How were mountains like the Himalayas formed?",
-          "Continental plates collided and crumpled the land upward over millions of years.", Difficulty.Medium),
-        W(GeographyCategory, "Why does it rain more on one side of a mountain range?",
-          "Rising air cools and drops its moisture on the windward side, leaving the far side dry.", Difficulty.Hard),
-        W(GeographyCategory, "Why are deserts cold at night?",
-          "No clouds and dry air — the day's heat radiates straight back into space.", Difficulty.Medium),
-        W(GeographyCategory, "What causes ocean tides?",
-          "Mostly the Moon's gravity pulling on the oceans as Earth rotates.", Difficulty.Medium),
-        W(GeographyCategory, "Why do volcanoes erupt?",
-          "Molten rock under pressure finds a weak point in the crust and forces its way out.", Difficulty.Medium),
-        W(GeographyCategory, "Why is Antarctica a desert?",
-          "Deserts are defined by low precipitation — and it barely ever snows THERE, it's just too cold to melt.", Difficulty.Hard),
+            // ── HISTORY ───────────────────────────────────────────────────────────
+            .Category(HistoryCategory)
+            .Card(HistoryCategory, Body("Why did ancient Egyptians build the pyramids?",
+                "As monumental tombs for their pharaohs."), Difficulty.Easy)
+            .Card(HistoryCategory, Body("What was the Great Wall of China built for?",
+                "To defend the northern borders against raids and invasions."), Difficulty.Easy)
+            .Card(HistoryCategory, Body("Why did knights wear armour?",
+                "Protection from swords, arrows, and other weapons in battle."), Difficulty.Easy)
+            .Card(HistoryCategory, Body("What did the printing press change?",
+                "Books could be copied by machine instead of by hand — ideas spread massively faster."), Difficulty.Medium)
+            .Card(HistoryCategory, Body("Why were castles built with moats?",
+                "Water made walls hard to reach, tunnel under, or roll siege towers against."), Difficulty.Medium)
+            .Card(HistoryCategory, Body("What were Roman roads for?",
+                "Moving armies, trade, and messages quickly across the empire."), Difficulty.Medium)
+            .Card(HistoryCategory, Body("Why did sailors get scurvy on long voyages?",
+                "No fresh fruit or vegetables — months without vitamin C."), Difficulty.Hard)
+            .Card(HistoryCategory, Body("What was the Silk Road?",
+                "A network of trade routes linking China with the Middle East and Europe."), Difficulty.Medium)
 
-        // ── NATURE ────────────────────────────────────────────────────────────
-        W(NatureCategory, "Why do birds fly south for the winter?",
-          "Following food and warmer weather; their routes are driven by survival, not sightseeing.", Difficulty.Easy),
-        W(NatureCategory, "Why do leaves change colour in autumn?",
-          "Trees withdraw green chlorophyll, revealing the yellow and orange pigments underneath.", Difficulty.Medium),
-        W(NatureCategory, "Why do cats purr?",
-          "A vibration made in the voice box — usually contentment, sometimes self-soothing.", Difficulty.Easy),
-        W(NatureCategory, "Why do bees dance?",
-          "The waggle dance tells hive-mates the direction and distance of food.", Difficulty.Medium),
-        W(NatureCategory, "Why do camels have humps?",
-          "Fat storage — energy reserves for long stretches without food (not water tanks).", Difficulty.Medium),
-        W(NatureCategory, "Why do onions make you cry?",
-          "Cutting releases a gas that turns mildly acidic in your eyes; tears flush it out.", Difficulty.Medium),
-        W(NatureCategory, "Why do dogs tilt their heads when you talk?",
-          "Likely adjusting their ears and sight to locate and read you better.", Difficulty.Easy),
-        W(NatureCategory, "Why do flamingos stand on one leg?",
-          "It's their most stable, least tiring posture — one-legged standing takes almost no muscle effort.", Difficulty.Hard),
+            // ── GEOGRAPHY ─────────────────────────────────────────────────────────
+            .Category(GeographyCategory)
+            .Card(GeographyCategory, Body("Why do rivers flow to the sea?",
+                "Gravity — water runs downhill, and the sea is as low as it gets."), Difficulty.Easy)
+            .Card(GeographyCategory, Body("Why is it hot at the equator?",
+                "Sunlight hits it most directly, concentrating the energy."), Difficulty.Easy)
+            .Card(GeographyCategory, Body("How were mountains like the Himalayas formed?",
+                "Continental plates collided and crumpled the land upward over millions of years."), Difficulty.Medium)
+            .Card(GeographyCategory, Body("Why does it rain more on one side of a mountain range?",
+                "Rising air cools and drops its moisture on the windward side, leaving the far side dry."), Difficulty.Hard)
+            .Card(GeographyCategory, Body("Why are deserts cold at night?",
+                "No clouds and dry air — the day's heat radiates straight back into space."), Difficulty.Medium)
+            .Card(GeographyCategory, Body("What causes ocean tides?",
+                "Mostly the Moon's gravity pulling on the oceans as Earth rotates."), Difficulty.Medium)
+            .Card(GeographyCategory, Body("Why do volcanoes erupt?",
+                "Molten rock under pressure finds a weak point in the crust and forces its way out."), Difficulty.Medium)
+            .Card(GeographyCategory, Body("Why is Antarctica a desert?",
+                "Deserts are defined by low precipitation — and it barely ever snows THERE, it's just too cold to melt."), Difficulty.Hard)
 
-        // ── HOW IT WORKS ──────────────────────────────────────────────────────
-        W(HowItWorksCategory, "How does a fridge keep food cold?",
-          "It pumps heat OUT of the box using a circulating refrigerant — cold is just heat removed.", Difficulty.Hard),
-        W(HowItWorksCategory, "How does a plane stay in the air?",
-          "Wings deflect air downward and create pressure differences — the air pushes the plane up.", Difficulty.Medium),
-        W(HowItWorksCategory, "How does a microphone work?",
-          "Sound vibrates a tiny membrane, and that motion is converted into an electrical signal.", Difficulty.Medium),
-        W(HowItWorksCategory, "How does soap clean your hands?",
-          "Soap molecules grab grease on one end and water on the other, so grime rinses away.", Difficulty.Medium),
-        W(HowItWorksCategory, "How does a compass know where north is?",
-          "Its magnetised needle aligns itself with the Earth's magnetic field.", Difficulty.Easy),
-        W(HowItWorksCategory, "How do noise-cancelling headphones work?",
-          "They play an inverted copy of incoming sound, and the two waves cancel out.", Difficulty.Hard),
-        W(HowItWorksCategory, "How does popcorn pop?",
-          "Moisture inside the kernel turns to steam until the shell bursts and the starch puffs.", Difficulty.Easy),
-        W(HowItWorksCategory, "How does a battery store energy?",
-          "As chemical energy — reactions inside push electrons through the circuit when connected.", Difficulty.Hard),
+            // ── NATURE ────────────────────────────────────────────────────────────
+            .Category(NatureCategory)
+            .Card(NatureCategory, Body("Why do birds fly south for the winter?",
+                "Following food and warmer weather; their routes are driven by survival, not sightseeing."), Difficulty.Easy)
+            .Card(NatureCategory, Body("Why do leaves change colour in autumn?",
+                "Trees withdraw green chlorophyll, revealing the yellow and orange pigments underneath."), Difficulty.Medium)
+            .Card(NatureCategory, Body("Why do cats purr?",
+                "A vibration made in the voice box — usually contentment, sometimes self-soothing."), Difficulty.Easy)
+            .Card(NatureCategory, Body("Why do bees dance?",
+                "The waggle dance tells hive-mates the direction and distance of food."), Difficulty.Medium)
+            .Card(NatureCategory, Body("Why do camels have humps?",
+                "Fat storage — energy reserves for long stretches without food (not water tanks)."), Difficulty.Medium)
+            .Card(NatureCategory, Body("Why do onions make you cry?",
+                "Cutting releases a gas that turns mildly acidic in your eyes; tears flush it out."), Difficulty.Medium)
+            .Card(NatureCategory, Body("Why do dogs tilt their heads when you talk?",
+                "Likely adjusting their ears and sight to locate and read you better."), Difficulty.Easy)
+            .Card(NatureCategory, Body("Why do flamingos stand on one leg?",
+                "It's their most stable, least tiring posture — one-legged standing takes almost no muscle effort."), Difficulty.Hard)
 
-        // ── WORD ORIGINS ──────────────────────────────────────────────────────
-        W(WordOriginsCategory, "Where does the word 'sandwich' come from?",
-          "The Earl of Sandwich, who wanted meals he could eat without leaving the card table.", Difficulty.Medium),
-        W(WordOriginsCategory, "Why is a 'piggy bank' pig-shaped?",
-          "Old jars were made of 'pygg' clay — the name stuck and became the animal.", Difficulty.Hard),
-        W(WordOriginsCategory, "Where does 'quarantine' come from?",
-          "Italian 'quaranta' — forty — the days ships once waited in port during plagues.", Difficulty.Hard),
-        W(WordOriginsCategory, "Why do we say 'break a leg' for good luck?",
-          "Theatre superstition — wishing luck directly was thought to jinx the performance.", Difficulty.Medium),
-        W(WordOriginsCategory, "Where does the word 'robot' come from?",
-          "A 1920 Czech play — 'robota' means forced labour.", Difficulty.Hard),
-        W(WordOriginsCategory, "Why is it called a 'grandfather' clock?",
-          "A popular 1876 song about a grandfather's clock — the name outlived the tune.", Difficulty.Extreme),
-        W(WordOriginsCategory, "Where does 'ketchup' come from?",
-          "Probably from 'kê-tsiap', a Chinese fermented fish sauce — tomatoes came much later.", Difficulty.Extreme),
-        W(WordOriginsCategory, "Why is a marathon 42.195 km?",
-          "Legend of a Greek messenger's run, plus a 1908 London tweak so it finished at the royal box.", Difficulty.Extreme),
+            // ── HOW IT WORKS ──────────────────────────────────────────────────────
+            .Category(HowItWorksCategory)
+            .Card(HowItWorksCategory, Body("How does a fridge keep food cold?",
+                "It pumps heat OUT of the box using a circulating refrigerant — cold is just heat removed."), Difficulty.Hard)
+            .Card(HowItWorksCategory, Body("How does a plane stay in the air?",
+                "Wings deflect air downward and create pressure differences — the air pushes the plane up."), Difficulty.Medium)
+            .Card(HowItWorksCategory, Body("How does a microphone work?",
+                "Sound vibrates a tiny membrane, and that motion is converted into an electrical signal."), Difficulty.Medium)
+            .Card(HowItWorksCategory, Body("How does soap clean your hands?",
+                "Soap molecules grab grease on one end and water on the other, so grime rinses away."), Difficulty.Medium)
+            .Card(HowItWorksCategory, Body("How does a compass know where north is?",
+                "Its magnetised needle aligns itself with the Earth's magnetic field."), Difficulty.Easy)
+            .Card(HowItWorksCategory, Body("How do noise-cancelling headphones work?",
+                "They play an inverted copy of incoming sound, and the two waves cancel out."), Difficulty.Hard)
+            .Card(HowItWorksCategory, Body("How does popcorn pop?",
+                "Moisture inside the kernel turns to steam until the shell bursts and the starch puffs."), Difficulty.Easy)
+            .Card(HowItWorksCategory, Body("How does a battery store energy?",
+                "As chemical energy — reactions inside push electrons through the circuit when connected."), Difficulty.Hard)
 
-        // ── EXPANSION: PREMIUM BAIT ───────────────────────────────────────────
-        W(ScienceCategory, "Why do we dream?",
-          "Likely memory consolidation and emotional processing while the brain does its nightly filing.", Difficulty.Hard),
-        W(ScienceCategory, "Why does your voice sound different in recordings?",
-          "Live, you also hear it through your skull bones, which adds bass only you receive.", Difficulty.Medium),
-        W(ScienceCategory, "Why do mosquito bites itch?",
-          "Your immune system reacts to the mosquito's saliva with histamine — the itch is friendly fire.", Difficulty.Medium),
-        W(ScienceCategory, "Why can't you tickle yourself?",
-          "Your brain predicts your own movements and cancels the surprise — tickling requires surprise.", Difficulty.Hard),
-        W(NatureCategory, "Why do wombats have cube-shaped poo?",
-          "Their intestines have zones of different elasticity that mould corners. Genuinely. Cubes.", Difficulty.Extreme),
-        W(NatureCategory, "Why do goats scream like humans?",
-          "Individual variation in bleats — some goats just have unfortunate voices.", Difficulty.Medium),
-        W(NatureCategory, "Why don't penguins' feet freeze?",
-          "Counter-current blood flow: warm blood pre-heats the cold blood coming back from the feet.", Difficulty.Hard),
-        W(HowItWorksCategory, "How does your phone know which way is up?",
-          "A tiny accelerometer chip senses gravity's pull direction.", Difficulty.Medium),
-        W(HowItWorksCategory, "How do noise-activated sleep apps know you're snoring?",
-          "The microphone listens for the frequency pattern of snores — your phone is judging you all night.", Difficulty.Medium),
-        W(HowItWorksCategory, "How does bubble wrap get its bubbles?",
-          "Two plastic sheets fuse while one is sucked into bubble moulds by vacuum. Popping is destiny.", Difficulty.Easy),
-        W(HistoryCategory, "Why do we clink glasses before drinking?",
-          "Old ritual of trust and shared celebration — the poison-proof legend is mostly myth.", Difficulty.Medium),
-        W(HistoryCategory, "Why do we say 'bless you' after a sneeze?",
-          "Ancient habit — one legend ties it to plague-era prayers, another to souls escaping. Habit outlived reasons.", Difficulty.Medium),
-        W(HistoryCategory, "Why did pirates wear eye patches?",
-          "Likely to keep one eye dark-adapted for going below deck — practical, not just fashion.", Difficulty.Hard),
-        W(WordOriginsCategory, "Why is it called a 'nightmare'?",
-          "The 'mare' was a demon believed to sit on sleepers' chests. Horses are innocent.", Difficulty.Hard),
-        W(WordOriginsCategory, "Where does 'deadline' come from?",
-          "A literal line in Civil War prison camps — cross it and be shot. Office life kept the vibe.", Difficulty.Extreme),
-        W(WordOriginsCategory, "Why do we 'take the mickey' or 'pull someone's leg'?",
-          "Origins are murky slang; leg-pulling may come from tripping victims — mockery has always had technique.", Difficulty.Extreme),
-    ];
+            // ── WORD ORIGINS ──────────────────────────────────────────────────────
+            .Category(WordOriginsCategory)
+            .Card(WordOriginsCategory, Body("Where does the word 'sandwich' come from?",
+                "The Earl of Sandwich, who wanted meals he could eat without leaving the card table."), Difficulty.Medium)
+            .Card(WordOriginsCategory, Body("Why is a 'piggy bank' pig-shaped?",
+                "Old jars were made of 'pygg' clay — the name stuck and became the animal."), Difficulty.Hard)
+            .Card(WordOriginsCategory, Body("Where does 'quarantine' come from?",
+                "Italian 'quaranta' — forty — the days ships once waited in port during plagues."), Difficulty.Hard)
+            .Card(WordOriginsCategory, Body("Why do we say 'break a leg' for good luck?",
+                "Theatre superstition — wishing luck directly was thought to jinx the performance."), Difficulty.Medium)
+            .Card(WordOriginsCategory, Body("Where does the word 'robot' come from?",
+                "A 1920 Czech play — 'robota' means forced labour."), Difficulty.Hard)
+            .Card(WordOriginsCategory, Body("Why is it called a 'grandfather' clock?",
+                "A popular 1876 song about a grandfather's clock — the name outlived the tune."), Difficulty.Extreme)
+            .Card(WordOriginsCategory, Body("Where does 'ketchup' come from?",
+                "Probably from 'kê-tsiap', a Chinese fermented fish sauce — tomatoes came much later."), Difficulty.Extreme)
+            .Card(WordOriginsCategory, Body("Why is a marathon 42.195 km?",
+                "Legend of a Greek messenger's run, plus a 1908 London tweak so it finished at the royal box."), Difficulty.Extreme)
 
-    private static ICard W(string category, string question, string realAnswer, Difficulty d) =>
-        StandardCard.Create(
-            category,
-            "<b>Question:</b> " + question + "\n\n" +
-            "<b>Reader: announce the REAL answer first —</b>\n" + realAnswer + "\n\n" +
-            "<b>Now, everyone in turn: give your best WRONG answer.</b> " +
-            "Confident. Creative. Committed. Group votes for the winner.\n\n" +
-            "<i>Say something accidentally true and you're out of the round — with full honours.</i>",
-            d, category);
+            // ── EXPANSION: PREMIUM BAIT ───────────────────────────────────────────
+            .Category(ScienceCategory)
+            .Card(ScienceCategory, Body("Why do we dream?",
+                "Likely memory consolidation and emotional processing while the brain does its nightly filing."), Difficulty.Hard)
+            .Card(ScienceCategory, Body("Why does your voice sound different in recordings?",
+                "Live, you also hear it through your skull bones, which adds bass only you receive."), Difficulty.Medium)
+            .Card(ScienceCategory, Body("Why do mosquito bites itch?",
+                "Your immune system reacts to the mosquito's saliva with histamine — the itch is friendly fire."), Difficulty.Medium)
+            .Card(ScienceCategory, Body("Why can't you tickle yourself?",
+                "Your brain predicts your own movements and cancels the surprise — tickling requires surprise."), Difficulty.Hard)
+            .Category(NatureCategory)
+            .Card(NatureCategory, Body("Why do wombats have cube-shaped poo?",
+                "Their intestines have zones of different elasticity that mould corners. Genuinely. Cubes."), Difficulty.Extreme)
+            .Card(NatureCategory, Body("Why do goats scream like humans?",
+                "Individual variation in bleats — some goats just have unfortunate voices."), Difficulty.Medium)
+            .Card(NatureCategory, Body("Why don't penguins' feet freeze?",
+                "Counter-current blood flow: warm blood pre-heats the cold blood coming back from the feet."), Difficulty.Hard)
+            .Category(HowItWorksCategory)
+            .Card(HowItWorksCategory, Body("How does your phone know which way is up?",
+                "A tiny accelerometer chip senses gravity's pull direction."), Difficulty.Medium)
+            .Card(HowItWorksCategory, Body("How do noise-activated sleep apps know you're snoring?",
+                "The microphone listens for the frequency pattern of snores — your phone is judging you all night."), Difficulty.Medium)
+            .Card(HowItWorksCategory, Body("How does bubble wrap get its bubbles?",
+                "Two plastic sheets fuse while one is sucked into bubble moulds by vacuum. Popping is destiny."), Difficulty.Easy)
+            .Category(HistoryCategory)
+            .Card(HistoryCategory, Body("Why do we clink glasses before drinking?",
+                "Old ritual of trust and shared celebration — the poison-proof legend is mostly myth."), Difficulty.Medium)
+            .Card(HistoryCategory, Body("Why do we say 'bless you' after a sneeze?",
+                "Ancient habit — one legend ties it to plague-era prayers, another to souls escaping. Habit outlived reasons."), Difficulty.Medium)
+            .Card(HistoryCategory, Body("Why did pirates wear eye patches?",
+                "Likely to keep one eye dark-adapted for going below deck — practical, not just fashion."), Difficulty.Hard)
+            .Category(WordOriginsCategory)
+            .Card(WordOriginsCategory, Body("Why is it called a 'nightmare'?",
+                "The 'mare' was a demon believed to sit on sleepers' chests. Horses are innocent."), Difficulty.Hard)
+            .Card(WordOriginsCategory, Body("Where does 'deadline' come from?",
+                "A literal line in Civil War prison camps — cross it and be shot. Office life kept the vibe."), Difficulty.Extreme)
+            .Card(WordOriginsCategory, Body("Why do we 'take the mickey' or 'pull someone's leg'?",
+                "Origins are murky slang; leg-pulling may come from tripping victims — mockery has always had technique."), Difficulty.Extreme)
+
+            .Build();
+
+    // Title is the category (unchanged from the pre-builder bank — the real
+    // question lives in the body, which is what every UI and the gameplay
+    // tests read).
+    private static string Body(string question, string realAnswer) =>
+        "<b>Question:</b> " + question + "\n\n" +
+        "<b>Reader: announce the REAL answer first —</b>\n" + realAnswer + "\n\n" +
+        "<b>Now, everyone in turn: give your best WRONG answer.</b> " +
+        "Confident. Creative. Committed. Group votes for the winner.\n\n" +
+        "<i>Say something accidentally true and you're out of the round — with full honours.</i>";
 }
